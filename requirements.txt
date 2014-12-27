@@ -1,0 +1,4 @@
+django>=1.7
+requests
+xmltodict
+helen_electricity_usage

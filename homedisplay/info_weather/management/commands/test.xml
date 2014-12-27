@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--This document is intended only for use by authorized licensees of The Weather Channel. Unauthorized use is prohibited. Copyright 1995-2005, The Weather Channel Interactive, Inc. All Rights Reserved.-->
+<weather ver="2.0">
+  <head>
+    <locale>en_US</locale>
+    <form>MEDIUM</form>
+    <ut>C</ut>
+    <ud>mi</ud>
+    <us>mph</us>
+    <up>in</up>
+    <ur>in</ur>
+  </head>
+  <loc id="FIXX0001">
+    <dnam>Espoo, Finland</dnam>
+    <tm>8:08 PM</tm>
+    <lat>60.21</lat>
+    <lon>24.65</lon>
+    <sunr>9:27 AM</sunr>
+    <suns>3:18 PM</suns>
+    <zone>2</zone>
+  </loc>
+  <hbhf>
+    <lsup>12/27/14 7:27 PM Local Time</lsup>
+    <hour h="1" c="21">
+      <tmp>-9</tmp>
+      <flik>-15</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>0</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>16</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-11</dewp>
+      <hmid>90</hmid>
+    </hour>
+    <hour h="2" c="22">
+      <tmp>-9</tmp>
+      <flik>-14</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>0</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>17</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-10</dewp>
+      <hmid>90</hmid>
+    </hour>
+    <hour h="3" c="23">
+      <tmp>-8</tmp>
+      <flik>-14</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>0</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>18</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-9</dewp>
+      <hmid>94</hmid>
+    </hour>
+    <hour h="4" c="0">
+      <tmp>-8</tmp>
+      <flik>-14</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>0</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>19</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-9</dewp>
+      <hmid>91</hmid>
+    </hour>
+    <hour h="5" c="1">
+      <tmp>-8</tmp>
+      <flik>-14</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>0</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>20</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-9</dewp>
+      <hmid>90</hmid>
+    </hour>
+    <hour h="6" c="2">
+      <tmp>-9</tmp>
+      <flik>-14</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>0</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>21</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-9</dewp>
+      <hmid>93</hmid>
+    </hour>
+    <hour h="7" c="3">
+      <tmp>-9</tmp>
+      <flik>-15</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>21</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-11</dewp>
+      <hmid>90</hmid>
+    </hour>
+    <hour h="8" c="4">
+      <tmp>-9</tmp>
+      <flik>-16</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>19</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-11</dewp>
+      <hmid>92</hmid>
+    </hour>
+    <hour h="9" c="5">
+      <tmp>-10</tmp>
+      <flik>-17</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>17</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-11</dewp>
+      <hmid>92</hmid>
+    </hour>
+    <hour h="10" c="6">
+      <tmp>-11</tmp>
+      <flik>-17</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>0</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>18</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-12</dewp>
+      <hmid>91</hmid>
+    </hour>
+    <hour h="11" c="7">
+      <tmp>-11</tmp>
+      <flik>-18</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>20</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-12</dewp>
+      <hmid>91</hmid>
+    </hour>
+    <hour h="12" c="8">
+      <tmp>-12</tmp>
+      <flik>-19</flik>
+      <icon>33</icon>
+      <t>Mostly Clear</t>
+      <bt>M Clear</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>10</s>
+        <gust>N/A</gust>
+        <d>19</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-12</dewp>
+      <hmid>95</hmid>
+    </hour>
+    <hour h="13" c="9">
+      <tmp>-12</tmp>
+      <flik>-19</flik>
+      <icon>33</icon>
+      <t>Mostly Clear</t>
+      <bt>M Clear</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>10</s>
+        <gust>N/A</gust>
+        <d>16</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>92</hmid>
+    </hour>
+    <hour h="14" c="10">
+      <tmp>-12</tmp>
+      <flik>-19</flik>
+      <icon>34</icon>
+      <t>Mostly Sunny</t>
+      <bt>M Sunny</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>10</s>
+        <gust>N/A</gust>
+        <d>17</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>92</hmid>
+    </hour>
+    <hour h="15" c="11">
+      <tmp>-12</tmp>
+      <flik>-19</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>10</s>
+        <gust>N/A</gust>
+        <d>17</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>91</hmid>
+    </hour>
+    <hour h="16" c="12">
+      <tmp>-11</tmp>
+      <flik>-18</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>18</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>88</hmid>
+    </hour>
+    <hour h="17" c="13">
+      <tmp>-11</tmp>
+      <flik>-18</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>18</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>88</hmid>
+    </hour>
+    <hour h="18" c="14">
+      <tmp>-11</tmp>
+      <flik>-18</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>20</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-12</dewp>
+      <hmid>95</hmid>
+    </hour>
+    <hour h="19" c="15">
+      <tmp>-11</tmp>
+      <flik>-17</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>20</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>89</hmid>
+    </hour>
+    <hour h="20" c="16">
+      <tmp>-11</tmp>
+      <flik>-17</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>21</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>87</hmid>
+    </hour>
+    <hour h="21" c="17">
+      <tmp>-11</tmp>
+      <flik>-17</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>24</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>90</hmid>
+    </hour>
+    <hour h="22" c="18">
+      <tmp>-12</tmp>
+      <flik>-18</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>25</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>89</hmid>
+    </hour>
+    <hour h="23" c="19">
+      <tmp>-13</tmp>
+      <flik>-19</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>27</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>91</hmid>
+    </hour>
+    <hour h="24" c="20">
+      <tmp>-13</tmp>
+      <flik>-19</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>30</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>96</hmid>
+    </hour>
+    <hour h="25" c="21">
+      <tmp>-13</tmp>
+      <flik>-19</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>29</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>89</hmid>
+    </hour>
+    <hour h="26" c="22">
+      <tmp>-13</tmp>
+      <flik>-19</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>29</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>87</hmid>
+    </hour>
+    <hour h="27" c="23">
+      <tmp>-12</tmp>
+      <flik>-19</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>31</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>92</hmid>
+    </hour>
+    <hour h="28" c="0">
+      <tmp>-12</tmp>
+      <flik>-19</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>30</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>85</hmid>
+    </hour>
+    <hour h="29" c="1">
+      <tmp>-13</tmp>
+      <flik>-19</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>30</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>88</hmid>
+    </hour>
+    <hour h="30" c="2">
+      <tmp>-13</tmp>
+      <flik>-20</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>28</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>95</hmid>
+    </hour>
+    <hour h="31" c="3">
+      <tmp>-13</tmp>
+      <flik>-20</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>31</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>89</hmid>
+    </hour>
+    <hour h="32" c="4">
+      <tmp>-13</tmp>
+      <flik>-21</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>29</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>94</hmid>
+    </hour>
+    <hour h="33" c="5">
+      <tmp>-13</tmp>
+      <flik>-21</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>27</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>97</hmid>
+    </hour>
+    <hour h="34" c="6">
+      <tmp>-13</tmp>
+      <flik>-20</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>27</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>93</hmid>
+    </hour>
+    <hour h="35" c="7">
+      <tmp>-13</tmp>
+      <flik>-21</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>22</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>89</hmid>
+    </hour>
+    <hour h="36" c="8">
+      <tmp>-13</tmp>
+      <flik>-19</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>17</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>100</hmid>
+    </hour>
+    <hour h="37" c="9">
+      <tmp>-12</tmp>
+      <flik>-19</flik>
+      <icon>27</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>9</s>
+        <gust>N/A</gust>
+        <d>16</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>94</hmid>
+    </hour>
+    <hour h="38" c="10">
+      <tmp>-12</tmp>
+      <flik>-19</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>15</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>95</hmid>
+    </hour>
+    <hour h="39" c="11">
+      <tmp>-12</tmp>
+      <flik>-18</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>8</s>
+        <gust>N/A</gust>
+        <d>15</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-12</dewp>
+      <hmid>95</hmid>
+    </hour>
+    <hour h="40" c="12">
+      <tmp>-11</tmp>
+      <flik>-17</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>16</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>88</hmid>
+    </hour>
+    <hour h="41" c="13">
+      <tmp>-11</tmp>
+      <flik>-17</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>0</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>13</d>
+        <t>NNE</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>86</hmid>
+    </hour>
+    <hour h="42" c="14">
+      <tmp>-11</tmp>
+      <flik>-17</flik>
+      <icon>30</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>0</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>11</d>
+        <t>N</t>
+      </wind>
+      <dewp>-13</dewp>
+      <hmid>90</hmid>
+    </hour>
+    <hour h="43" c="15">
+      <tmp>-12</tmp>
+      <flik>-18</flik>
+      <icon>28</icon>
+      <t>Mostly Cloudy</t>
+      <bt>M Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>8</d>
+        <t>N</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>85</hmid>
+    </hour>
+    <hour h="44" c="16">
+      <tmp>-12</tmp>
+      <flik>-18</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>7</d>
+        <t>N</t>
+      </wind>
+      <dewp>-15</dewp>
+      <hmid>81</hmid>
+    </hour>
+    <hour h="45" c="17">
+      <tmp>-12</tmp>
+      <flik>-18</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>7</s>
+        <gust>N/A</gust>
+        <d>8</d>
+        <t>N</t>
+      </wind>
+      <dewp>-14</dewp>
+      <hmid>84</hmid>
+    </hour>
+    <hour h="46" c="18">
+      <tmp>-14</tmp>
+      <flik>-19</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>5</s>
+        <gust>N/A</gust>
+        <d>5</d>
+        <t>N</t>
+      </wind>
+      <dewp>-16</dewp>
+      <hmid>89</hmid>
+    </hour>
+    <hour h="47" c="19">
+      <tmp>-14</tmp>
+      <flik>-19</flik>
+      <icon>29</icon>
+      <t>Partly Cloudy</t>
+      <bt>P Cloudy</bt>
+      <ppcp>10</ppcp>
+      <wind>
+        <s>4</s>
+        <gust>N/A</gust>
+        <d>358</d>
+        <t>N</t>
+      </wind>
+      <dewp>-16</dewp>
+      <hmid>92</hmid>
+    </hour>
+  </hbhf>
+</weather>
+
