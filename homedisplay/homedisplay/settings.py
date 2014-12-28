@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'info_weather',
     'info_electricity',
+    'info_internet_connection',
     'display',
     'control_milight',
 )

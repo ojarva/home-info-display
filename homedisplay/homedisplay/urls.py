@@ -8,5 +8,6 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^lightcontrol/', include("control_milight.urls")),
-    url(r'^display/', include("display.urls"))
+    url(r'^display/', include("display.urls")),
+    url(r'^internet_connection/', include("info_internet_connection.urls")),
 )
