@@ -41,6 +41,9 @@ INSTALLED_APPS = (
     'info_internet_connection',
     'display',
     'control_milight',
+    'repeating_tasks',
+    'server_power',
+    'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (

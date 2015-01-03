@@ -1,8 +1,8 @@
-from django.shortcuts import render
-import json
-from django.http import HttpResponseRedirect, HttpResponse
-from django.views.generic import View
 from django.conf import settings
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render
+from django.views.generic import View
+import json
 import time
 
 from .models import Internet

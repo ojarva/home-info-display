@@ -3,3 +3,5 @@ requests
 xmltodict
 helen_electricity_usage
 huawei_b593_status
+wakeonlan
+ledcontroller

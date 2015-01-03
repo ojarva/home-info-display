@@ -5,7 +5,7 @@ from django.views.generic import View
 from django.conf import settings
 from ledcontroller import LedController
 
-from .models import LightState
+from .models import LightGroup
 
 led = LedController(settings.MILIGHT_IP)
 
@@ -14,7 +14,7 @@ def update_lightstate(group, brightness, color, on=True):
         for a in range(1, 5):
             update_lightstate(a, brightness, color)
 
-    (state, _) = LightState.objects.get_or_create(group=group)
+    (state, _) = LightGroup.objects.get_or_create(pk=group)
     if brightness is not None:
         if color == "white":
             state.white_brightness = brightness
@@ -46,7 +46,7 @@ class control(View):
             led.disco(group)
             update_lightstate(group, None, "disco")
         elif command == "night":
-            (state, _) = LightState.objects.get_or_create(group=group)
+            (state, _) = LightGroup.objects.get_or_create(pk=group)
             if state.color != "red":
                 led.set_brightness(0, group)
                 led.white(group)

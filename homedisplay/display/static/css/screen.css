@@ -56,3 +56,8 @@ body {
     overflow-x: hidden;
     overflow-y: hidden;
 }
+
+a.list-group-item {
+    background-color: #121212;
+    color: #ccc;
+}
