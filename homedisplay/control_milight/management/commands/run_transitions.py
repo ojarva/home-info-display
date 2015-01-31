@@ -18,13 +18,13 @@ class Command(BaseCommand):
         led = LedController(settings.MILIGHT_IP)
 
         def execute_all(transition):
-            led.set_brightness(transition.to_brightness, transition.group.id)
+            led.set_brightness(transition.to_brightness, transition.group.group_id)
             if transition.to_color:
-                led.set_color(transition.to_color, transition.group.id)
+                led.set_color(transition.to_color, transition.group.group_id)
             if transition.to_nightmode:
-                led.nightmode(transition.group.id)
+                led.nightmode(transition.group.group_id)
 
-            update_lightstate(transition.group.id, transition.to_brightness, transition.to_color)
+            update_lightstate(transition.group.group_id, transition.to_brightness, transition.to_color)
             transition.delete()
 
 
@@ -61,11 +61,11 @@ class Command(BaseCommand):
                 rate = brightness_range / transition_length
                 set_brightness = transition.start_brightness + rate * spent_time
                 if int(set_brightness) != current_state.white_brightness: # TODO: per-color brightness value
-                    led.set_brightness(set_brightness, transition.group.id)
-                    print "Setting brightness %s for group %s" % (set_brightness, transition.group.id)
+                    led.set_brightness(set_brightness, transition.group.group_id)
+                    print "Setting brightness %s for group %s" % (set_brightness, transition.group.group_id)
                     if current_state.color is None:
                         current_state.color = "white"
-                    led.set_color(current_state.color, transition.group.id)
-                update_lightstate(transition.group.id, set_brightness, current_state.color)
+                    led.set_color(current_state.color, transition.group.group_id)
+                update_lightstate(transition.group.group_id, set_brightness, current_state.color)
 
-            processed_lights.add(transition.group.id)
+            processed_lights.add(transition.group.group_id)

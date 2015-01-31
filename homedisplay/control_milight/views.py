@@ -14,7 +14,7 @@ def update_lightstate(group, brightness, color, on=True):
         for a in range(1, 5):
             update_lightstate(a, brightness, color)
 
-    (state, _) = LightGroup.objects.get_or_create(pk=group)
+    (state, _) = LightGroup.objects.get_or_create(group_id=group)
     if brightness is not None:
         if color == "white":
             state.white_brightness = brightness
@@ -46,7 +46,7 @@ class control(View):
             led.disco(group)
             update_lightstate(group, None, "disco")
         elif command == "night":
-            (state, _) = LightGroup.objects.get_or_create(pk=group)
+            (state, _) = LightGroup.objects.get_or_create(group_id=group)
             if state.color != "red":
                 led.set_brightness(0, group)
                 led.white(group)
