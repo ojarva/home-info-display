@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var lightcontrol_content_file = "/lightcontrol/content";
-    if (kitchen === true) {
+    if (typeof kitchen != "undefined" && kitchen === true) {
         lightcontrol_content_file += "/kitchen";
     }
     $.get(lightcontrol_content_file, function (data) {

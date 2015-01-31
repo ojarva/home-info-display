@@ -15,6 +15,4 @@ $(document).ready(function() {
         refresh_internet();
         setInterval(refresh_internet, 60000);
     });
-
-
 });

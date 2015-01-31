@@ -44,7 +44,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         now = datetime.datetime.now()
         current_time = now - datetime.timedelta(minutes=int(now.strftime("%M")), seconds=int(now.strftime("%S")), microseconds=int(now.strftime("%f")))
-        data = open("info_weather/management/commands/test.xml").read()
+        r = requests.get("http://desktopfw.weather.com/weather/local/FIXX0001?hbhf=48&ut=C")
+        data = r.text
+#        wget --no-cookies --header "Cookie: RMID=`echo $RANDOM | md5sum | awk {'print $1'}`" --user-agent "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 3.5.23022)"  "desktopfw.weather.com/weather/local/FIXX0001?hbhf=48&ut=C" -O-
+#        data = open("info_weather/management/commands/test.xml").read()
         data = xmltodict.parse(data)
         data = json.loads(json.dumps(data))
         for hour in data["weather"]["hbhf"]["hour"]:

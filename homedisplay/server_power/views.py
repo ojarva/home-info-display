@@ -8,6 +8,7 @@ import datetime
 import json
 import subprocess
 import time
+import manage_server_power
 
 class info(View):
     def get(self, request, *args, **kwargs):

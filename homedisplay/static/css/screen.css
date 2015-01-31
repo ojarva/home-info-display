@@ -6,25 +6,22 @@
 }
 
 #clock {
-    font-size: 860%;
+    font-size: 490%;
     font-weight: bold;
 }
 
 body {
     overflow-x: hidden;
     overflow-y: hidden;
-    margin: 0px;
-    padding: 0px;
-    border: 0px;
-    background-color: #111111;
+    background-color: black;
     color: #cccccc;
-    font-family: "Courier New";
+    font-size: 175%;
 }
 
 #calendar {
     padding-top: 0.25em;
     padding-bottom: 0.25em;
-    font-size: 450%;
+    font-size: 257%;
 }
 
 .center-content {
@@ -32,34 +29,55 @@ body {
     margin-left:auto;
     margin-right:auto;
 }
-
-.darkbox {
-    background-color: #111111;
-    -moz-border-radius:10px;
-    -webkit-border-radius:10px;
-    border-radius:10px;
-    margin-bottom: 0.25em;
-    border-style: dashed;
-    border-width: 1px;
-    border-color: #222222;
-    padding: 25px;
-}
-
-.lightbox {
-    border-style: dashed;
-    border-width: 1px;
-    border-color: #222222;
-    background-color: #121212;
-    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#1b1b1b), to(#111111));
-    -moz-border-radius:10px;
-    -webkit-border-radius:10px;
-    border-radius:10px;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    padding: 25px;
-}
-
 a.list-group-item {
     background-color: #121212;
     color: #ccc;
+}
+
+.light-box {
+  background-color: #111;
+}
+
+.dark-box {
+  background-color: #222;
+}
+
+.item-box {
+  background-color: #
+  padding: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.stripe-box:nth-child(even) {
+  background-color: #111;
+}
+.stripe-box:nth-child(odd) {
+  background-color: #222;
+}
+
+.action-button {
+  padding: 15px;
+  display: inline-block;
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-bottom: 5px;
+  font-size: 120%;
+  background-color:
+}
+
+.weather-info {
+  font-size: 100%;
+}
+
+.weather-info .col-md-4 {
+  font-size: 130%;
+}
+
+.repeating-tasks {
+  margin-top: 20px;
+}
+
+.birthdays {
+  margin-top: 20px;
 }

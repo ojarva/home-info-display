@@ -1,7 +1,6 @@
 $(document).ready(function () {
     var lightcontrol_content_file = "/lightcontrol/content";
-    console.log("Kitchen", kitchen);
-    if (kitchen === true) {
+    if (typeof kitchen != "undefined" && kitchen === true) {
         lightcontrol_content_file += "/kitchen";
     }
     $.get(lightcontrol_content_file, function (data) {
@@ -13,7 +12,7 @@ $(document).ready(function () {
             });
         });
 
-        $.each($("#lightcontrol .lightcontrol-btn-mini"), function () {
+        $.each($("#lightcontrol .lightcontrol-per-group"), function () {
             $(this).bind("click", function () {
                 var classes = $(this).attr("class");
                 classes = classes.split(" ");
