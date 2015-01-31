@@ -1,3 +1,16 @@
+.lightcontrol-huge-btn {
+    -webkit-border-radius: 28;
+    -moz-border-radius: 28;
+    border-radius: 28px;
+    font-family: Georgia;
+    color: #ffffff;
+    font-size: 100px;
+    background: #353a3d;
+    padding: 10px 20px 10px 20px;
+    border: solid #000000 2px;
+    text-decoration: none;
+
+}
 .lightcontrol-btn {
     -webkit-border-radius: 28;
     -moz-border-radius: 28;

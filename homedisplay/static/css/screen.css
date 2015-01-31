@@ -42,6 +42,7 @@ body {
     border-style: dashed;
     border-width: 1px;
     border-color: #222222;
+    padding: 25px;
 }
 
 .lightbox {
@@ -55,4 +56,10 @@ body {
     border-radius:10px;
     overflow-x: hidden;
     overflow-y: hidden;
+    padding: 25px;
+}
+
+a.list-group-item {
+    background-color: #121212;
+    color: #ccc;
 }

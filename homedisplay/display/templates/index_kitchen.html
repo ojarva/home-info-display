@@ -3,7 +3,6 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="Olli Jarva">
@@ -15,31 +14,24 @@
     <link href="/static/css/lightcontrol.css" rel="stylesheet">
     <link href="/static/css/internet_connection.css" rel="stylesheet">
     <link href="/static/css/repeating_tasks.css" rel="stylesheet">
-    <link href="/static/css/server_power.css" rel="stylesheet">
-
 </head>
 
 <body>
     <div class="custom-container">
         <div class="row">
-            <div class="col-md-4">
-                <div class="lightbox" id="internet_connection">
-                </div>
-                <div class="lightbox" id="server_power">
-                </div>
-                <div class="lightbox" id="repeating_tasks">
-                </div>
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="center-content darkbox">
                     <div id="clock"></div>
                     <div id="calendar"></div>
-                    <input type="text" style="display:none" id="calendar_input">
                 </div>
                 <div id="lightcontrol" class="lightbox center-content">
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
+                <div class="lightbox" id="internet_connection">
+                </div>
+                <div class="lightbox" id="repeating_tasks">
+                </div>
             </div>
         </div>
 
@@ -48,6 +40,9 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <script type="text/javascript">
+        var kitchen=true;
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/main.js"></script>
@@ -55,7 +50,6 @@
     <script src="/static/js/lightcontrol.js"></script>
     <script src="/static/js/internet_connection.js"></script>
     <script src="/static/js/repeating_tasks.js"></script>
-    <script src="/static/js/server_power.js"></script>
 
 
 </body>

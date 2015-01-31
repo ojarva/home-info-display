@@ -1,5 +1,10 @@
 $(document).ready(function () {
-    $.get("/lightcontrol/content", function (data) {
+    var lightcontrol_content_file = "/lightcontrol/content";
+    console.log("Kitchen", kitchen);
+    if (kitchen === true) {
+        lightcontrol_content_file += "/kitchen";
+    }
+    $.get(lightcontrol_content_file, function (data) {
         $("#lightcontrol").html(data);
         $.each($("#lightcontrol .lightcontrol-btn"), function() {
             $(this).bind("click", function () {

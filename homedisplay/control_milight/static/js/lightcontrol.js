@@ -1,5 +1,9 @@
 $(document).ready(function () {
-    $.get("/lightcontrol/content", function (data) {
+    var lightcontrol_content_file = "/lightcontrol/content";
+    if (kitchen === true) {
+        lightcontrol_content_file += "/kitchen";
+    }
+    $.get(lightcontrol_content_file, function (data) {
         $("#lightcontrol").html(data);
         $.each($("#lightcontrol .lightcontrol-btn"), function() {
             $(this).bind("click", function () {
@@ -8,7 +12,7 @@ $(document).ready(function () {
             });
         });
 
-        $.each($("#lightcontrol .lightcontrol-btn-mini"), function () {
+        $.each($("#lightcontrol .lightcontrol-per-group"), function () {
             $(this).bind("click", function () {
                 var classes = $(this).attr("class");
                 classes = classes.split(" ");
