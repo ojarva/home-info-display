@@ -1,5 +1,5 @@
 function refresh_internet() {
-    $.get("/internet_connection/status", function (data) {
+    $.get("/homecontroller/internet_connection/status", function (data) {
         console.log(data);
         output = $("#internet_connection");
         output.find("#connected").html(data.connected);
@@ -10,7 +10,7 @@ function refresh_internet() {
 }
 
 $(document).ready(function() {
-    $.get("/internet_connection/content", function(data) {
+    $.get("/homecontroller/internet_connection/content", function(data) {
         $("#internet_connection").html(data);
         refresh_internet();
         setInterval(refresh_internet, 60000);

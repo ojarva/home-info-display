@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var lightcontrol_content_file = "/lightcontrol/content";
+    var lightcontrol_content_file = "/homecontroller/lightcontrol/content";
     if (typeof kitchen != "undefined" && kitchen === true) {
         lightcontrol_content_file += "/kitchen";
     }
@@ -8,7 +8,7 @@ $(document).ready(function () {
         $.each($("#lightcontrol .lightcontrol-btn"), function() {
             $(this).bind("click", function () {
                 var id = $(this).attr("id").replace("lightcontrol_all_", "");
-                $.get("/lightcontrol/control/"+id+"/0");
+                $.get("/homecontroller/lightcontrol/control/"+id+"/0");
             });
         });
 
@@ -18,7 +18,7 @@ $(document).ready(function () {
                 classes = classes.split(" ");
                 var group = classes[1].replace("lightcontrol_", "");
                 var command = classes[2].replace("lightcontrol_", "");
-                $.get("/lightcontrol/control/"+command+"/"+group);
+                $.get("/homecontroller/lightcontrol/control/"+command+"/"+group);
             });
         });
 
