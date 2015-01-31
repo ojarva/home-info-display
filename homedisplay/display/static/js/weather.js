@@ -1,7 +1,7 @@
 
 $(document).ready(function () {
   function set_weather_info (elem, text, info) {
-    $(elem).html(text+"<br>"+info.fields.temperature+"&deg;C <img src='/static/images/"+info.fields.icon+".png'>");
+    $(elem).html(text+"<br>"+info.fields.temperature+"&deg;C <img src='/homecontroller/static/images/"+info.fields.icon+".png'>");
   }
 
   function reset_weather_info() {
@@ -9,7 +9,7 @@ $(document).ready(function () {
       $(this).html("<br><i class='fa fa-question'></i>");
     })
   }
-  $.get("/weather/get_json", function (data) {
+  $.get("/homecontroller/weather/get_json", function (data) {
     reset_weather_info();
     var first_date = moment();
     var hour = parseInt(first_date.format("H"));
