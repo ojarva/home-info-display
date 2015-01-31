@@ -26,3 +26,10 @@ $.ajaxSetup({
         }
     }
 });
+
+$(document).ready(function() {
+  $(".animate-click").on("click", function () {
+    $(this).stop(true).effect("highlight", {color: "#ffffff"}, 500);
+
+  });
+});
