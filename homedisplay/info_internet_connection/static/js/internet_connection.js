@@ -11,11 +11,11 @@ function refresh_internet() {
     } else {
       cs_out = "<i class='fa fa-times error-message'></i>";
     }
-    output.find("#connected").html(cs_out);
-    output.find("#mode").html(data.fields.mode);
-    output.find("#signal").html(data.fields.signal+"/5");
+    output.find(".connected").html(cs_out);
+    output.find(".mode").html(data.fields.mode);
+    output.find(".signal").html("<i class='fa fa-signal'></i> "+data.fields.signal+"/5");
     data_moment = moment(data.fields.timestamp);
-    output.find("#age").html("("+data_moment.fromNow()+")");
+    output.find(".age").html("("+data_moment.fromNow()+")");
   });
 }
 
