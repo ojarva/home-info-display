@@ -21,7 +21,7 @@ body {
 #calendar {
   padding-top: 0.25em;
   padding-bottom: 0.25em;
-  font-size: 257%;
+  font-size: 457%;
 }
 
 .center-content {
@@ -73,6 +73,10 @@ a.list-group-item {
   height: 100px;
   text-align: center;
   font-size: 300%;
+}
+
+.lightcontrol-headers td {
+  font-size: 175%;
 }
 
 .weather-info {
