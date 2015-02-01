@@ -7,3 +7,4 @@ requests>=2.5.1
 wakeonlan>=0.2.2
 xmltodict>=0.9.0
 manage_server_power>=0.0.1
+numpy
