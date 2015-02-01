@@ -1,7 +1,7 @@
 function refresh_internet() {
   $.get("/homecontroller/internet_connection/status", function (data) {
     data = data[0];
-    output = $("#internet_connection");
+    output = $("#internet-connection");
     var cs = data.fields.connect_status;
     var cs_out;
     if (cs == "connected") {

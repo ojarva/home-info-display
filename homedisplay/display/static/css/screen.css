@@ -11,15 +11,15 @@
 }
 
 .success-message {
-  font-color: #07CF00;
+  color: #07CF00;
 }
 
 .warning-message {
-  font-color: #E8B256;
+  color: #E8B256;
 }
 
 .error-message {
-  font-color: #E85656;
+  color: #E85656;
 }
 
 body {
