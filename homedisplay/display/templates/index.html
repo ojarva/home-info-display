@@ -27,9 +27,8 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="center-content darkbox">
-                    <div id="clock"></div>
-                    <div id="calendar"></div>
-                    <input type="text" style="display:none" id="calendar_input">
+                    <div id="clock">--:--:--</div>
+                    <div id="calendar">-- --.-.</div>
                 </div>
                 <div id="lightcontrol" class="lightbox center-content">
                   {% include "snippets/large_button.html" with mode="off" text="Pois" icon="power-off" %}
@@ -111,15 +110,15 @@
                 </div>
 
                 <div class="repeating-tasks">
-                  <ul>
-                    <li><i class="fa fa-times"></i> Pese WC (n päivää sitten)</li>
-                    <li><i class="fa fa-times"></i> Vaihda lakanat (n päivää sitten)</li>
+                  <ul class="fa-ul">
+                    <li><i class="fa-li fa fa-times"></i> Pese WC (n päivää sitten)</li>
+                    <li><i class="fa-li fa fa-times"></i> Vaihda lakanat (n päivää sitten)</li>
                   </ul>
                 </div>
 
                 <div class="birthdays">
-                  <ul>
-                    <li>Kalle (30v)</li>
+                  <ul class="fa-ul">
+                    <li><i class="fa-li fa fa-birthday-cake"></i> Kalle (30v)</li>
                   </ul>
                 </div>
               </div>
@@ -167,7 +166,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/homecontroller/static/js/jquery.min.js"></script>
     <script src="/homecontroller/static/js/bootstrap.min.js"></script>
-    <script src="/homecontroller/static/js/moment.js"></script>
+    <script src="/homecontroller/static/js/moment-with-locales.min.js"></script>
     <script src="/homecontroller/static/jquery-ui/jquery-ui.js"></script>
     <script src="/homecontroller/static/js/main.js"></script>
     <script src="/homecontroller/static/js/clock.js"></script>
