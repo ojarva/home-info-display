@@ -5,7 +5,7 @@ var refresh_weather = function () {
 
   function reset_weather_info() {
     $(".weather-info .col-md-4").each(function () {
-      $(this).html("<br><i class='fa fa-question'></i>");
+      $(this).html("<br><i class='fa fa-question-circle'></i>");
     })
   }
   $.get("/homecontroller/weather/get_json", function (data) {
@@ -29,6 +29,8 @@ var refresh_weather = function () {
     } else if (hour < 18) {
       desired_hours[20] = {"this_elem": "#today .weather-2", "this_text": "Ilta"};
       desired_hours[23] = {"this_elem": "#today .weather-3", "this_text": "Yö"};
+    } else if (hour < 23) {
+      desired_hours[23] = {"this_elem": "#today .weather-2", "this_text": "Yö"};
     }
     $.each(data, function () {
       var set = false;
