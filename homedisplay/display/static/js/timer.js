@@ -31,6 +31,13 @@ var Timer = function(parent_elem, options) {
   var start, interval, alarm_playing = false, alarm_interval, running = false, id_uniq = Math.random().toString().replace(".", ""), id;
   options = options || {};
   options.delay = options.delay || 100;
+  if (options.id) {
+    id = options.id;
+  }
+  if (options.start_time) {
+    start = options.start_time;
+  }
+  console.log(options);
 
   function create() {
     $(parent_elem).append("<div class='row timer-item timer-item-even' style='display:none' id='timer-"+id_uniq+"'>"+
@@ -50,15 +57,25 @@ var Timer = function(parent_elem, options) {
     "   <i class='fa fa-refresh'></i>"+
     " </div>"+
     "</div>");
-    restart();
     $("#timer-"+id_uniq).stop(true).slideDown("fast");
 
     $("#timer-"+id_uniq+" .timer-stop").click(function() {
-      stop();
+      delete_item();
     });
     $("#timer-"+id_uniq+" .timer-restart").click(function () {
       restart();
     });
+    if (typeof id == 'undefined') {
+      restart();
+      $.post("/homecontroller/timer/create", {name: options.name, duration: options.duration}, function(data) {
+        id = data[0].pk;
+        $("#timer-"+id_uniq).addClass("timer-backend-id-"+ id);
+        start = new Date(data[0].fields.start_time)
+      });
+    } else {
+      $("#timer-"+id_uniq).addClass("timer-backend-id-"+id);
+      start_item();
+    }
   }
   create();
 
@@ -114,27 +131,37 @@ var Timer = function(parent_elem, options) {
 
   }
 
-
-  function restart() {
-    start = new Date();
+  function start_item() {
     if (interval) {
       clearInterval(interval);
-      $("#timer-"+id_uniq).stop(true).effect("highlight", {color: "#006600"}, 500);
     }
     if (alarm_interval) {
       clearInterval(alarm_interval);
     }
-    alarm_playing = false;
-
     running = true;
     interval = setInterval(update, options.delay);
     update();
     $("#timer-"+id_uniq).data("end-timestamp", (start.getTime()/1000) + options.duration);
     sort_timers();
-    // TODO: update backend
+    $.get("/homecontroller/timer/start/"+id, function(data) {
+      //TODO
+    });
   }
 
-  function stop() {
+
+  function restart() {
+    start = new Date();
+    if (interval) {
+      $("#timer-"+id_uniq).stop(true).effect("highlight", {color: "#006600"}, 500);
+    }
+
+    start_item();
+    $.get("/homecontroller/timer/restart/"+id, function (data) {
+      start = new Date(data[0].fields.start_time);
+    });
+  }
+
+  function delete_item() {
     $("#timer-"+id_uniq).slideUp("fast", function () { $(this).remove(); });
     if (interval) {
       clearInterval(interval);
@@ -143,21 +170,28 @@ var Timer = function(parent_elem, options) {
       clearInterval(alarm_interval);
     }
     alarm_playing = false;
+    $.get("/homecontroller/timer/delete/"+id, function(data) {
 
-    // TODO: update backend
+    });
   }
 
-  this.stop = stop;
+  this.delete_item = delete_item;
   this.restart = restart;
+  this.start_item = start_item;
 };
 
 
-function refresh_from_server() {
-  $.getJSON("/timers/list", function(data) {
+function refresh_timers_from_server() {
+  $.getJSON("/homecontroller/timer/list", function(data) {
     $.each(data, function() {
-      if (data.duration === null) {
+      var id = this.pk;
+      if (this.fields.duration === null) {
         // if data.duration is not null, it's timer, not countdown
-
+      } else {
+        currently_running = $("#timer-holder").find(".timer-backend-id-"+id);
+        if (currently_running.length == 0) {
+          var timer_run = new Timer("#timer-holder", {"name": this.fields.name, "duration": this.fields.duration, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk});
+        }
       }
     });
   });
@@ -177,5 +211,7 @@ $(document).ready(function () {
   $(".add-timer").click(function () {
     var timer_run = new Timer("#timer-holder", {"name": $(this).data("name"), "duration": $(this).data("duration")});
   });
+  refresh_timers_from_server();
+  setInterval(refresh_timers_from_server, 10000);
 
 });
