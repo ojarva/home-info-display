@@ -14,7 +14,7 @@ function fetch_indoor_quality() {
       $("#indoor-quality").addClass("error-message");
     }
     $("#indoor-quality .status").html(co2_out);
-    $("#indoor-quality .temperature").html(temperature+"&deg;C");
+    $("#indoor-quality .temperature").html(latest.fields.temperature+"&deg;C");
     $("#indoor-quality .co2").html(co2+"ppm");
   });
 }
