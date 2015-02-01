@@ -30,6 +30,10 @@
   font-size: 200%;
 }
 
+#indoor-quality .age {
+  font-size: 50%;
+}
+
 #internet-connection {
   font-size: 200%;
 }
@@ -37,6 +41,10 @@
 #internet-connection .connected {
   font-size: 200%;
 }
+#internet-connection .age {
+  font-size: 50%;
+}
+
 
 body {
   overflow-x: hidden;
