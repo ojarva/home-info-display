@@ -22,9 +22,9 @@ function fetch_indoor_quality() {
   });
   $.get("/homecontroller/indoor_quality/co2/trend", function (data) {
     var icon;
-    if (data.delta < -0.05) {
+    if (data.delta < -0.025) {
       icon = "down";
-    } else if (data.delta > 0.05) {
+    } else if (data.delta > 0.025) {
       icon = "up";
     } else {
       icon = "right";
