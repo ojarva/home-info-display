@@ -13,7 +13,7 @@ class get_co2(View):
         data = IndoorQuality.objects.all()[0:1440]
         return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
-class get_co2_trends(View):
+class get_co2_trend(View):
     def get(self, request, *args, **kwargs):
         data = IndoorQuality.objects.all()[0:30]
         co2 = []
