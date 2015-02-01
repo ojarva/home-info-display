@@ -157,6 +157,10 @@ svg {
 }
 
 
+g.tick {
+  opacity: 0.3 !important;
+}
+
 svg text {
   font: normal 12px Arial;
   fill: white;
