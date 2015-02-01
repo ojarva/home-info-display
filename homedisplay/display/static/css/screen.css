@@ -66,6 +66,9 @@ a.list-group-item {
   background-color:
 }
 
+.weather-temperature {
+  font-size: 175%;
+}
 .lightcontrol-btn {
   margin-left: 1px;
   margin-right: 1px;
@@ -85,6 +88,9 @@ a.list-group-item {
 
 .weather-info .col-md-4 {
   font-size: 130%;
+  text-align: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .repeating-tasks {

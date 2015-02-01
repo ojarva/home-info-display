@@ -1,6 +1,6 @@
 var refresh_weather = function () {
   function set_weather_info (elem, text, info) {
-    $(elem).html(text+"<br>"+info.fields.temperature+"&deg;C <img src='/homecontroller/static/images/"+info.fields.icon+".png'>");
+    $(elem).html(text+"<br><span class='weather-temperature'>"+info.fields.temperature+"&deg;C</span> <img src='/homecontroller/static/images/"+info.fields.icon+".png'>");
   }
 
   function reset_weather_info() {
