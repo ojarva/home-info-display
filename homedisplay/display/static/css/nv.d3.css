@@ -159,6 +159,7 @@ svg {
 
 svg text {
   font: normal 12px Arial;
+  fill: white;
 }
 
 svg .title {
