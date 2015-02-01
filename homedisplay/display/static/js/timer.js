@@ -153,7 +153,7 @@ var Timer = function(parent_elem, options) {
     $.ajax({
       url: "/homecontroller/timer/get/"+id,
       success: function (data) {
-        start = data[0].fields.start_time;
+        start = new Date(data[0].fields.start_time);
         if (data[0].fields.running) {
           if (!running) {
             start();
