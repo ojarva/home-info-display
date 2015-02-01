@@ -22,14 +22,18 @@
   color: #E85656;
 }
 
+#indoor-quality {
+  font-size: 200%;
+}
+
+#indoor-quality .status {
+  font-size: 200%;
+}
+
 #internet-connection {
   font-size: 200%;
 }
-/*#internet-connection .mode
-#internet-connection .age
-#internet-connection .signal {
-  font-size: 200%;
-}*/
+
 #internet-connection .connected {
   font-size: 200%;
 }
