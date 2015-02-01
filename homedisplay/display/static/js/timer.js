@@ -28,7 +28,7 @@ var beep = (function () {
 })();
 
 var Timer = function(parent_elem, options) {
-  var start, interval, alarm_playing = false, alarm_interval, running = false, id_uniq = Math.random().toString().replace(".", ""), id;
+  var start, interval, alarm_playing = false, backend_interval, alarm_interval, running = false, id_uniq = Math.random().toString().replace(".", ""), id;
   options = options || {};
   options.delay = options.delay || 100;
   if (options.id) {
@@ -140,11 +140,35 @@ var Timer = function(parent_elem, options) {
     }
     running = true;
     interval = setInterval(update, options.delay);
+    backend_interval = setInterval(refresh_from_backend, 15000);
     update();
     $("#timer-"+id_uniq).data("end-timestamp", (start.getTime()/1000) + options.duration);
     sort_timers();
     $.get("/homecontroller/timer/start/"+id, function(data) {
       //TODO
+    });
+  }
+
+  function refresh_from_backend() {
+    $.ajax({
+      url: "/homecontroller/timer/get/"+id,
+      success: function (data) {
+        start = data[0].fields.start_time;
+        if (data[0].fields.running) {
+          if (!running) {
+            start();
+          }
+        } else {
+          if (running) {
+            stop();
+          }
+        }
+      },
+      statusCode: {
+        404: function () {
+          delete_item();
+        }
+      }
     });
   }
 
@@ -168,6 +192,9 @@ var Timer = function(parent_elem, options) {
     }
     if (alarm_interval) {
       clearInterval(alarm_interval);
+    }
+    if (backend_interval) {
+      clearInterval(backend_interval);
     }
     alarm_playing = false;
     $.get("/homecontroller/timer/delete/"+id, function(data) {
