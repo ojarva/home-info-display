@@ -1,37 +1,37 @@
 .custom-container {
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 #clock {
-    font-size: 490%;
-    font-weight: bold;
+  font-size: 790%;
+  font-weight: bold;
 }
 
 body {
-    overflow-x: hidden;
-    overflow-y: hidden;
-    background-color: black;
-    color: #cccccc;
-    font-size: 175%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  background-color: black;
+  color: #cccccc;
+  font-size: 175%;
 }
 
 #calendar {
-    padding-top: 0.25em;
-    padding-bottom: 0.25em;
-    font-size: 257%;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  font-size: 257%;
 }
 
 .center-content {
-    text-align: center;
-    margin-left:auto;
-    margin-right:auto;
+  text-align: center;
+  margin-left:auto;
+  margin-right:auto;
 }
 a.list-group-item {
-    background-color: #121212;
-    color: #ccc;
+  background-color: #121212;
+  color: #ccc;
 }
 
 .light-box {
@@ -66,6 +66,15 @@ a.list-group-item {
   background-color:
 }
 
+.lightcontrol-btn {
+  margin-left: 1px;
+  margin-right: 1px;
+  width: 100px;
+  height: 100px;
+  text-align: center;
+  font-size: 300%;
+}
+
 .weather-info {
   font-size: 100%;
 }
@@ -80,4 +89,20 @@ a.list-group-item {
 
 .birthdays {
   margin-top: 20px;
+}
+
+
+.lights-off {
+  background-color: #111111;
+}
+.lights-on {
+  background-color: #006600;
+  color: #E6FFD7;
+}
+.lights-morning {
+  background-color: #222222;
+}
+.lights-night {
+  background-color: #cc0000;
+  color: #ffeded;
 }
