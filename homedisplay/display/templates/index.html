@@ -20,6 +20,7 @@
     <link href="/homecontroller/static/css/internet_connection.css" rel="stylesheet">
     <link href="/homecontroller/static/css/repeating_tasks.css" rel="stylesheet">
     <link href="/homecontroller/static/css/server_power.css" rel="stylesheet">
+    <link href="/homecontroller/static/css/timer.css" rel="stylesheet">
 
 </head>
 
@@ -84,9 +85,32 @@
                   <span class="age"></span>
                 </div>
                 <div id="graph">
-                  <svg style='height:300px'> </svg>
+                  <svg style='height:200px'> </svg>
                 </div>
               </div>
+              <div id="timers">
+                <div class="row timer-item center-content add-timers">
+                  <div class="col-md-3 timer-striping animate-click add-timer" data-duration="2700" data-name="Pesukone">
+                    <p><i style="font-size: 300%" class="fa fa-cutlery"></i></p>
+                  </div>
+                  <div class="col-md-3 timer-striping animate-click add-timer" data-duration="180" data-name="Tee">
+                    <p><i style="font-size: 300%" class="fa fa-coffee"></i></p>
+                  </div>
+                  <div class="col-md-3 timer-striping animate-click" id="add-stopclock">
+                    <p><i style="font-size: 300%" class="fa fa-clock-o"></i></p>
+                  </div>
+                  <div class="col-md-3 timer-striping animate-click" id="add-custom-timer-plus">
+                    <p><i style="font-size: 300%" class="fa fa-plus"></i></p>
+                  </div>
+                </div>
+
+                <div id="stopclock-holder">
+                </div>
+
+                <div id="timer-holder">
+                </div>
+              </div>
+
               <div class="lightbox" id="server_power">
                 {% if ping %}
                 <button class="btn server_power_shutdown">Sammuta</button>
@@ -186,6 +210,8 @@
 
     <script src="/homecontroller/static/js/main.js"></script>
     <script src="/homecontroller/static/js/clock.js"></script>
+    <script src="/homecontroller/static/js/timer.js"></script>
+    <script src="/homecontroller/static/js/stopclock.js"></script>
     <script src="/homecontroller/static/js/lightcontrol.js"></script>
     <script src="/homecontroller/static/js/internet_connection.js"></script>
     <script src="/homecontroller/static/js/repeating_tasks.js"></script>
