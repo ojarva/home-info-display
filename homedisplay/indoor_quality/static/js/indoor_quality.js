@@ -26,6 +26,7 @@ function fetch_indoor_quality() {
       var chart = nv.models.lineChart()
       .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
       .showLegend(false)
+      .interpolate("basis")
       .transitionDuration(350)  //how fast do you want the lines to transition?
       .showYAxis(true)        //Show the y-axis
       .showXAxis(true)        //Show the x-axis
