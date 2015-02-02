@@ -12,3 +12,4 @@ class Timer(models.Model):
     def end_time(self):
         if self.duration:
             return self.start_time + datetime.timedelta(seconds=self.duration)
+        return datetime.datetime.now()
