@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.timezone import now
+import datetime
 
 class Timer(models.Model):
     name = models.CharField(max_length=200)
