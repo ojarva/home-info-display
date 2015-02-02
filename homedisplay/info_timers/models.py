@@ -1,5 +1,5 @@
 from django.db import models
-import datetime
+from django.utils.timezone import now
 
 class Timer(models.Model):
     name = models.CharField(max_length=200)
@@ -12,4 +12,4 @@ class Timer(models.Model):
     def end_time(self):
         if self.duration:
             return self.start_time + datetime.timedelta(seconds=self.duration)
-        return datetime.datetime.now()
+        return now()
