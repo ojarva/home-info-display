@@ -2,55 +2,169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Olli Jarva">
+  <meta charset="utf-8">
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Kitchen</title>
+  <!-- Bootstrap core CSS -->
+  <link href="/homecontroller/static/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/homecontroller/static/jquery-ui/jquery-ui.min.css" rel="stylesheet">
+  <link href="/homecontroller/static/css/font-awesome.css" rel="stylesheet">
 
-    <title>Info</title>
+  <link href="/homecontroller/static/css/custom_kitchen.css?4" rel="stylesheet">
+  <link href="/homecontroller/static/css/timer.css" rel="stylesheet">
 
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/css/screen.css" rel="stylesheet">
-    <link href="/static/css/lightcontrol.css" rel="stylesheet">
-    <link href="/static/css/internet_connection.css" rel="stylesheet">
-    <link href="/static/css/repeating_tasks.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="custom-container">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="center-content darkbox">
-                    <div id="clock"></div>
-                    <div id="calendar"></div>
-                </div>
-                <div id="lightcontrol" class="lightbox center-content">
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="lightbox" id="internet_connection">
-                </div>
-                <div class="lightbox" id="repeating_tasks">
-                </div>
+  <audio src="alarm.mp3" width="0" height="0" id="sound1" enablejavascript="true"></audio>
+  <div id="main-content">
+    <div class="row">
+      <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-42 center-content" id="time-info">
+              <div class="foo center-content">
+                <div id="clock">--:--:--</div>
+                <div id="calendar">-----</div>
+              </div>
             </div>
         </div>
+          <div class="row light-controls">
+            <div class="col-md-3 center-content lightcontrol-btn" data-group="3" data-command="night" id="lights-night">
+              <i class="fa fa-bed"></i>
+            </div>
+            <div class="col-md-3 center-content lightcontrol-btn" data-group="3" data-command="morning" id="lights-morning">
+              <i class="fa fa-moon-o"></i>
+            </div>
+            <div class="col-md-3 center-content lightcontrol-btn" data-group="3" data-command="on" id="lights-full">
+              <i class="fa fa-sun-o"></i>
+            </div>
+            <div class="col-md-3 center-content lightcontrol-btn" data-group="3" data-command="off" id="lights-off">
+              <i class="fa fa-power-off"></i>
+            </div>
 
-    </div>
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script type="text/javascript">
-        var kitchen=true;
-    </script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/main.js"></script>
-    <script src="/static/js/clock.js"></script>
-    <script src="/static/js/lightcontrol.js"></script>
-    <script src="/static/js/internet_connection.js"></script>
-    <script src="/static/js/repeating_tasks.js"></script>
+          </div>
+      </div>
+      <div class="col-md-6">
 
 
-</body>
+        <div id="timers">
+          <div class="row timer-item center-content add-timers">
+            <div class="col-md-3 timer-striping animate-click add-timer" data-duration="2700" data-name="Pesukone">
+              <p><i style="font-size: 300%" class="fa fa-cutlery"></i></p>
+            </div>
+            <div class="col-md-3 timer-striping animate-click add-timer" data-duration="180" data-name="Tee">
+              <p><i style="font-size: 300%" class="fa fa-coffee"></i></p>
+            </div>
+            <div class="col-md-3 timer-striping animate-click" id="add-stopclock">
+              <p><i style="font-size: 300%" class="fa fa-clock-o"></i></p>
+            </div>
+            <div class="col-md-3 timer-striping animate-click" id="add-custom-timer-plus">
+              <p><i style="font-size: 300%" class="fa fa-plus"></i></p>
+            </div>
+          </div>
+
+          <div id="stopclock-holder">
+          </div>
+
+          <div id="timer-holder">
+          </div>
+
+
+        </div>
+      </div>
+
+    </div> <!-- row -->
+  </div> <!-- main-content -->
+  <div id="add-custom-timer" style="display:none">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="row">
+          <div class="col-md-4 add-timer-button animate-click" id="add-1">
+            1
+          </div>
+          <div class="col-md-4 add-timer-button animate-click" id="add-2">
+            2
+          </div>
+          <div class="col-md-4 add-timer-button animate-click" id="add-3">
+            3
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 add-timer-button animate-click" id="add-4">
+            4
+          </div>
+          <div class="col-md-4 add-timer-button animate-click" id="add-5">
+            5
+          </div>
+          <div class="col-md-4 add-timer-button animate-click" id="add-6">
+            6
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 add-timer-button animate-click" id="add-7">
+            7
+          </div>
+          <div class="col-md-4 add-timer-button animate-click" id="add-8">
+            8
+          </div>
+          <div class="col-md-4 add-timer-button animate-click" id="add-9">
+            9
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 add-timer-button animate-click">
+
+          </div>
+          <div class="col-md-4 add-timer-button animate-click" id="add-0">
+            0
+          </div>
+          <div class="col-md-4 add-timer-button animate-click" id="add-back">
+            <i class="fa fa-backward"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="row">
+          <div class="col-md-10">
+            <div id="custom-timer-duration" data-content="0000000">000:00:00</div>
+          </div>
+
+          <div class="col-md-2" id="close-add-custom-timer" style="font-size: 600%; text-align: right; padding-right: 40px">
+            <i class="fa fa-times-circle-o"></i>
+          </div>
+        </div>
+        <div class="row" style="min-height: 70px">
+          <div class="col-md-12">
+            <div class="timer-description-button animate-click">Nimetön</div>
+            <div class="timer-description-button animate-click">Leipä</div>
+            <div class="timer-description-button animate-click">Kakku</div>
+            <div class="timer-description-button animate-click">Pasta</div>
+            <div class="timer-description-button animate-click">Pesutupa</div>
+            <div class="timer-description-button animate-click">Sous Vide</div>
+            <div class="timer-description-button animate-click">Parvekkeella</div>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="timer-description-button animate-click" data-duration="3300">Skumppa</div>
+            <div class="timer-description-button animate-click" data-duration="7200">Magnum</div>
+            <div class="timer-description-button animate-click" data-duration="2100">Siideri</div>
+          </div>
+        </div>
+      </div>
+  </div> <!-- add-custom-timer -->
+    <script src="/homecontroller/static/js/jquery.min.js"></script>
+    <script src="/homecontroller/static/js/bootstrap.min.js"></script>
+    <script src="/homecontroller/static/js/moment-with-locales.min.js"></script>
+    <script src="/homecontroller/static/jquery-ui/jquery-ui.min.js"></script>
+
+    <script src="/homecontroller/static/js/main.js"></script>
+    <script src="/homecontroller/static/js/stopclock.js?3"></script>
+    <script src="/homecontroller/static/js/timer.js?2"></script>
+    <script src="/homecontroller/static/js/clock.js?2"></script>
+    <script src="/homecontroller/static/js/lightcontrol.js?1"></script>
+    <script src="/homecontroller/static/js/custom_timers.js"></script>
+  </body>
 </html>
