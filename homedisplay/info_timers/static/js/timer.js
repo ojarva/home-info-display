@@ -68,9 +68,11 @@ var Timer = function(parent_elem, options) {
     this_elem.stop(true).slideDown("fast");
 
     if (created_backend) {
+      console.log("created by backend");
       this_elem.addClass("timer-backend-id-"+id);
       startItem();
     } else {
+      console.log("not created by backend");
       restart();
       // TODO: stopclock/timer
       $.post("/homecontroller/timer/create", {name: options.name, duration: options.duration}, function(data) {
@@ -159,7 +161,7 @@ var Timer = function(parent_elem, options) {
     interval = setInterval(update, options.delay);
     update();
     backend_interval = setInterval(refreshFromBackend, 15000);
-    this.elem.data("start-timestamp", start);
+    this_elem.data("start-timestamp", start);
     if (timer_type == "timer") {
       this_elem.data("end-timestamp", (start.getTime()/1000) + options.duration);
     }
