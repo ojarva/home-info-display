@@ -1,0 +1,95 @@
+body {
+  background-color: black;
+  color: #bbb;
+
+}
+
+.light-controls {
+  font-size: 900%;
+}
+
+.center-content {
+  text-align: center;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+#clock {
+  font-size: 400%;
+  font-weight: bold;
+}
+
+#screensaver {
+  background-color: black;
+  display: block;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+#weather-info div {
+  height: 293px;
+}
+
+#weather-info div p {
+  padding-top: 80px;
+}
+
+#weather-general {
+  float: left;
+  width: 200px;
+  font-size: 300%;
+  text-align: center;
+}
+
+#weather-temperature {
+  margin-left: 200px;
+  font-size: 300%;
+  text-align: right;
+}
+
+#calendar {
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  font-size: 450%;
+}
+
+#time-info {
+  background-color: #131313;
+  height: 300px;
+  padding-top: 50px;
+}
+
+#lights-off {
+  background-color: #111111;
+}
+#lights-full {
+  background-color: #006600;
+  color: #E6FFD7;
+}
+#lights-morning {
+  background-color: #222222;
+}
+#lights-night {
+  background-color: #cc0000;
+  color: #ffeded;
+}
+
+.col-md-6 {
+  width: 50% !important;
+  float: left;
+  position: relative;
+  min-height: 1px;
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.light-controls div {
+  height: 300px;
+}
+
+.light-controls div p {
+  padding-top: 60px;
+}
