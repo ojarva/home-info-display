@@ -1,6 +1,10 @@
 function refresh_internet() {
   $.get("/homecontroller/internet_connection/status", function (data) {
     data = data[0];
+    if (typeof data == "undefined") {
+      console.log("!!! No internet connection information available");
+      return;
+    }
     output = $("#internet-connection");
     var cs = data.fields.connect_status;
     var cs_out;
