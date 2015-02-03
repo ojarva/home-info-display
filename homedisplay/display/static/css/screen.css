@@ -105,18 +105,6 @@ a.list-group-item {
 .weather-temperature {
   font-size: 175%;
 }
-.lightcontrol-btn {
-  margin-left: 1px;
-  margin-right: 1px;
-  width: 130px;
-  height: 130px;
-  text-align: center;
-  font-size: 400%;
-}
-
-.lightcontrol-headers td {
-  font-size: 165%;
-}
 
 .weather-info {
   font-size: 100%;
@@ -129,14 +117,18 @@ a.list-group-item {
   padding-bottom: 5px;
 }
 
-.repeating-tasks {
-  margin-top: 20px;
+.lightcontrol-btn {
+  margin-left: 1px;
+  margin-right: 1px;
+  width: 130px;
+  height: 130px;
+  text-align: center;
+  font-size: 400%;
 }
 
-.birthdays {
-  margin-top: 20px;
+.lightcontrol-headers td {
+  font-size: 165%;
 }
-
 
 .lights-off {
   background-color: #111111;
@@ -151,4 +143,14 @@ a.list-group-item {
 .lights-night {
   background-color: #cc0000;
   color: #ffeded;
+}
+
+
+
+.repeating-tasks {
+  margin-top: 20px;
+}
+
+.birthdays {
+  margin-top: 20px;
 }
