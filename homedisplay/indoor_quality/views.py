@@ -1,21 +1,25 @@
-from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponse
-from django.views.generic import View
-from django.core import serializers
 
 from .models import IndoorQuality
-import numpy
+from django.conf import settings
+from django.core import serializers
+from django.http import HttpResponseRedirect, HttpResponse
+from django.utils.timezone import now
+from django.views.generic import View
+import datetime
 import json
+import numpy
 import time
 
 class get_co2(View):
     def get(self, request, *args, **kwargs):
-        data = IndoorQuality.objects.all()[0:1440]
+        data = IndoorQuality.objects.filter(timestamp__gte=now()-datetime.timedelta(hours=24))
         return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 class get_co2_trend(View):
     def get(self, request, *args, **kwargs):
         data = IndoorQuality.objects.all()[0:30]
+        if len(data) < 30:
+            return HttpResponse(json.dumps({"status": "no_data"}), content_type="application/json")
         co2 = []
         timestamps = []
         for item in data:

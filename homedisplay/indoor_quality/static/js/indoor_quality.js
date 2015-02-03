@@ -2,6 +2,10 @@ function fetch_indoor_quality() {
   var output = $("#indoor-quality");
   $.get("/homecontroller/indoor_quality/co2", function (data) {
     var latest = data[0];
+    if (typeof latest == "undefined") {
+      console.log("!!! No indoor air quality information available.");
+      return;
+    }
     var co2 = latest.fields.co2;
     var co2_out;
     if (co2 < 1000) {
@@ -26,7 +30,7 @@ function fetch_indoor_quality() {
       var chart = nv.models.lineChart()
       .useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
       .showLegend(false)
-      .interpolate("basis")
+      .interpolate("bundle")
       .transitionDuration(350)  //how fast do you want the lines to transition?
       .showYAxis(true)        //Show the y-axis
       .showXAxis(true)        //Show the x-axis
