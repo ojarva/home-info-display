@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ws4redis',
     'control_milight',
     'display',
     'indoor_quality',
@@ -45,6 +46,7 @@ INSTALLED_APPS = (
     'info_weather',
     'repeating_tasks',
     'server_power',
+    'ws_sync',
     'django_extensions',
 )
 
@@ -58,9 +60,27 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    'ws4redis.context_processors.default',
+)
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+
+
 ROOT_URLCONF = 'homedisplay.urls'
 
-WSGI_APPLICATION = 'homedisplay.wsgi.application'
+#WSGI_APPLICATION = 'homedisplay.wsgi.application'
+
+WEBSOCKET_URL = '/ws/'
+WS4REDIS_EXPIRE = 0
+WS4REDIS_HEARTBEAT = '--heartbeat--'
+WS4REDIS_PREFIX = 'home'
 
 
 # Database

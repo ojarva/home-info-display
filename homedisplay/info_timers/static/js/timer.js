@@ -1,10 +1,12 @@
+var created_timer_items = [];
+
 var Timer = function(parent_elem, options) {
   var timer_type, created_backend = false, start, interval, backend_interval, alarm_interval, running = false, id_uniq = Math.random().toString().replace(".", ""), id;
   var this_elem;
   options = options || {};
   options.delay = options.delay || 100;
   if (options.id) {
-    id = options.id;
+    setId(options.id);
     created_backend = true;
   }
   if (options.start_time) {
@@ -14,6 +16,33 @@ var Timer = function(parent_elem, options) {
     timer_type = "timer";
   } else {
     timer_type = "stopclock";
+  }
+
+  function onReceiveItemWS(message) {
+    console.log("onReceiveItemWS", id, message);
+    if (message == "stop") {
+      stop("backend");
+    } else if (message == "delete") {
+      deleteItem("backend");
+    } else if (message == "restart") {
+      restart("backend");
+    } else if (message == "start") {
+      startItem("backend");
+    } else {
+      console.log("Unknown per-item WS message: ", message);
+    }
+  }
+
+  function setId(new_id) {
+    // Set backend id to local object.
+    id = new_id;
+    created_timer_items.push(id);
+    ws4redis = WS4Redis({
+      //TODO
+      uri: 'ws://localhost:8000/ws/timer-'+id+'?subscribe-broadcast&publish-broadcast&echo',
+      receive_message: onReceiveItemWS,
+      heartbeat_msg: "--heartbeat--"
+    });
   }
 
   function create() {
@@ -68,15 +97,16 @@ var Timer = function(parent_elem, options) {
     this_elem.stop(true).slideDown("fast");
 
     if (created_backend) {
-      console.log("created by backend");
       this_elem.addClass("timer-backend-id-"+id);
-      startItem();
+      if (options.running) {
+        startItem("backend");
+      } else {
+        stop("backend");
+      }
     } else {
-      console.log("not created by backend");
       restart();
-      // TODO: stopclock/timer
       $.post("/homecontroller/timer/create", {name: options.name, duration: options.duration}, function(data) {
-        id = data[0].pk;
+        setId(data[0].pk);
         this_elem.addClass("timer-backend-id-"+ id);
         start = new Date(data[0].fields.start_time)
       });
@@ -90,6 +120,7 @@ var Timer = function(parent_elem, options) {
   }
 
   function stop(source) {
+    //TODO: support for timers
     if (this_elem.find(".stopclock-stop i").hasClass("fa-trash")) {
       // Delete counter
       deleteItem();
@@ -99,7 +130,33 @@ var Timer = function(parent_elem, options) {
       running = false;
       clearItemIntervals();
       this_elem.find(".stopclock-stop i").removeClass("fa-stop").addClass("fa-trash");
+      if (source != "backend") {
+        $.get("/homecontroller/timer/stop/"+id, function (data) {
+          diff = ((new Date(data[0].fields.stopped_at)) - (new Date(data[0].fields.start_time))) / 1000;
+          update_timer_content(diff, "");
+        });
+      } else if (options.stopped_at) {
+        diff = (new Date(options.stopped_at) - start) / 1000;
+        update_timer_content(diff, "");
+      }
     }
+  }
+
+  function update_timer_content(diff, prefix) {
+    var hours = Math.floor(diff / 3600);
+    diff = diff - hours * 3600;
+    var minutes = Math.floor(diff / 60);
+    diff = diff - minutes * 60;
+    var seconds = Math.floor(diff);
+    var msec = diff - seconds;
+    var timer = prefix+zeroPad(hours, 2) + ":"+zeroPad(minutes, 2)+":"+zeroPad(seconds, 2)+"."+(String(Math.round(msec*10))+"00").substr(0,1);
+    // TODO: timer/stopclock
+    if (timer_type == "timer") {
+      this_elem.find(".timer-timeleft").html(timer);
+    } else {
+      this_elem.find(".stopclock-content").html(timer);
+    }
+
   }
 
   function update() {
@@ -129,20 +186,7 @@ var Timer = function(parent_elem, options) {
     } else if (timer_type == "stopclock"){
       var diff = (now - start) / 1000;
     }
-
-    var hours = Math.floor(diff / 3600);
-    diff = diff - hours * 3600;
-    var minutes = Math.floor(diff / 60);
-    diff = diff - minutes * 60;
-    var seconds = Math.floor(diff);
-    var msec = diff - seconds;
-    var timer = prefix+zeroPad(hours, 2) + ":"+zeroPad(minutes, 2)+":"+zeroPad(seconds, 2)+"."+(String(Math.round(msec*10))+"00").substr(0,1);
-    // TODO: timer/stopclock
-    if (timer_type == "timer") {
-      this_elem.find(".timer-timeleft").html(timer);
-    } else {
-      this_elem.find(".stopclock-content").html(timer);
-    }
+    update_timer_content(diff, prefix);
   }
 
   function clearItemIntervals() {
@@ -152,7 +196,6 @@ var Timer = function(parent_elem, options) {
     if (alarm_interval) {
       clearInterval(alarm_interval);
     }
-
   }
 
   function startItem(source) {
@@ -184,6 +227,7 @@ var Timer = function(parent_elem, options) {
           }
         } else {
           if (running) {
+            //TODO: support for timers/stopclocks
             stop("backend");
           }
         }
@@ -215,13 +259,12 @@ var Timer = function(parent_elem, options) {
   function deleteItem(item_source) {
     this_elem.slideUp("fast", function () { $(this).remove(); });
     clearItemIntervals();
+    ws4redis.close(); // Clean up WS connections
     if (backend_interval) {
       clearInterval(backend_interval);
     }
     if (item_source != "backend") {
-      // Don't update backend if backend was source.
       $.get("/homecontroller/timer/delete/"+id, function(data) {
-
       });
     }
   }
@@ -236,20 +279,28 @@ function refresh_timers_from_server() {
   $.getJSON("/homecontroller/timer/list", function(data) {
     $.each(data, function() {
       var id = this.pk;
-      if (this.fields.duration === null) {
+      if (!hasTimer(id)) {
+        if (this.fields.duration === null) {
         // if data.duration is not null, it's timer, not countdown
-        currently_running = $("#stopclock-holder").find(".timer-backend-id-"+id);
-        if (currently_running.length == 0) {
-          var timer_run = new Timer("#stopclock-holder", {"name": this.fields.name, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk});
-        }
-      } else {
-        currently_running = $("#timer-holder").find(".timer-backend-id-"+id);
-        if (currently_running.length == 0) {
-          var timer_run = new Timer("#timer-holder", {"name": this.fields.name, "duration": this.fields.duration, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk});
+          var timer_run = new Timer("#stopclock-holder", {"name": this.fields.name, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
+        } else {
+          var timer_run = new Timer("#timer-holder", {"name": this.fields.name, "duration": this.fields.duration, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
         }
       }
     });
   });
+}
+
+function hasTimer(id) {
+  currently_running = $(".timer-backend-id-"+id);
+  if (id in created_timer_items) {
+    return false;
+  }
+  if (currently_running.length == 0) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 function sort_timers() {
@@ -270,7 +321,35 @@ function sort_timers() {
   $("#stopclock-holder").append(items);
 }
 
+function onReceiveWS(message) {
+  /* Ugly hack: WS message arrives before HTTP response.
+     This leads to duplicate timer items, as originally
+     added timer does not have ID yet. */
+  setTimeout(function () {
+    console.log("onReceiveWS", message);
+    if (message.substring(0, 7) == "create-") {
+      var data = JSON.parse(message.substring(7))[0];
+      if (!hasTimer(data.pk)) {
+        if (data.fields.duration === null) {
+          // if data.duration is not null, it's timer, not countdown
+          var timer_run = new Timer("#stopclock-holder", {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
+        } else {
+          var timer_run = new Timer("#timer-holder", {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
+        }
+      }
+    }
+  }, 1000);
+}
+
+var ws4redis;
+
 $(document).ready(function () {
+  ws4redis = WS4Redis({
+    //TODO
+    uri: 'ws://localhost:8000/ws/timers?subscribe-broadcast&publish-broadcast&echo',
+    receive_message: onReceiveWS,
+    heartbeat_msg: "--heartbeat--"
+  });
   $(".add-timer").click(function () {
     var timer_run = new Timer("#timer-holder", {"name": $(this).data("name"), "duration": $(this).data("duration")});
   });
