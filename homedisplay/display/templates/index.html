@@ -22,7 +22,6 @@
     <link href="/homecontroller/static/css/timer.css" rel="stylesheet">
     <link href="/homecontroller/static/css/weather.css" rel="stylesheet">
 
-
 </head>
 
 <body>
@@ -208,7 +207,9 @@
     <script src="/homecontroller/static/jquery-ui/jquery-ui.js"></script>
     <script src="/homecontroller/static/js/d3.min.js"></script>
     <script src="/homecontroller/static/js/nv.d3.js"></script>
-
+    <script type="text/javascript">
+      var websocket_root = "{{ WEBSOCKET_URI }}";
+    </script>
     <script src="/homecontroller/static/js/main.js"></script>
     <script src="/homecontroller/static/js/clock.js"></script>
     <script src="/homecontroller/static/js/timer.js"></script>

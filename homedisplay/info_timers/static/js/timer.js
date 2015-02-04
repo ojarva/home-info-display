@@ -45,8 +45,7 @@ var Timer = function(parent_elem, options) {
     id = new_id;
     timers.addTimerId(id);
     ws4redis = WS4Redis({
-      //TODO
-      uri: 'ws://localhost:8000/ws/timer-'+id+'?subscribe-broadcast&publish-broadcast&echo',
+      uri: websocket_root+'timer-'+id+'?subscribe-broadcast&publish-broadcast&echo',
       receive_message: onReceiveItemWS,
       heartbeat_msg: "--heartbeat--"
     });
@@ -365,8 +364,7 @@ var Timers = function() {
   }
 
   var ws4redis = WS4Redis({
-    //TODO
-    uri: 'ws://localhost:8000/ws/timers?subscribe-broadcast&publish-broadcast&echo',
+    uri: websocket_root+'timers?subscribe-broadcast&publish-broadcast&echo',
     receive_message: onReceiveWS,
     heartbeat_msg: "--heartbeat--"
   });
