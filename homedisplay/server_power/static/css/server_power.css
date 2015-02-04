@@ -1,0 +1,7 @@
+#server_power .shutdown {
+  background-color: #cc0000;
+}
+
+#server_power .startup {
+  background-color: #006600;
+}
