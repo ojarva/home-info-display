@@ -78,53 +78,104 @@
   </div> <!-- main-content -->
   <div id="add-custom-timer" style="display:none">
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-5">
         <div class="row">
-          <div class="col-md-4 add-timer-button animate-click" id="add-1">
-            1
+          <div class="col-md-2 add-timer-button animate-click" data-content="clear-h">
+            h
           </div>
-          <div class="col-md-4 add-timer-button animate-click" id="add-2">
-            2
+          <div class="col-md-2 add-timer-button animate-click" data-content="+1h">
+            +1
           </div>
-          <div class="col-md-4 add-timer-button animate-click" id="add-3">
-            3
+          <div class="col-md-2 add-timer-button animate-click" data-content="+3h">
+            +3
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="+8h">
+            +8
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="+24h">
+            +24
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4 add-timer-button animate-click" id="add-4">
-            4
+          <div class="col-md-2 add-timer-button animate-click">
           </div>
-          <div class="col-md-4 add-timer-button animate-click" id="add-5">
-            5
+          <div class="col-md-2 add-timer-button animate-click" data-content="-1h">
+            -1
           </div>
-          <div class="col-md-4 add-timer-button animate-click" id="add-6">
-            6
+          <div class="col-md-2 add-timer-button animate-click" data-content="-3h">
+            -3
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="-8h">
+            -8
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="-24h">
+            -24
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-md-2 add-timer-button animate-click" data-content="clear-m">
+            min
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="+1m">
+            +1
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="+3m">
+            +3
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="+5m">
+            +5
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="+15m">
+            +15
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4 add-timer-button animate-click" id="add-7">
-            7
+          <div class="col-md-2 add-timer-button animate-click">
           </div>
-          <div class="col-md-4 add-timer-button animate-click" id="add-8">
-            8
+          <div class="col-md-2 add-timer-button animate-click" data-content="-1m">
+            -1
           </div>
-          <div class="col-md-4 add-timer-button animate-click" id="add-9">
-            9
+          <div class="col-md-2 add-timer-button animate-click" data-content="-3m">
+            -3
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="-5m">
+            -5
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="-15m">
+            -15
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-md-2 add-timer-button animate-click" data-content="clear-s">
+            s
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="+5s">
+            +5
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="+10s">
+            +10
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="+15s">
+            +15
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4 add-timer-button animate-click">
-
+          <div class="col-md-2 add-timer-button animate-click">
           </div>
-          <div class="col-md-4 add-timer-button animate-click" id="add-0">
-            0
+          <div class="col-md-2 add-timer-button animate-click" data-content="-5s">
+            -5
           </div>
-          <div class="col-md-4 add-timer-button animate-click" id="add-back">
-            <i class="fa fa-backward"></i>
+          <div class="col-md-2 add-timer-button animate-click" data-content="-10s">
+            -10
+          </div>
+          <div class="col-md-2 add-timer-button animate-click" data-content="-15s">
+            -15
           </div>
         </div>
       </div>
-      <div class="col-md-9">
+      <div class="col-md-7">
         <div class="row">
           <div class="col-md-10">
             <div id="custom-timer-duration" data-content="0000000">000:00:00</div>
@@ -148,6 +199,8 @@
         <hr>
         <div class="row">
           <div class="col-md-12">
+            <div class="timer-description-button animate-click" data-duration="390">Muna (6,5min)</div>
+            <div class="timer-description-button animate-click" data-duration="480">Muna (8min)</div>
             <div class="timer-description-button animate-click" data-duration="3300">Skumppa</div>
             <div class="timer-description-button animate-click" data-duration="7200">Magnum</div>
             <div class="timer-description-button animate-click" data-duration="2100">Siideri</div>
@@ -162,7 +215,6 @@
     <script src="/homecontroller/static/js/ws4redis_v2.js"></script>
 
     <script src="/homecontroller/static/js/main.js"></script>
-    <script src="/homecontroller/static/js/stopclock.js?3"></script>
     <script src="/homecontroller/static/js/timer.js?2"></script>
     <script src="/homecontroller/static/js/clock.js?2"></script>
     <script src="/homecontroller/static/js/lightcontrol.js?1"></script>

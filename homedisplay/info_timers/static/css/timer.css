@@ -1,9 +1,9 @@
 .add-timer-button {
-  height: 140px;
+  height: 100px;
   text-align: center;
-  padding-top: 49px;
+  padding-top: 30px;
   font-size: 200%;
-  width: 33.3% !important;
+  width: 20% !important;
   float: left;
   position: relative;
 }
@@ -30,41 +30,6 @@
   font-size: 600%;
   padding-left: 30px;
 }
-
-#add-1 {
-  background-color: #151515;
-}
-#add-2 {
-  background-color: #252525;
-}
-#add-3 {
-  background-color: #151515;
-}
-#add-4 {
-  background-color: #252525;
-}
-#add-5 {
-  background-color: #151515;
-}
-#add-6 {
-  background-color: #252525;
-}
-#add-7 {
-  background-color: #151515;
-}
-#add-8 {
-  background-color: #252525;
-}
-#add-9 {
-  background-color: #151515;
-}
-#add-0 {
-  background-color: #151515;
-}
-#add-back {
-  background-color: #252525;
-}
-
 
 .progress-bar-danger {
   background-color: red;
