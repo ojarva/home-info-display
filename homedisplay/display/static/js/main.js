@@ -28,8 +28,11 @@ $.ajaxSetup({
 });
 
 $(document).ready(function() {
+  $(".animate-click").each(function () {
+    $(this).data("original-bg-color", $(this).css("background-color"));
+  })
   $(".animate-click").on("click", function () {
-    $(this).stop(true).effect("highlight", {color: "#ffffff"}, 500);
+    $(this).stop(true).css("background-color", $(this).data("original-bg-color")).effect("highlight", {color: "#ffffff"}, 500);
 
   });
 });
