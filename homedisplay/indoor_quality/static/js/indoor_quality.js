@@ -1,29 +1,41 @@
-function fetch_indoor_quality() {
-  var output = $("#indoor-quality");
-  $.get("/homecontroller/indoor_quality/co2", function (data) {
-    var latest = data[0];
-    if (typeof latest == "undefined") {
-      console.log("!!! No indoor air quality information available.");
-      return;
-    }
-    var co2 = latest.fields.co2;
-    var co2_out;
-    if (co2 < 1000) {
-      co2_out = "<i class='fa fa-check success-message'></i>";
-      output.removeClass("warning-message error-message");
-    } else if (co2 < 1500) {
-      co2_out = "<i class='fa fa-exclamation-triangle'></i>";
-      output.addClass("warning-message");
-    } else {
-      co2_out = "<i class='fa fa-ban'></i>";
-      output.addClass("error-message");
-    }
-    output.find(".status").html(co2_out);
-    output.find(".temperature").html(Math.round(parseFloat(latest.fields.temperature)*10)/10+"&deg;C");
-    output.find(".co2").html(co2+"ppm");
-    data_moment = moment(latest.fields.timestamp);
-    output.find(".age").html("("+data_moment.fromNow()+")");
+var IndoorAirQuality = function (options) {
+  options = options || {};
+  options.main_elem = options.main_elem || "#indoor-quality";
 
+  var output = $(options.main_elem),
+      latest_data,
+      update_interval;
+
+  function fetch() {
+    $.get("/homecontroller/indoor_quality/co2", function (data) {
+      var latest = data[0];
+      if (typeof latest == "undefined") {
+        console.log("!!! No indoor air quality information available.");
+        return;
+      }
+      var co2 = latest.fields.co2;
+      var co2_out;
+      if (co2 < 1000) {
+        co2_out = "<i class='fa fa-check success-message'></i>";
+        output.removeClass("warning-message error-message");
+      } else if (co2 < 1500) {
+        co2_out = "<i class='fa fa-exclamation-triangle'></i>";
+        output.addClass("warning-message");
+      } else {
+        co2_out = "<i class='fa fa-ban'></i>";
+        output.addClass("error-message");
+      }
+      output.find(".status").html(co2_out);
+      output.find(".temperature").html(Math.round(parseFloat(latest.fields.temperature)*10)/10+"&deg;C");
+      output.find(".co2").html(co2+"ppm");
+      data_moment = moment(latest.fields.timestamp);
+      output.find(".age").html("("+data_moment.fromNow()+")");
+      latest_data = data;
+      drawGraph(data);
+    });
+  }
+
+  function drawGraph(data) {
     var x = [];
     var y = [];
     nv.addGraph(function() {
@@ -67,21 +79,48 @@ function fetch_indoor_quality() {
       nv.utils.windowResize(chart.update);
       return chart;
     });
-  });
-  $.get("/homecontroller/indoor_quality/co2/trend", function (data) {
-    var icon;
-    if (data.delta < -0.025) {
-      icon = "down";
-    } else if (data.delta > 0.025) {
-      icon = "up";
-    } else {
-      icon = "right";
-    }
-    output.find(".trend").html("<i class='fa fa-arrow-"+icon+"'></i>");
-  });
-}
+  }
 
+  function fetchTrend() {
+    $.get("/homecontroller/indoor_quality/co2/trend", function (data) {
+      var icon;
+      if (data.delta < -0.025) {
+        icon = "down";
+      } else if (data.delta > 0.025) {
+        icon = "up";
+      } else {
+        icon = "right";
+      }
+      output.find(".trend").html("<i class='fa fa-arrow-"+icon+"'></i>");
+    });
+  }
+
+  function run() {
+    fetch();
+    fetchTrend();
+  }
+
+  function startInterval() {
+    stopInterval();
+    run();
+    update_interval = setInterval(run, 60000);
+  }
+
+  function stopInterval() {
+    if (update_interval) {
+      update_interval = clearInterval(update_interval);
+    }
+  }
+
+  this.fetch = fetch;
+  this.fetchTrend = fetchTrend;
+  this.drawGraph = drawGraph;
+  this.startInterval = startInterval;
+  this.stopInterval = stopInterval;
+};
+
+var indoor_air_quality;
 $(document).ready(function () {
-  fetch_indoor_quality();
-  setInterval(fetch_indoor_quality, 60000);
+  indoor_air_quality = new IndoorAirQuality();
+  indoor_air_quality.startInterval();
 });
