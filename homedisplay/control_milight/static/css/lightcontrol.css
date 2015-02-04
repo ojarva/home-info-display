@@ -1,0 +1,27 @@
+.lightcontrol-btn {
+  margin-left: 1px;
+  margin-right: 1px;
+  width: 130px;
+  height: 130px;
+  text-align: center;
+  font-size: 400%;
+}
+
+.lightcontrol-headers td {
+  font-size: 165%;
+}
+
+.lights-off {
+  background-color: #111111;
+}
+.lights-on {
+  background-color: #006600;
+  color: #E6FFD7;
+}
+.lights-morning {
+  background-color: #222222;
+}
+.lights-night {
+  background-color: #cc0000;
+  color: #ffeded;
+}

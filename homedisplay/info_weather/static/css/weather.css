@@ -1,0 +1,14 @@
+.weather-temperature {
+  font-size: 175%;
+}
+
+.weather-info {
+  font-size: 100%;
+}
+
+.weather-info .col-md-4 {
+  font-size: 130%;
+  text-align: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
