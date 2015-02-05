@@ -10,6 +10,14 @@
   font-weight: bold;
 }
 
+.close {
+  color: #cccccc;
+}
+
+.close:hover, .close:focus {
+  color: white;
+}
+
 .success-message {
   color: #07CF00;
 }
@@ -101,10 +109,6 @@ a.list-group-item {
   font-size: 120%;
   background-color:
 }
-
-
-
-
 
 .repeating-tasks {
   margin-top: 20px;

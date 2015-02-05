@@ -123,4 +123,13 @@ var indoor_air_quality;
 $(document).ready(function () {
   indoor_air_quality = new IndoorAirQuality();
   indoor_air_quality.startInterval();
+
+  $("#indoor-quality").on("click", function () {
+    console.log("indoor-quality");
+    switchVisibleContent("#indoor-quality-modal");
+  });
+
+  $("#indoor-quality-modal .close").on("click", function() {
+    switchVisibleContent("#main-content");
+  });
 });

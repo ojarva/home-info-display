@@ -27,6 +27,11 @@ $.ajaxSetup({
     }
 });
 
+function switchVisibleContent(elem) {
+  $(".content-box").hide();
+  $(elem).show();
+}
+
 $(document).ready(function() {
   $(".animate-click").each(function () {
     $(this).data("original-bg-color", $(this).css("background-color"));
