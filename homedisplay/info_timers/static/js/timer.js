@@ -207,10 +207,10 @@ var Timer = function(parent_elem, options) {
 
   function clearItemIntervals() {
     if (update_interval) {
-      clearInterval(update_interval);
+      update_interval = clearInterval(update_interval);
     }
     if (alarm_interval) {
-      clearInterval(alarm_interval);
+      alarm_interval = clearInterval(alarm_interval);
     }
   }
 
@@ -276,13 +276,17 @@ var Timer = function(parent_elem, options) {
   function deleteItem(item_source) {
     this_elem.slideUp("fast", function () { $(this).remove(); });
     clearItemIntervals();
-    ws4redis.close(); // Clean up WS connections
     if (backend_interval) {
-      clearInterval(backend_interval);
+      backend_interval = clearInterval(backend_interval);
     }
     if (item_source != "backend" && id) {
       $.get("/homecontroller/timer/delete/"+id, function(data) {
       });
+    }
+    try {
+      ws4redis.close(); // Clean up WS connections
+    } catch () {
+
     }
   }
 
