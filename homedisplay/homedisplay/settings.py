@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'info_weather',
     'repeating_tasks',
     'server_power',
+    'info_birthdays',
     'ws_sync',
     'django_extensions',
 )
