@@ -1,7 +1,8 @@
+from .models import Task, TaskHistory
 from django.conf import settings
+from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, get_object_or_404
 from django.template import RequestContext, Template
 from django.utils.timezone import now
 from django.views.generic import View
@@ -9,27 +10,27 @@ import datetime
 import json
 import time
 
-
-from .models import Task, TaskHistory
-
 class info(View):
     def get(self, request, *args, **kwargs):
         todo_tasks = []
+        date = kwargs.get("date")
         for task in Task.objects.all():
-            if task.last_completed_at is None:
-                task.overdue = None
-                todo_tasks.append(task)
-                continue
+            if date == "today":
+                if task.last_completed_at is None:
+                    todo_tasks.append(task)
+                    continue
 
-            if task.overdue_by() > datetime.timedelta(0):
-                task.overdue = task.overdue_by().total_seconds()
-                todo_tasks.append(task)
+                if task.overdue_by() > datetime.timedelta(0):
+                    todo_tasks.append(task)
+            elif date == "tomorrow":
+                if task.last_completed_at is None:
+                    continue
 
-        ret = []
-        for item in todo_tasks:
-            ret.append({"title": item.title, "overdue_by": item.overdue, "id": item.id })
+                overdue_by = task.overdue_by()
+                if overdue_by > datetime.timedelta(days=-1) and overdue_by < datetime.timedelta(0):
+                    todo_tasks.append(task)
 
-        return render_to_response("repeating_tasks_content.html", {"data": ret}, RequestContext(request))
+        return HttpResponse(serializers.serialize("json", todo_tasks), content_type="application/json")
 
 class done(View):
     def get(self, request, *args, **kwargs):
