@@ -10,6 +10,7 @@ import datetime
 import json
 import time
 
+
 class info(View):
     def get(self, request, *args, **kwargs):
         todo_tasks = []

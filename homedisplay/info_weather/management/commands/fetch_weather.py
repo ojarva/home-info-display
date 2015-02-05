@@ -3,6 +3,8 @@ import xmltodict
 import requests
 import json
 import datetime
+import redis
+redis_instance = redis.StrictRedis()
 
 from info_weather.models import Weather
 
@@ -58,3 +60,4 @@ class Command(BaseCommand):
             a = Weather(date=timestamp, hour=int(timestamp.strftime("%H")), icon=hour["icon"], ppcp=int(hour["ppcp"]), dewpoint=int(hour["dewp"]), feels_like=int(hour["flik"]), humidity=int(hour["hmid"]), temperature=int(hour["tmp"]), description=hour["t"], wind_direction=hour["wind"]["t"], wind_gust=hour["wind"]["gust"], wind_speed=hour["wind"]["s"])
             a.save()
             self.stdout.write("Saved %s" % timestamp)
+        redis_instance.publish("home:broadcast:weather", "updated")

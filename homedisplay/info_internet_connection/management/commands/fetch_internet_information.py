@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
-import datetime
 from django.utils.timezone import now
-
 from info_internet_connection.models import Internet
-
+import datetime
 import huawei_b593_status
+import redis
+
+r = redis.StrictRedis()
 
 #{'WIFI': 'off', 'SIG': '5', 'Mode': '4g', 'Roam': 'home', 'SIM': 'normal', 'Connect': 'connected'}
 
@@ -32,3 +33,4 @@ class Command(BaseCommand):
         latest_data.connect_status = data["Connect"]
         latest_data.update_timestamp = now()
         latest_data.save()
+        r.publish("home:broadcast:internet", "updated")

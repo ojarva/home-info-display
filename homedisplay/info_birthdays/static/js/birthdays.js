@@ -3,8 +3,16 @@ var Birthdays = function(elem, use_date, options) {
   options.interval = options.interval || 1800000; // 30min
   options.showdate = options.showdate || false;
   options.maxitems = options.maxitems || 100000;
-  var parent_elem = $(elem), this_date = use_date, update_interval, wait_sync, current_item = 0, items_in_current = 0;
+  var parent_elem = $(elem), this_date = use_date, update_interval, wait_sync, current_item = 0, items_in_current = 0, ws4redis;
   parent_elem = parent_elem.slice(current_item, 1);
+
+  function onReceiveItemWS(message) {
+    console.log(message);
+    if (message == "updated") {
+      console.log("birthdays: backend requests update");
+      update();
+    }
+  }
 
   function clearDates() {
     $(parent_elem).children().remove();
@@ -102,6 +110,11 @@ var Birthdays = function(elem, use_date, options) {
       wait_time = (31 - minutes) * 60 * 1000 - (30 * 1000);
     }
     wait_sync = setTimeout(runInterval, wait_time);
+    ws4redis = new WS4Redis({
+      uri: websocket_root+'birthdays?subscribe-broadcast&publish-broadcast&echo',
+      receive_message: onReceiveItemWS,
+      heartbeat_msg: "--heartbeat--"
+    });
   }
 
   function stopInterval() {
@@ -110,6 +123,11 @@ var Birthdays = function(elem, use_date, options) {
     }
     if (update_interval) {
       update_interval = clearInterval(update_interval);
+    }
+    try {
+      ws4redis.close();
+    } catch(e) {
+
     }
   }
 

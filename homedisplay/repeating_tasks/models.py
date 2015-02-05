@@ -1,6 +1,12 @@
 from django.db import models
 from django.utils.timezone import now
 import datetime
+from django.db.models.signals import pre_delete
+from django.db.models.signals import post_save
+
+from django.dispatch import receiver
+import redis
+r = redis.StrictRedis()
 
 class Task(models.Model):
     title = models.TextField()
@@ -45,3 +51,11 @@ class TaskHistory(models.Model):
 
     task = models.ForeignKey("Task")
     completed_at = models.DateTimeField(null=True)
+
+@receiver(pre_delete, sender=Task, dispatch_uid='task_delete_signal')
+def publish_task_deleted(sender, instance, using, **kwargs):
+    r.publish("home:broadcast:repeating_tasks", "updated")
+
+@receiver(post_save, sender=Task, dispatch_uid="task_saved_signal")
+def publish_task_saved(sender, instance, *args, **kwargs):
+    r.publish("home:broadcast:repeating_tasks", "updated")

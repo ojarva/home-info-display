@@ -4,7 +4,15 @@ var IndoorAirQuality = function (options) {
 
   var output = $(options.main_elem),
       latest_data,
-      update_interval;
+      update_interval,
+      ws4redis;
+
+  function onReceiveItemWS(message) {
+    if (message == "updated") {
+      console.log("indoor air quality: backend requests update");
+      update();
+    }
+  }
 
   function getData() {
     return latest_data;
@@ -149,20 +157,30 @@ var IndoorAirQuality = function (options) {
     });
   }
 
-  function run() {
+  function update() {
     fetch();
     fetchTrend();
   }
 
   function startInterval() {
     stopInterval();
-    run();
-    update_interval = setInterval(run, 60000);
+    update();
+    update_interval = setInterval(update, 1800000);
+    ws4redis = new WS4Redis({
+      uri: websocket_root+'indoor?subscribe-broadcast&publish-broadcast&echo',
+      receive_message: onReceiveItemWS,
+      heartbeat_msg: "--heartbeat--"
+    });
   }
 
   function stopInterval() {
     if (update_interval) {
       update_interval = clearInterval(update_interval);
+    }
+    try {
+      ws4redis.close();
+    } catch(e) {
+
     }
   }
 
