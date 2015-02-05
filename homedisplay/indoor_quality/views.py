@@ -22,8 +22,8 @@ class get_co2(View):
             if i < 5:
                 continue
             if i % 5 == 0:
-                a.co2 = float(sum(co2_items)) / len(co2_items)
-                a.temperature = float(sum(temp_items)) / len(co2_items)
+                a.co2 = round(float(sum(co2_items)) / len(co2_items))
+                a.temperature = round(float(sum(temp_items)) / len(co2_items), 1)
                 co2_items = []
                 temp_items = []
                 filtered_data.append(a)
