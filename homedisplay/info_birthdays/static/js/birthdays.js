@@ -2,7 +2,9 @@ var Birthdays = function(elem, use_date, options) {
   options = options || {};
   options.interval = options.interval || 1800000; // 30min
   options.showdate = options.showdate || false;
-  var parent_elem = $(elem), this_date = use_date, update_interval, wait_sync;
+  options.maxitems = options.maxitems || 100000;
+  var parent_elem = $(elem), this_date = use_date, update_interval, wait_sync, current_item = 0, items_in_current = 0;
+  parent_elem = parent_elem.slice(current_item, 1);
 
   function clearDates() {
     $(parent_elem).children().remove();
@@ -67,7 +69,13 @@ var Birthdays = function(elem, use_date, options) {
             date += this.birthday_moment.year();
           }
         }
-        $(parent_elem).append("<li><i class='fa-li fa fa-birthday-cake'></i> "+name+date+age+"</li>");
+        if (items_in_current > options.maxitems) {
+          current_item += 1;
+          parent_elem = $(elem).slice(current_item, current_item + 1);
+          items_in_current = 0;
+        }
+        items_in_current += 1;
+        parent_elem.append("<li><i class='fa-li fa fa-birthday-cake'></i> "+name+date+age+"</li>");
       })
     });
   }
@@ -108,7 +116,7 @@ var birthdays_today, birthdays_tomorrow, birthdays_all;
 $(document).ready(function() {
   birthdays_today = new Birthdays("#today .birthdays .fa-ul", "today");
   birthdays_tomorrow = new Birthdays("#tomorrow .birthdays .fa-ul", "tomorrow");
-  birthdays_all = new Birthdays("#birthdays-list-all .fa-ul", "all", {interval: 60*60*1000, showdate: true});
+  birthdays_all = new Birthdays("#birthdays-list-all .fa-ul", "all", {interval: 60*60*1000, showdate: true, maxitems: 38});
   birthdays_today.startInterval();
   birthdays_tomorrow.startInterval();
   birthdays_all.startInterval();
@@ -116,7 +124,6 @@ $(document).ready(function() {
     switchVisibleContent("#birthdays-list-all");
   });
   $("#birthdays-list-all .close").on("click", function() {
-    console.log("click");
     switchVisibleContent("#main-content");
   });
 });
