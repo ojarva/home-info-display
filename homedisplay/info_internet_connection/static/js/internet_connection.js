@@ -38,8 +38,9 @@ $(document).ready(function() {
                   ["Funet", "Internet/funet_last_108000.png"]
                   ];
     content = "";
+    timestamp = new Date() - 0;
     $.each(charts, function() {
-      content += "<div class='smokeping-chart'><h4>"+this[0]+"</h4><img src='/smokeping/images/"+this[1]+"'></div>";
+      content += "<div class='smokeping-chart'><h4>"+this[0]+"</h4><img src='/smokeping/images/"+this[1]+"?"+timestamp"'></div>";
     });
     $("#internet-connection-modal .smokeping-charts").html(content);
     switchVisibleContent("#internet-connection-modal");
