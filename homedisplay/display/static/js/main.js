@@ -28,8 +28,8 @@ $.ajaxSetup({
 });
 
 function switchVisibleContent(elem) {
-  $(".content-box").hide();
-  $(elem).show();
+  $(".content-box").slideUp();
+  $(elem).slideDown();
 }
 
 $(document).ready(function() {
