@@ -9,15 +9,21 @@ var RepeatingTasks = function(elem, use_date) {
     $.get("/homecontroller/repeating_tasks/get_json/"+this_date, function(data) {
       clearTasks();
       $.each(data, function() {
-        console.log(this);
         overdue_by = "";
-        console.log(this.fields.last_completed_at);
         if (this.fields.last_completed_at) {
           diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
           overdue_by = " ("+diff.fromNow()+")";
         }
-        $(parent_elem).append("<li><i class='fa-li fa fa-times-circle'></i> "+this.fields.title+overdue_by+"</li>");
-      })
+        parent_elem.append("<li class='repeating-task-mark-done' data-id='"+this.pk+"'><i class='fa-li fa fa-times-circle'></i> <span class='task-title'>"+this.fields.title+"</span>"+overdue_by+"</li>");
+      });
+      parent_elem.find(".repeating-task-mark-done").on("click", function() {
+        this_elem = $(this);
+        id = this_elem.data("id");
+        $("#confirm-repeating-task").data("id", id);
+        $("#confirm-repeating-task .task-title").html(this_elem.find(".task-title").html());
+        switchVisibleContent("#confirm-repeating-task");
+      });
+
     });
   }
 
@@ -50,6 +56,7 @@ var RepeatingTasks = function(elem, use_date) {
 
   this.startInterval = startInterval;
   this.stopInterval = stopInterval;
+  this.update = update;
 }
 
 var tasks_today, tasks_tomorrow;
@@ -59,4 +66,18 @@ $(document).ready(function() {
   tasks_tomorrow = new RepeatingTasks("#tomorrow .repeating-tasks .fa-ul", "tomorrow");
   tasks_today.startInterval();
   tasks_tomorrow.startInterval();
+  $("#confirm-repeating-task .close").on("click", function() {
+    switchVisibleContent("#main-content");
+  });
+  $("#confirm-repeating-task .yes").on("click", function () {
+    $.get("/homecontroller/repeating_tasks/done/"+$(this).parent().parent().parent().data("id"), function() {
+      tasks_today.update();
+      tasks_tomorrow.update();
+    });
+    switchVisibleContent("#main-content");
+  });
+  $("#confirm-repeating-task .cancel").on("click", function () {
+    switchVisibleContent("#main-content");
+  });
+
 });

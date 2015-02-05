@@ -1,1 +1,24 @@
 
+#confirm-repeating-task .confirm-dialog-box {
+  width: 500px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  margin-top: -150px;
+  margin-left: -250px;
+}
+
+#confirm-repeating-task .confirm-dialog-box div {
+  padding: 20px;
+}
+
+#confirm-repeating-task .yes {
+  background-color: #006600;
+}
+
+#confirm-repeating-task .cancel {
+  background-color: #cc0000;
+
+}
