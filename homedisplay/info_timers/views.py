@@ -9,8 +9,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
+import redis
 import json
 import time
+
+r = redis.StrictRedis()
 
 def convert_to_timestamp(dt):
     return time.mktime(dt.timetuple())
@@ -37,15 +40,14 @@ class stop(View):
         item.running = False
         item.stopped_at = now()
         item.save()
-        message = RedisMessage('stop')
-        RedisPublisher(facility='timer-%s' % item.pk, broadcast=True).publish_message(message)
+        r.publish("home:broadcast:timer-%s" % item.pk, "stop")
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 class delete(View):
     def get(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
-        message = RedisMessage('delete')
-        RedisPublisher(facility='timer-%s' % item.pk, broadcast=True).publish_message(message)
+        r.publish("home:broadcast:timer-%s" % item.pk, "delete")
+
         item.delete()
 
         return HttpResponse(json.dumps({"deleted": True, "id": kwargs["id"]}), content_type="application/json")
@@ -55,8 +57,8 @@ class restart(View):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.start_time = now()
         item.save()
-        message = RedisMessage('restart')
-        RedisPublisher(facility='timer-%s' % item.pk, broadcast=True).publish_message(message)
+        r.publish("home:broadcast:timer-%s" % item.pk, "restart")
+
 
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
@@ -66,8 +68,7 @@ class start(View):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.running = True
         item.save()
-        message = RedisMessage('start')
-        RedisPublisher(facility='timer-%s' % item.pk, broadcast=True).publish_message(message)
+        r.publish("home:broadcast:timer-%s" % item.pk, "start")
 
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
@@ -78,6 +79,8 @@ class create(View):
         item = Timer(name=p.get("name"), start_time=now(), duration=p.get("duration"))
         item.save()
         serialized = serializers.serialize("json", [item])
+        r.publish("home:broadcast:timers", "create-"+serialized)
+
         message = RedisMessage('create-'+serialized)
         RedisPublisher(facility='timers', broadcast=True).publish_message(message)
 

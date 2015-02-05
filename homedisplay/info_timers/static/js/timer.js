@@ -45,7 +45,7 @@ var Timer = function(parent_elem, options) {
     // Set backend id to local object.
     id = new_id;
     timers.addTimerId(id);
-    ws4redis = WS4Redis({
+    ws4redis = new WS4Redis({
       uri: websocket_root+'timer-'+id+'?subscribe-broadcast&publish-broadcast&echo',
       receive_message: onReceiveItemWS,
       heartbeat_msg: "--heartbeat--"
@@ -365,7 +365,7 @@ var Timers = function() {
     }, 1000);
   }
 
-  var ws4redis = WS4Redis({
+  var ws4redis = new WS4Redis({
     uri: websocket_root+'timers?subscribe-broadcast&publish-broadcast&echo',
     receive_message: onReceiveWS,
     heartbeat_msg: "--heartbeat--"
