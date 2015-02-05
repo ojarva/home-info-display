@@ -20,49 +20,47 @@ var Birthdays = function(elem, use_date, options) {
     return 0;
   }
 
+  function formatSortString(da) {
+    var da = moment(da);
+    var m = da.month();
+    if (m < 10) {
+      m = "0"+m;
+    }
+    var d = da.date();
+    if (d < 10) {
+      d = "0"+d;
+    }
+    return ""+m+d;
+  }
+
   function update() {
     $.get("/homecontroller/birthdays/get_json/"+this_date, function(data) {
       clearDates();
+      var now, now_str, data_sortable = [];
       now = moment().subtract(1, "days");
-      m = now.month();
-      if (m < 10) {
-        m = "0"+m;
-      }
-      d = now.date();
-      if (d < 10) {
-        d = "0"+d;
-      }
-      now_str = ""+m+d;
-      data_sortable = []
+      now_str = formatSortString(now);
       $.each(data, function() {
+        var a, sort_string, prefix;
         a = moment(this.fields.birthday);
-        m = a.month();
-        if (m < 10) {
-          m = "0"+m;
-        }
-        d = a.date();
-        if (d < 10) {
-          d = "0"+d;
-        }
+        sort_string = formatSortString(a);
         this.birthday_moment = a;
         prefix = "0";
         this.next_year = false;
-        if (""+m+d < now_str) {
+        if (sort_string < now_str) {
           prefix = "1";
           this.next_year = true;
         }
-        this.birthday_sort = prefix+m+d;
+        this.birthday_sort = prefix+sort_string;
         data_sortable.push(this);
       });
       data_sortable.sort(compareBirthdays);
 
 
       $.each(data_sortable, function() {
-        name = this.fields.name;
+        var name = this.fields.name, age = "", b, date = "";
         if (this.fields.nickname) {
           name = this.fields.nickname;
         }
-        var age = "";
         if (this.fields.valid_year) {
           b = moment(this.birthday_moment);
           b = b.year(now.year());
@@ -71,7 +69,6 @@ var Birthdays = function(elem, use_date, options) {
           }
           age = (" ("+this.birthday_moment.from(b)+")").replace(" sitten", "");
         }
-        var date = "";
         if (options.showdate) {
           date = " - "+this.birthday_moment.date()+"."+(this.birthday_moment.month()+1)+".";
           if (this.fields.valid_year) {
@@ -94,9 +91,9 @@ var Birthdays = function(elem, use_date, options) {
   }
 
   function startInterval() {
+    var now = new Date(), minutes, wait_time;
     stopInterval();
     update();
-    now = new Date();
     minutes = now.getMinutes();
     // Sync intervals to run at 00:00:30 and 00:30:30
     if (minutes > 31) {
