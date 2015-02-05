@@ -15,7 +15,7 @@ class Task(models.Model):
     def overdue_by(self):
         tsc = self.time_since_completion()
         if tsc is None:
-            return None
+            return datetime.timedelta(0)
         return self.time_since_completion() - datetime.timedelta(seconds=self.repeat_every_n_seconds)
 
     def completed(self):
