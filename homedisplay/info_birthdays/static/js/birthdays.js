@@ -23,6 +23,16 @@ var Birthdays = function(elem, use_date, options) {
   function update() {
     $.get("/homecontroller/birthdays/get_json/"+this_date, function(data) {
       clearDates();
+      now = moment().subtract(1, "days");
+      m = now.month();
+      if (m < 10) {
+        m = "0"+m;
+      }
+      d = now.date();
+      if (d < 10) {
+        d = "0"+d;
+      }
+      now_str = ""+m+d;
       data_sortable = []
       $.each(data, function() {
         a = moment(this.fields.birthday);
@@ -35,32 +45,31 @@ var Birthdays = function(elem, use_date, options) {
           d = "0"+d;
         }
         this.birthday_moment = a;
-        this.birthday_sort = ""+m+d;
+        prefix = "0";
+        this.next_year = false;
+        if (""+m+d < now_str) {
+          prefix = "1";
+          this.next_year = true;
+        }
+        this.birthday_sort = prefix+m+d;
         data_sortable.push(this);
       });
       data_sortable.sort(compareBirthdays);
 
-      now = moment().subtract(1, "days");
-      m = now.month();
-      if (m < 10) {
-        m = "0"+m;
-      }
-      d = now.date();
-      if (d < 10) {
-        d = "0"+d;
-      }
-      now_str = ""+m+d;
+
       $.each(data_sortable, function() {
-        if (this.birthday_sort < now_str) {
-          return;
-        }
         name = this.fields.name;
         if (this.fields.nickname) {
           name = this.fields.nickname;
         }
         var age = "";
         if (this.fields.valid_year) {
-          age = (" ("+this.birthday_moment.fromNow()+")").replace(" sitten", "");
+          b = moment(this.birthday_moment);
+          b = b.year(now.year());
+          if (this.next_year) {
+            b = b.add(1, "year");
+          }
+          age = (" ("+this.birthday_moment.from(b)+")").replace(" sitten", "");
         }
         var date = "";
         if (options.showdate) {
