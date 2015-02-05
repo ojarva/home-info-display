@@ -19,9 +19,9 @@ class get_co2(View):
         for i, a in enumerate(data):
             co2_items.append(a.co2)
             temp_items.append(a.temperature)
-            if i < 10:
+            if i < 5:
                 continue
-            if i % 10 == 0:
+            if i % 5 == 0:
                 a.co2 = float(sum(co2_items)) / len(co2_items)
                 a.temperature = float(sum(temp_items)) / len(co2_items)
                 co2_items = []
