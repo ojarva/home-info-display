@@ -29,7 +29,9 @@ $.ajaxSetup({
 
 function switchVisibleContent(elem) {
   $(".content-box").slideUp();
-  $(elem).slideDown();
+  if (elem != "#main-content") {
+    $(elem).slideDown();
+  }
 }
 
 $(document).ready(function() {
