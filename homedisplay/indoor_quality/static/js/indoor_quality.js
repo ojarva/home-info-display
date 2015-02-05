@@ -32,6 +32,8 @@ var IndoorAirQuality = function (options) {
       output.find(".status").html(co2_out);
       output.find(".temperature").html(Math.round(parseFloat(latest.fields.temperature)*10)/10+"&deg;C");
       output.find(".co2").html(co2+"ppm");
+      $("#indoor-quality-modal .latest-indoor-co2").html(co2);
+      $("#indoor-quality-modal .latest-indoor-temperature").html((parseFloat(latest.fields.temperature)*10)/10);
       data_moment = moment(latest.fields.timestamp);
       output.find(".age").html("("+data_moment.fromNow()+")");
       latest_data = data;
