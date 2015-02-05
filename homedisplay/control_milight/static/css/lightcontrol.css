@@ -1,10 +1,19 @@
 .lightcontrol-btn {
   margin-left: 1px;
   margin-right: 1px;
+  text-align: center;
+}
+.lightcontrol-btn-large {
   width: 130px;
   height: 130px;
-  text-align: center;
   font-size: 400%;
+}
+
+.lightcontrol-btn-small {
+  width: 130px;
+  height: 80px;
+  font-size: 200%;
+
 }
 
 .lightcontrol-headers td {

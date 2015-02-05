@@ -26,6 +26,7 @@
 
 <body>
     <div class="custom-container">
+      <div id="main-content" class="content-box">
         <div class="row">
             <div class="col-md-4">
                 <div class="center-content darkbox">
@@ -38,35 +39,42 @@
                   {% include "snippets/large_button.html" with mode="morning" text="Aamu" icon="moon-o" %}
                   {% include "snippets/large_button.html" with mode="night" text="Yö" icon="bed" %}
 
-                  <table class="center-content">
-                    <tr class="lightcontrol-headers">
-                      <td>Tatami</td><td>Pöytä</td><td>Keittiö</td><td>Eteinen</td>
-                    </tr>
-                    <tr>
-                      {% for index in "    " %}
-                      <td>{% include "snippets/small_button.html" with group=forloop.counter mode="off" text="Pois" icon="power-off" %}</td>
-                      {% endfor %}
-                    </tr>
-
-                    <tr>
-                      {% for index in "    " %}
-                      <td>{% include "snippets/small_button.html" with group=forloop.counter mode="on" text="Kirkas" icon="sun-o" %}</td>
-                      {% endfor %}
-                    </tr>
-
-                    <tr>
-                      {% for index in "    " %}
-                      <td>{% include "snippets/small_button.html" with group=forloop.counter mode="morning" text="Aamu" icon="moon-o" %}</td>
-                      {% endfor %}
-                    </tr>
-
-                    <tr>
-                      {% for index in "    " %}
-                      <td>{% include "snippets/small_button.html" with group=forloop.counter mode="night" text="Yö" icon="bed" %}</td>
-                      {% endfor %}
-                    </tr>
-                  </table>
-
+                  <div class="row">
+                    <h3>Tatami</h3>
+                    <div>
+                      {% include "snippets/small_button.html" with group=1 mode="off" text="Pois" icon="power-off" %}
+                      {% include "snippets/small_button.html" with group=1 mode="on" text="Kirkkaaksi" icon="sun-o" %}
+                      {% include "snippets/small_button.html" with group=1 mode="morning" text="Aamu" icon="moon-o" %}
+                      {% include "snippets/small_button.html" with group=1 mode="night" text="Yö" icon="bed" %}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <h3>Pöytä</h3>
+                    <div>
+                      {% include "snippets/small_button.html" with group=2 mode="off" text="Pois" icon="power-off" %}
+                      {% include "snippets/small_button.html" with group=2 mode="on" text="Kirkkaaksi" icon="sun-o" %}
+                      {% include "snippets/small_button.html" with group=2 mode="morning" text="Aamu" icon="moon-o" %}
+                      {% include "snippets/small_button.html" with group=2 mode="night" text="Yö" icon="bed" %}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <h3>Keittiö</h3>
+                    <div>
+                      {% include "snippets/small_button.html" with group=3 mode="off" text="Pois" icon="power-off" %}
+                      {% include "snippets/small_button.html" with group=3 mode="on" text="Kirkkaaksi" icon="sun-o" %}
+                      {% include "snippets/small_button.html" with group=3 mode="morning" text="Aamu" icon="moon-o" %}
+                      {% include "snippets/small_button.html" with group=3 mode="night" text="Yö" icon="bed" %}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <h3>Eteinen</h3>
+                    <div>
+                      {% include "snippets/small_button.html" with group=4 mode="off" text="Pois" icon="power-off" %}
+                      {% include "snippets/small_button.html" with group=4 mode="on" text="Kirkkaaksi" icon="sun-o" %}
+                      {% include "snippets/small_button.html" with group=4 mode="morning" text="Aamu" icon="moon-o" %}
+                      {% include "snippets/small_button.html" with group=4 mode="night" text="Yö" icon="bed" %}
+                    </div>
+                  </div>
                 </div>
             </div>
             <div class="col-md-4">
@@ -84,15 +92,12 @@
                   <span class="temperature">?&deg;C</span>
                   <span class="age"></span>
                 </div>
-                <div id="graph">
-                  <svg style='height:200px'> </svg>
-                </div>
               </div>
               <div class="lightbox" id="server_power">
                 Verkkolevy:
-                <div class="shutdown action-button animate-click stripe-box"><i class="fa fa-power-off"></i> Sammuta</div>
-                <div class="startup action-button animate-click stripe-box"><i class="fa fa-power-off"></i> Käynnistä</div>
-                <div class="unknown action-button animate-click stripe-box"><i class="fa fa-question-circle"></i> Kesken</div>
+                <div style="display:none;" class="shutdown action-button animate-click stripe-box">&nbsp;<i class="fa fa-power-off"></i>&nbsp;</div>
+                <div style="display:none;" class="startup action-button animate-click stripe-box">&nbsp;<i class="fa fa-power-off"></i>&nbsp;</div>
+                <div style="display:none;" class="unknown action-button animate-click stripe-box">&nbsp;<i class="fa fa-question-circle"></i>&nbsp;</div>
               </div>
               <div id="timers">
                 <div class="row timer-item center-content add-timers">
@@ -195,21 +200,22 @@
               </div>
             </div>
         </div>
+      </div> <!-- main-content -->
+      <div style="display:none;" class="content-box" id="indoor-quality-modal">
+        <div id="indoor-quality-graph">
+          <svg style='height:200px'> </svg>
+        </div>
 
+      </div>
     </div>
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="/homecontroller/static/js/jquery.min.js"></script>
-    <script src="/homecontroller/static/js/bootstrap.min.js"></script>
-    <script src="/homecontroller/static/js/moment-with-locales.min.js"></script>
-    <script src="/homecontroller/static/jquery-ui/jquery-ui.js"></script>
+    {% include "snippets/js_base.html" %}
+
     <script src="/homecontroller/static/js/d3.min.js"></script>
     <script src="/homecontroller/static/js/nv.d3.js"></script>
-    <script type="text/javascript">
-      var websocket_root = "{{ WEBSOCKET_URI }}";
-    </script>
     <script src="/homecontroller/static/js/main.js"></script>
     <script src="/homecontroller/static/js/clock.js"></script>
     <script src="/homecontroller/static/js/timer.js"></script>

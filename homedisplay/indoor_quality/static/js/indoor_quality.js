@@ -71,7 +71,7 @@ var IndoorAirQuality = function (options) {
                      "values": processed_data
                    }];
 
-      d3.select('#graph svg')    //Select the <svg> element you want to render the chart in.
+      d3.select('#indoor-quality-graph svg')    //Select the <svg> element you want to render the chart in.
       .datum(myData)         //Populate the <svg> element with chart data...
       .call(chart);          //Finally, render the chart!
 
