@@ -285,7 +285,7 @@ var Timer = function(parent_elem, options) {
     }
     try {
       ws4redis.close(); // Clean up WS connections
-    } catch () {
+    } catch (e) {
 
     }
   }

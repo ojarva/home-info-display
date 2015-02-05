@@ -59,13 +59,15 @@ var RepeatingTasks = function(elem, use_date) {
   this.update = update;
 }
 
-var tasks_today, tasks_tomorrow;
+var tasks_today, tasks_tomorrow, tasks_all;
 
 $(document).ready(function() {
   tasks_today = new RepeatingTasks("#today .repeating-tasks .fa-ul", "today");
   tasks_tomorrow = new RepeatingTasks("#tomorrow .repeating-tasks .fa-ul", "tomorrow");
+  tasks_all = new RepeatingTasks("#repeating-tasks-all .fa-ul", "all");
   tasks_today.startInterval();
   tasks_tomorrow.startInterval();
+  tasks_all.startInterval();
   $("#confirm-repeating-task .close").on("click", function() {
     switchVisibleContent("#main-content");
   });
@@ -73,10 +75,19 @@ $(document).ready(function() {
     $.get("/homecontroller/repeating_tasks/done/"+$(this).parent().parent().parent().data("id"), function() {
       tasks_today.update();
       tasks_tomorrow.update();
+      tasks_all.update();
     });
     switchVisibleContent("#main-content");
   });
   $("#confirm-repeating-task .cancel").on("click", function () {
+    switchVisibleContent("#main-content");
+  });
+
+  $("#main-button-box .repeating").on("click", function() {
+    switchVisibleContent("#repeating-tasks-all");
+  });
+
+  $("#repeating-tasks-all .close").on("click", function() {
     switchVisibleContent("#main-content");
   });
 

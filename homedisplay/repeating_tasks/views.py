@@ -14,7 +14,10 @@ class info(View):
     def get(self, request, *args, **kwargs):
         todo_tasks = []
         date = kwargs.get("date")
-        for task in Task.objects.all():
+        tasks = Task.objects.all()
+        tasks = sorted(tasks, key=lambda t: t.overdue_by())
+        tasks.reverse()
+        for task in tasks:
             if date == "today":
                 if task.last_completed_at is None:
                     todo_tasks.append(task)
@@ -29,7 +32,8 @@ class info(View):
                 overdue_by = task.overdue_by()
                 if overdue_by > datetime.timedelta(days=-1) and overdue_by < datetime.timedelta(0):
                     todo_tasks.append(task)
-
+            elif date == "all":
+                todo_tasks.append(task)
         return HttpResponse(serializers.serialize("json", todo_tasks), content_type="application/json")
 
 class done(View):
