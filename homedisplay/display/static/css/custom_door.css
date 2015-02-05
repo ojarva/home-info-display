@@ -29,25 +29,15 @@ body {
   width: 100%;
 }
 
-#weather-info div {
-  height: 293px;
-}
-
-#weather-info div p {
-  padding-top: 80px;
-}
 
 #weather-general {
   float: left;
-  width: 200px;
   font-size: 300%;
   text-align: center;
 }
-
-#weather-temperature {
-  margin-left: 200px;
-  font-size: 300%;
-  text-align: right;
+#weather-general img {
+  width: 80px;
+  height: 80px;
 }
 
 #calendar {
@@ -90,6 +80,6 @@ body {
   height: 300px;
 }
 
-.light-controls div p {
+.light-controls div {
   padding-top: 60px;
 }
