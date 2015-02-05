@@ -26,6 +26,7 @@ var Timer = function(parent_elem, options) {
   }
 
   function onReceiveItemWS(message) {
+    console.log(id,"received message",message);
     source = "backend";
     if (message == "stop") {
       stopItem(source);
@@ -348,6 +349,7 @@ var Timers = function() {
     /* Ugly hack: WS message arrives before HTTP response.
        This leads to duplicate timer items, as originally
        added timer does not have ID yet. */
+   console.log("Global: received message", message);
     setTimeout(function () {
       if (message.substring(0, 7) == "create-") {
         var data = JSON.parse(message.substring(7))[0];
