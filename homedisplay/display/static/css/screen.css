@@ -18,6 +18,9 @@
   color: white;
 }
 
+.smokeping-chart {
+  display:inline-block;
+}
 .success-message {
   color: #07CF00;
 }

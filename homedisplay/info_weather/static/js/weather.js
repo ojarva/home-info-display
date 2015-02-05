@@ -79,5 +79,4 @@ var refresh_weather = function () {
 $(document).ready(function () {
   refresh_weather();
   setInterval(refresh_weather, 300000); // 5 minutes
-
 });

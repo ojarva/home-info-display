@@ -26,4 +26,26 @@ function refresh_internet() {
 $(document).ready(function() {
   refresh_internet();
   setInterval(refresh_internet, 15000);
+
+  $("#internet-connection").on("click", function() {
+    var charts = [["idler", "Internet/idler_last_10800.png"],
+                  ["Google", "Internet/google_last_10800.png"],
+                  ["Saunalahti", "Internet/saunalahti_last_10800.png"],
+                  ["Funet", "Internet/funet_last_10800.png"],
+                  ["idler", "Internet/idler_last_108000.png"],
+                  ["Google", "Internet/google_last_108000.png"],
+                  ["Saunalahti", "Internet/saunalahti_last_108000.png"],
+                  ["Funet", "Internet/funet_last_108000.png"]
+                  ];
+    content = "";
+    $.each(charts, function() {
+      content += "<div class='smokeping-chart'><h4>"+this[0]+"</h4><img src='/smokeping/images/"+this[1]+"'></div>";
+    });
+    $("#internet-connection-modal .smokeping-charts").html(content);
+    switchVisibleContent("#internet-connection-modal");
+  });
+
+  $("#internet-connection-modal .close").on("click", function () {
+    switchVisibleContent("#main-content");
+  });
 });
