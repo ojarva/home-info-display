@@ -10,7 +10,7 @@ from django.views.generic import View
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 import json
-
+import time
 
 def convert_to_timestamp(dt):
     return time.mktime(dt.timetuple())
@@ -18,7 +18,7 @@ def convert_to_timestamp(dt):
 
 class current_time(View):
     def get(self, request, *args, **kwargs):
-        return HttpResponse(convert_to_timestamp(now()))
+        return HttpResponse(int(convert_to_timestamp(now())*1000))
 
 class list(View):
     def get(self, request, *args, **kwargs):
