@@ -13,10 +13,12 @@ import time
 class get_co2(View):
     def get(self, request, *args, **kwargs):
         data = IndoorQuality.objects.filter(timestamp__gte=now()-datetime.timedelta(hours=24))
-        filtered_data = []
+        if len(data) < 5:
+            return HttpResponse(json.dumps([]), content_type="application/json")
+        filtered_data = [data[0]]
         co2_items = []
         temp_items = []
-        for i, a in enumerate(data):
+        for i, a in enumerate(data[1:]):
             co2_items.append(a.co2)
             temp_items.append(a.temperature)
             if i < 5:
@@ -27,7 +29,6 @@ class get_co2(View):
                 co2_items = []
                 temp_items = []
                 filtered_data.append(a)
-
         return HttpResponse(serializers.serialize("json", filtered_data), content_type="application/json")
 
 class get_co2_trend(View):
