@@ -40,7 +40,7 @@ $(document).ready(function() {
     content = "";
     timestamp = new Date() - 0;
     $.each(charts, function() {
-      content += "<div class='smokeping-chart'><h4>"+this[0]+"</h4><img src='/smokeping/images/"+this[1]+"?"+timestamp"'></div>";
+      content += "<div class='smokeping-chart'><h4>"+this[0]+"</h4><img src='/smokeping/images/"+this[1]+"?"+timestamp+"'></div>";
     });
     $("#internet-connection-modal .smokeping-charts").html(content);
     switchVisibleContent("#internet-connection-modal");
