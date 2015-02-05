@@ -10,16 +10,16 @@ var refresh_weather = function () {
   }
   $.get("/homecontroller/weather/get_json", function (data) {
     reset_weather_info();
-    var first_date = moment(), plus_one = false;
-    var hour = parseInt(first_date.format("H"));
+    var first_date = moment(), plus_one = false, hour, today, tomorrow, desired_hours = {};
+    hour = parseInt(first_date.format("H"));
     if (hour >= 23) {
       first_date = first_date.add(1, "days");
       plus_one = true;
       hour = 0;
     }
-    var today = first_date.format("YYYY-MM-DD");
-    var tomorrow = first_date.add(1, "days").format("YYYY-MM-DD");
-    var desired_hours = {};
+    today = first_date.format("YYYY-MM-DD");
+    tomorrow = first_date.add(1, "days").format("YYYY-MM-DD");
+    desired_hours = {};
     if (hour < 6) {
       desired_hours[8] = {"this_elem": "#today .weather-2", "this_text": "Aamu"};
       desired_hours[16] = {"this_elem": "#today .weather-3", "this_text": "Iltapäivä"};
@@ -33,9 +33,7 @@ var refresh_weather = function () {
       desired_hours[23] = {"this_elem": "#today .weather-2", "this_text": "Yö"};
     }
     $.each(data, function () {
-      var set = false;
-      var this_text, this_elem;
-      this_data = this;
+      var set = false, this_text, this_elem, this_data = this;
       if (this.fields.date == today) {
         // Current day
         if (this.fields.hour == hour) {

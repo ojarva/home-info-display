@@ -9,7 +9,7 @@ var RepeatingTasks = function(elem, use_date) {
     $.get("/homecontroller/repeating_tasks/get_json/"+this_date, function(data) {
       clearTasks();
       $.each(data, function() {
-        overdue_by = "";
+        var overdue_by = "", diff;
         if (this.fields.last_completed_at) {
           diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
           overdue_by = " ("+diff.fromNow()+")";
@@ -17,8 +17,8 @@ var RepeatingTasks = function(elem, use_date) {
         parent_elem.append("<li class='repeating-task-mark-done' data-id='"+this.pk+"'><i class='fa-li fa fa-times-circle'></i> <span class='task-title'>"+this.fields.title+"</span>"+overdue_by+"</li>");
       });
       parent_elem.find(".repeating-task-mark-done").on("click", function() {
-        this_elem = $(this);
-        id = this_elem.data("id");
+        var this_elem = $(this);
+        var id = this_elem.data("id");
         $("#confirm-repeating-task").data("id", id);
         $("#confirm-repeating-task .task-title").html(this_elem.find(".task-title").html());
         switchVisibleContent("#confirm-repeating-task");
@@ -34,7 +34,7 @@ var RepeatingTasks = function(elem, use_date) {
   function startInterval() {
     stopInterval();
     update();
-    now = new Date();
+    var now = new Date(), minutes, wait_time;
     minutes = now.getMinutes();
     // Sync intervals to run at 00:00:30 and 00:30:30
     if (minutes > 31) {
