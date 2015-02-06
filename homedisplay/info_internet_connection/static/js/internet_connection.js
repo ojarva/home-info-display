@@ -50,7 +50,7 @@ var RefreshInternet = function() {
   function setSignal(level) {
     $("#internet-connection .signal-bars div").removeClass("active").addClass("inactive");
     for (a = 1; a < level; a++) {
-      $("#internet-connection .signal-bars .signal-"+a).addClass("active");
+      $("#internet-connection .signal-bars .signal-"+a).addClass("active").removeClass("inactive");
     }
   }
 
