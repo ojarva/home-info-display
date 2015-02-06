@@ -45,13 +45,26 @@ var ShowRealtimePing = function() {
 }
 
 var RefreshInternet = function() {
-  var ws4redis, update_interval;
+  var ws4redis, update_interval, update_timeout, output = $("#internet-connection");
 
   function setSignal(level) {
-    $("#internet-connection .signal-bars div").removeClass("active").addClass("inactive");
+    output.find(".signal-bars div").removeClass("active").addClass("inactive");
     for (a = 1; a < level+1; a++) {
-      $("#internet-connection .signal-bars .signal-"+a).addClass("active").removeClass("inactive");
+      output.find(".signal-bars .signal-"+a).addClass("active").removeClass("inactive");
     }
+  }
+
+  function clearAutoNoUpdates() {
+    if (update_timeout) {
+      update_timeout = clearTimeout(update_timeout);
+    }
+  }
+
+  function autoNoUpdates() {
+    clearAutoNoUpdates();
+    output.find(".signal-bars").slideUp();
+    output.find(".signal-bars").data("is-hidden", true);
+    output.find(".connected").html("<i class='fa fa-times warning-message'></i> Ei tietoja");
   }
 
   function update() {
@@ -59,9 +72,14 @@ var RefreshInternet = function() {
       var data = data[0];
       if (typeof data == "undefined") {
         console.log("!!! No internet connection information available");
+        autoNoUpdates();
         return;
       }
-      var output = $("#internet-connection");
+      signal_bars = output.find(".signal-bars");
+      if (signal_bars.data("is-hidden")) {
+        signal_bars.slideDown();
+        signal_bars.data("is-hidden", false);
+      }
       var cs = data.fields.connect_status;
       var cs_out;
       if (cs == "connected") {
@@ -74,8 +92,8 @@ var RefreshInternet = function() {
       output.find(".connected").html(cs_out);
       output.find(".mode").html(data.fields.mode);
       setSignal(data.fields.signal);
-      var data_moment = moment(data.fields.timestamp);
-      output.find(".age").html("("+data_moment.fromNow()+")");
+      clearAutoNoUpdates();
+      update_timeout = setTimeout(autoNoUpdates, 150000); // 2,5 minutes
     });
   }
 

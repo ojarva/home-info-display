@@ -5,6 +5,7 @@ var IndoorAirQuality = function (options) {
   var output = $(options.main_elem),
       latest_data,
       update_interval,
+      update_timeout,
       ws4redis;
 
   function onReceiveItemWS(message) {
@@ -12,6 +13,16 @@ var IndoorAirQuality = function (options) {
       console.log("indoor air quality: backend requests update");
       update();
     }
+  }
+
+  function clearAutoNoUpdates() {
+    if (update_timeout) {
+      update_timeout = clearTimeout(update_timeout);
+    }
+  }
+
+  function autoNoUpdates() {
+    output.find(".status").html("<i class='fa fa-times warning-message'></i> Ei tietoja");
   }
 
   function getData() {
@@ -23,6 +34,7 @@ var IndoorAirQuality = function (options) {
       var latest = data[0];
       if (typeof latest == "undefined") {
         console.log("!!! No indoor air quality information available.");
+        autoNoUpdates();
         return;
       }
       var co2 = latest.fields.co2;
@@ -42,8 +54,8 @@ var IndoorAirQuality = function (options) {
       output.find(".co2").html(co2+"ppm");
       $("#indoor-quality-modal .latest-indoor-co2").html(co2);
       $("#indoor-quality-modal .latest-indoor-temperature").html((parseFloat(latest.fields.temperature)*10)/10);
-      data_moment = moment(latest.fields.timestamp);
-      output.find(".age").html("("+data_moment.fromNow()+")");
+      clearAutoNoUpdates();
+      update_timeout = setTimeout(autoNoUpdates, 150000); // 2,5 minutes
       latest_data = data;
     });
   }
@@ -145,6 +157,10 @@ var IndoorAirQuality = function (options) {
 
   function fetchTrend() {
     $.get("/homecontroller/indoor_quality/co2/trend", function (data) {
+      if (data.status == "no_data") {
+        output.find(".trend").html("");
+        return;
+      }
       var icon;
       if (data.delta < -0.025) {
         icon = "down";
