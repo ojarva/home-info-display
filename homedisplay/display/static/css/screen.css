@@ -5,6 +5,13 @@
   margin-left: auto;
 }
 
+#main-button-box {
+  font-size: 200%;
+}
+#main-button-box div {
+  min-width: 90px;
+}
+
 #clock {
   font-size: 790%;
   font-weight: bold;
