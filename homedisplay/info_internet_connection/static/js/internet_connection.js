@@ -47,6 +47,13 @@ var ShowRealtimePing = function() {
 var RefreshInternet = function() {
   var ws4redis, update_interval;
 
+  function setSignal(level) {
+    $("#internet-connection .signal-bars div").removeClass("active").addClass("inactive");
+    for (a = 1; a < level; a++) {
+      $("#internet-connection .signal-bars .signal-"+a).addClass("active");
+    }
+  }
+
   function update() {
     $.get("/homecontroller/internet_connection/status", function (data) {
       var data = data[0];
@@ -66,7 +73,7 @@ var RefreshInternet = function() {
       }
       output.find(".connected").html(cs_out);
       output.find(".mode").html(data.fields.mode);
-      output.find(".signal").html("<i class='fa fa-signal'></i> "+data.fields.signal+"/5");
+      setSignal(data.fields.signal);
       var data_moment = moment(data.fields.timestamp);
       output.find(".age").html("("+data_moment.fromNow()+")");
     });
