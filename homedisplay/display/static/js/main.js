@@ -40,7 +40,9 @@ $(document).ready(function() {
   })
   $(".animate-click").on("click", function () {
     $(this).stop(true).css("background-color", $(this).data("original-bg-color")).effect("highlight", {color: "#ffffff"}, 500);
-
+  });
+  $("#main-content .close").on("click", function() {
+    $.get("/homecontroller/display/control/off");
   });
 });
 moment.locale("fi");
