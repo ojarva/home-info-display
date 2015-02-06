@@ -219,7 +219,7 @@ var Timer = function(parent_elem, options) {
     running = true;
     update(); // Immediately run first update
     update_interval = setInterval(update, options.delay);
-    backend_interval = setInterval(refreshFromBackend, 15000);
+    backend_interval = setInterval(refreshFromBackend, 5*60*1000);
     this_elem.data("start-timestamp", start_time);
     if (timer_type == "timer") {
       this_elem.data("end-timestamp", (start_time.getTime()/1000) + options.duration);

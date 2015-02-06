@@ -1,3 +1,49 @@
+var ShowRealtimePing = function() {
+  var ws4redis, container = $("#internet-connection .ping"), invalid_timeout;
+
+  function noUpdates(warning_class) {
+    warning_class = warning_class || "error";
+    container.html("<i class='fa fa-times-circle "+warning_class+"-message'></i>");
+  }
+  function autoNoUpdates() {
+    noUpdates("warning");
+  }
+  function update(message) {
+    if (message == "no_pings") {
+      noUpdates();
+      return;
+    }
+    if (invalid_timeout) {
+      invalid_timeout = clearTimeout(invalid_timeout);
+    }
+    container.html("<i class='fa fa-check-circle success-message'></i> "+(Math.round(parseFloat(message)*10)/10)+"ms");
+    invalid_timeout = setTimeout(autoNoUpdates, 10000);
+  }
+
+  function onReceiveItemWS(message) {
+    console.log("ping: backend requests update");
+    update(message);
+  }
+
+  function startInterval() {
+    ws4redis = new WS4Redis({
+      uri: websocket_root+'ping?subscribe-broadcast&publish-broadcast&echo',
+      receive_message: onReceiveItemWS,
+      heartbeat_msg: "--heartbeat--"
+    });
+  }
+
+  function stopInterval() {
+    try {
+      ws4redis.close();
+    } catch(e) {
+    }
+  }
+
+  this.startInterval = startInterval;
+  this.stopInterval = stopInterval;
+}
+
 var RefreshInternet = function() {
   var ws4redis, update_interval;
 
@@ -58,10 +104,12 @@ var RefreshInternet = function() {
   this.stopInterval = stopInterval;
 };
 
-var refresh_internet;
+var refresh_internet, show_pings;
 $(document).ready(function() {
   refresh_internet = new RefreshInternet();
   refresh_internet.startInterval();
+  show_pings = new ShowRealtimePing();
+  show_pings.startInterval();
 
   $("#internet-connection").on("click", function() {
     var charts = [["idler", "Internet/idler_last_10800.png"],
