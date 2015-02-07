@@ -378,7 +378,7 @@ var Timers = function() {
   $(".add-timer").click(function () {
     var timer_run = new Timer("#timer-holder", {"name": $(this).data("name"), "duration": $(this).data("duration")});
   });
-  $("#add-stopclock").click(function () {
+  $(".add-stopclock").click(function () {
     var timer_run = new Timer("#stopclock-holder", {"name": "Ajastin"});
   });
 
