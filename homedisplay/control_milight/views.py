@@ -54,6 +54,7 @@ class control_per_source(View):
                 led.white()
                 led.set_brightness(100)
                 run_display_command("on")
+                redis_instance.publish("home:broadcast:shutdown", "shutdown_cancel")
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
