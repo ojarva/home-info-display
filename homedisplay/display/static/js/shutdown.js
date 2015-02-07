@@ -30,6 +30,7 @@ var ShutdownProgress = function(options) {
 
   function stop() {
     stopInterval();
+    switchVisibleContent("#main-content");
   }
 
   function startInterval() {
