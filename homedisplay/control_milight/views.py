@@ -1,13 +1,17 @@
-from django.shortcuts import render
-import json
-from django.http import HttpResponseRedirect, HttpResponse
-from django.views.generic import View
-from django.conf import settings
-from ledcontroller import LedController
 
 from .models import LightGroup
+from display.views import run_display_command
+from django.conf import settings
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render
+from django.views.generic import View
+from ledcontroller import LedController
+import json
+import redis
 
+redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
+
 
 def update_lightstate(group, brightness, color, on=True):
     if group == 0:
@@ -49,9 +53,13 @@ class control_per_source(View):
             elif command == "on":
                 led.white()
                 led.set_brightness(100)
+                run_display_command("on")
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
+                led.white(self.DOOR)
+                led.set_brightness(10, self.DOOR)
+                redis_instance.publish("home:broadcast:shutdown", "shutdown_delay")
         elif source == "display":
             if command == "night":
                 led.set_brightness(0)

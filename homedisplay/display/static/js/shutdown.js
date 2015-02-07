@@ -21,6 +21,13 @@ var ShutdownProgress = function(options) {
 
   function onReceiveItemWS(message) {
     console.log("Shutdown received", message);
+    if (message == "shutdown_delay") {
+      switchVisibleContent("#shutdown-progress");
+      restart();
+    } else if (message == "shutdown_cancel") {
+      switchVisibleContent("#main-content");
+      stop();
+    }
   }
 
   function restart() {
@@ -37,25 +44,23 @@ var ShutdownProgress = function(options) {
     stopInterval();
     update();
     update_interval = setInterval(update, 100);
-    ws4redis = new WS4Redis({
-      uri: websocket_root+'shutdown?subscribe-broadcast&publish-broadcast&echo',
-      receive_message: onReceiveItemWS,
-      heartbeat_msg: "--heartbeat--"
-    });
+
   }
 
   function stopInterval() {
     if (update_interval) {
       update_interval = clearInterval(update_interval);
     }
-    try {
-      ws4redis.close();
-    } catch(e) {
-
-    }
     $("#shutdown-progress .progress-bar").css("width", "0%");
 
   }
+
+  ws4redis = new WS4Redis({
+    uri: websocket_root+'shutdown?subscribe-broadcast&publish-broadcast&echo',
+    receive_message: onReceiveItemWS,
+    heartbeat_msg: "--heartbeat--"
+  });
+
   this.restart = restart;
   this.stop = stop;
   this.shutdown = shutdown;
@@ -70,6 +75,7 @@ $(document).ready(function() {
   });
 
   $("#shutdown-progress .close, #shutdown-progress .cancel").on("click", function() {
+    shutdown_progress.stop();
     switchVisibleContent("#main-content");
   });
   $("#shutdown-progress .yes").on("click", function() {
