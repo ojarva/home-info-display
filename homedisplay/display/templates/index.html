@@ -212,10 +212,12 @@
         <h3>Hiilidioksidi (<span class="latest-indoor-co2"></span>ppm)</h3>
         <div id="indoor-air-quality-co2-graph">
           <svg style='height:350px'> </svg>
+          <div style="display:none" class="data-error error-message"><i class="fa fa-times"></i> Ei tietoja</div>
         </div>
         <h3>Lämpötila (<span class="latest-indoor-temperature"></span>&deg;C)</h3>
         <div id="indoor-air-quality-temperature-graph">
           <svg style='height:350px'> </svg>
+          <div style="display:none" class="data-error error-message"><i class="fa fa-times"></i> Ei tietoja</div>
         </div>
       </div>
       <div style="display:none;" class="content-box" id="internet-connection-modal">
@@ -260,6 +262,20 @@
           </div>
         </div>
       </div>
+      <div style="display:none" class="content-box" id="shutdown-progress">
+        <div class="custom-container">
+          <div class="close" style="font-size: 600%"><i class="fa fa-times-circle-o"></i></div>
+          <div class="confirm-dialog-box">
+            <div class="title">Sammuta näyttö?</div>
+            <div class='progress' style="padding:0px">
+              <div class='progress-bar progress-bar-danger' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width:0%'></div>
+            </div>
+            <div>
+              <div class="action-button animate-click yes">Heti</div> <div class="action-button animate-click cancel">Peruuta</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
 
@@ -271,6 +287,9 @@
     <script src="/homecontroller/static/js/d3.min.js"></script>
     <script src="/homecontroller/static/js/nv.d3.js"></script>
     <script src="/homecontroller/static/js/main.js"></script>
+
+
+    <script src="/homecontroller/static/js/shutdown.js"></script>
     <script src="/homecontroller/static/js/clock.js"></script>
     <script src="/homecontroller/static/js/timer.js"></script>
     <script src="/homecontroller/static/js/lightcontrol.js"></script>
@@ -279,7 +298,6 @@
     <script src="/homecontroller/static/js/indoor_quality.js"></script>
     <script src="/homecontroller/static/js/server_power.js"></script>
     <script src="/homecontroller/static/js/weather.js"></script>
-    <script src="/homecontroller/static/js/ws4redis_v2.js"></script>
     <script src="/homecontroller/static/js/birthdays.js"></script>
 
 

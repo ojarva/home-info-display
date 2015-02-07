@@ -8,6 +8,39 @@
 #main-button-box {
   font-size: 200%;
 }
+
+.progress {
+  border-radius: 0px !important;
+}
+
+
+.confirm-dialog-box {
+  width: 500px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+
+  margin-top: -150px;
+  margin-left: -250px;
+}
+
+.confirm-dialog-box div.title {
+  padding: 20px;
+}
+
+
+.confirm-dialog-box .yes {
+  background-color: #006600;
+}
+
+.confirm-dialog-box .cancel {
+  background-color: #cc0000;
+
+}
+
+
+
 #main-button-box div {
   min-width: 90px;
 }
