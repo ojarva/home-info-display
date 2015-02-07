@@ -38,7 +38,6 @@ function switchVisibleContent(elem) {
 
 
 $(document).ready(function() {
-  shutdown_progress = new ShutdownProgress();
   $(".animate-click").each(function () {
     $(this).data("original-bg-color", $(this).css("background-color"));
   })

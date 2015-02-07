@@ -4,9 +4,9 @@
   text-align: center;
 }
 .lightcontrol-btn-large {
-  width: 130px;
-  height: 130px;
-  font-size: 400%;
+  height: 110px;
+  font-size: 300%;
+  min-width: 110px;
 }
 
 .lightcontrol-btn-small {

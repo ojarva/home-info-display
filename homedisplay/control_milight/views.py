@@ -26,6 +26,59 @@ def update_lightstate(group, brightness, color, on=True):
     state.save()
     return state
 
+class control_per_source(View):
+    BED = 1
+    TABLE = 2
+    KITCHEN = 3
+    DOOR = 4
+
+    def get(self, request, *args, **kwargs):
+        source = kwargs.get("source")
+        command = kwargs.get("command")
+        if source == "door":
+            if command == "night":
+                led.off()
+                for group in (self.DOOR, self.KITCHEN):
+                    led.set_color("red", group)
+                    led.set_brightness(10, group)
+            elif command == "morning":
+                led.off(self.BED)
+                for group in (self.TABLE, self.KITCHEN, self.DOOR):
+                    led.set_color("white", group)
+                    led.set_brightness(10, group)
+            elif command == "on":
+                led.white()
+                led.set_brightness(100)
+            elif command == "off":
+                led.set_brightness(0)
+                led.off()
+        elif source == "display":
+            if command == "night":
+                led.set_brightness(0)
+                led.set_color("red")
+                led.set_brightness(0)
+            elif command == "morning-sleeping":
+                led.off()
+                led.white(self.KITCHEN)
+                led.set_brightness(30, self.KITCHEN)
+                led.white(self.DOOR)
+                led.set_brightness(30, self.DOOR)
+                led.set_color("red", self.TABLE)
+                led.set_brightness(0, self.TABLE)
+            elif command == "morning-all":
+                led.white()
+                led.set_brightness(30)
+            elif command == "off":
+                led.set_brightness(0)
+                led.off()
+            elif command == "on":
+                led.white()
+                led.set_brightness(100)
+        else:
+            raise NotImplementedError("Invalid source: %s" % source)
+        return HttpResponse("ok")
+
+
 class control(View):
     def get(self, request, *args, **kwargs):
         command = kwargs.get("command")
@@ -36,6 +89,7 @@ class control(View):
             led.set_brightness(100, group)
             update_lightstate(group, 100, "white")
         elif command == "off":
+            led.set_brightness(0, group)
             led.off(group)
             update_lightstate(group, None, None, False)
         elif command == "morning":
