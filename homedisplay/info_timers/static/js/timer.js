@@ -383,7 +383,7 @@ var Timers = function() {
   });
 
   refreshFromServer();
-  setInterval(refreshFromServer, 10000);
+  setInterval(refreshFromServer, 3 * 60 * 1000);
 
   this.sortTimers = sortTimers;
   this.hasTimer = hasTimer;
