@@ -41,7 +41,7 @@ class Task(models.Model):
     def completed(self):
         n = now()
         self.last_completed_at = n
-        self.snooze = 0
+        self.snooze = None
         a = TaskHistory(task=self, completed_at=n)
         a.save()
         self.save()
