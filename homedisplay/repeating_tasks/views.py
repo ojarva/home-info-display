@@ -35,6 +35,7 @@ class info(View):
                     todo_tasks.append(task)
             elif date == "all":
                 todo_tasks.append(task)
+        todo_tasks = sorted(todo_tasks, key=lambda t: t.optional)
         return HttpResponse(serializers.serialize("json", todo_tasks), content_type="application/json")
 
 class done(View):

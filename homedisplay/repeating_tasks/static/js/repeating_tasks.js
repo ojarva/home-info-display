@@ -21,7 +21,12 @@ var RepeatingTasks = function(elem, use_date) {
           diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
           overdue_by = " ("+diff.fromNow()+")";
         }
-        parent_elem.append("<li class='repeating-task-mark-done' data-id='"+this.pk+"'><i class='fa-li fa fa-times-circle'></i> <span class='task-title'>"+this.fields.title+"</span>"+overdue_by+"</li>");
+        if (this.fields.optional) {
+          icon = "fa-question-circle";
+        } else {
+          icon = "fa-times-circle";
+        }
+        parent_elem.append("<li class='repeating-task-mark-done' data-id='"+this.pk+"'><i class='fa-li fa "+icon+"'></i> <span class='task-title'>"+this.fields.title+"</span>"+overdue_by+"</li>");
       });
       parent_elem.find(".repeating-task-mark-done").on("click", function() {
         var this_elem = $(this);

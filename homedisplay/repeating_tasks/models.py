@@ -10,6 +10,7 @@ r = redis.StrictRedis()
 
 class Task(models.Model):
     title = models.TextField()
+    optional = models.NullBooleanField(default=False, null=True)
     repeat_every_n_seconds = models.IntegerField()
     last_completed_at = models.DateTimeField(null=True, blank=True)
 
