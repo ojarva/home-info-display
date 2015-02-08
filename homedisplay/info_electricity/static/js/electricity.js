@@ -6,11 +6,18 @@
     height = 800,
     margin = {top:20,right:20,bottom:20,left:25};
 
+  var dayFormat_orig = d3.time.format('%j');
+  var yearFormat_orig = d3.time.format('%Y');
+  function dayFormat(timestamp) {
+    var val = 0 - (0 - dayFormat_orig(timestamp)) - (0 - yearFormat_orig(timestamp) * 365);
+    return val;
+  }
+
   //formats
   var hourFormat = d3.time.format('%H'),
-    dayFormat = d3.time.format('%j'),
+  //  dayFormat = d3.time.format('%j'),
     timeFormat = d3.time.format('%Y-%m-%dT%X'),
-    monthDayFormat = d3.time.format('%m.%d');
+    monthDayFormat = d3.time.format('%Y-%m-%d');
 
   //data vars for rendering
   var dateExtent = null,
@@ -41,8 +48,8 @@
 
   var svg = d3.select('[role="heatmap"]');
   var heatmap = svg
-//    .attr('width',width)
-//    .attr('height',height)
+    .attr('width',width)
+    .attr('height',height)
   .append('g')
     .attr('width',width-margin.left-margin.right)
     .attr('height',height-margin.top-margin.bottom)
@@ -151,7 +158,7 @@
   }
 
   //extend frame height in `http://bl.ocks.org/`
-  d3.select(self.frameElement).style("height", "600px");
+//  d3.select(self.frameElement).style("height", "600px");
 })();
 
 
