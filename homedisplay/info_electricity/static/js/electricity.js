@@ -2,7 +2,7 @@
   //UI configuration
   var itemSize = 18,
     cellSize = itemSize-1,
-    width = 800,
+    width = 1600,
     height = 800,
     margin = {top:20,right:20,bottom:20,left:25};
 
