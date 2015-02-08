@@ -2,7 +2,7 @@ var RefreshWeather = function () {
   var ws4redis, update_interval;
 
   function set_weather_info (elem, text, info) {
-    $(elem).html(text+"<br><span class='weather-temperature'>"+info.fields.temperature+"&deg;C</span> <img src='/homecontroller/static/images/"+info.fields.icon+".png'>");
+    $(elem).html(text+"<br><span class='weather-temperature'>"+info.fields.apparent_temperature+"&deg;C</span> <img src='/homecontroller/static/images/"+info.fields.icon+".png'>");
   }
 
   function reset_weather_info() {
