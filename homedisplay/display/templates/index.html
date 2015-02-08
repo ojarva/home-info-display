@@ -17,6 +17,7 @@
 
     <link href="/homecontroller/static/css/screen.css" rel="stylesheet">
     <link href="/homecontroller/static/css/server_power.css" rel="stylesheet">
+    <link href="/homecontroller/static/css/electricity.css" rel="stylesheet">
     <link href="/homecontroller/static/css/lightcontrol.css" rel="stylesheet">
     <link href="/homecontroller/static/css/repeating_tasks.css" rel="stylesheet">
     <link href="/homecontroller/static/css/timer.css" rel="stylesheet">
@@ -70,7 +71,7 @@
                 <div class="col-md-3 timer-striping animate-click add-timer" data-duration="180" data-name="Tee">
                   <p><i style="font-size: 300%" class="fa fa-coffee"></i></p>
                 </div>
-                <div class="col-md-3 timer-striping animate-click" id="add-stopclock">
+                <div class="col-md-3 timer-striping animate-click add-stopclock">
                   <p><i style="font-size: 300%" class="fa fa-clock-o"></i></p>
                 </div>
                 <div class="col-md-3 timer-striping animate-click" id="add-custom-timer-plus">
@@ -285,6 +286,36 @@
         </div>
       </div>
     </div>
+    <div style="display:none" class="content-box" id="electricity-modal">
+      <div class="custom-container">
+        <div class="close" style="font-size: 600%"><i class="fa fa-times-circle-o"></i></div>
+        <div class="days-hours-heatmap">
+          <!-- calibration and render type controller -->
+          <div class="calibration" role="calibration">
+            <div class="group" role="example">
+              <svg width="120" height="17">
+              </svg>
+              <div role="description" class="description">
+                <label>Less</label>
+                <label>More</label>
+              </div>
+            </div>
+            <div role="toggleDisplay" class="display-control">
+              <div>
+                <input type="radio" name="displayType" checked/>
+                <label>count</label>
+              </div>
+              <div>
+                <input type="radio" name="displayType"/>
+                <label>daily</label>
+              </div>
+            </div>
+          </div>
+          <!-- heatmap -->
+          <svg role="heatmap" class="heatmap"></svg>
+        </div>
+      </div>
+    </div>
   </div>
 
 
@@ -303,6 +334,7 @@
   <script src="/homecontroller/static/js/timer.js"></script>
   <script src="/homecontroller/static/js/custom_timers.js"></script>
 
+  <script src="/homecontroller/static/js/electricity.js"></script>
   <script src="/homecontroller/static/js/lightcontrol.js"></script>
   <script src="/homecontroller/static/js/internet_connection.js"></script>
   <script src="/homecontroller/static/js/repeating_tasks.js"></script>
