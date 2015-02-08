@@ -17,7 +17,7 @@
   var hourFormat = d3.time.format('%H'),
   //  dayFormat = d3.time.format('%j'),
     timeFormat = d3.time.format('%Y-%m-%dT%X'),
-    monthDayFormat = d3.time.format('%Y-%m-%d');
+    monthDayFormat = d3.time.format('%d.%m.');
 
   //data vars for rendering
   var dateExtent = null,
