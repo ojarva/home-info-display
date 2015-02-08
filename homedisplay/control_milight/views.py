@@ -69,9 +69,9 @@ class control_per_source(View):
             elif command == "morning-sleeping":
                 led.off()
                 led.white(self.KITCHEN)
-                led.set_brightness(30, self.KITCHEN)
+                led.set_brightness(10, self.KITCHEN)
                 led.white(self.DOOR)
-                led.set_brightness(30, self.DOOR)
+                led.set_brightness(10, self.DOOR)
                 led.set_color("red", self.TABLE)
                 led.set_brightness(0, self.TABLE)
             elif command == "morning-all":
