@@ -101,6 +101,15 @@ $(document).ready(function() {
     });
     switchVisibleContent("#main-content");
   });
+  $("#confirm-repeating-task .snooze").on("click", function () {
+    $.get("/homecontroller/repeating_tasks/snooze/"+$(this).parent().parent().parent().data("id")+"/"+$(this).data("days"), function() {
+      tasks_today.update();
+      tasks_tomorrow.update();
+      tasks_all.update();
+    });
+    switchVisibleContent("#main-content");
+  });
+
   $("#confirm-repeating-task .cancel").on("click", function () {
     switchVisibleContent("#main-content");
   });

@@ -11,6 +11,7 @@ r = redis.StrictRedis()
 class Task(models.Model):
     title = models.TextField()
     optional = models.NullBooleanField(default=False, null=True)
+    snooze = models.DateTimeField(null=True)
     repeat_every_n_seconds = models.IntegerField()
     last_completed_at = models.DateTimeField(null=True, blank=True)
 
@@ -20,14 +21,27 @@ class Task(models.Model):
         return now() - self.last_completed_at
 
     def overdue_by(self):
+        if self.snooze:
+            if self.snooze < now():
+                self.snooze = None
+                self.save()
+            else:
+                return now() - self.snooze
         tsc = self.time_since_completion()
         if tsc is None:
             return datetime.timedelta(0)
         return self.time_since_completion() - datetime.timedelta(seconds=self.repeat_every_n_seconds)
 
+    def snooze_by(self, days):
+        if not self.snooze:
+            self.snooze = now()
+        self.snooze += datetime.timedelta(days=days)
+        self.save()
+
     def completed(self):
         n = now()
         self.last_completed_at = n
+        self.snooze = 0
         a = TaskHistory(task=self, completed_at=n)
         a.save()
         self.save()

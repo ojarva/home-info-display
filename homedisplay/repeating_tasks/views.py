@@ -11,7 +11,7 @@ import json
 import time
 
 
-class info(View):
+class get_json(View):
     def get(self, request, *args, **kwargs):
         todo_tasks = []
         date = kwargs.get("date")
@@ -37,6 +37,13 @@ class info(View):
                 todo_tasks.append(task)
         todo_tasks = sorted(todo_tasks, key=lambda t: t.optional)
         return HttpResponse(serializers.serialize("json", todo_tasks), content_type="application/json")
+
+class snooze(View):
+    def get(self, request, *args, **kwargs):
+        task = get_object_or_404(Task, pk=kwargs["task_id"])
+        days = int(kwargs["days"])
+        task.snooze_by(days)
+        return HttpResponse("ok")
 
 class done(View):
     def get(self, request, *args, **kwargs):
