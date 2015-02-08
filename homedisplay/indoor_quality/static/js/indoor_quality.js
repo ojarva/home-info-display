@@ -44,10 +44,10 @@ var IndoorAirQuality = function (options) {
         output.removeClass("warning-message error-message");
       } else if (co2 < 1500) {
         co2_out = "<i class='fa fa-exclamation-triangle'></i>";
-        output.addClass("warning-message");
+        output.removeClass("error-message").addClass("warning-message");
       } else {
         co2_out = "<i class='fa fa-ban'></i>";
-        output.addClass("error-message");
+        output.removeClass("warning-message").addClass("error-message");
       }
       output.find(".status").html(co2_out);
       output.find(".temperature").html(Math.round(parseFloat(latest.fields.temperature)*10)/10+"&deg;C");
