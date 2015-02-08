@@ -41,8 +41,8 @@
 
   var svg = d3.select('[role="heatmap"]');
   var heatmap = svg
-    .attr('width',width)
-    .attr('height',height)
+//    .attr('width',width)
+//    .attr('height',height)
   .append('g')
     .attr('width',width-margin.left-margin.right)
     .attr('height',height-margin.top-margin.bottom)

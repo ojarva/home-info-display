@@ -14,7 +14,7 @@ from django.core import serializers
 
 class get_json(View):
     def get(self, request, *args, **kwargs):
-        time_start = now() - datetime.timedelta(days=80)
+        time_start = now() - datetime.timedelta(days=70)
         items = []
         for item in Electricity.objects.filter(date__gte=time_start):
             d = {"timestamp": item.get_timestamp(), "value": {"W": float(item.usage)}}
