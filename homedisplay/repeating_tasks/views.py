@@ -20,11 +20,7 @@ class get_json(View):
         tasks.reverse()
         for task in tasks:
             if date == "today":
-                if task.last_completed_at is None:
-                    todo_tasks.append(task)
-                    continue
-
-                if task.overdue_by() > datetime.timedelta(0):
+                if task.overdue_by() >= datetime.timedelta(0):
                     todo_tasks.append(task)
             elif date == "tomorrow":
                 if task.last_completed_at is None:

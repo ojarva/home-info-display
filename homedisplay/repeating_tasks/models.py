@@ -16,11 +16,19 @@ class Task(models.Model):
     last_completed_at = models.DateTimeField(null=True, blank=True)
 
     def time_since_completion(self):
+        """ Returns datetime.timedelta for time since last completion.
+            None if never completed.
+        """
         if self.last_completed_at is None:
             return None
         return now() - self.last_completed_at
 
     def overdue_by(self):
+        """ Returns overdue in datetime.timedelta.
+            < 0 if task is not overdue
+            > 0 if task is overdue
+
+        """
         if self.snooze:
             if self.snooze < now():
                 self.snooze = None
@@ -33,6 +41,7 @@ class Task(models.Model):
         return self.time_since_completion() - datetime.timedelta(seconds=self.repeat_every_n_seconds)
 
     def snooze_by(self, days):
+        """ Add specified snoozing time to Task. """
         if not self.snooze:
             self.snooze = now()
         self.snooze += datetime.timedelta(days=days)
