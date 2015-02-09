@@ -58,7 +58,7 @@ $(document).ready(function () {
   light_control = new LightControl();
   light_control.initialize(".lightcontrol-btn");
 
-  $("#main-button-box .lights").on("click", function() {
+  $(".main-button-box .lights").on("click", function() {
     switchVisibleContent("#lightcontrol-modal");
   });
   $("#lightcontrol-modal .close").on("click", function() {

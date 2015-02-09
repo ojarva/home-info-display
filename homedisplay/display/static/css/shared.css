@@ -35,23 +35,14 @@
 
 }
 
-#main-button-box div {
+.main-button-box div {
   min-width: 90px;
 }
 
-#main-button-box .action-button {
+.main-button-box .action-button {
   margin: 0px;
 }
 
-#main-button-box {
-  font-size: 200%;
-}
-
-
-#clock {
-  font-size: 790%;
-  font-weight: bold;
-}
 
 .signal-bars {
   background-color: black;
@@ -131,42 +122,25 @@
   color: #E85656;
 }
 
-#indoor-quality {
-  font-size: 200%;
-}
-
-#indoor-quality .status {
-  font-size: 200%;
-}
 
 #indoor-quality .age {
   font-size: 50%;
 }
 
-#internet-connection {
-  font-size: 200%;
-}
-
-#internet-connection .connected {
-  font-size: 200%;
-}
 #internet-connection .age {
   font-size: 50%;
 }
 
 
 body {
-  overflow-x: hidden;
-  overflow-y: hidden;
+
   background-color: black;
   color: #cccccc;
-  font-size: 175%;
 }
 
 #calendar {
   padding-top: 0.25em;
   padding-bottom: 0.25em;
-  font-size: 457%;
 }
 
 .center-content {
@@ -207,14 +181,13 @@ a.list-group-item {
   margin-left: 15px;
   margin-right: 15px;
   margin-bottom: 5px;
-  font-size: 120%;
   background-color:
 }
 
-.repeating-tasks {
+.list-repeating-tasks {
   margin-top: 20px;
 }
 
-.birthdays {
+.list-birthdays {
   margin-top: 20px;
 }

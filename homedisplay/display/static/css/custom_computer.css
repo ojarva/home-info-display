@@ -1,0 +1,16 @@
+body {
+  padding-top: 60px;
+}
+
+.content-box {
+  padding-top: 60px !important;
+}
+
+#internet-connection {
+  font-size: 130%;
+}
+
+#indoor-quality {
+  font-size: 130%;
+}
+#server-

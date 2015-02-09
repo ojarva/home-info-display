@@ -165,7 +165,7 @@
 var electricity_info;
 $(document).ready(function () {
 
-  $("#main-button-box .electricity").on("click", function() {
+  $(".main-button-box .electricity").on("click", function() {
     switchVisibleContent("#electricity-modal");
   });
   $("#electricity-modal .close").on("click", function() {

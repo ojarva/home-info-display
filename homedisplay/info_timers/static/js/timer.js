@@ -64,7 +64,7 @@ var Timer = function(parent_elem, options) {
       "   <div class='timer-info'>"+
       "     "+options.name+" <span style='float: right' class='timer-timeleft'>---</span>"+
       "   </div>"+
-      "   <div class='progress'>"+
+      "   <div class='progress hidden-xs hidden-sm'>"+
       "    <div class='progress-bar' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width:100%'>"+
       "    </div>"+
       "   </div>"+

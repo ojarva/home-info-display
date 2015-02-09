@@ -84,8 +84,8 @@ var RepeatingTasks = function(elem, use_date) {
 var tasks_today, tasks_tomorrow, tasks_all;
 
 $(document).ready(function() {
-  tasks_today = new RepeatingTasks("#today .repeating-tasks .fa-ul", "today");
-  tasks_tomorrow = new RepeatingTasks("#tomorrow .repeating-tasks .fa-ul", "tomorrow");
+  tasks_today = new RepeatingTasks("#today .list-repeating-tasks .fa-ul", "today");
+  tasks_tomorrow = new RepeatingTasks("#tomorrow .list-repeating-tasks .fa-ul", "tomorrow");
   tasks_all = new RepeatingTasks("#repeating-tasks-all .fa-ul", "all");
   tasks_today.startInterval();
   tasks_tomorrow.startInterval();
@@ -114,7 +114,7 @@ $(document).ready(function() {
     switchVisibleContent("#main-content");
   });
 
-  $("#main-button-box .repeating").on("click", function() {
+  $(".main-button-box .repeating").on("click", function() {
     switchVisibleContent("#repeating-tasks-all");
   });
 

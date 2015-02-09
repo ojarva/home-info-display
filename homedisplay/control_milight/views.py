@@ -39,7 +39,32 @@ class control_per_source(View):
     def get(self, request, *args, **kwargs):
         source = kwargs.get("source")
         command = kwargs.get("command")
-        if source == "door":
+        if source == "computer":
+            if command == "night":
+                led.set_brightness(0)
+                led.set_color("red")
+                led.set_brightness(0)
+            elif command == "morning-sleeping":
+                led.off()
+                led.white(self.KITCHEN)
+                led.set_brightness(10, self.KITCHEN)
+                led.white(self.DOOR)
+                led.set_brightness(10, self.DOOR)
+                led.set_color("red", self.TABLE)
+                led.set_brightness(0, self.TABLE)
+            elif command == "morning-wakeup":
+                #TODO: fade up
+                led.white()
+                led.set_brightness(30)
+            elif command == "off":
+                led.set_brightness(0)
+                led.off()
+                redis_instance.publish("home:broadcast:shutdown", "shutdown_delay")
+            elif command == "on":
+                redis_instance.publish("home:broadcast:shutdown", "shutdown_cancel")
+                led.white()
+                led.set_brightness(100)
+        elif source == "door":
             if command == "night":
                 led.off()
                 for group in (self.DOOR, self.KITCHEN):

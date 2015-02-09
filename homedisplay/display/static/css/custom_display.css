@@ -1,0 +1,38 @@
+.main-button-box {
+  font-size: 200%;
+}
+
+#clock {
+  font-size: 790%;
+  font-weight: bold;
+}
+
+#indoor-quality {
+  font-size: 200%;
+}
+
+#indoor-quality .status {
+  font-size: 200%;
+}
+
+#internet-connection {
+  font-size: 200%;
+}
+
+#internet-connection .connected {
+  font-size: 200%;
+}
+
+body {
+  font-size: 175%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+#calendar {
+  font-size: 457%;
+}
+
+.action-button {
+  font-size: 120%;
+}

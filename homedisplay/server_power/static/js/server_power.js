@@ -1,6 +1,6 @@
 var ServerPower = function() {
   var interval, ws4redis;
-  var main_elem = $("#server_power");
+  var main_elem = $("#server-power");
 
   function showButton(button_name) {
     main_elem.find(".action-button").hide();

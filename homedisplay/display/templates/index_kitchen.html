@@ -48,20 +48,7 @@
 
 
         <div id="timers">
-          <div class="row timer-item center-content add-timers">
-            <div class="col-md-3 timer-striping animate-click add-timer" data-duration="2700" data-name="Pesukone">
-              <p><i style="font-size: 300%" class="fa fa-cutlery"></i></p>
-            </div>
-            <div class="col-md-3 timer-striping animate-click add-timer" data-duration="180" data-name="Tee">
-              <p><i style="font-size: 300%" class="fa fa-coffee"></i></p>
-            </div>
-            <div class="col-md-3 timer-striping animate-click add-stopclock">
-              <p><i style="font-size: 300%" class="fa fa-clock-o"></i></p>
-            </div>
-            <div class="col-md-3 timer-striping animate-click" id="add-custom-timer-plus">
-              <p><i style="font-size: 300%" class="fa fa-plus"></i></p>
-            </div>
-          </div>
+          {% include "snippets/add_timers.html" %}
 
           <div id="stopclock-holder">
           </div>
