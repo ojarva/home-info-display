@@ -6,7 +6,7 @@ var refresh_weather = function () {
   function reset_weather_info() {
     $("#weather-general").html("<i class='fa fa-question-circle'></i>");
   }
-  $.get("/homecontroller/weather/get_json", function (data) {
+  $.get("/homecontroller/weather/get_json?"+(new Date()).getTime(), function (data) {
     reset_weather_info();
     var current_time = moment().add(1, "hours");
     var today = current_time.format("YYYY-MM-DD");
