@@ -31,8 +31,8 @@ def iterate_all_destinations():
     else:
         message = min(times)
     redis_instance.publish("home:broadcast:ping", message)
-    time.sleep(1)
 
 if __name__ == '__main__':
     while True:
         iterate_all_destinations()
+        time.sleep(1)
