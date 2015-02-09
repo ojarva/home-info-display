@@ -8,14 +8,9 @@ var refresh_weather = function () {
   }
   $.get("/homecontroller/weather/get_json", function (data) {
     reset_weather_info();
-    var first_date = moment(), plus_one = false;
-    var hour = parseInt(first_date.format("H")) + 1;
-    if (hour >= 23) {
-      first_date = first_date.add(1, "days");
-      plus_one = true;
-      hour = 0;
-    }
-    var today = first_date.format("YYYY-MM-DD");
+    var current_time = moment().add(1, "hours");
+    var today = current_time.format("YYYY-MM-DD");
+    var hour = current_time.format("H")
     $.each(data, function () {
       var this_data = this;
       if (this.fields.date == today) {
