@@ -7,10 +7,15 @@ body {
 }
 
 #internet-connection {
-  font-size: 130%;
+  margin-top: 20px;
+  font-size: 180%;
 }
 
 #indoor-quality {
-  font-size: 130%;
+  margin-top: 20px;
+  font-size: 180%;
 }
-#server-
+#server-power {
+  margin-top: 20px;
+  font-size: 180%;
+}

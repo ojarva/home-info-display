@@ -9,14 +9,9 @@
 }
 
 .timer-description-button {
-  display: inline;
+  display: inline-block;
   margin: 15px;
   padding: 15px;
-}
-
-.timer-description-button-selected {
-  background-color: #aaa !important;
-  color: #000 !important;
 }
 
 .timer-description-button:nth-child(even) {
@@ -102,10 +97,6 @@
   font-size: 300%;
   height: 100%;
   text-align: center;
-}
-
-.timer-main {
-  /*  margin-right: 150px;*/
 }
 
 .timer-info {
