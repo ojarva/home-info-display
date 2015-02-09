@@ -31,6 +31,8 @@ $.ajaxSetup({
 
 function switchVisibleContent(elem) {
   $(".content-box").slideUp();
+  $("html, body").animate({ scrollTop: 0 }, "fast");
+  $("#navbar").collapse('hide');
   if (elem != "#main-content") {
     $(elem).slideDown();
   }
