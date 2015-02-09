@@ -8,6 +8,7 @@ from django.views.generic import View
 from ledcontroller import LedController
 import json
 import redis
+import time
 
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
@@ -53,14 +54,20 @@ class control_per_source(View):
                 led.set_color("red", self.TABLE)
                 led.set_brightness(0, self.TABLE)
             elif command == "morning-wakeup":
-                #TODO: fade up
+                #TODO: fade up slowly
                 led.white()
-                led.set_brightness(30)
+                run_display_command("on")
+                redis_instance.publish("home:broadcast:shutdown", "shutdown_cancel")
+                for a in range(0, 100, 5):
+                    led.set_brightness(a)
+                    time.sleep(0.5)
+
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
                 redis_instance.publish("home:broadcast:shutdown", "shutdown_delay")
             elif command == "on":
+                run_display_command("on")
                 redis_instance.publish("home:broadcast:shutdown", "shutdown_cancel")
                 led.white()
                 led.set_brightness(100)
