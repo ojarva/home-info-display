@@ -2,7 +2,7 @@ var IndoorAirQuality = function (options) {
   options = options || {};
   options.main_elem = options.main_elem || ".indoor-quality";
   options.update_interval = options.update_interval || 1800000;
-  options.update_timeout = options.update_timeout || 150000;
+  options.update_timeout = options.update_timeout || 360000;
   options.co2_green = options.co2_green || 1000;
   options.co2_error = options.co2_error || 1500;
 
@@ -34,14 +34,14 @@ var IndoorAirQuality = function (options) {
   }
 
   function fetch() {
-    $.get("/homecontroller/indoor_quality/co2", function (data) {
+    $.get("/homecontroller/indoor_quality/get_json/co2", function (data) {
       var latest = data[0];
       if (typeof latest == "undefined") {
         console.log("!!! No indoor air quality information available.");
         autoNoUpdates();
         return;
       }
-      var co2 = latest.fields.co2;
+      var co2 = latest.value;
       var co2_out;
       if (co2 < options.co2_green) {
         co2_out = "<i class='fa fa-check success-message'></i>";
@@ -54,19 +54,26 @@ var IndoorAirQuality = function (options) {
         output.removeClass("warning-message").addClass("error-message");
       }
       output.find(".status").html(co2_out);
-      output.find(".temperature").html(Math.round(parseFloat(latest.fields.temperature)*10)/10+"&deg;C");
       output.find(".co2").html(co2+"ppm");
-      $("#indoor-quality-modal .latest-indoor-co2").html(co2);
-      $("#indoor-quality-modal .latest-indoor-temperature").html((parseFloat(latest.fields.temperature)*10)/10);
       clearAutoNoUpdates();
       update_timeout = setTimeout(autoNoUpdates, options.update_timeout); // 2,5 minutes
       latest_data = data;
+    });
+    $.get("/homecontroller/indoor_quality/get_json/temperature", function (data) {
+      var latest = data[0];
+      if (typeof latest == "undefined") {
+        console.log("!!! No indoor air quality information available.");
+        autoNoUpdates();
+        return;
+      }
+      output.find(".temperature").html(Math.round(parseFloat(latest.value)*10)/10+"&deg;C");
     });
   }
 
   function drawGraph(data, options) {
     options = options || {};
     options.xlabel = options.xlabel || "Aika";
+    options.ylabel = options.ylabel || "Arvo";
 
     elem = $(options.selector);
 
@@ -112,7 +119,7 @@ var IndoorAirQuality = function (options) {
 
       processed_data = []
       $.each(data, function () {
-        processed_data.push([this.fields.timestamp, this.fields[options.field_selector]]);
+        processed_data.push([this.timestamp, this.value]);
       });
       processed_data.reverse();
       var myData = [{"key": options.key,
@@ -131,13 +138,9 @@ var IndoorAirQuality = function (options) {
     });
   }
 
-  function drawGraphs(data) {
-    drawGraph(data, {ylabel: "CO2 (ppm)", key: "CO2", selector: "#indoor-air-quality-co2-graph svg", field_selector: "co2"});
-    drawGraph(data, {ylabel: "Lämpötila (c)", key: "Temperature", selector: "#indoor-air-quality-temperature-graph svg", field_selector: "temperature"});
-  }
 
   function fetchTrend() {
-    $.get("/homecontroller/indoor_quality/co2/trend", function (data) {
+    $.get("/homecontroller/indoor_quality/get_json/co2/trend", function (data) {
       if (data.status == "no_data") {
         output.find(".trend").html("");
         return;
@@ -181,10 +184,33 @@ var IndoorAirQuality = function (options) {
     }
   }
 
+  function drawGraphs(data) {
+    drawGraph(data, {ylabel: "CO2 (ppm)", key: "CO2", selector: "#indoor-air-quality-co2-graph svg", field_selector: "co2"});
+    drawGraph(data, {ylabel: "Lämpötila (c)", key: "Temperature", selector: "#indoor-air-quality-temperature-graph svg", field_selector: "temperature"});
+  }
+
+  function refreshAllData() {
+    $.get("/homecontroller/indoor_quality/get_keys", function(data) {
+      $.each(data, function () {
+        refreshData(this);
+      });
+    });
+  }
+  function refreshData(key) {
+    var data_output = $(".indoor-air-"+key)
+    $.get("/homecontroller/indoor_quality/get_json/"+key, function(data) {
+      if (data[0]) {
+        data_output.find(".latest").html(data[0].value);
+      }
+      drawGraph(data, {key: key, selector: ".indoor-air-"+key+" svg"});
+    });
+  }
+
   this.fetch = fetch;
   this.getData = getData;
   this.fetchTrend = fetchTrend;
-  this.drawGraphs = drawGraphs;
+  this.refreshData = refreshData;
+  this.refreshAllData = refreshAllData;
   this.drawGraph = drawGraph;
   this.startInterval = startInterval;
   this.stopInterval = stopInterval;
@@ -196,8 +222,11 @@ $(document).ready(function () {
   indoor_air_quality.startInterval();
 
   $(".indoor-quality").on("click", function () {
-    indoor_air_quality.drawGraphs(indoor_air_quality.getData());
-    switchVisibleContent("#indoor-quality-modal");
+    $.get("/homecontroller/indoor_quality/get_modal", function (data) {
+      $("#indoor-quality-modal .air-quality-graph-content").html(data);
+      indoor_air_quality.refreshAllData()
+      switchVisibleContent("#indoor-quality-modal");
+    });
   });
 
   $("#indoor-quality-modal .close").on("click", function() {

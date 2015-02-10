@@ -8,6 +8,17 @@ import datetime
 import json
 import numpy
 import time
+from django.template import RequestContext
+from django.shortcuts import render_to_response
+
+class get_keys(View):
+    def get(self, request, *args, **kwargs):
+        return HttpResponse(json.dumps(settings.SENSOR_MAP.keys()), content_type="application/json")
+
+class get_modal(View):
+    def get(self, request, *args, **kwargs):
+        ret = {"graphs": settings.SENSOR_MAP}
+        return render_to_response("air_quality_graphs.html", ret, context_instance=RequestContext(request))
 
 class get_json(View):
     def get(self, request, *args, **kwargs):
