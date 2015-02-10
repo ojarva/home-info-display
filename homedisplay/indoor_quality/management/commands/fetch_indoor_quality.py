@@ -10,8 +10,7 @@ class Command(BaseCommand):
     help = 'Fetches indoor air quality information'
 
     def handle(self, *args, **options):
-        co2 = open(settings.CO2_FILE).read()
-        temperature = open(settings.TEMPERATURE_FILE).read()
-        a = IndoorQuality(co2=co2, temperature=temperature)
-        a.save()
-        r.publish("home:broadcast:indoor", "updated")
+        co2 = float(open(settings.CO2_FILE).read())
+        temperature = float(open(settings.TEMPERATURE_FILE).read())
+        r.rpush("air-quality-co2", co2)
+        r.rpush("air-quality-temperature", temperature)
