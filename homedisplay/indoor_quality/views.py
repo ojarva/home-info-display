@@ -14,7 +14,7 @@ class get_json(View):
         data = AirDataPoint.objects.filter(timepoint__timestamp__gte=now()-datetime.timedelta(hours=24)).filter(name=kwargs["sensor_id"]).select_related("timepoint")
         if len(data) < 5:
             return HttpResponse(json.dumps([]), content_type="application/json")
-        filtered_data = [data[0]]
+        filtered_data = [{"value": data[0].value, "timestamp": str(data[0].timepoint.timestamp)}]
         items = []
         for i, a in enumerate(data[1:]):
             if a.value is None:
