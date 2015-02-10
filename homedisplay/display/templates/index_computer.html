@@ -13,19 +13,9 @@
   <title>Koti</title>
   <link rel="shortcut icon" type="image/png" href="/homecontroller/static/img/favicon.png"/>
 
-  <link href="/homecontroller/static/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/homecontroller/static/jquery-ui/jquery-ui.css" rel="stylesheet">
-  <link href="/homecontroller/static/css/font-awesome.min.css" rel="stylesheet">
-  <link href="/homecontroller/static/css/nv.d3.css" rel="stylesheet">
-
-  <link href="/homecontroller/static/css/shared.css" rel="stylesheet">
   <link href="/homecontroller/static/css/custom_computer.css" rel="stylesheet">
-  <link href="/homecontroller/static/css/server_power.css" rel="stylesheet">
-  <link href="/homecontroller/static/css/electricity.css" rel="stylesheet">
-  <link href="/homecontroller/static/css/lightcontrol.css" rel="stylesheet">
-  <link href="/homecontroller/static/css/repeating_tasks.css" rel="stylesheet">
-  <link href="/homecontroller/static/css/timer.css" rel="stylesheet">
-  <link href="/homecontroller/static/css/timed_actions.css" rel="stylesheet">
+  {% include "snippets/common_css.html" %}
+
 </head>
 
 <body>
@@ -134,27 +124,11 @@
   </div> <!-- container -->
 
   {% include "snippets/js_base.html" %}
-
   <script src="/homecontroller/static/js/d3.min.js"></script>
   <script src="/homecontroller/static/js/nv.d3.js"></script>
-  <script src="/homecontroller/static/js/main.js"></script>
 
-  <script src="/homecontroller/static/js/reload.js"></script>
-  <script src="/homecontroller/static/js/shutdown.js"></script>
-  <script src="/homecontroller/static/js/clock.js"></script>
-  <script src="/homecontroller/static/js/timer.js"></script>
-  <script src="/homecontroller/static/js/custom_timers.js"></script>
-
-  <script src="/homecontroller/static/js/electricity.js"></script>
+  {% include "snippets/js_common.html" %}
   <script src="/homecontroller/static/js/custom_computer.js"></script>
-
-  <script src="/homecontroller/static/js/lightcontrol.js"></script>
-  <script src="/homecontroller/static/js/internet_connection.js"></script>
-  <script src="/homecontroller/static/js/repeating_tasks.js"></script>
-  <script src="/homecontroller/static/js/indoor_quality.js"></script>
-  <script src="/homecontroller/static/js/server_power.js"></script>
-  <script src="/homecontroller/static/js/birthdays.js"></script>
-  <script src="/homecontroller/static/js/timed_actions.js"></script>
 
 </body>
 </html>
