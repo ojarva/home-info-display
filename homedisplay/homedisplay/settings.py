@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'repeating_tasks',
     'server_power',
     'info_birthdays',
+    'control_timed_actions',
     'ws_sync',
     'django_extensions',
 )
