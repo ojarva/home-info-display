@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         co2 = open(settings.CO2_FILE).read()
-        temperature = open(settings.TEMPERATURE_FILE)
+        temperature = open(settings.TEMPERATURE_FILE).read()
         a = IndoorQuality(co2=co2, temperature=temperature)
         a.save()
         r.publish("home:broadcast:indoor", "updated")
