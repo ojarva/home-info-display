@@ -2,6 +2,6 @@ from django.conf.urls import patterns, include, url
 from . import views
 
 urlpatterns = patterns('',
-    (r'^co2$', views.get_co2.as_view()),
-    (r'^co2/trend$', views.get_co2_trend.as_view()),
+    (r'^get_json/(?P<sensor_id>(.+)$', views.get_json.as_view()),
+    (r'^get_json/(?P<sensor_id>(.+)/trend$', views.get_json_trend.as_view()),
 )

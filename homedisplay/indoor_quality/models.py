@@ -14,6 +14,10 @@ class AirDataPoint(models.Model):
     name = models.CharField(max_length=20)
     value = models.DecimalField(max_digits=7, decimal_places=2, null=True)
 
+    class Meta:
+        ordering = ["-timepoint__timestamp"]
+        get_latest_by = "-timepoint__timestamp"
+
     def __unicode__(self):
         return "%s - %s=%s" % (self.timepoint.timestamp, self.name, self.value)
 

@@ -1,5 +1,5 @@
 
-from .models import IndoorQuality
+from .models import AirDataPoint, AirTimePoint
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
@@ -10,42 +10,41 @@ import json
 import numpy
 import time
 
-class get_co2(View):
+class get_json(View):
     def get(self, request, *args, **kwargs):
-        data = IndoorQuality.objects.filter(timestamp__gte=now()-datetime.timedelta(hours=24))
+        data = AirDataPoint.objects.filter(timepoint__timestamp__gte=now()-datetime.timedelta(hours=24)).filter(name=kwargs["sensor_id"]).select_related("timepoint")
         if len(data) < 5:
             return HttpResponse(json.dumps([]), content_type="application/json")
         filtered_data = [data[0]]
-        co2_items = []
-        temp_items = []
+        items = []
         for i, a in enumerate(data[1:]):
-            co2_items.append(a.co2)
-            temp_items.append(a.temperature)
+            if a.value is None:
+                continue
+            items.append(a.value)
             if i < 5:
                 continue
             if i % 5 == 0:
-                a.co2 = round(float(sum(co2_items)) / len(co2_items))
-                a.temperature = round(float(sum(temp_items)) / len(co2_items), 1)
-                co2_items = []
-                temp_items = []
+                a.value = round(float(sum(items)) / len(items), 1)
+                items = []
                 filtered_data.append(a)
         return HttpResponse(serializers.serialize("json", filtered_data), content_type="application/json")
 
-class get_co2_trend(View):
+class get_json_trend(View):
     def get(self, request, *args, **kwargs):
-        data = IndoorQuality.objects.all()[0:30]
+        data = AirDataPoint.objects.filter(name=kwargs["sensor_id"]).select_related("timepoint")[0:30]
         if len(data) < 30:
             return HttpResponse(json.dumps({"status": "no_data"}), content_type="application/json")
-        co2 = []
+        items = []
         timestamps = []
         for item in data:
-            if item.co2:
-                co2.append(item.co2)
-                timestamps.append(time.mktime(item.timestamp.timetuple()))
-        co2.reverse()
+            if item.value is None:
+                continue
+            items.append(item.value)
+            timestamps.append(time.mktime(item.timepoint.timestamp.timetuple()))
+        items.reverse()
         timestamps.reverse()
         timestamps = map(lambda x: x - timestamps[0], timestamps)
-        co2 = numpy.array(co2)
+        items = numpy.array(items)
         timestamps = numpy.array(timestamps)
-        z = numpy.polyfit(timestamps, co2, 1)
+        z = numpy.polyfit(timestamps, items, 1)
         return HttpResponse(json.dumps({"delta": z[0], "base": z[1]}), content_type="application/json")
