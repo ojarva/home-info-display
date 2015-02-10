@@ -43,128 +43,122 @@
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav main-button-box">
-          <!--          <div class="center-content stripe-box animate-click action-button electricity"><i class="fa fa-bolt"></i></div>
-          <div class="center-content stripe-box animate-click action-button lights"><i class="fa fa-lightbulb-o"></i></div>
-          <div class="center-content stripe-box animate-click action-button repeating"><i class="fa fa-repeat"></i></div>
-          <div class="center-content stripe-box animate-click action-button birthdays"><i class="fa fa-birthday-cake"></i></div>
-        -->
-        <li class="active"><a href="#">Alkuun</a></li>
-        <li><a href="#"></a></li>
-        <li><a class="repeating" href="#"><i class="fa fa-repeat"></i></a></li>
-        <li><a class="lights" href="#"><i class="fa fa-lightbulb-o"></i></a></li>
-        <li><a class="electricity" href="#"><i class="fa fa-bolt"></i></a></li>
-        <li><a class="birthdays" href="#"><i class="fa fa-birthday-cake"></i></a></li>
-      </ul>
-    </div><!--/.nav-collapse -->
-  </div>
-</nav>
-<div class="container">
-  <a name="top"></a>
-  <div id="main-content">
-    <div class="row">
-      <div class="col-md-12">
-        <div id="lightcontrol" class="lightbox center-content">
-          <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="computer" data-command="off"><i class="fa fa-power-off"></i></div>
-          <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-on" data-source="computer" data-command="on"><i class="fa fa-sun-o"></i></div>
-          <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="computer" data-command="morning-sleeping"><i class="fa fa-bed"></i> <i class="fa fa-user"></i></div>
-          <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="computer" data-command="morning-wakeup"><i class="fa fa-bed"></i><i class="fa fa-arrow-up"></i></div>
-          <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-night" data-source="computer" data-command="night"><i class="fa fa-bed"></i></div>
-        </div>
-      </div>
+          <li class="active"><a href="#">Alkuun</a></li>
+          <li><a class="repeating" href="#"><i class="fa fa-repeat"></i></a></li>
+          <li><a class="lights" href="#"><i class="fa fa-lightbulb-o"></i></a></li>
+          <li><a class="electricity" href="#"><i class="fa fa-bolt"></i></a></li>
+          <li><a class="birthdays" href="#"><i class="fa fa-birthday-cake"></i></a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div id="timers">
-          {% include "snippets/add_timers.html" %}
-
-          <div id="stopclock-holder">
-          </div>
-
-          <div id="timer-holder">
+  </nav>
+  <div class="container">
+    <a name="top"></a>
+    <div id="main-content">
+      <div class="row">
+        <div class="col-md-12">
+          <div id="lightcontrol" class="lightbox center-content">
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="computer" data-command="off"><i class="fa fa-power-off"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-on" data-source="computer" data-command="on"><i class="fa fa-sun-o"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="computer" data-command="morning-sleeping"><i class="fa fa-bed"></i> <i class="fa fa-user"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="computer" data-command="morning-wakeup"><i class="fa fa-bed"></i><i class="fa fa-arrow-up"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-night" data-source="computer" data-command="night"><i class="fa fa-bed"></i></div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="lightbox" id="internet-connection">
-          {% include "snippets/internet_connection.html" %}
-        </div>
-        <div class="lightbox" id="indoor-quality">
-          {% include "snippets/indoor_quality.html" %}
-        </div>
-        <div class="lightbox" id="server-power">
-          {% include "snippets/server_power.html" %}
-        </div>
-      </div>
-    </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="timers">
+            {% include "snippets/add_timers.html" %}
 
-    <div class="row">
-      <div class="col-md-6">
-        <div class="item-box" id="today">
-          <div class="row">
-            <div class="col-md-12">
-              <h2>Tänään</h2>
+            <div id="stopclock-holder">
+            </div>
+
+            <div id="timer-holder">
             </div>
           </div>
-
-          <div class="list-repeating-tasks">
-            <ul class="fa-ul">
-            </ul>
-          </div>
-
-          <div class="list-birthdays">
-            <ul class="fa-ul">
-            </ul>
-          </div>
         </div>
-        <div class="item-box" id="tomorrow">
-          <div class="row">
-            <div class="col-md-12">
-              <h2>Huomenna</h2>
-            </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="item-box" id="internet-connection">
+            {% include "snippets/internet_connection.html" %}
           </div>
-
-          <div class="list-repeating-tasks">
-            <ul class="fa-ul">
-            </ul>
+          <div class="item-box" id="indoor-quality">
+            {% include "snippets/indoor_quality.html" %}
           </div>
-
-          <div class="list-birthdays">
-            <ul class="fa-ul">
-            </ul>
+          <div class="item-box" id="server-power">
+            {% include "snippets/server_power.html" %}
           </div>
         </div>
       </div>
-    </div>
-  </div> <!-- main-content -->
-  {% include "snippets/modal_dialogs.html" %}
-</div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="item-box" id="today">
+            <div class="row">
+              <div class="col-md-12">
+                <h2>Tänään</h2>
+              </div>
+            </div>
+
+            <div class="list-repeating-tasks">
+              <ul class="fa-ul">
+              </ul>
+            </div>
+
+            <div class="list-birthdays">
+              <ul class="fa-ul">
+              </ul>
+            </div>
+          </div>
+          <div class="item-box" id="tomorrow">
+            <div class="row">
+              <div class="col-md-12">
+                <h2>Huomenna</h2>
+              </div>
+            </div>
+
+            <div class="list-repeating-tasks">
+              <ul class="fa-ul">
+              </ul>
+            </div>
+
+            <div class="list-birthdays">
+              <ul class="fa-ul">
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> <!-- main-content -->
+    {% include "snippets/modal_dialogs.html" %}
+  </div> <!-- container -->
 
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-{% include "snippets/js_base.html" %}
+  <!-- Bootstrap core JavaScript
+  ================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+  {% include "snippets/js_base.html" %}
 
-<script src="/homecontroller/static/js/d3.min.js"></script>
-<script src="/homecontroller/static/js/nv.d3.js"></script>
-<script src="/homecontroller/static/js/main.js"></script>
+  <script src="/homecontroller/static/js/d3.min.js"></script>
+  <script src="/homecontroller/static/js/nv.d3.js"></script>
+  <script src="/homecontroller/static/js/main.js"></script>
 
-<script src="/homecontroller/static/js/reload.js"></script>
-<script src="/homecontroller/static/js/shutdown.js"></script>
-<script src="/homecontroller/static/js/clock.js"></script>
-<script src="/homecontroller/static/js/timer.js"></script>
-<script src="/homecontroller/static/js/custom_timers.js"></script>
+  <script src="/homecontroller/static/js/reload.js"></script>
+  <script src="/homecontroller/static/js/shutdown.js"></script>
+  <script src="/homecontroller/static/js/clock.js"></script>
+  <script src="/homecontroller/static/js/timer.js"></script>
+  <script src="/homecontroller/static/js/custom_timers.js"></script>
 
-<script src="/homecontroller/static/js/electricity.js"></script>
-<script src="/homecontroller/static/js/lightcontrol.js"></script>
-<script src="/homecontroller/static/js/internet_connection.js"></script>
-<script src="/homecontroller/static/js/repeating_tasks.js"></script>
-<script src="/homecontroller/static/js/indoor_quality.js"></script>
-<script src="/homecontroller/static/js/server_power.js"></script>
-<script src="/homecontroller/static/js/birthdays.js"></script>
-<script src="/homecontroller/static/js/timed_actions.js"></script>
+  <script src="/homecontroller/static/js/electricity.js"></script>
+  <script src="/homecontroller/static/js/lightcontrol.js"></script>
+  <script src="/homecontroller/static/js/internet_connection.js"></script>
+  <script src="/homecontroller/static/js/repeating_tasks.js"></script>
+  <script src="/homecontroller/static/js/indoor_quality.js"></script>
+  <script src="/homecontroller/static/js/server_power.js"></script>
+  <script src="/homecontroller/static/js/birthdays.js"></script>
+  <script src="/homecontroller/static/js/timed_actions.js"></script>
 
 </body>
 </html>
