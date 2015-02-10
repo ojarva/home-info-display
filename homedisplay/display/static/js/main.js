@@ -30,9 +30,9 @@ $.ajaxSetup({
 });
 
 function switchVisibleContent(elem) {
-  $(".content-box").slideUp();
-  $("html, body").animate({ scrollTop: 0 }, "fast");
-  $("#navbar").collapse('hide');
+  $(".content-box").slideUp(); // Hide all content boxes
+  $("html, body").animate({ scrollTop: 0 }, "fast"); // Always scroll to top.
+  $("#navbar").collapse('hide'); // Hide menu, if visible
   if (elem != "#main-content") {
     $(elem).slideDown();
   }

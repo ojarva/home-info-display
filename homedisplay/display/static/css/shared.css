@@ -93,6 +93,8 @@
 
 .close {
   color: #cccccc;
+  position: relative;
+  z-index: 10;
 }
 
 
