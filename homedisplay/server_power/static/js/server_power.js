@@ -69,6 +69,6 @@ var ServerPower = function(options) {
 var server_power;
 
 $(document).ready(function() {
-  server_power = new ServerPower({main_elem: "#server-power"});
+  server_power = new ServerPower({main_elem: ".server-power"});
   server_power.startInterval();
 });
