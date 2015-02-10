@@ -1,4 +1,3 @@
-
 from .models import AirDataPoint, AirTimePoint
 from django.conf import settings
 from django.core import serializers
@@ -26,8 +25,8 @@ class get_json(View):
             if i % 5 == 0:
                 a.value = round(float(sum(items)) / len(items), 1)
                 items = []
-                filtered_data.append(a)
-        return HttpResponse(serializers.serialize("json", filtered_data), content_type="application/json")
+                filtered_data.append({"value": a.value, "timestamp": str(a.timepoint.timestamp)})
+        return HttpResponse(json.dumps(filtered_data), content_type="application/json")
 
 class get_json_trend(View):
     def get(self, request, *args, **kwargs):
