@@ -94,7 +94,8 @@ $(document).ready(function() {
     switchVisibleContent("#main-content");
   });
   $("#confirm-repeating-task .yes").on("click", function () {
-    $.get("/homecontroller/repeating_tasks/done/"+$(this).parent().parent().parent().data("id"), function() {
+    var id = $("#confirm-repeating-task").data("id");
+    $.get("/homecontroller/repeating_tasks/done/"+id, function() {
       tasks_today.update();
       tasks_tomorrow.update();
       tasks_all.update();
@@ -102,7 +103,8 @@ $(document).ready(function() {
     switchVisibleContent("#main-content");
   });
   $("#confirm-repeating-task .snooze").on("click", function () {
-    $.get("/homecontroller/repeating_tasks/snooze/"+$(this).parent().parent().parent().data("id")+"/"+$(this).data("days"), function() {
+    var id = $("#confirm-repeating-task").data("id");
+    $.get("/homecontroller/repeating_tasks/snooze/"+id+"/"+$(this).data("days"), function() {
       tasks_today.update();
       tasks_tomorrow.update();
       tasks_all.update();

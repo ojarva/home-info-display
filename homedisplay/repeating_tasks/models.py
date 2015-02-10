@@ -23,6 +23,18 @@ class Task(models.Model):
             return None
         return now() - self.last_completed_at
 
+    def expires_at(self):
+        """ Returns datetime when this task expires """
+        if self.snooze:
+            return self.snooze
+        if self.last_completed_at is None:
+            return now()
+        exact_expiration = self.last_completed_at + datetime.timedelta(seconds=self.repeat_every_n_seconds)
+        if exact_expiration < now():
+            return now()
+        return exact_expiration
+
+
     def overdue_by(self):
         """ Returns overdue in datetime.timedelta.
             < 0 if task is not overdue
@@ -34,6 +46,7 @@ class Task(models.Model):
                 self.snooze = None
                 self.save()
             else:
+                print now(), self.snooze
                 return now() - self.snooze
         tsc = self.time_since_completion()
         if tsc is None:
@@ -67,7 +80,7 @@ class Task(models.Model):
             return False
 
     def __unicode__(self):
-        return u"%s (%sd)" % (self.title, (self.repeat_every_n_seconds / 86400))
+        return u"%s (%sd)" % (self.title, self.repeat_every_n_seconds / 86400)
 
 class TaskHistory(models.Model):
     class Meta:

@@ -18,16 +18,19 @@ class get_json(View):
         tasks = Task.objects.all()
         tasks = sorted(tasks, key=lambda t: t.overdue_by())
         tasks.reverse()
+        if date == "today":
+            day_starts = now().replace(hour=0, minute=0, second=0)
+            day_ends = now().replace(hour=23, minute=59, second=59)
+        elif date == "tomorrow":
+            day_starts = now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days=1)
+            day_ends = now().replace(hour=23, minute=59, second=59) + datetime.timedelta(days=1)
+        else:
+            day_starts = day_ends = None
+        print day_starts, day_ends
         for task in tasks:
-            if date == "today":
-                if task.overdue_by() >= datetime.timedelta(0):
-                    todo_tasks.append(task)
-            elif date == "tomorrow":
-                if task.last_completed_at is None:
-                    continue
-
-                overdue_by = task.overdue_by()
-                if overdue_by > datetime.timedelta(days=-1) and overdue_by < datetime.timedelta(0):
+            exp_at = task.expires_at()
+            if day_starts and day_ends:
+                if day_starts < exp_at and day_ends > exp_at:
                     todo_tasks.append(task)
             elif date == "all":
                 todo_tasks.append(task)
