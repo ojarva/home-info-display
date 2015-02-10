@@ -14,7 +14,7 @@ class get_json(View):
         data = AirDataPoint.objects.filter(timepoint__timestamp__gte=now()-datetime.timedelta(hours=24)).filter(name=kwargs["sensor_id"]).select_related("timepoint")
         if len(data) < 5:
             return HttpResponse(json.dumps([]), content_type="application/json")
-        filtered_data = [{"value": data[0].value, "timestamp": str(data[0].timepoint.timestamp)}]
+        filtered_data = [{"value": float(data[0].value), "timestamp": str(data[0].timepoint.timestamp)}]
         items = []
         for i, a in enumerate(data[1:]):
             if a.value is None:
@@ -25,7 +25,7 @@ class get_json(View):
             if i % 5 == 0:
                 a.value = round(float(sum(items)) / len(items), 1)
                 items = []
-                filtered_data.append({"value": a.value, "timestamp": str(a.timepoint.timestamp)})
+                filtered_data.append({"value": float(a.value), "timestamp": str(a.timepoint.timestamp)})
         return HttpResponse(json.dumps(filtered_data), content_type="application/json")
 
 class get_json_trend(View):
