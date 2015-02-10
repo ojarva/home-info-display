@@ -1,25 +1,8 @@
-"""
-Django settings for homedisplay project.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/1.7/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.7/ref/settings/
-"""
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '4bqp(_+0m5___@j!@kc-(4feec=wf=!d#9p@el5q)4$#g9qir4'
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 TEMPLATE_DEBUG = True
@@ -48,14 +31,12 @@ INSTALLED_APPS = (
     'server_power',
     'info_birthdays',
     'control_timed_actions',
-    'ws_sync',
     'django_extensions',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-#    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -73,11 +54,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'ws4redis.context_processors.default',
 )
 WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+#WSGI_APPLICATION = 'homedisplay.wsgi.application'
 
 
 ROOT_URLCONF = 'homedisplay.urls'
-
-#WSGI_APPLICATION = 'homedisplay.wsgi.application'
 
 WEBSOCKET_URL = '/ws/'
 WS4REDIS_EXPIRE = 0

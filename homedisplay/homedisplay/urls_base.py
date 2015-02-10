@@ -1,11 +1,9 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.views.generic.base import RedirectView
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'homedisplay.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
+    url(r'^$', RedirectView.as_view(url='/homecontroller/display/content/computer', permanent=False)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^lightcontrol/', include("control_milight.urls")),
     url(r'^display/', include("display.urls")),
