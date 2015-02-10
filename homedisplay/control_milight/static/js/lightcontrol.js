@@ -18,7 +18,7 @@ var LightControl = function() {
         source = main_elem.data("source");
         main_elem.animate({backgroundColor: "#ffffff"}, 250);
         main_elem.children().removeClass().addClass("fa fa-spinner fa-spin")
-        function animate_success(icon) {
+        function animate_completed(icon) {
           main_elem.data("running", false);
           main_elem.children().removeClass().addClass("fa fa-"+icon);
           var restore_classes = function () {
@@ -40,10 +40,10 @@ var LightControl = function() {
         $.ajax({
           url: url,
           success: function () {
-            animate_success("check");
+            animate_completed("check");
           },
           error: function () {
-            animate_success("times");
+            animate_completed("times");
           }
         });
       });

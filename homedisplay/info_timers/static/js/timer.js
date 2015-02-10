@@ -11,6 +11,7 @@ var Timer = function(parent_elem, options) {
   var this_elem;
   options = options || {};
   options.delay = options.delay || 100;
+  options.backend_interval = options.backend_interval || 5*60*1000;
 
   if (options.id) {
     setId(options.id);
@@ -173,8 +174,6 @@ var Timer = function(parent_elem, options) {
     }
   }
 
-
-
   function update() {
     if (!running) {
       return;
@@ -219,7 +218,7 @@ var Timer = function(parent_elem, options) {
     running = true;
     update(); // Immediately run first update
     update_interval = setInterval(update, options.delay);
-    backend_interval = setInterval(refreshFromBackend, 5*60*1000);
+    backend_interval = setInterval(refreshFromBackend, options.backend_interval);
     this_elem.data("start-timestamp", start_time);
     if (timer_type == "timer") {
       this_elem.data("end-timestamp", (start_time.getTime()/1000) + options.duration);
@@ -296,7 +295,11 @@ var Timer = function(parent_elem, options) {
   this.getId = getId;
 };
 
-var Timers = function() {
+var Timers = function(options) {
+  options = options || {};
+  options.update_interval = options.update_interval || 3 * 60 * 1000;
+  var timer_holder = options.timer_holder || "#timer-holder";
+  var stopclock_holder = options.stopclock_holder || "#stopclock-holder";
   var created_timer_items = [];
 
   function refreshFromServer() {
@@ -306,9 +309,9 @@ var Timers = function() {
         if (!hasTimer(id)) {
           if (this.fields.duration === null) {
           // if data.duration is not null, it's timer, not countdown
-            var timer_run = new Timer("#stopclock-holder", {"name": this.fields.name, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
+            var timer_run = new Timer(stopclock_holder, {"name": this.fields.name, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
           } else {
-            var timer_run = new Timer("#timer-holder", {"name": this.fields.name, "duration": this.fields.duration, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
+            var timer_run = new Timer(timer_holder, {"name": this.fields.name, "duration": this.fields.duration, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
           }
         }
       });
@@ -332,37 +335,37 @@ var Timers = function() {
   }
 
   function sortTimers() {
-    var items = $("#timer-holder .timer-item");
+    var items = $(timer_holder).find(".timer-item");
     items.detach().sort(function(a,b) {
       var astts = $(a).data('end-timestamp');
       var bstts = $(b).data('end-timestamp')
       return (astts > bstts) ? (astts > bstts) ? 1 : 0 : -1;
     });
-    $("#timer-holder").append(items);
+    $(timer_holder).append(items);
 
-    var items = $("#stopclock-holder .timer-item");
+    var items = $(stopclock_holder).find(".timer-item");
     items.detach().sort(function(a,b) {
       var astts = $(a).data('start-timestamp');
       var bstts = $(b).data('start-timestamp')
       return (astts > bstts) ? (astts > bstts) ? 1 : 0 : -1;
     });
-    $("#stopclock-holder").append(items);
+    $(stopclock_holder).append(items);
   }
 
   function onReceiveWS(message) {
     /* Ugly hack: WS message arrives before HTTP response.
        This leads to duplicate timer items, as originally
        added timer does not have ID yet. */
-   console.log("Global: received message", message);
+   console.log("Timer global: received message", message);
     setTimeout(function () {
       if (message.substring(0, 7) == "create-") {
         var data = JSON.parse(message.substring(7))[0];
         if (!hasTimer(data.pk)) {
           if (data.fields.duration === null) {
             // if data.duration is not null, it's timer, not countdown
-            var timer_run = new Timer("#stopclock-holder", {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
+            var timer_run = new Timer(stopclock_holder, {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
           } else {
-            var timer_run = new Timer("#timer-holder", {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
+            var timer_run = new Timer(timer_holder, {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
           }
         }
       }
@@ -376,14 +379,14 @@ var Timers = function() {
   });
 
   $(".add-timer").click(function () {
-    var timer_run = new Timer("#timer-holder", {"name": $(this).data("name"), "duration": $(this).data("duration")});
+    var timer_run = new Timer(timer_holder, {"name": $(this).data("name"), "duration": $(this).data("duration")});
   });
   $(".add-stopclock").click(function () {
-    var timer_run = new Timer("#stopclock-holder", {"name": "Ajastin"});
+    var timer_run = new Timer(stopclock_holder, {"name": "Ajastin"});
   });
 
   refreshFromServer();
-  setInterval(refreshFromServer, 3 * 60 * 1000);
+  setInterval(refreshFromServer, options.update_interval);
 
   this.sortTimers = sortTimers;
   this.hasTimer = hasTimer;
@@ -394,5 +397,5 @@ var Timers = function() {
 var timers;
 
 $(document).ready(function () {
-  timers = new Timers();
+  timers = new Timers({stopclock_holder: "#stopclock-holder", timer_holder: "#timer-holder"});
 });

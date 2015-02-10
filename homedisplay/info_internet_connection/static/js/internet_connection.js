@@ -1,5 +1,7 @@
-var ShowRealtimePing = function() {
-  var ws4redis, container = $("#internet-connection .ping"), invalid_timeout;
+var ShowRealtimePing = function(options) {
+  options = options || {};
+  options.invalid_timeout = options.invalid_timeout || 10000;
+  var ws4redis, container = $(options.output), invalid_timeout;
 
   function noUpdates(warning_class) {
     warning_class = warning_class || "error";
@@ -17,7 +19,7 @@ var ShowRealtimePing = function() {
       invalid_timeout = clearTimeout(invalid_timeout);
     }
     container.html("<i class='fa fa-check-circle success-message'></i> "+(Math.round(parseFloat(message)*10)/10)+"ms");
-    invalid_timeout = setTimeout(autoNoUpdates, 10000);
+    invalid_timeout = setTimeout(autoNoUpdates, options.invalid_timeout);
   }
 
   function onReceiveItemWS(message) {
@@ -44,8 +46,11 @@ var ShowRealtimePing = function() {
   this.stopInterval = stopInterval;
 }
 
-var RefreshInternet = function() {
-  var ws4redis, update_interval, update_timeout, output = $("#internet-connection");
+var RefreshInternet = function(options) {
+  options = options || {};
+  options.update_interval = options.update_interval || 1800000;
+  options.invalid_timeout = options.invalid_timeout || 5000;
+  var ws4redis, update_interval, update_timeout, output = $(".internet-connection");
 
   function setSignal(level) {
     output.find(".signal-bars div").removeClass("active").addClass("inactive");
@@ -93,7 +98,7 @@ var RefreshInternet = function() {
       output.find(".mode").html(data.fields.mode);
       setSignal(data.fields.signal);
       clearAutoNoUpdates();
-      update_timeout = setTimeout(autoNoUpdates, 150000); // 2,5 minutes
+      update_timeout = setTimeout(autoNoUpdates, options.invalid_timeout);
     });
   }
 
@@ -107,7 +112,7 @@ var RefreshInternet = function() {
   function startInterval() {
     stopInterval();
     update();
-    update_interval = setInterval(update, 1800000);
+    update_interval = setInterval(update, options.update_interval);
     ws4redis = new WS4Redis({
       uri: websocket_root+'internet?subscribe-broadcast&publish-broadcast&echo',
       receive_message: onReceiveItemWS,
@@ -131,12 +136,12 @@ var RefreshInternet = function() {
 
 var refresh_internet, show_pings;
 $(document).ready(function() {
-  refresh_internet = new RefreshInternet();
+  refresh_internet = new RefreshInternet({output: ".internet-connection"});
   refresh_internet.startInterval();
-  show_pings = new ShowRealtimePing();
+  show_pings = new ShowRealtimePing({output: ".internet-connection .ping"});
   show_pings.startInterval();
 
-  $("#internet-connection").on("click", function() {
+  $(".internet-connection").on("click", function() {
     var charts = [["idler", "Internet/idler_last_10800.png"],
                   ["Google", "Internet/google_last_10800.png"],
                   ["Saunalahti", "Internet/saunalahti_last_10800.png"],

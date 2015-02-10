@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,47 +5,42 @@
   <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
   <meta name="mobile-web-app-capable" content="yes">
   <title>Kitchen</title>
-  <!-- Bootstrap core CSS -->
   <link href="/homecontroller/static/css/bootstrap.min.css" rel="stylesheet">
   <link href="/homecontroller/static/jquery-ui/jquery-ui.min.css" rel="stylesheet">
   <link href="/homecontroller/static/css/font-awesome.css" rel="stylesheet">
 
   <link href="/homecontroller/static/css/custom_kitchen.css?4" rel="stylesheet">
   <link href="/homecontroller/static/css/timer.css" rel="stylesheet">
-
 </head>
 
 <body>
-  <audio src="alarm.mp3" width="0" height="0" id="sound1" enablejavascript="true"></audio>
   <div id="main-content">
     <div class="row">
       <div class="col-md-6">
-          <div class="row">
-            <div class="col-md-42 center-content" id="time-info">
-              <div class="foo center-content">
-                <div id="clock">--:--:--</div>
-                <div id="calendar">-----</div>
-              </div>
-            </div>
-        </div>
-          <div class="row light-controls">
-            <div class="col-md-3 center-content lightcontrol-btn lightcontrol-btn-large" data-group="3" data-command="off" id="lights-off">
-              <i class="fa fa-power-off"></i>
-            </div>
-            <div class="col-md-3 center-content lightcontrol-btn lightcontrol-btn-large" data-group="3" data-command="on" id="lights-full">
-              <i class="fa fa-sun-o"></i>
-            </div>
-            <div class="col-md-3 center-content lightcontrol-btn lightcontrol-btn-large" data-group="3" data-command="morning" id="lights-morning">
-              <i class="fa fa-moon-o"></i>
-            </div>
-            <div class="col-md-3 center-content lightcontrol-btn lightcontrol-btn-large" data-group="3" data-command="night" id="lights-night">
-              <i class="fa fa-bed"></i>
+        <div class="row">
+          <div class="col-md-12 center-content" id="time-info">
+            <div class="center-content">
+              <div id="clock">--:--:--</div>
+              <div id="calendar">-----</div>
             </div>
           </div>
+        </div>
+        <div class="row light-controls">
+          <div class="col-md-3 center-content lightcontrol-btn lightcontrol-btn-large" data-group="3" data-command="off" id="lights-off">
+            <i class="fa fa-power-off"></i>
+          </div>
+          <div class="col-md-3 center-content lightcontrol-btn lightcontrol-btn-large" data-group="3" data-command="on" id="lights-full">
+            <i class="fa fa-sun-o"></i>
+          </div>
+          <div class="col-md-3 center-content lightcontrol-btn lightcontrol-btn-large" data-group="3" data-command="morning" id="lights-morning">
+            <i class="fa fa-moon-o"></i>
+          </div>
+          <div class="col-md-3 center-content lightcontrol-btn lightcontrol-btn-large" data-group="3" data-command="night" id="lights-night">
+            <i class="fa fa-bed"></i>
+          </div>
+        </div>
       </div>
       <div class="col-md-6">
-
-
         <div id="timers">
           {% include "snippets/add_timers.html" %}
 
@@ -55,22 +49,20 @@
 
           <div id="timer-holder">
           </div>
-
-
         </div>
       </div>
 
     </div> <!-- row -->
   </div> <!-- main-content -->
   <div id="add-custom-timer" style="display:none">
-    {% include "snippets/add_custom_timer.html" %}
+    {% include "snippets/modals/add_custom_timer.html" %}
   </div> <!-- add-custom-timer -->
-    {% include "snippets/js_base.html" %}
+  {% include "snippets/js_base.html" %}
 
-    <script src="/homecontroller/static/js/main.js"></script>
-    <script src="/homecontroller/static/js/timer.js?2"></script>
-    <script src="/homecontroller/static/js/clock.js?2"></script>
-    <script src="/homecontroller/static/js/lightcontrol.js?1"></script>
-    <script src="/homecontroller/static/js/custom_timers.js"></script>
-  </body>
+  <script src="/homecontroller/static/js/main.js"></script>
+  <script src="/homecontroller/static/js/timer.js?2"></script>
+  <script src="/homecontroller/static/js/clock.js?2"></script>
+  <script src="/homecontroller/static/js/lightcontrol.js?1"></script>
+  <script src="/homecontroller/static/js/custom_timers.js"></script>
+</body>
 </html>

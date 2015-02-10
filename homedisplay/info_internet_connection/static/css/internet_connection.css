@@ -1,0 +1,44 @@
+.internet-connection .age {
+  font-size: 50%;
+}
+
+.internet-connection .signal-bars {
+  background-color: black;
+  margin: 0px;
+  padding: 0px;
+  display: inline-block;
+}
+.internet-connection .signal-bars div {
+  background-color: gray;
+  display:inline-block;
+  font-size: 70%;
+  width: 7px;
+  margin-bottom: 0px;
+  margin-top: 5px;
+  margin-left: 0px;
+  margin-right: 1px;
+  padding: 0px;
+}
+
+.internet-connection .signal-bars .active {
+  background-color: #07CF00;
+}
+.internet-connection .signal-bars .inactive {
+  background-color: gray;
+}
+
+.internet-connection .signal-bars .signal-1 {
+  height: 5px;
+}
+.internet-connection .signal-bars .signal-2 {
+  height: 12px;
+}
+.internet-connection .signal-bars .signal-3 {
+  height: 19px;
+}
+.internet-connection .signal-bars .signal-4 {
+  height: 27px;
+}
+.internet-connection .signal-bars .signal-5 {
+  height: 35px;
+}

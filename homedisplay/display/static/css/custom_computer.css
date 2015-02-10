@@ -6,16 +6,16 @@ body {
   padding-top: 60px !important;
 }
 
-#internet-connection {
+.internet-connection {
   margin-top: 20px;
   font-size: 180%;
 }
 
-#indoor-quality {
+.indoor-quality {
   margin-top: 20px;
   font-size: 180%;
 }
-#server-power {
+.server-power {
   margin-top: 20px;
   font-size: 180%;
 }

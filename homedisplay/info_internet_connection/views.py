@@ -7,7 +7,7 @@ from django.core import serializers
 import json
 
 from .models import Internet
-class info(View):
+class get_json(View):
     def get(self, request, *args, **kwargs):
         try:
             data = Internet.objects.latest()

@@ -1,4 +1,6 @@
-var RefreshWeather = function () {
+var RefreshWeather = function (options) {
+  options = options || {};
+  options.update_interval = options.update_interval || 1800000;
   var ws4redis, update_interval;
 
   function set_weather_info (elem, text, info) {
@@ -89,7 +91,7 @@ var RefreshWeather = function () {
   function startInterval() {
     stopInterval();
     update();
-    update_interval = setInterval(update, 1800000);
+    update_interval = setInterval(update, options.update_interval);
     ws4redis = new WS4Redis({
       uri: websocket_root+'weather?subscribe-broadcast&publish-broadcast&echo',
       receive_message: onReceiveItemWS,

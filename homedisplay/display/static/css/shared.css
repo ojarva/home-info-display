@@ -36,49 +36,6 @@
   margin: 0px;
 }
 
-
-.signal-bars {
-  background-color: black;
-  margin: 0px;
-  padding: 0px;
-  display: inline-block;
-}
-.signal-bars div {
-  background-color: gray;
-  display:inline-block;
-  font-size: 70%;
-  width: 7px;
-  margin-bottom: 0px;
-  margin-top: 5px;
-  margin-left: 0px;
-  margin-right: 1px;
-  padding: 0px;
-}
-
-.signal-bars .active {
-  background-color: #07CF00;
-}
-.signal-bars .inactive {
-  background-color: gray;
-}
-
-.signal-bars .signal-1 {
-  height: 5px;
-}
-.signal-bars .signal-2 {
-  height: 12px;
-}
-.signal-bars .signal-3 {
-  height: 19px;
-}
-.signal-bars .signal-4 {
-  height: 27px;
-}
-.signal-bars .signal-5 {
-  height: 35px;
-}
-
-
 .content-box {
   position: absolute;
   display: block;
@@ -91,10 +48,13 @@
   opacity: 0.92;
 }
 
-.close {
-  color: #cccccc;
+.content-box .close {
   position: relative;
   z-index: 10;
+}
+
+.close {
+  color: #cccccc;
 }
 
 
@@ -118,14 +78,9 @@
 }
 
 
-#indoor-quality .age {
+.indoor-quality .age {
   font-size: 50%;
 }
-
-#internet-connection .age {
-  font-size: 50%;
-}
-
 
 body {
 

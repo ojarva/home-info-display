@@ -8,17 +8,11 @@
   font-size: 400%;
   min-width: 130px;
 }
-
 .lightcontrol-btn-small {
   width: 130px;
   height: 80px;
   font-size: 200%;
 }
-
-.lightcontrol-headers td {
-  font-size: 165%;
-}
-
 .lights-off {
   background-color: #111111;
 }

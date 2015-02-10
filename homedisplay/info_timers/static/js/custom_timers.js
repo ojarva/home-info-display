@@ -1,5 +1,8 @@
-var CustomTimer = function() {
-  time_spec = {"h_s": 0, "h_l": 3, "m_s": 3, "m_l": 2, "s_s": 5, "s_l": 2};
+var CustomTimer = function(options) {
+  options = options || {};
+  var duration_elem = $(options.duration_elem);
+  var modal_elem = $(options.modal_elem);
+  var time_spec = {"h_s": 0, "h_l": 3, "m_s": 3, "m_l": 2, "s_s": 5, "s_l": 2};
 
   function zeroPad(num, places) {
     var zero = places - num.toString().length + 1;
@@ -11,11 +14,9 @@ var CustomTimer = function() {
     return d
   }
   function setTimeField(content, field, data) {
-    console.log(content, content.length);
     index_start = time_spec[field+"_s"];
     length = time_spec[field+"_l"];
     d = content.substring(0, index_start)+data+content.substring(index_start+length);
-    console.log(d, d.length);
     return d;
   }
   function nullTimeField(content, field) {
@@ -27,7 +28,7 @@ var CustomTimer = function() {
   }
 
   function processButton(content) {
-    var current_content = $("#custom-timer-duration").data("content");
+    var current_content = duration_elem.data("content");
     if (content.substring(0, 6) == "clear-") {
       // backspace
       var clear_field = content.substring(6);
@@ -91,13 +92,13 @@ var CustomTimer = function() {
       field_data = zeroPad(field_data, time_spec[field+"_l"]);
       current_content = setTimeField(current_content, field, field_data);
     }
-    $("#custom-timer-duration").data("content", current_content);
+    duration_elem.data("content", current_content);
     var c = current_content;
-    $("#custom-timer-duration").html(c.substr(0,3)+":"+c.substr(3,2)+":"+c.substr(5,2));
+    duration_elem.html(c.substr(0,3)+":"+c.substr(3,2)+":"+c.substr(5,2));
   }
 
   function submitTimer(name) {
-    var c = $("#custom-timer-duration").data("content");
+    var c = duration_elem.data("content");
     var seconds = parseInt(c.substr(0,3)) * 3600 + parseInt(c.substr(3,2)) * 60 + parseInt(c.substr(5,2));
     if (seconds == 0) {
       seconds = $(this).data("duration");
@@ -107,21 +108,19 @@ var CustomTimer = function() {
     } else {
       var timer_run = new Timer("#timer-holder", {"name": name, "duration": seconds});
     }
-    $("#close-add-custom-timer").click();
+    modal_elem.find(".close").click();
   }
 
   function closeCustomTimer() {
     var c = "0000000";
-    $("#custom-timer-duration").data("content", c);
-    $("#custom-timer-duration").html(c.substr(0,3)+":"+c.substr(3,2)+":"+c.substr(5,2));
+    duration_elem.data("content", c);
+    duration_elem.html(c.substr(0,3)+":"+c.substr(3,2)+":"+c.substr(5,2));
 
-    $("#add-custom-timer").hide();
-    $("#main-content").show();
+    switchVisibleContent("#main-content");
   }
 
   function showCustomTimer() {
-    $("#add-custom-timer").show();
-    $("#main-content").hide();
+    switchVisibleContent("#add-custom-timer");
   }
 
   this.showCustomTimer = showCustomTimer;
@@ -132,21 +131,21 @@ var CustomTimer = function() {
   this.getTimeField = getTimeField;
   this.nullTimeField = nullTimeField;
 
-  $(".add-timer-button").on("click", function () {
+  modal_elem.find(".add-timer-button").on("click", function () {
     var content = $(this).data("content").trim();
     processButton(content);
   });
 
-  $(".timer-description-button").on("click", function() {
+  modal_elem.find(".timer-description-button").on("click", function() {
     var name = $(this).html();
     submitTimer(name);
   });
 
-  $("#add-custom-timer-plus").on("click", function() {
+  $(".add-custom-timer-plus").on("click", function() {
     showCustomTimer();
   });
 
-  $("#close-add-custom-timer").on("click", function () {
+  modal_elem.find(".close").on("click", function () {
     closeCustomTimer();
   });
 };
@@ -154,5 +153,5 @@ var CustomTimer = function() {
 var custom_timer;
 
 $(document).ready(function () {
-  custom_timer = CustomTimer();
+  custom_timer = CustomTimer({duration_elem: "#custom-timer-duration", modal_elem: "#add-custom-timer"});
 });

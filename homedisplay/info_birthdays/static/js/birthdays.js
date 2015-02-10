@@ -7,7 +7,6 @@ var Birthdays = function(elem, use_date, options) {
   parent_elem = parent_elem.slice(current_item, 1);
 
   function onReceiveItemWS(message) {
-    console.log(message);
     if (message == "updated") {
       console.log("birthdays: backend requests update");
       update();

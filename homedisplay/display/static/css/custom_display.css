@@ -7,19 +7,19 @@
   font-weight: bold;
 }
 
-#indoor-quality {
+.indoor-quality {
   font-size: 200%;
 }
 
-#indoor-quality .status {
+.indoor-quality .status {
   font-size: 200%;
 }
 
-#internet-connection {
+.internet-connection {
   font-size: 200%;
 }
 
-#internet-connection .connected {
+.internet-connection .connected {
   font-size: 200%;
 }
 
