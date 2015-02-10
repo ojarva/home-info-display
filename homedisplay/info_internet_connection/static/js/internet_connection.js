@@ -49,7 +49,7 @@ var ShowRealtimePing = function(options) {
 var RefreshInternet = function(options) {
   options = options || {};
   options.update_interval = options.update_interval || 1800000;
-  options.invalid_timeout = options.invalid_timeout || 5000;
+  options.invalid_timeout = options.invalid_timeout || 150000;
   var ws4redis, update_interval, update_timeout, output = $(".internet-connection");
 
   function setSignal(level) {
