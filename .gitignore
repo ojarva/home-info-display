@@ -4,3 +4,5 @@ syntax: glob
 local_settings.py
 db.sqlite3
 homedisplay/static/
+develo/
+build/
