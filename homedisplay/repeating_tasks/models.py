@@ -52,7 +52,6 @@ class Task(models.Model):
                 self.snooze = None
                 self.save()
             else:
-                print now(), self.snooze
                 return now() - self.snooze
         tsc = self.time_since_completion()
         if tsc is None:
