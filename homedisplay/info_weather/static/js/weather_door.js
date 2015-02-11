@@ -11,7 +11,7 @@ var refresh_weather = function () {
     var current_time = moment().add(1, "hours");
     var today = current_time.format("YYYY-MM-DD");
     var hour = current_time.format("H")
-    $.each(data, function () {
+    $.each(data.hours, function () {
       var this_data = this;
       if (this.fields.date == today) {
         // Current day

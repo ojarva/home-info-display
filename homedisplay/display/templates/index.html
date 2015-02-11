@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head  profile="http://www.w3.org/2005/10/profile">
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Olli Jarva">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Olli Jarva">
 
-    <title>Info</title>
+  <title>Info</title>
 
-    <link rel="shortcut icon" type="image/png" href="/homecontroller/static/img/favicon.png"/>
-    <link href="/homecontroller/static/css/custom_display.css" rel="stylesheet">
-    {% include "snippets/common_css.html" %}
+  <link rel="shortcut icon" type="image/png" href="/homecontroller/static/img/favicon.png"/>
+  <link href="/homecontroller/static/css/custom_display.css" rel="stylesheet">
+  {% include "snippets/common_css.html" %}
 
 </head>
 
@@ -19,91 +19,116 @@
   <div class="custom-container">
     <div id="main-content">
       <div class="row">
-          <div class="col-md-4">
-              <div class="center-content darkbox">
-                  <div id="clock">--:--:--</div>
-                  <div id="calendar">-- --.-.</div>
-              </div>
-              <div id="lightcontrol" class="lightbox center-content">
-                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="display" data-command="off"><i class="fa fa-power-off"></i></div>
-                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-on" data-source="display" data-command="on"><i class="fa fa-sun-o"></i></div>
-                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="display" data-command="morning-sleeping"><i class="fa fa-bed"></i> <i class="fa fa-user"></i></div>
-                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="display" data-command="morning-all"><i class="fa fa-arrow-right"></i><i class="fa fa-bed"></i></div>
-                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-night" data-source="display" data-command="night"><i class="fa fa-bed"></i></div>
-              </div>
+        <div class="col-md-4">
+          <div class="center-content darkbox">
+            <div id="clock">--:--:--</div>
+            <div id="calendar">-- --.-.</div>
           </div>
-          <div class="col-md-4">
-            <div class="item-box internet-connection">
-              {% include "snippets/internet_connection.html" %}
-            </div>
-            <div class="item-box indoor-quality">
-              {% include "snippets/indoor_quality.html" %}
-            </div>
-            <div class="item-box server-power">
-              {% include "snippets/server_power.html" %}
-            </div>
-            <div id="timers">
-              {% include "snippets/add_timers.html" %}
-
-              <div id="stopclock-holder">
-              </div>
-
-              <div id="timer-holder">
-              </div>
-            </div>
+          <div class="lightbox center-content">
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="display" data-command="off"><i class="fa fa-power-off"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-on" data-source="display" data-command="on"><i class="fa fa-sun-o"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="display" data-command="morning-sleeping"><i class="fa fa-bed"></i> <i class="fa fa-user"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="display" data-command="morning-all"><i class="fa fa-arrow-right"></i><i class="fa fa-bed"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-night" data-source="display" data-command="night"><i class="fa fa-bed"></i></div>
           </div>
-          <div class="col-md-4">
+          <div class="timed-lightcontrol item-box light-box">
             <div class="row">
-              <div class="col-md-9">
-                <div class="item-box main-button-box">
-                  <div class="center-content stripe-box animate-click action-button electricity"><i class="fa fa-bolt"></i></div>
-                  <div class="center-content stripe-box animate-click action-button lights"><i class="fa fa-lightbulb-o"></i></div>
-                  <div class="center-content stripe-box animate-click action-button repeating"><i class="fa fa-repeat"></i></div>
-                  <div class="center-content stripe-box animate-click action-button birthdays"><i class="fa fa-birthday-cake"></i></div>
-                </div>
+              <div class="col-md-4 vertical-center">
+                <div class="animation-direction"><i class="fa fa-arrow-right"></i><i class="fa fa-bed"></i></div>
+                <div class="play-control"><span class="action-button animate-click"><i class="fa fa-stop"></i></span></div>
               </div>
-              <div class="col-md-3">
-                <div class="close" style="font-size: 600%"><i class="fa fa-power-off"></i></div>
+              <div class="col-md-4 center-content">
+                <span class="start-time-content">22:00</span>
+                <div class="time-control start-time"><div class="plus action-button animate-click"><i class="fa fa-plus"></i></div><div class="minus action-button animate-click"><i class="fa fa-minus"></i></div></div>
               </div>
-            </div>
-            <div class="item-box" id="today">
-              <div class="row">
-                <div class="col-md-12">
-                  <h2>Tänään</h2>
-                </div>
-              </div>
-              {% include "snippets/weather_info.html" %}
-
-              <div class="list-repeating-tasks">
-                <ul class="fa-ul">
-                </ul>
-              </div>
-
-              <div class="list-birthdays">
-                <ul class="fa-ul">
-                </ul>
+              <div class="col-md-4 center-content">
+                <span class="duration-content">+01:00</span>
+                <div class="time-control duration-time"><div class="plus action-button animate-click"><i class="fa fa-plus"></i></div><div class="minus action-button animate-click"><i class="fa fa-minus"></i></div></div>
               </div>
             </div>
-            <div class="item-box" id="tomorrow">
-              <div class="row">
-                <div class="col-md-12">
-                  <h2>Huomenna</h2>
+            <div class="row fading-progress hidden-xs hidden-sm">
+              <div class="col-md-12">
+                <div class='progress'>
+                  <div class='progress-bar' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width:80%'>
+                  </div>
                 </div>
-              </div>
-              {% include "snippets/weather_info.html" %}
-
-
-              <div class="list-repeating-tasks">
-                <ul class="fa-ul">
-                </ul>
-              </div>
-
-              <div class="list-birthdays">
-                <ul class="fa-ul">
-                </ul>
               </div>
             </div>
           </div>
+        </div>
+        <div class="col-md-4">
+          <div class="item-box internet-connection">
+            {% include "snippets/internet_connection.html" %}
+          </div>
+          <div class="item-box indoor-quality">
+            {% include "snippets/indoor_quality.html" %}
+          </div>
+          <div class="item-box server-power">
+            {% include "snippets/server_power.html" %}
+          </div>
+          <div id="timers">
+            {% include "snippets/add_timers.html" %}
+
+            <div id="stopclock-holder">
+            </div>
+
+            <div id="timer-holder">
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-9">
+              <div class="item-box main-button-box">
+                <div class="center-content stripe-box animate-click action-button electricity"><i class="fa fa-bolt"></i></div>
+                <div class="center-content stripe-box animate-click action-button lights"><i class="fa fa-lightbulb-o"></i></div>
+                <div class="center-content stripe-box animate-click action-button repeating"><i class="fa fa-repeat"></i></div>
+                <div class="center-content stripe-box animate-click action-button birthdays"><i class="fa fa-birthday-cake"></i></div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="close" style="font-size: 600%"><i class="fa fa-power-off"></i></div>
+            </div>
+          </div>
+          <div class="item-box" id="today">
+            <div class="row">
+              <div class="col-md-12">
+                <h2>Tänään</h2>
+              </div>
+            </div>
+            {% include "snippets/weather_info.html" %}
+
+            <div class="sun-info"></div>
+            <div class="list-repeating-tasks">
+              <ul class="fa-ul">
+              </ul>
+            </div>
+
+            <div class="list-birthdays">
+              <ul class="fa-ul">
+              </ul>
+            </div>
+          </div>
+          <div class="item-box" id="tomorrow">
+            <div class="row">
+              <div class="col-md-12">
+                <h2>Huomenna</h2>
+              </div>
+            </div>
+            {% include "snippets/weather_info.html" %}
+
+
+            <div class="list-repeating-tasks">
+              <ul class="fa-ul">
+              </ul>
+            </div>
+
+            <div class="list-birthdays">
+              <ul class="fa-ul">
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div> <!-- main-content -->

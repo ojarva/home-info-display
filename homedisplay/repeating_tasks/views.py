@@ -26,7 +26,6 @@ class get_json(View):
             day_ends = now().replace(hour=23, minute=59, second=59) + datetime.timedelta(days=1)
         else:
             day_starts = day_ends = None
-        print day_starts, day_ends
         for task in tasks:
             exp_at = task.expires_at()
             if day_starts and day_ends:

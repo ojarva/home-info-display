@@ -1,3 +1,39 @@
+.timed-lightcontrol {
+  font-size: 200%;
+}
+.timed-lightcontrol .animation-direction {
+  font-size: 100%;
+  display: inline;
+}
+.timed-lightcontrol .play-control {
+  font-size: 150%;
+  display: inline;
+}
+.timed-lightcontrol .time-control {
+  font-size
+}
+.timed-lightcontrol .action-button {
+  margin-top: 5px;
+  padding-top: 5px;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+.timed-lightcontrol .time-control .plus {
+  background-color: green;
+}
+.timed-lightcontrol .time-control .minus {
+  background-color: red;
+}
+
+.timed-lightcontrol .fading-progress {
+  padding-top: 10px;
+}
+
 .lightcontrol-btn {
   margin-left: 1px;
   margin-right: 1px;

@@ -8,6 +8,7 @@ import datetime
 import json
 import subprocess
 import time
+from astral import Astral
 from .models import Weather
 from django.core import serializers
 
@@ -35,8 +36,15 @@ def get_wind_readable(wind):
 class get_json(View):
     def get(self, request, *args, **kwargs):
         time_now = now()
-        forecast = json.loads(serializers.serialize("json", Weather.objects.filter(date__gte=time_now.date())))
-        for item in forecast:
+        forecast = {"hours": json.loads(serializers.serialize("json", Weather.objects.filter(date__gte=time_now.date())))}
+        for item in forecast["hours"]:
             item["fields"]["apparent_temperature"] = calculate_apparent_temperature(item["fields"]["temperature"], float(item["fields"]["wind_speed"]), item["fields"]["humidity"])
             item["fields"]["wind_speed_readable"] = get_wind_readable(float(item["fields"]["wind_speed"]))
+
+        sun_info = Astral()
+        sun_info.solar_depression = 'civil'
+        b = sun_info[settings.SUN_CITY].sun()
+        for k in b:
+            b[k] = unicode(b[k])
+        forecast["sun"] = b
         return HttpResponse(json.dumps(forecast), content_type="application/json")

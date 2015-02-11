@@ -10,3 +10,4 @@ manage_server_power>=0.0.1
 numpy
 django-websocket-redis
 hiredis>=0.1.4
+astral

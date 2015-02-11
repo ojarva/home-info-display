@@ -19,12 +19,12 @@ var RepeatingTasks = function(elem, use_date) {
         var overdue_by = "", diff;
         if (this.fields.last_completed_at) {
           diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
-          overdue_by = " ("+diff.fromNow()+")";
+          overdue_by = " (<span class='auto-fromnow-update' data-timestamp='"+diff+"'>"+diff.fromNow()+"</span>)";
         }
         if (this.fields.optional) {
           icon = "fa-question-circle";
         } else {
-          icon = "fa-times-circle";
+          icon = "fa-repeat";
         }
         parent_elem.append("<li class='repeating-task-mark-done' data-id='"+this.pk+"'><i class='fa-li fa "+icon+"'></i> <span class='task-title'>"+this.fields.title+"</span>"+overdue_by+"</li>");
       });
@@ -79,6 +79,7 @@ var RepeatingTasks = function(elem, use_date) {
   this.startInterval = startInterval;
   this.stopInterval = stopInterval;
   this.update = update;
+  this.clearTasks = clearTasks;
 }
 
 var tasks_today, tasks_tomorrow, tasks_all;

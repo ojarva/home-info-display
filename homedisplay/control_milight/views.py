@@ -1,5 +1,5 @@
 
-from .models import LightGroup
+from .models import LightGroup, LightAutomation
 from display.views import run_display_command
 from django.conf import settings
 from django.http import HttpResponseRedirect, HttpResponse
@@ -8,11 +8,12 @@ from django.views.generic import View
 from ledcontroller import LedController
 import json
 import redis
+from django.shortcuts import get_object_or_404, get_object_or_create
 import time
+from django.core import serializers
 
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
-
 
 def update_lightstate(group, brightness, color, on=True):
     if group == 0:
@@ -30,6 +31,18 @@ def update_lightstate(group, brightness, color, on=True):
     state.on = on
     state.save()
     return state
+
+class timed(View):
+    def get(self, request, *args, **kwargs):
+        action = kwargs.get("action")
+        command = kwargs.get("command")
+        start_time = None
+        duration = None # TODO
+        item, _ = LightAutomation.objects.get_or_create(action=action, defaults={"start_time": start_time, "duration": duration})
+        if command == "update":
+            pass # TODO
+            item.save()
+        return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 class control_per_source(View):
     BED = 1

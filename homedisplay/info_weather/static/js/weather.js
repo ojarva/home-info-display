@@ -38,7 +38,12 @@ var RefreshWeather = function (options) {
       } else if (hour < 23) {
         desired_hours[23] = {"this_elem": "#today .weather-2", "this_text": "Yö"};
       }
-      $.each(data, function () {
+      if (data.sun) {
+        sunrise = moment(data.sun.sunrise);
+        sunset = moment(data.sun.sunset);
+        $(".sun-info").html("<i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-up'></i> "+sunrise.format("HH:mm")+" (<span class='auto-fromnow-update' data-timestamp='"+sunrise+"'>"+sunrise.fromNow()+"</span>) <i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-down'></i> "+sunset.format("HH:mm")+" (<span class='auto-fromnow-update' data-timestamp='"+sunset+"'>"+sunset.fromNow()+"</span>)");
+      }
+      $.each(data.hours, function () {
         var set = false, this_text, this_elem, this_data = this;
         if (this.fields.date == today) {
           // Current day

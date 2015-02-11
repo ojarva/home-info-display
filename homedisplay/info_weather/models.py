@@ -19,4 +19,4 @@ class Weather(models.Model):
 
     wind_direction = models.TextField()
     wind_gust = models.TextField()
-    wind_speed = models.TextField()
+    wind_speed = models.TextField() # TODO: convert to NumberField.

@@ -38,7 +38,6 @@ function switchVisibleContent(elem) {
   }
 }
 
-
 $(document).ready(function() {
   $(".animate-click").each(function () {
     $(this).data("original-bg-color", $(this).css("background-color"));
@@ -46,4 +45,5 @@ $(document).ready(function() {
   $(".animate-click").on("click", function () {
     $(this).stop(true).css("background-color", $(this).data("original-bg-color")).effect("highlight", {color: "#ffffff"}, 500);
   });
+
 });

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 from django.utils.timezone import now
 import datetime
@@ -9,11 +11,15 @@ import redis
 r = redis.StrictRedis()
 
 class Task(models.Model):
-    title = models.TextField()
-    optional = models.NullBooleanField(default=False, null=True)
-    snooze = models.DateTimeField(null=True)
-    repeat_every_n_seconds = models.IntegerField()
-    last_completed_at = models.DateTimeField(null=True, blank=True)
+    title = models.TextField(verbose_name="Otsikko") #TODO: convert to CharField
+    optional = models.NullBooleanField(default=False, verbose_name="Optionaalinen", help_text="Kyllä, jos tarkoituksena on tarkistaa, eikä tehdä joka kerta.")
+    snooze = models.DateTimeField(null=True, blank=True)
+    repeat_every_n_seconds = models.IntegerField(verbose_name="Toista joka n:s sekunti", help_text="Toistoväli sekunteina")
+    last_completed_at = models.DateTimeField(null=True, blank=True, verbose_name="Edellinen valmistuminen", help_text="Edellinen kerta kun tehtävä on tehty")
+
+    class Meta:
+        verbose_name = "Toistuva tehtävä"
+        verbose_name_plural = "Toistuvat tehtävät"
 
     def time_since_completion(self):
         """ Returns datetime.timedelta for time since last completion.

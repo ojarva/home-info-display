@@ -44,3 +44,8 @@ class LightTransition(models.Model):
 
     def __unicode__(self):
         return "%s (%s): %s->%s" % (self.group.group_id, self.description, self.start_brightness, self.to_brightness)
+
+class LightAutomation(models.Model):
+    action = models.CharField(max_length=30)
+    start_time = models.TimeField()
+    duration = models.IntegerField()
