@@ -3,10 +3,11 @@
     {% for k,v in graphs.items %}
     {% if forloop.counter|divisibleby:2 %}
     <div class="indoor-air-{{ k }}">
-      <h3>{{ v }} (<span class="latest"></span>)</h3>
+      <h3>{{ v }} (<span class="latest"><i class="fa fa-spinner fa-pulse"></i></span>)</h3>
       <div class="graph">
         <svg style='height:200px'> </svg>
         <div style="display:none" class="data-error error-message"><i class="fa fa-times"></i> Ei tietoja</div>
+        <div style="display:none" class="spinner"><i class="fa fa-spinner fa-pulse"></i></div>
       </div>
     </div>
     {% endif %}
@@ -16,10 +17,11 @@
     {% for k,v in graphs.items %}
     {% if not forloop.counter|divisibleby:2 %}
     <div class="indoor-air-{{ k }}">
-      <h3>{{ v }} (<span class="latest"></span>)</h3>
+      <h3>{{ v }} (<span class="latest"><i class="fa fa-spinner fa-pulse"></i></span>)</h3>
       <div class="graph">
         <svg style='height:200px'> </svg>
         <div style="display:none" class="data-error error-message"><i class="fa fa-times"></i> Ei tietoja</div>
+        <div style="display:none" class="spinner"><i class="fa fa-spinner fa-pulse"></i></div>
       </div>
     </div>
     {% endif %}
