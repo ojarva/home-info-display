@@ -43,12 +43,12 @@ var LightControlTimed = function(options) {
     //TODO: update other components as well
     if (status) {
       // Running
-      startInterval();
       main.find(".play-control i").removeClass("fa-play").addClass("fa-stop");
+      startInterval();
     } else {
       // Stopped
-      stopInterval();
       main.find(".play-control i").removeClass("fa-stop").addClass("fa-play");
+      stopInterval();
     }
   }
 

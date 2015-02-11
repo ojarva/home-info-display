@@ -39,12 +39,18 @@ class timed(View):
         if command == "update":
             start_time = request.POST.get("start_time").split(":")
             duration = request.POST.get("duration").replace("+", "").split(":")
+            running = request.POST.get("running")
+            if running == "true":
+                running = True
+            else:
+                running = False
             start_time = datetime.time(int(start_time[0]), int(start_time[1]))
             duration = int(duration[0]) * 3600 + int(duration[1]) * 60
-            item, created = LightAutomation.objects.get_or_create(action=action, defaults={"start_time": start_time, "duration": duration})
+            item, created = LightAutomation.objects.get_or_create(action=action, defaults={"start_time": start_time, "duration": duration, "running": running})
             if not created:
                 item.start_time = start_time
                 item.duration = duration
+                item.running = running
 
             item.save()
             redis_instance.publish("home:broadcast:lightcontrol_timed", item.action)
