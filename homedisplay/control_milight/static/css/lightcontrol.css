@@ -23,6 +23,10 @@
   margin-right: 0px;
 }
 
+.timed-lightcontrol .time-left-container {
+  font-size: 50%;
+}
+
 .timed-lightcontrol .time-control .plus {
   background-color: green;
 }

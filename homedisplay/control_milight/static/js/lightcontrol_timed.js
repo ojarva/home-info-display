@@ -99,7 +99,6 @@ var LightControlTimed = function(options) {
   }
 
   function setPercent(percent) {
-    console.log(percent);
     main.find(".fading-progress .progress-bar").css("width", percent+"%");
   }
 
@@ -115,6 +114,11 @@ var LightControlTimed = function(options) {
     var time_diff = (moment() - parsed_time) / 1000;
     if (time_diff < duration_seconds) {
       setPercent(time_diff / duration_seconds * 100);
+      main.find(".time-left-container").slideDown();
+      main.find(".time-left").data("timestamp", end_time);
+      main.find(".time-left").html(end_time.fromNow());
+    } else {
+      main.find(".time-left-container").slideUp();
     }
   }
 
@@ -175,7 +179,9 @@ var LightControlTimed = function(options) {
 };
 
 
-var lightcontrol_timed;
+var lightcontrol_timed_evening,
+    lightcontrol_timed_morning;
 $(document).ready(function () {
-  lightcontrol_timed = new LightControlTimed({"elem": ".timed-lightcontrol"});
+  lightcontrol_timed_morning = new LightControlTimed({"elem": ".timed-lightcontrol-morning"});
+  lightcontrol_timed_evening = new LightControlTimed({"elem": ".timed-lightcontrol-evening"});
 });
