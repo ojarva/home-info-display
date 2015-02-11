@@ -10,6 +10,7 @@ from ledcontroller import LedController
 import json
 import redis
 import time
+import datetime
 
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
@@ -32,15 +33,30 @@ def update_lightstate(group, brightness, color, on=True):
     return state
 
 class timed(View):
+    def post(self, request, *args, **kwargs):
+        action = kwargs.get("action")
+        command = kwargs.get("command")
+        if command == "update":
+            start_time = request.POST.get("start_time").split(":")
+            duration = request.POST.get("duration").replace("+", "").split(":")
+            start_time = datetime.time(int(start_time[0]), int(start_time[1]))
+            duration = int(duration[0]) * 3600 + int(duration[1]) * 60
+            item, created = LightAutomation.objects.get_or_create(action=action, defaults={"start_time": start_time, "duration": duration})
+            if not created:
+                item.start_time = start_time
+                item.duration = duration
+
+            item.save()
+            redis_instance.publish("home:broadcast:lightcontrol_timed", item.action)
+        else:
+            item = get_object_or_404(LightAutomation, action=action)
+        return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
+
+
     def get(self, request, *args, **kwargs):
         action = kwargs.get("action")
         command = kwargs.get("command")
-        start_time = None
-        duration = None # TODO
-        item, _ = LightAutomation.objects.get_or_create(action=action, defaults={"start_time": start_time, "duration": duration})
-        if command == "update":
-            pass # TODO
-            item.save()
+        item = get_object_or_404(LightAutomation, action=action)
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 class control_per_source(View):

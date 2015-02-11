@@ -1,7 +1,7 @@
 from django.db import models
 from ledcontroller import LedController
 from django.conf import settings
-
+import datetime
 
 __all__ = ["LightGroup", "LightTransition"]
 
@@ -47,5 +47,26 @@ class LightTransition(models.Model):
 
 class LightAutomation(models.Model):
     action = models.CharField(max_length=30)
+    running = models.NullBooleanField(default=True)
     start_time = models.TimeField()
-    duration = models.IntegerField()
+    duration = models.IntegerField() # in seconds
+
+    @property
+    def end_datetime(self):
+        return self.start_datetime + datetime.timedelta(seconds=self.duration)
+
+    @property
+    def start_datetime(self):
+        return datetime.datetime.combine(datetime.date.today(), self.start_time)
+
+    def is_running(self, timestamp):
+        if self.start_time > timestamp.time():
+            return False
+        if timestamp > self.end_datetime:
+            return False
+        return True
+
+    def percent_done(self, timestamp):
+        if not self.is_running(timestamp):
+            return
+        return float((timestamp - self.start_datetime).total_seconds()) / self.duration
