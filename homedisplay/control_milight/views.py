@@ -1,16 +1,15 @@
-
 from .models import LightGroup, LightAutomation
 from display.views import run_display_command
 from django.conf import settings
+from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.views.generic import View
 from ledcontroller import LedController
 import json
 import redis
-from django.shortcuts import get_object_or_404, get_object_or_create
 import time
-from django.core import serializers
 
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
