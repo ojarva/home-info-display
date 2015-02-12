@@ -5,3 +5,18 @@
 .server-power .startup {
   background-color: #006600;
 }
+
+.server-power {
+  display: inline-block;
+}
+.genelec-power {
+  display: inline-block;
+}
+
+.genelec-power .shutdown {
+  background-color: #cc0000;
+}
+
+.genelec-power .startup {
+  background-color: #006600;
+}
