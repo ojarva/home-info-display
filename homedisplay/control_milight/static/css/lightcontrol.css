@@ -46,6 +46,7 @@
 }
 .lightcontrol-btn-large {
   height: 130px;
+  padding-top: 22px;
   font-size: 400%;
   min-width: 130px;
 }
