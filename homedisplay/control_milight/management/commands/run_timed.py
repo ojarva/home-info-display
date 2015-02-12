@@ -5,12 +5,15 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils.timezone import now
 from ledcontroller import LedController
 import datetime
+import redis
+
 
 class Command(BaseCommand):
     args = ''
     help = 'Run timed transitions'
 
     def handle(self, *args, **options):
+        redis_instance = redis.StrictRedis()
         led = LedController(settings.MILIGHT_IP)
         time = datetime.datetime.now()
         hour = datetime.time(time.hour, time.minute)

@@ -6,12 +6,13 @@
   display: inline;
 }
 .timed-lightcontrol .play-control {
-  font-size: 150%;
-  display: inline;
+  font-size: 200%;
+  display: inline-block;
+  float: right;
 }
 .timed-lightcontrol .time-control {
-  font-size
 }
+
 .timed-lightcontrol .action-button {
   margin-top: 5px;
   padding-top: 5px;
@@ -23,7 +24,7 @@
   margin-right: 0px;
 }
 
-.timed-lightcontrol .time-left-container {
+.timed-lightcontrol .time-left {
   font-size: 50%;
 }
 
