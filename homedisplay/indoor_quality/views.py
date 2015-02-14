@@ -33,7 +33,7 @@ class get_latest(View):
 
 class get_json(View):
     def get(self, request, *args, **kwargs):
-        items = redis_instance.lrange("air-storage-%s" % kwargs["sensor_id"], 0, 1)
+        items = redis_instance.lrange("air-storage-%s" % kwargs["sensor_id"], 0, -1)
         items.reverse()
         ret = ",".join(items)
         return HttpResponse("[%s]" % ret, content_type="application/json")
