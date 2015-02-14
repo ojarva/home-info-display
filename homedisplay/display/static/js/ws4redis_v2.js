@@ -18,7 +18,7 @@ function WS4Redis(options, $) {
 
   function connect(uri) {
     try {
-      console.log("Connecting to " + uri + " ...");
+//      console.log("Connecting to " + uri + " ...");
       deferred = $.Deferred();
       ws = new WebSocket(uri);
       ws.onopen = on_open;
@@ -47,7 +47,7 @@ function WS4Redis(options, $) {
   }
 
   function on_open() {
-    console.log('Connected!');
+    console.log("Connected to "+ws.url);
     timer_interval = 500;
     deferred.resolve();
     if (opts.heartbeat_msg && heartbeat_interval === null) {
@@ -60,7 +60,7 @@ function WS4Redis(options, $) {
     if (closed) {
       return;
     }
-    console.log("Connection closed!");
+    console.log("Connection to "+ws.url+"closed!");
     if (!timer) {
       // try to reconnect
       timer = setTimeout(function() {
