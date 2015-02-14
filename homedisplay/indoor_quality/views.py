@@ -49,7 +49,7 @@ class get_json_trend(View):
         for item in data:
             if item.value is None:
                 continue
-            items.append(item.value)
+            items.append(float(item.value))
             timestamps.append(time.mktime(item.timepoint.timestamp.timetuple()))
         items.reverse()
         timestamps.reverse()
