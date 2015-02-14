@@ -183,11 +183,6 @@ var IndoorAirQuality = function (options) {
     }
   }
 
-  function drawGraphs(data) {
-    drawGraph(data, {ylabel: "CO2 (ppm)", key: "CO2", selector: "#indoor-air-quality-co2-graph svg", field_selector: "co2"});
-    drawGraph(data, {ylabel: "Lämpötila (c)", key: "Temperature", selector: "#indoor-air-quality-temperature-graph svg", field_selector: "temperature"});
-  }
-
   function refreshAllData() {
     $.get("/homecontroller/indoor_quality/get_keys", function(data) {
       $.each(data, function () {
@@ -201,7 +196,7 @@ var IndoorAirQuality = function (options) {
     data_output.find(".spinner").show();
     $.get("/homecontroller/indoor_quality/get_json/"+key, function(data) {
       if (data[0]) {
-        data_output.find(".latest").html(data[0].value);
+        data_output.find(".latest").html(Math.round(data[0].value*10)/10);
       }
       data_output.find("svg").show();
       data_output.find(".spinner").hide();
