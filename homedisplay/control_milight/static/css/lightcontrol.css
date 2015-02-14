@@ -2,14 +2,17 @@
   font-size: 200%;
 }
 .timed-lightcontrol .animation-direction {
-  font-size: 100%;
-  display: inline;
+  font-size: 200%;
+  display: inline-block;
+  float: left;
 }
 .timed-lightcontrol .play-control {
   font-size: 200%;
   display: inline-block;
   float: right;
 }
+
+
 .timed-lightcontrol .time-control {
 }
 
