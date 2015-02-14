@@ -1,15 +1,18 @@
 from .models import AirDataPoint, AirTimePoint
 from django.conf import settings
 from django.core import serializers
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.utils.timezone import now
 from django.views.generic import View
 import datetime
 import json
 import numpy
+import redis
 import time
-from django.template import RequestContext
-from django.shortcuts import render_to_response
+
+redis_instance = redis.StrictRedis()
 
 class get_keys(View):
     def get(self, request, *args, **kwargs):
@@ -20,26 +23,23 @@ class get_modal(View):
         ret = {"graphs": settings.SENSOR_MAP}
         return render_to_response("air_quality_graphs.html", ret, context_instance=RequestContext(request))
 
+class get_latest(View):
+    def get(self, request, *args, **kwargs):
+        item = redis_instance.get("air-latest-%s" % kwargs["sensor_id"])
+        try:
+            return HttpResponse(json.dumps({"value": float(item)}), content_type="application/json")
+        except ValueError:
+            raise Http404
+
 class get_json(View):
     def get(self, request, *args, **kwargs):
-        data = AirDataPoint.objects.filter(timepoint__timestamp__gte=now()-datetime.timedelta(hours=24)).filter(name=kwargs["sensor_id"]).select_related("timepoint")
-        if len(data) < 5:
-            return HttpResponse(json.dumps([]), content_type="application/json")
-        filtered_data = [{"value": float(data[0].value), "timestamp": str(data[0].timepoint.timestamp)}]
-        items = []
-        for i, a in enumerate(data[1:]):
-            if a.value is None:
-                continue
-            items.append(a.value)
-            if i < 5:
-                continue
-            if i % 5 == 0:
-                a.value = round(float(sum(items)) / len(items), 1)
-                items = []
-                filtered_data.append({"value": float(a.value), "timestamp": str(a.timepoint.timestamp)})
-        return HttpResponse(json.dumps(filtered_data), content_type="application/json")
+        items = redis_instance.lrange("air-storage-%s" % kwargs["sensor_id"], 0, 1)
+        items.reverse()
+        ret = ",".join(items)
+        return HttpResponse("[%s]" % ret, content_type="application/json")
 
 class get_json_trend(View):
+    #TODO: implement this on top of redis
     def get(self, request, *args, **kwargs):
         data = AirDataPoint.objects.filter(name=kwargs["sensor_id"]).select_related("timepoint")[0:30]
         if len(data) < 30:
