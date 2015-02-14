@@ -96,15 +96,28 @@ var LightControlTimed = function(options) {
     var start_time = getStartTimeMoment();
     var end_time = getEndTimeMoment();
     var now = moment();
+    var verb;
     var content = main.find(".time-left");
     if (now < start_time) { // Not yet started
-      content.html("Alkaa "+start_time.fromNow());
+      verb = "Alkaa";
+      if (!getRunning()) {
+        verb = "Alkaisi";
+      }
+      content.html(verb+" "+start_time.fromNow());
     } else if (now > start_time && now < end_time) { // Currently running
-      content.html("Päättyy "+end_time.fromNow());
+      verb = "Päättyy";
+      if (!getRunning()) {
+        verb = "Päättyisi";
+      }
+      content.html(verb+" "+end_time.fromNow());
     } else {
       // Done for today.
       start_time.add(1, "days");
-      content.html("Alkaa "+start_time.fromNow());
+      verb = "Alkaa";
+      if (!getRunning()) {
+        verb = "Alkaisi";
+      }
+      content.html(verb+" "+start_time.fromNow());
     }
   }
 
