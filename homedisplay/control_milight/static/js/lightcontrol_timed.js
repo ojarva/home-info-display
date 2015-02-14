@@ -1,8 +1,11 @@
 var LightControlTimed = function(options) {
   options = options || {}
   options.update_interval = options.update_interval || 1000;
-  var main = $(options.elem),
-      ws4redis,
+  var main = $(options.elem);
+  if (main.length == 0) {
+    console.log("!!! Invalid selector for LightControlTimed: "+options.elem);
+  }
+  var ws4redis,
       action = main.data("action"),
       update_interval;
 
@@ -83,6 +86,7 @@ var LightControlTimed = function(options) {
   }
 
   function adjustStartTime(dir) {
+    // TODO: this is called too early, when data is not loaded yet.
     var start_time = getStartTimeMoment();
     if (dir == "plus") {
       start_time.add(15, "minutes");
