@@ -17,7 +17,7 @@ class AirDataPoint(models.Model):
         redis_latest_key = "air-latest-%s" % self.name
         redis_collect_key = "air-collect-%s" % self.name
         redis_storage_key = "air-storage-%s" % self.name
-        redis_instance.setex(redis_latest_key, self.value, 300)
+        redis_instance.setex(redis_latest_key, 300, self.value)
         redis_instance.lpush(redis_collect_key, self.value)
         if self.timepoint.timestamp.minute % 5 == 0:
             # Calculate average every five minutes
