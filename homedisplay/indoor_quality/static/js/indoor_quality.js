@@ -54,7 +54,7 @@ var IndoorAirQuality = function (options) {
         output.removeClass("warning-message").addClass("error-message");
       }
       output.find(".status").html(co2_out);
-      output.find(".co2").html(co2+"ppm");
+      output.find(".co2").html(Math.round(co2)+"ppm");
       clearAutoNoUpdates();
       update_timeout = setTimeout(autoNoUpdates, options.update_timeout); // 2,5 minutes
       latest_data = data;
