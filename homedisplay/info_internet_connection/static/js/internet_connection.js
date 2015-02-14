@@ -23,7 +23,6 @@ var ShowRealtimePing = function(options) {
   }
 
   function onReceiveItemWS(message) {
-    console.log("ping: backend requests update");
     update(message);
   }
 

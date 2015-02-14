@@ -35,7 +35,7 @@ var IndoorAirQuality = function (options) {
 
   function fetch() {
     $.get("/homecontroller/indoor_quality/get_latest/co2", function (data) {
-      if (typeof latest == "undefined") {
+      if (typeof data == "undefined") {
         console.log("!!! No indoor air quality information available.");
         autoNoUpdates();
         return;
@@ -59,12 +59,12 @@ var IndoorAirQuality = function (options) {
       latest_data = data;
     });
     $.get("/homecontroller/indoor_quality/get_latest/temperature", function (data) {
-      var temperature = data.value;
-      if (typeof latest == "undefined") {
+      if (typeof data == "undefined") {
         console.log("!!! No indoor air quality information available.");
         autoNoUpdates();
         return;
       }
+      var temperature = data.value;
       output.find(".temperature").html(Math.round(parseFloat(temperature)*10)/10+"&deg;C");
     });
   }

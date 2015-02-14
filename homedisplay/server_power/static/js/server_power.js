@@ -26,7 +26,6 @@ var ServerPower = function(options) {
   }
 
   function onReceiveItemWS(message) {
-    console.log("server_power: backend requests update");
     setStatus(message);
   }
 
