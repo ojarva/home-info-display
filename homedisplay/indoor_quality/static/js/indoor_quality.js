@@ -229,6 +229,7 @@ $(document).ready(function () {
   });
 
   $("#indoor-quality-modal .close").on("click", function() {
+    $("#indoor-quality-modal .air-quality-graph-content").children().remove();
     switchVisibleContent("#main-content");
   });
 });
