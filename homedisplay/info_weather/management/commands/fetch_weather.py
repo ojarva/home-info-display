@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from info_weather.models import Weather
+from info_weather.views import get_weather_data
 import datetime
 import json
 import redis
@@ -27,4 +28,4 @@ class Command(BaseCommand):
             a = Weather(date=timestamp, hour=int(timestamp.strftime("%H")), icon=hour["icon"], ppcp=int(hour["ppcp"]), dewpoint=int(hour["dewp"]), feels_like=int(hour["flik"]), humidity=int(hour["hmid"]), temperature=int(hour["tmp"]), description=hour["t"], wind_direction=hour["wind"]["t"], wind_gust=hour["wind"]["gust"], wind_speed=hour["wind"]["s"])
             a.save()
 #            self.stdout.write("Saved %s" % timestamp)
-        redis_instance.publish("home:broadcast:weather", "updated")
+        redis_instance.publish("home:broadcast:weather", json.dumps(get_weather_data()))
