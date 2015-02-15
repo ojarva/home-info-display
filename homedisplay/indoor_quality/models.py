@@ -34,14 +34,14 @@ class AirDataPoint(models.Model):
             redis_instance.delete(redis_collect_key)
             final_values = []
             for item in old_values:
-              try:
-                final_values.append(float(item))
-              except ValueError:
-                pass
+                try:
+                    final_values.append(float(item))
+                except (ValueError, TypeError):
+                    pass
             if len(final_values) > 0:
-              value = float(sum(final_values)) / len(final_values)
+                value = float(sum(final_values)) / len(final_values)
             else:
-              value = None
+                value = None
 
             redis_instance.lpush(redis_storage_key, json.dumps({"timestamp": str(self.timepoint.timestamp), "value": value}))
             redis_instance.ltrim(redis_storage_key, 0, 288)

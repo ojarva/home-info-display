@@ -28,7 +28,7 @@ class get_latest(View):
         item = redis_instance.get("air-latest-%s" % kwargs["sensor_id"])
         try:
             return HttpResponse(json.dumps({"value": float(item)}), content_type="application/json")
-        except ValueError:
+        except (ValueError, TypeError):
             raise Http404
 
 class get_json(View):
