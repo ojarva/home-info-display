@@ -27,4 +27,5 @@ class Command(BaseCommand):
             elif item.action == "morning":
                 print "Setting morning brightness to", ((percent_done)*100)
                 led.set_brightness(int((percent_done)*100))
+                led.white()
 #            update_lightstate(transition.group.group_id, transition.to_brightness, transition.to_color)
