@@ -165,6 +165,7 @@ var IndoorAirQuality = function (options) {
     stopInterval();
     update();
     update_interval = setInterval(update, options.update_interval);
+    update_timeout = setTimeout(autoNoUpdates, 5000);
     ws4redis = new WS4Redis({
       uri: websocket_root+'indoor?subscribe-broadcast&publish-broadcast&echo',
       receive_message: onReceiveItemWS,
