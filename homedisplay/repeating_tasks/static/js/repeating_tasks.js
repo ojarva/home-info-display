@@ -6,55 +6,49 @@ var RepeatingTasks = function(elem, use_date) {
   }
 
   function onReceiveItemWS(message) {
-    if (message == "updated") {
+    try {
+      data = JSON.parse(message);
+      processData(data[this_date]);
+    } catch (e) {
       console.log("repeating tasks: backend requests update");
       update();
     }
   }
 
-  function update() {
-    $.get("/homecontroller/repeating_tasks/get_json/"+this_date, function(data) {
-      clearTasks();
-      $.each(data, function() {
-        var overdue_by = "", diff;
-        if (this.fields.last_completed_at) {
-          diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
-          overdue_by = " (<span class='auto-fromnow-update' data-timestamp='"+diff+"'>"+diff.fromNow()+"</span>)";
-        }
-        if (this.fields.optional) {
-          icon = "fa-question-circle";
-        } else {
-          icon = "fa-repeat";
-        }
-        parent_elem.append("<li class='repeating-task-mark-done' data-id='"+this.pk+"'><i class='fa-li fa "+icon+"'></i> <span class='task-title'>"+this.fields.title+"</span>"+overdue_by+"</li>");
-      });
-      parent_elem.find(".repeating-task-mark-done").on("click", function() {
-        var this_elem = $(this);
-        var id = this_elem.data("id");
-        $("#confirm-repeating-task").data("id", id);
-        $("#confirm-repeating-task .task-title").html(this_elem.find(".task-title").html());
-        switchVisibleContent("#confirm-repeating-task");
-      });
-
+  function processData(data) {
+    clearTasks();
+    $.each(data, function() {
+      var overdue_by = "", diff;
+      if (this.fields.last_completed_at) {
+        diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
+        overdue_by = " (<span class='auto-fromnow-update' data-timestamp='"+diff+"'>"+diff.fromNow()+"</span>)";
+      }
+      if (this.fields.optional) {
+        icon = "fa-question-circle";
+      } else {
+        icon = "fa-repeat";
+      }
+      parent_elem.append("<li class='repeating-task-mark-done' data-id='"+this.pk+"'><i class='fa-li fa "+icon+"'></i> <span class='task-title'>"+this.fields.title+"</span>"+overdue_by+"</li>");
+    });
+    parent_elem.find(".repeating-task-mark-done").on("click", function() {
+      var this_elem = $(this);
+      var id = this_elem.data("id");
+      $("#confirm-repeating-task").data("id", id);
+      $("#confirm-repeating-task .task-title").html(this_elem.find(".task-title").html());
+      switchVisibleContent("#confirm-repeating-task");
     });
   }
 
-  function runInterval() {
-    update_interval = setInterval(update, 1800000); // 30min
+  function update() {
+    $.get("/homecontroller/repeating_tasks/get_json/"+this_date, function(data) {
+      processData(data);
+    });
   }
 
   function startInterval() {
     stopInterval();
     update();
-    var now = new Date(), minutes, wait_time;
-    minutes = now.getMinutes();
-    // Sync intervals to run at 00:00:30 and 00:30:30
-    if (minutes > 31) {
-      wait_time = (61 - minutes) * 60 * 1000 - (30 * 1000);
-    } else {
-      wait_time = (31 - minutes) * 60 * 1000 - (30 * 1000);
-    }
-    wait_sync = setTimeout(runInterval, wait_time);
+    update_interval = setInterval(update, 1000 * 60 * 120);
     ws4redis = new WS4Redis({
       uri: websocket_root+'repeating_tasks?subscribe-broadcast&publish-broadcast&echo',
       receive_message: onReceiveItemWS,
@@ -63,9 +57,6 @@ var RepeatingTasks = function(elem, use_date) {
   }
 
   function stopInterval() {
-    if (wait_sync) {
-      wait_sync = clearTimeout(wait_sync);
-    }
     if (update_interval) {
       update_interval = clearInterval(update_interval);
     }
@@ -97,18 +88,12 @@ $(document).ready(function() {
   $("#confirm-repeating-task .yes").on("click", function () {
     var id = $("#confirm-repeating-task").data("id");
     $.get("/homecontroller/repeating_tasks/done/"+id, function() {
-      tasks_today.update();
-      tasks_tomorrow.update();
-      tasks_all.update();
     });
     switchVisibleContent("#main-content");
   });
   $("#confirm-repeating-task .snooze").on("click", function () {
     var id = $("#confirm-repeating-task").data("id");
     $.get("/homecontroller/repeating_tasks/snooze/"+id+"/"+$(this).data("days"), function() {
-      tasks_today.update();
-      tasks_tomorrow.update();
-      tasks_all.update();
     });
     switchVisibleContent("#main-content");
   });

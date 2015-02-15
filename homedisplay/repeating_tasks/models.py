@@ -3,12 +3,44 @@
 from django.db import models
 from django.utils.timezone import now
 import datetime
-from django.db.models.signals import pre_delete
+from django.db.models.signals import post_delete
 from django.db.models.signals import post_save
-
+import json
 from django.dispatch import receiver
 import redis
+from django.core import serializers
+
 r = redis.StrictRedis()
+
+
+def get_repeating_data(date):
+    todo_tasks = []
+    tasks = Task.objects.all()
+    tasks = sorted(tasks, key=lambda t: t.overdue_by())
+    tasks.reverse()
+    if date == "today":
+        day_starts = now().replace(hour=0, minute=0, second=0)
+        day_ends = now().replace(hour=23, minute=59, second=59)
+    elif date == "tomorrow":
+        day_starts = now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days=1)
+        day_ends = now().replace(hour=23, minute=59, second=59) + datetime.timedelta(days=1)
+    else:
+        day_starts = day_ends = None
+    for task in tasks:
+        exp_at = task.expires_at()
+        if day_starts and day_ends:
+            if day_starts < exp_at and day_ends > exp_at:
+                todo_tasks.append(task)
+        elif date == "all":
+            todo_tasks.append(task)
+    todo_tasks = sorted(todo_tasks, key=lambda t: t.optional)
+    return todo_tasks
+
+def get_all_repeating_data():
+    data = {}
+    for spec in ("today", "tomorrow", "all"):
+        data[spec] = json.loads(serializers.serialize("json", get_repeating_data(spec)))
+    return data
 
 class Task(models.Model):
     title = models.TextField(verbose_name="Otsikko") #TODO: convert to CharField
@@ -94,10 +126,10 @@ class TaskHistory(models.Model):
     task = models.ForeignKey("Task")
     completed_at = models.DateTimeField(null=True)
 
-@receiver(pre_delete, sender=Task, dispatch_uid='task_delete_signal')
+@receiver(post_delete, sender=Task, dispatch_uid='task_delete_signal')
 def publish_task_deleted(sender, instance, using, **kwargs):
-    r.publish("home:broadcast:repeating_tasks", "updated")
+    r.publish("home:broadcast:repeating_tasks", json.dumps(get_all_repeating_data()))
 
 @receiver(post_save, sender=Task, dispatch_uid="task_saved_signal")
 def publish_task_saved(sender, instance, *args, **kwargs):
-    r.publish("home:broadcast:repeating_tasks", "updated")
+    r.publish("home:broadcast:repeating_tasks", json.dumps(get_all_repeating_data()))
