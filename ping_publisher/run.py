@@ -1,38 +1,48 @@
-import time
-import subprocess
 from local_settings import *
+import re
 import redis
+import subprocess
+import time
 
-redis_instance = redis.StrictRedis()
+class PingRunner(object):
+    PARSER = re.compile(".*: \[([0-9]+)\], .*bytes, ([0-9\.]+) ms.*")
 
-def iterate_all_destinations():
+    def __init__(self):
+        self.redis_instance = redis.StrictRedis()
+        self.counter = 0
+        self.current_responses = []
 
-    times = []
+    @classmethod
+    def parse_ping_output(cls, line):
+        match = cls.PARSER.match(line)
+        if match is None:
+            return
+        counter = match.group(1)
+        response = float(match.group(2))
+        return (counter, response)
 
-    for dest in DESTINATIONS:
-        # TODO: different parameters for Linux
-        p = subprocess.Popen(["ping", "-c1", "-t2", dest], stdout=subprocess.PIPE)
-        p.wait()
-        (output, _) = p.communicate()
-        if p.returncode != 0:
-            continue
-        output = output.split("\n")
-        for line in output:
-            if "bytes from" in line:
-                line = line.split(" ")
-                for item in line:
-                    if item.startswith("time="):
-                        item = item.split("=")
-                        times.append(float(item[1]))
+    def run(self):
+        cmd = ["fping", "-l", "-e"]
+        cmd += DESTINATIONS
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=1)
+        for line in iter(p.stdout.readline, b''):
+            (counter, response) = self.parse_ping_output(line)
+            self.current_responses.append(response)
+            if counter != self.counter:
+                if len(self.current_responses) == 0:
+                    message = "no_pings"
+                else:
+                    message = min(self.current_responses)
+                self.current_responses = []
+                self.counter = counter
+                print "broadcasting", message
+                self.redis_instance.publish("home:broadcast:ping", message)
 
-    message = None
-    if len(times) == 0:
-        message = "no_pings"
-    else:
-        message = min(times)
-    redis_instance.publish("home:broadcast:ping", message)
+        p.communicate()
+
+def main():
+    pr = PingRunner()
+    pr.run()
 
 if __name__ == '__main__':
-    while True:
-        iterate_all_destinations()
-        time.sleep(1)
+    main()
