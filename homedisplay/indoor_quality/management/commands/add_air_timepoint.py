@@ -1,3 +1,8 @@
+"""
+This command will create new air quality timepoint and
+average all per-sensor information from redis.
+"""
+
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.timezone import now

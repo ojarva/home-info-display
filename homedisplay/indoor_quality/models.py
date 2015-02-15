@@ -5,6 +5,15 @@ import json
 redis_instance = redis.StrictRedis()
 
 class AirDataPoint(models.Model):
+    """ This represents a single sensor datapoint.
+        Timestamps for readings are syncronized with
+        AirTimePoint models. AirTimePoint rows should/could
+        be created with add_air_timepoint management command.
+
+        save() will also store latest reading and automatically
+        calculate 5min aggregates to redis. These readings are
+        used by nvd3 graphs.
+    """
     timepoint = models.ForeignKey("AirTimePoint")
     name = models.CharField(max_length=20)
     value = models.DecimalField(max_digits=7, decimal_places=2, null=True)
@@ -42,6 +51,11 @@ class AirDataPoint(models.Model):
         return "%s - %s=%s" % (self.timepoint.timestamp, self.name, self.value)
 
 class AirTimePoint(models.Model):
+    """ This represents syncronized time point for each sensor's data.
+        New TimePoints should be created regularly - i.e. with cron -
+        using add_air_timepoint management command.
+    """
+
     class Meta:
         ordering = ["-timestamp"]
         get_latest_by = "-timestamp"
