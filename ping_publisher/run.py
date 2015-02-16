@@ -1,4 +1,5 @@
 from local_settings import *
+from setproctitle import setproctitle
 import re
 import redis
 import subprocess
@@ -41,6 +42,7 @@ class PingRunner(object):
         p.communicate()
 
 def main():
+    setproctitle("ping_publisher: run")
     pr = PingRunner()
     pr.run()
 
