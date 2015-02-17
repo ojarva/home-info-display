@@ -21,10 +21,10 @@ class Command(BaseCommand):
             if not item.is_running(time):
                 continue
             percent_done = item.percent_done(time)
-            if item.action == "evening":
+            if item.action == "evening" or item.action == "evening-weekend":
                 print "Setting evening brightness to", ((1-percent_done)*100)
                 led.set_brightness(int((1-percent_done)*100))
-            elif item.action == "morning":
+            elif item.action == "morning" or item.action == "morning-weekend":
                 print "Setting morning brightness to", ((percent_done)*100)
                 led.set_brightness(int((percent_done)*100))
                 led.white()
