@@ -1,6 +1,7 @@
 var LightControlTimed = function(options) {
   options = options || {}
   options.update_interval = options.update_interval || 1000;
+  var active_days;
   var main = $(options.elem);
   if (main.length == 0) {
     console.log("!!! Invalid selector for LightControlTimed: "+options.elem);
@@ -24,6 +25,14 @@ var LightControlTimed = function(options) {
     duration -= hours * 3600;
     var minutes = ("00"+Math.round(duration / 60)).substr(-2);
     main.find(".duration-content").html("+"+hours+":"+minutes);
+  }
+
+  function hideItem() {
+    $(".timed-lightcontrols-main").find(options.elem).slideUp();
+  }
+
+  function showItem() {
+    $(".timed-lightcontrols-main").find(options.elem).slideDown();
   }
 
   function getStartTime() {
@@ -69,19 +78,26 @@ var LightControlTimed = function(options) {
     }
   }
 
+  function updateFields(data) {
+    setStartTime(data[0].fields.start_time);
+    setDuration(data[0].fields.duration);
+    setRunning(data[0].fields.running);
+    if (data[0].fields.is_active) {
+      showItem();
+    } else {
+      hideItem();
+    }
+  }
+
   function update() {
     $.get("/homecontroller/lightcontrol/timed/get/"+ action, function (data) {
-      setStartTime(data[0].fields.start_time);
-      setDuration(data[0].fields.duration);
-      setRunning(data[0].fields.running);
+      updateFields(data);
     });
   }
 
   function updateBackend() {
     $.post("/homecontroller/lightcontrol/timed/update/" + action, {start_time: getStartTime(), duration: getDuration(), running: getRunning()}, function(data) {
-      setStartTime(data[0].fields.start_time);
-      setDuration(data[0].fields.duration);
-      setRunning(data[0].fields.running);
+      updateFields(data);
     });
   }
 
@@ -197,12 +213,18 @@ var LightControlTimed = function(options) {
 
   this.startInterval = startInterval;
   this.stopInterval = stopInterval;
+  this.hideItem = hideItem;
+  this.showItem = showItem;
 };
 
 
 var lightcontrol_timed_evening,
-    lightcontrol_timed_morning;
+    lightcontrol_timed_morning,
+    lightcontrol_timed_weekend_evening,
+    lightcontrol_timed_weekend_morning;
 $(document).ready(function () {
   lightcontrol_timed_morning = new LightControlTimed({"elem": ".timed-lightcontrol-morning"});
   lightcontrol_timed_evening = new LightControlTimed({"elem": ".timed-lightcontrol-evening"});
+  lightcontrol_timed_weekend_morning = new LightControlTimed({"elem": ".timed-lightcontrol-morning-weekend"});
+  lightcontrol_timed_weekend_evening = new LightControlTimed({"elem": ".timed-lightcontrol-evening-weekend"});
 });

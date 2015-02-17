@@ -5,12 +5,13 @@ from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render
+from django.utils.timezone import now
 from django.views.generic import View
 from ledcontroller import LedController
+import datetime
 import json
 import redis
 import time
-import datetime
 
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
@@ -56,14 +57,18 @@ class timed(View):
             redis_instance.publish("home:broadcast:lightcontrol_timed", item.action)
         else:
             item = get_object_or_404(LightAutomation, action=action)
-        return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
+        ret = json.loads(serializers.serialize("json", [item]))
+        ret[0]["fields"]["is_active"] = item.is_active_today(now())
+        return HttpResponse(json.dumps(ret), content_type="application/json")
 
 
     def get(self, request, *args, **kwargs):
         action = kwargs.get("action")
         command = kwargs.get("command")
         item = get_object_or_404(LightAutomation, action=action)
-        return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
+        ret = json.loads(serializers.serialize("json", [item]))
+        ret[0]["fields"]["is_active"] = item.is_active_today(now())
+        return HttpResponse(json.dumps(ret), content_type="application/json")
 
 class control_per_source(View):
     BED = 1

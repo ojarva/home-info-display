@@ -50,6 +50,7 @@ class LightAutomation(models.Model):
     running = models.NullBooleanField(default=True)
     start_time = models.TimeField()
     duration = models.IntegerField() # in seconds
+    active_days = models.CharField(max_length=7, default="0000000")
 
     @property
     def end_datetime(self):
@@ -59,10 +60,19 @@ class LightAutomation(models.Model):
     def start_datetime(self):
         return datetime.datetime.combine(datetime.date.today(), self.start_time)
 
+    def is_active_today(self, timestamp):
+        weekday = timestamp.weekday()
+        if self.active_days[weekday] == "0":
+            return False
+        return True
+
     def is_running(self, timestamp):
         if self.start_time > timestamp.time():
             return False
         if timestamp > self.end_datetime:
+            return False
+        weekday = timestamp.weekday()
+        if self.active_days[weekday] == "0":
             return False
         return True
 
