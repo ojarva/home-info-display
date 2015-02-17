@@ -13,7 +13,6 @@ urlpatterns = patterns('',
     url(r'^indoor_quality/', include("indoor_quality.urls")),
     url(r'^weather/', include("info_weather.urls")),
     url(r'^timer/', include("info_timers.urls")),
-    url(r'^action_timer/', include("control_timed_actions.urls")),
     url(r'^birthdays/', include("info_birthdays.urls")),
     url(r'^electricity/', include("info_electricity.urls")),
 )

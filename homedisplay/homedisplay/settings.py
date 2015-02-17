@@ -19,7 +19,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ws4redis',
     'control_milight',
     'display',
     'indoor_quality',
@@ -30,7 +29,6 @@ INSTALLED_APPS = (
     'repeating_tasks',
     'server_power',
     'info_birthdays',
-    'control_timed_actions',
     'django_extensions',
 )
 
