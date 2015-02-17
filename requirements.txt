@@ -12,3 +12,5 @@ django-websocket-redis
 hiredis>=0.1.4
 astral
 setproctitle
+statsd
+django-statsd>=2.0.1

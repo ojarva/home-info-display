@@ -21,6 +21,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'control_milight',
     'display',
+    'django_statsd',
     'indoor_quality',
     'info_electricity',
     'info_internet_connection',
@@ -33,12 +34,14 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django_statsd.middleware.StatsdMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_statsd.middleware.StatsdMiddlewareTimer',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
