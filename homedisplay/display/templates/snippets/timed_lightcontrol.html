@@ -2,8 +2,11 @@
 <div class="timed-lightcontrol timed-lightcontrol-{{ time }} item-box dark-box" data-action="{{ time }}">
   <div class="row">
     <div class="col-md-12">
-      <div style="float:left" class="animation-direction">
-        <span class="action-button animate-click">{{ icons }}</span>
+      <div class="animation-direction">
+        <span class="animate-click">
+<!--          <span class="fa-stack"><i style="opacity:0.5" class="fa fa-stack-1x {{ icon1 }}"></i><i class="fa fa-stack-1x {{ icon2 }}"></i></span> -->
+          <i class="fa {{ icon1 }}"></i><i class="fa {{ icon2 }}"></i>
+        </span>
       </div>
       <div style="float:right" class="center-content">
         <span class="duration-content">+-:--</span>
@@ -13,7 +16,14 @@
         <span class="start-time-content">--:--</span>
         <div class="time-control start-time"><div class="minus action-button animate-click"><i class="fa fa-minus"></i></div><div class="plus action-button animate-click"><i class="fa fa-plus"></i></div></div>
       </div>
-      <div class="play-control"><span class="action-button animate-click"><i class="fa-fw fa fa-stop"></i></span></div>
+      <div class="play-control">
+        <span class="animate-click">
+          <i class="fa-fw fa fa-stop"></i>
+        </span>
+      </div>
+      <div class="progress-indicator" style="display:none">
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+      </div>
     </div>
   </div>
   <div class="row">

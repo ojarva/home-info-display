@@ -2,16 +2,25 @@
   font-size: 200%;
 }
 .timed-lightcontrol .animation-direction {
-  font-size: 200%;
+  font-size: 2em;
   display: inline-block;
   float: left;
 }
 .timed-lightcontrol .play-control {
-  font-size: 200%;
+  font-size: 2em;
   display: inline-block;
   float: right;
 }
 
+.timed-lightcontrol .play-control .span {
+  display: inline-block;
+
+}
+.timed-lightcontrol .progress-indicator {
+  font-size: 2em;
+  display: inline-block;
+  float: right;
+}
 
 .timed-lightcontrol .time-control {
 }

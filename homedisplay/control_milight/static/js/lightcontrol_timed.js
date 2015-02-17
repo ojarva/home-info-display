@@ -113,13 +113,15 @@ var LightControlTimed = function(options) {
   }
 
   function updateFromNow() {
-    var start_time = getStartTimeMoment();
-    var end_time = getEndTimeMoment();
-    var now = moment();
-    var verb;
-    var content = main.find(".time-left");
+    var start_time = getStartTimeMoment(),
+        end_time = getEndTimeMoment(),
+        now = moment(),
+        verb,
+        show_progress_indicator;
+        content = main.find(".time-left");
     if (now < start_time) { // Not yet started
       verb = "Alkaa";
+      show_progress_indicator = false;
       if (!getRunning()) {
         verb = "Alkaisi";
       }
@@ -128,16 +130,25 @@ var LightControlTimed = function(options) {
       verb = "Päättyy";
       if (!getRunning()) {
         verb = "Päättyisi";
+        show_progress_indicator = false;
+      } else {
+        show_progress_indicator = true;
       }
       content.html(verb+" "+end_time.fromNow());
     } else {
       // Done for today.
       start_time.add(1, "days");
       verb = "Alkaa";
+      show_progress_indicator = false;
       if (!getRunning()) {
         verb = "Alkaisi";
       }
       content.html(verb+" "+start_time.fromNow());
+    }
+    if (show_progress_indicator == true) {
+      main.find(".progress-indicator").slideDown();
+    } else if (show_progress_indicator == false) {
+      main.find(".progress-indicator").slideUp();
     }
   }
 
