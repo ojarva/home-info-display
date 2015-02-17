@@ -21,16 +21,17 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'control_milight',
     'display',
+    'django_extensions',
     'django_statsd',
     'indoor_quality',
+    'info_birthdays',
     'info_electricity',
     'info_internet_connection',
     'info_timers',
     'info_weather',
     'repeating_tasks',
     'server_power',
-    'info_birthdays',
-    'django_extensions',
+    'ws4redis',
 )
 
 MIDDLEWARE_CLASSES = (
