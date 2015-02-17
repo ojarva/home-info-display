@@ -10,19 +10,12 @@
   font-size: 2em;
   display: inline-block;
   float: right;
+  margin-right: 20px;
 }
 
 .timed-lightcontrol .play-control .span {
   display: inline-block;
 
-}
-.timed-lightcontrol .progress-indicator {
-  font-size: 2em;
-  display: inline-block;
-  float: right;
-}
-
-.timed-lightcontrol .time-control {
 }
 
 .timed-lightcontrol .action-button {

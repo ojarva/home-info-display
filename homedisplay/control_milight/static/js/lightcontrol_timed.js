@@ -61,7 +61,7 @@ var LightControlTimed = function(options) {
 
   function getRunning() {
     icon = main.find(".play-control i");
-    if (icon.hasClass("fa-stop")) {
+    if (icon.hasClass("fa-toggle-on")) {
       return true;
     }
     return false;
@@ -71,10 +71,10 @@ var LightControlTimed = function(options) {
     //TODO: update other components as well
     if (status) {
       // Running
-      main.find(".play-control i").removeClass("fa-play").addClass("fa-stop");
+      main.find(".play-control i").removeClass("fa-toggle-off error-message").addClass("fa-toggle-on");
     } else {
       // Stopped
-      main.find(".play-control i").removeClass("fa-stop").addClass("fa-play");
+      main.find(".play-control i").removeClass("fa-toggle-on").addClass("fa-toggle-off error-message");
     }
   }
 
@@ -146,9 +146,9 @@ var LightControlTimed = function(options) {
       content.html(verb+" "+start_time.fromNow());
     }
     if (show_progress_indicator == true) {
-      main.find(".progress-indicator").slideDown();
+      main.find(".play-control i").addClass("success-message");
     } else if (show_progress_indicator == false) {
-      main.find(".progress-indicator").slideUp();
+      main.find(".play-control i").removeClass("success-message");
     }
   }
 
