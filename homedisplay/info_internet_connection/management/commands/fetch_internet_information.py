@@ -34,4 +34,4 @@ class Command(BaseCommand):
         latest_data.connect_status = data["Connect"]
         latest_data.update_timestamp = now()
         latest_data.save()
-        r.publish("home:broadcast:generic", json.dumps({"key": "internet", "value": "updated"}) # TODO: send all information
+        r.publish("home:broadcast:generic", json.dumps({"key": "internet", "content": "updated"}) # TODO: send all information
