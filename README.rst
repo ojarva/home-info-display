@@ -12,6 +12,7 @@ Installation
 - Install redis and sql database (don't use sqlite, you'll hit problems with locking)
 
 ::
+
   virtualenv prod
   source prod/bin/activate
   pip install -r requirements.txt
@@ -22,6 +23,7 @@ Crontab entries
 ---------------
 
 ::
+
   # Fetch weather information from weather.com
   04 *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_weather
   # Fetch internet connection information from Huawei modem
