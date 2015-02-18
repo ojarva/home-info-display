@@ -5,8 +5,8 @@ var ServerPower = function(options) {
   var interval;
 
   function showButton(button_name) {
-    main_elem.find(".action-button").hide();
-    main_elem.find("." + button_name).show();
+    main_elem.find(".action-button").slideUp();
+    main_elem.find("." + button_name).slideDown();
   }
 
   function setStatus(status) {
