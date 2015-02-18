@@ -196,13 +196,18 @@ var IndoorAirQuality = function (options) {
     data_output.find("svg").hide();
     data_output.find(".spinner").show();
     $.get("/homecontroller/indoor_quality/get_json/"+key, function(data) {
-      if (data[0]) {
-        data_output.find(".latest").html(Math.round(data[0].value*10)/10);
+      if (data.length > 12) {
+        data_output.find(".latest").html(Math.round(data[data.length-1].value*10)/10);
+        data_output.find(".data-error").slideUp();
+        data_output.find(".spinner").slideUp();
+        data_output.find("svg").slideDown();
+        drawGraph(data, {key: key, selector: ".indoor-air-"+key+" svg"});
+      } else {
+        data_output.find(".latest").html("-");
+        data_output.find("svg").slideUp();
+        data_output.find(".spinner").slideUp();
+        data_output.find(".data-error").slideDown();
       }
-      data_output.find("svg").show();
-      data_output.find(".spinner").hide();
-
-      drawGraph(data, {key: key, selector: ".indoor-air-"+key+" svg"});
     });
   }
 

@@ -1,0 +1,15 @@
+.air-quality-graph-content .graph svg {
+  height: 200px;
+}
+
+.air-quality-graph-content .graph .data-error {
+  font-size: 100px;
+  height: 200px;
+  display: none;
+}
+
+.air-quality-graph-content .graph .spinner {
+  font-size: 180px;
+  height: 200px;
+  display: none;
+}
