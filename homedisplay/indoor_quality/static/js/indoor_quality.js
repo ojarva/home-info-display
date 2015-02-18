@@ -39,7 +39,17 @@ var IndoorAirQuality = function (options) {
       output.removeClass("warning-message").addClass("error-message");
     }
     output.find(".status").html(co2_out);
-    output.find(".co2").html(Math.round(co2) + "ppm");
+    var previous_reading = output.find(".co2").data("value");
+    if (previous_reading) {
+      if (previous_reading < co2) {
+        // Gone up
+        output.find(".co2").effect("highlight", {color: "red"}, 150);
+      } else if (previous_reading > co2) {
+        // Gone down
+        output.find(".co2").effect("highlight", {color: "green"}, 150);
+      }
+    }
+    output.find(".co2").data("value", co2).html(Math.round(co2) + "ppm");
     clearAutoNoUpdates();
     update_timeout = setTimeout(autoNoUpdates, options.update_timeout); // 2,5 minutes
   }
@@ -51,7 +61,17 @@ var IndoorAirQuality = function (options) {
       return;
     }
     var temperature = data.value;
-    output.find(".temperature").html(Math.round(parseFloat(temperature) * 10) / 10 + "&deg;C");
+    var previous_reading = output.find(".temperature").data("value");
+    if (previous_reading) {
+      if (previous_reading < temperature) {
+        // Gone up
+        output.find(".temperature").effect("highlight", {color: "red"}, 150);
+      } else if (previous_reading > temperature) {
+        // Gone down
+        output.find(".temperature").effect("highlight", {color: "green"}, 150);
+      }
+    }
+    output.find(".temperature").data("value", temperature).html(Math.round(parseFloat(temperature) * 10) / 10 + "&deg;C");
   }
 
   function fetch() {
