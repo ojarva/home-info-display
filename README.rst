@@ -19,6 +19,12 @@ Create virtualenv:
   source prod/bin/activate
   pip install -r requirements.txt
 
+Load fixtures for transitions:
+
+::
+
+  python manage.py loaddata control_milight/fixtures/LightAutomation.json
+
 Test everything with Django server:
 
 ::
@@ -32,6 +38,8 @@ For production, configure uwsgi:
 
   uwsgi --virtualenv /path/to/virtualenv --socket /path/to/django.socket --buffer-size=32768 --workers=5 --master --module wsgi_django
   uwsgi --virtualenv /path/to/virtualenv --http-socket /path/to/web.socket --gevent 100 --http-websockets --workers=2 --master --module wsgi_websocket
+
+For production, remember to run "manage.py collectstatic". Also, running "manage.py compress --force" caches compressed css and javascript files.
 
 And nginx (or any other web server that supports websockets):
 
