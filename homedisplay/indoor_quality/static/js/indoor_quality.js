@@ -198,9 +198,9 @@ var IndoorAirQuality = function (options) {
     $.get("/homecontroller/indoor_quality/get_json/"+key, function(data) {
       if (data.length > 12) {
         data_output.find(".latest").html(Math.round(data[data.length-1].value*10)/10);
-        data_output.find(".data-error").slideUp();
-        data_output.find(".spinner").slideUp();
-        data_output.find("svg").slideDown();
+        data_output.find(".data-error").hide();
+        data_output.find(".spinner").hide();
+        data_output.find("svg").show();
         drawGraph(data, {key: key, selector: ".indoor-air-"+key+" svg"});
       } else {
         data_output.find(".latest").html("-");
