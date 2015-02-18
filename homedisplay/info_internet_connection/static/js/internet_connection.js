@@ -36,8 +36,8 @@ var ShowRealtimePing = function(options) {
 
 var RefreshInternet = function(options) {
   options = options || {};
-  options.update_interval = options.update_interval || 1800000;
-  options.invalid_timeout = options.invalid_timeout || 150000;
+  options.update_interval = options.update_interval || 30 * 60 * 1000;
+  options.invalid_timeout = options.invalid_timeout || 2 * 60 * 1000;
   var update_interval, update_timeout, output = $(".internet-connection");
 
   function setSignal(level) {
@@ -60,48 +60,45 @@ var RefreshInternet = function(options) {
     output.find(".connected").html("<i class='fa fa-times warning-message'></i> Ei tietoja");
   }
 
-  function update() {
-    $.get("/homecontroller/internet_connection/status", function (data) {
-      data = data[0];
-      if (typeof data == "undefined") {
-        console.log("!!! No internet connection information available");
-        autoNoUpdates();
-        return;
-      }
-      var signal_bars = output.find(".signal-bars");
-      if (signal_bars.data("is-hidden")) {
-        signal_bars.slideDown();
-        signal_bars.data("is-hidden", false);
-      }
-      var cs = data.fields.connect_status;
-      var cs_out;
-      if (cs == "connected") {
-        cs_out = "<i class='fa fa-check-circle success-message'></i>";
-      } else if (cs == "connecting") {
-        cs_out = "<i class='fa fa-spin fa-cog warning-message'></i>";
-      } else {
-        cs_out = "<i class='fa fa-times error-message'></i>";
-      }
-      output.find(".connected").html(cs_out);
-      output.find(".mode").html(data.fields.mode);
-      setSignal(data.fields.signal);
-      clearAutoNoUpdates();
-      update_timeout = setTimeout(autoNoUpdates, options.invalid_timeout);
-    });
+  function processData(data) {
+    if (typeof data == "undefined" || (data.status && data.status == "error")) {
+      console.log("!!! No internet connection information available");
+      autoNoUpdates();
+      return;
+    }
+    var signal_bars = output.find(".signal-bars");
+    if (signal_bars.data("is-hidden")) {
+      signal_bars.slideDown();
+      signal_bars.data("is-hidden", false);
+    }
+    var cs = data.fields.connect_status;
+    var cs_out;
+    if (cs == "connected") {
+      cs_out = "<i class='fa fa-check-circle success-message'></i>";
+    } else if (cs == "connecting") {
+      cs_out = "<i class='fa fa-spin fa-cog warning-message'></i>";
+    } else {
+      cs_out = "<i class='fa fa-times error-message'></i>";
+    }
+    output.find(".connected").html(cs_out);
+    output.find(".mode").html(data.fields.mode);
+    setSignal(data.fields.signal);
+    clearAutoNoUpdates();
+    update_timeout = setTimeout(autoNoUpdates, options.invalid_timeout);
+
   }
 
-  function onReceiveItemWS(message) {
-    if (message == "updated") {
-      console.log("internet: backend requests update");
-      update();
-    }
+  function update() {
+    $.get("/homecontroller/internet_connection/status", function (data) {
+      processData(data);
+    });
   }
 
   function startInterval() {
     stopInterval();
     update();
     update_interval = setInterval(update, options.update_interval);
-    ws_generic.register("internet", onReceiveItemWS);
+    ws_generic.register("internet", processData);
   }
 
   function stopInterval() {

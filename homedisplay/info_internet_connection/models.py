@@ -1,4 +1,13 @@
 from django.db import models
+from django.core import serializers
+import json
+
+def get_latest_serialized():
+    try:
+        item = [Internet.objects.latest()]
+    except Internet.DoesNotExist:
+        return {"status": "error", "message": "No data available"}
+    return json.loads(serializers.serialize("json", item))[0]
 
 class Internet(models.Model):
 

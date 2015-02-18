@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.timezone import now
-from info_internet_connection.models import Internet
+from info_internet_connection.models import Internet, get_latest_serialized
 import datetime
 import huawei_b593_status
 import json
@@ -34,4 +34,4 @@ class Command(BaseCommand):
         latest_data.connect_status = data["Connect"]
         latest_data.update_timestamp = now()
         latest_data.save()
-        r.publish("home:broadcast:generic", json.dumps({"key": "internet", "content": "updated"})) # TODO: send all information
+        r.publish("home:broadcast:generic", json.dumps({"key": "internet", "content": get_latest_serialized()}))
