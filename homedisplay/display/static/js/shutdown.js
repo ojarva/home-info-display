@@ -55,11 +55,7 @@ var ShutdownProgress = function(options) {
 
   }
 
-  ws4redis = new WS4Redis({
-    uri: websocket_root + "shutdown?subscribe-broadcast&publish-broadcast&echo",
-    receive_message: onReceiveItemWS,
-    heartbeat_msg: "--heartbeat--"
-  });
+  ws_generic.register("shutdown", onReceiveItemWS);
 
   this.restart = restart;
   this.stop = stop;

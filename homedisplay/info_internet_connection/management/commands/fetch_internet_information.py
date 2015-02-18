@@ -3,9 +3,9 @@ from django.utils.timezone import now
 from info_internet_connection.models import Internet
 import datetime
 import huawei_b593_status
+import json
 import redis
 
-r = redis.StrictRedis()
 
 #{'WIFI': 'off', 'SIG': '5', 'Mode': '4g', 'Roam': 'home', 'SIM': 'normal', 'Connect': 'connected'}
 
@@ -15,6 +15,7 @@ class Command(BaseCommand):
     help = 'Fetches home 4g router status information'
 
     def handle(self, *args, **options):
+        r = redis.StrictRedis()
         status = huawei_b593_status.HuaweiStatus()
         data = status.read()
         age_threshold = datetime.timedelta(minutes=2)
@@ -33,4 +34,4 @@ class Command(BaseCommand):
         latest_data.connect_status = data["Connect"]
         latest_data.update_timestamp = now()
         latest_data.save()
-        r.publish("home:broadcast:internet", "updated")
+        r.publish("home:broadcast:generic", json.dumps({"key": "internet", "value": "updated"}) # TODO: send all information

@@ -6,12 +6,11 @@ var LightControlTimed = function(options) {
   if (main.length == 0) {
     console.log("!!! Invalid selector for LightControlTimed: " + options.elem);
   }
-  var ws4redis,
-      action = main.data("action"),
+  var action = main.data("action"),
       update_interval;
 
-  function onReceiveItemWS(message) {
-    update();
+  function onReceiveItemWS(data) {
+    updateFields(data);
   }
 
   function setStartTime(start_time) {
@@ -213,11 +212,7 @@ var LightControlTimed = function(options) {
     updateBackend();
   });
 
-  ws4redis = new WS4Redis({
-    uri: websocket_root + "lightcontrol_timed?subscribe-broadcast&publish-broadcast&echo",
-    receive_message: onReceiveItemWS,
-    heartbeat_msg: "--heartbeat--"
-  });
+  ws_generic.register("lightcontrol_timed_" + action, onReceiveItemWS); // TODO: duplicate keys
 
   update();
   startInterval();

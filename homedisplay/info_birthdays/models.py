@@ -1,13 +1,28 @@
 # -*- coding: utf-8 -*-
 
+from django.core import serializers
 from django.db import models
-from django.utils.timezone import now
-from django.db.models.signals import pre_delete
 from django.db.models.signals import post_save
-
+from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils.timezone import now
+import datetime
+import json
 import redis
+
 r = redis.StrictRedis()
+
+def get_birthdays(selected_date):
+    if selected_date == "all":
+        items = Birthday.objects.all()
+    else:
+        date = now()
+        if selected_date == "tomorrow":
+            date = date + datetime.timedelta(days=1)
+
+        items = Birthday.objects.filter(birthday__month=date.month, birthday__day=date.day)
+    return json.loads(serializers.serialize("json", items))
+
 
 class Birthday(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nimi")
@@ -28,10 +43,14 @@ class Birthday(models.Model):
         verbose_name = "Merkkipäivä"
         verbose_name_plural = "Merkkipäivät"
 
+def publish_changes():
+    for k in ("today", "tomorrow", "all"):
+        r.publish("home:broadcast:generic", json.dumps({"key": "birthdays_%s" % k, "content": get_birthdays(k)}))
+
 @receiver(pre_delete, sender=Birthday, dispatch_uid='birthday_delete_signal')
 def publish_birthday_deleted(sender, instance, using, **kwargs):
-    r.publish("home:broadcast:birthdays", "updated")
+    publish_changes();
 
 @receiver(post_save, sender=Birthday, dispatch_uid="birthday_saved_signal")
 def publish_birthday_saved(sender, instance, *args, **kwargs):
-    r.publish("home:broadcast:birthdays", "updated")
+    publish_changes()

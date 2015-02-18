@@ -1,7 +1,7 @@
 var ShowRealtimePing = function(options) {
   options = options || {};
   options.invalid_timeout = options.invalid_timeout || 10000;
-  var ws4redis, container = $(options.output), invalid_timeout;
+  var container = $(options.output), invalid_timeout;
 
   function noUpdates(warning_class) {
     warning_class = warning_class || "error";
@@ -22,23 +22,12 @@ var ShowRealtimePing = function(options) {
     invalid_timeout = setTimeout(autoNoUpdates, options.invalid_timeout);
   }
 
-  function onReceiveItemWS(message) {
-    update(message);
-  }
-
   function startInterval() {
-    ws4redis = new WS4Redis({
-      uri: websocket_root + "ping?subscribe-broadcast&publish-broadcast&echo",
-      receive_message: onReceiveItemWS,
-      heartbeat_msg: "--heartbeat--"
-    });
+    ws_generic.register("ping", update);
   }
 
   function stopInterval() {
-    try {
-      ws4redis.close();
-    } catch(e) {
-    }
+    ws_generic.deRegister("ping");
   }
 
   this.startInterval = startInterval;
@@ -49,7 +38,7 @@ var RefreshInternet = function(options) {
   options = options || {};
   options.update_interval = options.update_interval || 1800000;
   options.invalid_timeout = options.invalid_timeout || 150000;
-  var ws4redis, update_interval, update_timeout, output = $(".internet-connection");
+  var update_interval, update_timeout, output = $(".internet-connection");
 
   function setSignal(level) {
     output.find(".signal-bars div").removeClass("active").addClass("inactive");
@@ -112,21 +101,14 @@ var RefreshInternet = function(options) {
     stopInterval();
     update();
     update_interval = setInterval(update, options.update_interval);
-    ws4redis = new WS4Redis({
-      uri: websocket_root + "internet?subscribe-broadcast&publish-broadcast&echo",
-      receive_message: onReceiveItemWS,
-      heartbeat_msg: "--heartbeat--"
-    });
+    ws_generic.register("internet", onReceiveItemWS);
   }
 
   function stopInterval() {
     if (update_interval) {
       update_interval = clearInterval(update_interval);
     }
-    try {
-      ws4redis.close();
-    } catch(e) {
-    }
+    ws_generic.deRegister("internet");
   }
 
   this.startInterval = startInterval;

@@ -1,3 +1,5 @@
+var timers;
+
 var Timer = function(parent_elem, options) {
   var timer_type,
       created_by_backend = false,
@@ -5,8 +7,6 @@ var Timer = function(parent_elem, options) {
       update_interval,
       backend_interval,
       alarm_interval,
-      ws4redis,
-      timers = [],
       running = false,
       id_uniq = Math.random().toString().replace(".", ""),
       id;
@@ -30,18 +30,24 @@ var Timer = function(parent_elem, options) {
   }
 
   function onReceiveItemWS(message) {
-    console.log(id, "received message", message);
     var source = "backend";
-    if (message == "stop") {
-      stopItem(source);
-    } else if (message == "delete") {
+    if (message == "delete") {
       deleteItem(source);
-    } else if (message == "restart") {
-      restartItem(source);
-    } else if (message == "start") {
+      return;
+    }
+    data = message[0];
+    start_time = new Date(data.fields.start_time);
+    if (data.fields.running) {
       startItem(source);
     } else {
-      console.log("Unknown per-item WS message: ", message);
+      this_elem.stop(true).css("background-color", this_elem.data("original-bg-color")).effect("highlight", {color: "#cc0000"}, 500);
+      running = false;
+      clearItemIntervals();
+      this_elem.find(".stopclock-stop i").removeClass("fa-stop").addClass("fa-trash");
+      if (data.fields.stopped_at) {
+        var diff = (new Date(options.stopped_at) - start_time) / 1000;
+        update_timer_content(diff, "");
+      }
     }
   }
 
@@ -49,11 +55,7 @@ var Timer = function(parent_elem, options) {
     // Set backend id to local object.
     id = new_id;
     timers.addTimerId(id);
-    ws4redis = new WS4Redis({
-      uri: websocket_root + "timer-" + id + "?subscribe-broadcast&publish-broadcast&echo",
-      receive_message: onReceiveItemWS,
-      heartbeat_msg: "--heartbeat--"
-    });
+    ws_generic.register("timer-" + id, onReceiveItemWS);
   }
 
   function getId() {
@@ -161,7 +163,6 @@ var Timer = function(parent_elem, options) {
       deleteItem("ui");
     } else {
       this_elem.stop(true).css("background-color", this_elem.data("original-bg-color")).effect("highlight", {color: "#cc0000"}, 500);
-
       running = false;
       clearItemIntervals();
       this_elem.find(".stopclock-stop i").removeClass("fa-stop").addClass("fa-trash");
@@ -286,11 +287,7 @@ var Timer = function(parent_elem, options) {
       $.get("/homecontroller/timer/delete/" + id, function(data) {
       });
     }
-    try {
-      ws4redis.close(); // Clean up WS connections
-    } catch (e) {
-
-    }
+    ws_generic.deRegister("timer-" + id);
   }
 
   this.deleteItem = deleteItem;
@@ -330,7 +327,7 @@ var Timers = function(options) {
   function hasTimer(id) {
     currently_running = $(".timer-backend-id-" + id);
     if (id in created_timer_items) {
-      return false;
+      return true;
     }
     if (currently_running.length == 0) {
       return false;
@@ -361,34 +358,27 @@ var Timers = function(options) {
     /* Ugly hack: WS message arrives before HTTP response.
        This leads to duplicate timer items, as originally
        added timer does not have ID yet. */
-   console.log("Timer global: received message", message);
     setTimeout(function () {
-      var timer;
-      if (message.substring(0, 7) == "create-") {
-        var data = JSON.parse(message.substring(7))[0];
-        if (!hasTimer(data.pk)) {
-          if (data.fields.duration === null) {
-            // if data.duration is not null, it's timer, not countdown
-            timer = new Timer(stopclock_holder, {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
-          } else {
-            timer = new Timer(timer_holder, {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
-          }
+      var run_timer;
+      var data = message[0];
+      if (!hasTimer(data.pk)) {
+        if (data.fields.duration === null) {
+          // if data.duration is not null, it's timer, not countdown
+          run_timer = new Timer(stopclock_holder, {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
+        } else {
+          run_timer = new Timer(timer_holder, {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
         }
       }
     }, 1000);
   }
 
-  var ws4redis = new WS4Redis({
-    uri: websocket_root + "timers?subscribe-broadcast&publish-broadcast&echo",
-    receive_message: onReceiveWS,
-    heartbeat_msg: "--heartbeat--"
-  });
+  ws_generic.register("timers", onReceiveWS);
 
   $(".add-timer").click(function () {
-    var timer_run = new Timer(timer_holder, {"name": $(this).data("name"), "duration": $(this).data("duration")});
+    $.post("/homecontroller/timer/create", {name: $(this).data("name"), duration: $(this).data("duration")});
   });
   $(".add-stopclock").click(function () {
-    var timer_run = new Timer(stopclock_holder, {"name": "Ajastin"});
+    $.post("/homecontroller/timer/create", {name: "Ajastin"});
   });
 
   refreshFromServer();
@@ -400,7 +390,6 @@ var Timers = function(options) {
   this.addTimerId = addTimerId;
 };
 
-var timers;
 
 $(document).ready(function () {
   timers = new Timers({stopclock_holder: "#stopclock-holder", timer_holder: "#timer-holder"});

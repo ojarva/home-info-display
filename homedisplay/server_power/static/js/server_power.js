@@ -2,7 +2,7 @@ var ServerPower = function(options) {
   options = options || {};
   options.update_interval = options.update_interval || 60 * 1000;
   var main_elem = $(options.main_elem);
-  var interval, ws4redis;
+  var interval;
 
   function showButton(button_name) {
     main_elem.find(".action-button").hide();
@@ -33,21 +33,14 @@ var ServerPower = function(options) {
     stopInterval();
     refreshServerPower();
     interval = setInterval(refreshServerPower, options.update_interval);
-    ws4redis = new WS4Redis({
-      uri: websocket_root + "server_power?subscribe-broadcast&publish-broadcast&echo",
-      receive_message: onReceiveItemWS,
-      heartbeat_msg: "--heartbeat--"
-    });
+    ws_generic.register("server_power", onReceiveItemWS);
   }
 
   function stopInterval() {
     if (interval) {
       interval = clearInterval(interval);
     }
-    try {
-      ws4redis.close();
-    } catch(e) {
-    }
+    ws_generic.deRegister("server_power");
   }
 
   main_elem.find(".startup").on("click", function() {

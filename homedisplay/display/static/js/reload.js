@@ -1,23 +1,21 @@
 var Reloader = function() {
-  var ws4redis;
+
   function onReceiveItemWS(message) {
     window.location.reload();
   }
 
-  ws4redis = new WS4Redis({
-    uri: websocket_root + "reload?subscribe-broadcast&publish-broadcast&echo",
-    receive_message: onReceiveItemWS,
-    heartbeat_msg: "--heartbeat--"
-  });
-
-  function stop() {
-    try {
-      ws4redis.close();
-    } catch (e) {
-    }
+  function startItem() {
+    ws_generic.register("reload", onReceiveItemWS);
   }
 
-  this.stop = stop;
+  function stopItem() {
+    ws_generic.deRegister("reload");
+  }
+
+  startItem();
+
+  this.stopItem = stopItem;
+  this.startItem = startItem;
 };
 
 var reloader_instance;

@@ -8,13 +8,14 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils.timezone import now
 from indoor_quality.models import AirDataPoint, AirTimePoint
 import redis
-r = redis.StrictRedis()
+import json
 
 class Command(BaseCommand):
     args = ''
     help = 'Adds new indoor air quality timepoint'
 
     def handle(self, *args, **options):
+        r = redis.StrictRedis()
         timepoint = AirTimePoint()
         timepoint.save()
         for sensor in settings.SENSOR_MAP:
@@ -34,4 +35,4 @@ class Command(BaseCommand):
                 avg = float(s) / c
             datapoint = AirDataPoint(name=sensor, value=avg, timepoint=timepoint)
             datapoint.save()
-        r.publish("home:broadcast:indoor", "updated")
+        r.publish("home:broadcast:generic", json.dumps({"key": "indoor_quality", "content": "updated"}))

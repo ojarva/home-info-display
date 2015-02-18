@@ -1,7 +1,7 @@
 var RefreshWeather = function (options) {
   options = options || {};
   options.update_interval = options.update_interval || 1000 * 60 * 120;
-  var ws4redis, update_interval;
+  var update_interval;
 
   function setWeatherInfo (elem, text, info) {
     $(elem).html(text+"<br><span class='weather-temperature'>" + info.fields.apparent_temperature + "&deg;C</span> <img src='/homecontroller/static/images/" + info.fields.icon + ".png'>");
@@ -90,34 +90,22 @@ var RefreshWeather = function (options) {
     });
   }
 
-  function onReceiveItemWS(message) {
-    try {
-      var data = JSON.parse(message);
-      processData(data);
-    } catch (e) {
-      update();
-    }
+  function onReceiveItemWS(data) {
+    processData(data);
   }
 
   function startInterval() {
     stopInterval();
     update();
     update_interval = setInterval(update, options.update_interval);
-    ws4redis = new WS4Redis({
-      uri: websocket_root + "weather?subscribe-broadcast&publish-broadcast&echo",
-      receive_message: onReceiveItemWS,
-      heartbeat_msg: "--heartbeat--"
-    });
+    ws_generic.register("weather", onReceiveItemWS);
   }
 
   function stopInterval() {
     if (update_interval) {
       update_interval = clearInterval(update_interval);
     }
-    try {
-      ws4redis.close();
-    } catch(e) {
-    }
+    ws_generic.deRegister("weather");
   }
 
   this.startInterval = startInterval;

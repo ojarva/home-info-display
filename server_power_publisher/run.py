@@ -1,10 +1,10 @@
 from setproctitle import setproctitle
+import json
 import local_settings
 import manage_server_power
 import redis
 import subprocess
 import time
-
 
 class ServerPowerPublisher(object):
     def __init__(self):
@@ -15,14 +15,14 @@ class ServerPowerPublisher(object):
 
     def check_server_power(self):
         status = "unknown"
-        alive_status = sp.is_alive()
+        alive_status = self.sp.is_alive()
         if alive_status == manage_server_power.SERVER_UP:
             status = "running"
         elif alive_status == manage_server_power.SERVER_UP_NOT_RESPONDING:
             status = "not_responding"
         elif alive_status == manage_server_power.SERVER_DOWN:
             status = "down"
-        redis_instance.publish("home:broadcast:server_power", status)
+        self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "server_power", "content": status}))
 
     def run(self):
         while True:

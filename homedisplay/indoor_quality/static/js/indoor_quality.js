@@ -9,8 +9,7 @@ var IndoorAirQuality = function (options) {
   var output = $(options.main_elem),
       latest_data,
       update_interval,
-      update_timeout,
-      ws4redis;
+      update_timeout;
 
   function onReceiveItemWS(message) {
     if (message == "updated") {
@@ -165,22 +164,14 @@ var IndoorAirQuality = function (options) {
     update();
     update_interval = setInterval(update, options.update_interval);
     update_timeout = setTimeout(autoNoUpdates, 5000);
-    ws4redis = new WS4Redis({
-      uri: websocket_root+'indoor?subscribe-broadcast&publish-broadcast&echo',
-      receive_message: onReceiveItemWS,
-      heartbeat_msg: "--heartbeat--"
-    });
+    ws_generic.register("indoor_quality", onReceiveItemWS);
   }
 
   function stopInterval() {
     if (update_interval) {
       update_interval = clearInterval(update_interval);
     }
-    try {
-      ws4redis.close();
-    } catch(e) {
-
-    }
+    ws_generic.deRegister("indoor_quality");
   }
 
   function refreshAllData() {

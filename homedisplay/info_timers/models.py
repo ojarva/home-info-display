@@ -1,6 +1,12 @@
 from django.db import models
 from django.utils.timezone import now
+from django.core import serializers
 import datetime
+import json
+
+
+def get_serialized_timer(item):
+    return json.loads(serializers.serialize("json", [item]))
 
 class Timer(models.Model):
     name = models.CharField(max_length=30)

@@ -1,18 +1,12 @@
 var RepeatingTasks = function(elem, use_date) {
-  var parent_elem = $(elem), this_date = use_date, update_interval, wait_sync, ws4redis;
+  var parent_elem = $(elem), this_date = use_date, update_interval;
 
   function clearTasks() {
     $(parent_elem).children().remove();
   }
 
   function onReceiveItemWS(message) {
-    try {
-      var data = JSON.parse(message);
-      processData(data[this_date]);
-    } catch (e) {
-      console.log("repeating tasks: backend requests update");
-      update();
-    }
+    processData(message);
   }
 
   function processData(data) {
@@ -49,22 +43,14 @@ var RepeatingTasks = function(elem, use_date) {
     stopInterval();
     update();
     update_interval = setInterval(update, 1000 * 60 * 120);
-    ws4redis = new WS4Redis({
-      uri: websocket_root + "repeating_tasks?subscribe-broadcast&publish-broadcast&echo",
-      receive_message: onReceiveItemWS,
-      heartbeat_msg: "--heartbeat--"
-    });
+    ws_generic.register("repeating_tasks_" + this_date, onReceiveItemWS);
   }
 
   function stopInterval() {
     if (update_interval) {
       update_interval = clearInterval(update_interval);
     }
-    try {
-      ws4redis.close();
-    } catch(e) {
-
-    }
+    ws_generic.deRegister("repeating_tasks_" + this_date);
   }
 
   this.startInterval = startInterval;

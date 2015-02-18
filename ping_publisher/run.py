@@ -1,5 +1,6 @@
 from local_settings import *
 from setproctitle import setproctitle
+import json
 import re
 import redis
 import subprocess
@@ -37,7 +38,7 @@ class PingRunner(object):
                 self.current_responses = []
                 self.counter = counter
                 print "broadcasting", message
-                self.redis_instance.publish("home:broadcast:ping", message)
+                self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "ping", "content": message}))
 
         p.communicate()
 

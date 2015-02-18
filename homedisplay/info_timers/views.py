@@ -1,4 +1,4 @@
-from .models import Timer
+from .models import Timer, get_serialized_timer
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
@@ -40,13 +40,13 @@ class stop(View):
         item.running = False
         item.stopped_at = now()
         item.save()
-        r.publish("home:broadcast:timer-%s" % item.pk, "stop")
+        r.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % item.pk, "content": get_serialized_timer(item)}))
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 class delete(View):
     def get(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
-        r.publish("home:broadcast:timer-%s" % item.pk, "delete")
+        r.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % item.pk, "content": "delete"}))
 
         item.delete()
 
@@ -57,7 +57,7 @@ class restart(View):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.start_time = now()
         item.save()
-        r.publish("home:broadcast:timer-%s" % item.pk, "restart")
+        r.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % item.pk, "content": get_serialized_timer(item)}))
 
 
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
@@ -68,7 +68,7 @@ class start(View):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.running = True
         item.save()
-        r.publish("home:broadcast:timer-%s" % item.pk, "start")
+        r.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % item.pk, "content": get_serialized_timer(item)}))
 
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
@@ -78,10 +78,7 @@ class create(View):
         p = request.POST
         item = Timer(name=p.get("name"), start_time=now(), duration=p.get("duration"))
         item.save()
-        serialized = serializers.serialize("json", [item])
-        r.publish("home:broadcast:timers", "create-"+serialized)
-
-        message = RedisMessage('create-'+serialized)
-        RedisPublisher(facility='timers', broadcast=True).publish_message(message)
+        serialized = json.loads(serializers.serialize("json", [item]))
+        r.publish("home:broadcast:generic", json.dumps({"key": "timers", "content": serialized}))
 
         return HttpResponse(serialized, content_type="application/json")

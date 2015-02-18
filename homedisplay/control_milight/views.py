@@ -34,6 +34,12 @@ def update_lightstate(group, brightness, color, on=True):
     return state
 
 class timed(View):
+    def get_serialized_item(self, action):
+        item = get_object_or_404(LightAutomation, action=action)
+        ret = json.loads(serializers.serialize("json", [item]))
+        ret[0]["fields"]["is_active"] = item.is_active_today(now())
+        return ret
+
     def post(self, request, *args, **kwargs):
         action = kwargs.get("action")
         command = kwargs.get("command")
@@ -54,21 +60,19 @@ class timed(View):
                 item.running = running
 
             item.save()
-            redis_instance.publish("home:broadcast:lightcontrol_timed", item.action)
+            serialized = self.get_serialized_item(action)
+            redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_%s" % action, "content": serialized}))
+            return HttpResponse(json.dumps(serialized), content_type="application/json")
+
         else:
-            item = get_object_or_404(LightAutomation, action=action)
-        ret = json.loads(serializers.serialize("json", [item]))
-        ret[0]["fields"]["is_active"] = item.is_active_today(now())
-        return HttpResponse(json.dumps(ret), content_type="application/json")
+            item = self.get_serialized_item(action)
+            return HttpResponse(json.dumps(item), content_type="application/json")
 
 
     def get(self, request, *args, **kwargs):
         action = kwargs.get("action")
-        command = kwargs.get("command")
-        item = get_object_or_404(LightAutomation, action=action)
-        ret = json.loads(serializers.serialize("json", [item]))
-        ret[0]["fields"]["is_active"] = item.is_active_today(now())
-        return HttpResponse(json.dumps(ret), content_type="application/json")
+        item = self.get_serialized_item(action)
+        return HttpResponse(json.dumps(item), content_type="application/json")
 
 class control_per_source(View):
     BED = 1
@@ -96,7 +100,7 @@ class control_per_source(View):
                 #TODO: fade up slowly
                 led.white()
                 run_display_command("on")
-                redis_instance.publish("home:broadcast:shutdown", "shutdown_cancel")
+                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
                 for a in range(0, 100, 5):
                     led.set_brightness(a)
                     time.sleep(0.5)
@@ -104,10 +108,10 @@ class control_per_source(View):
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
-                redis_instance.publish("home:broadcast:shutdown", "shutdown_delay")
+                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
             elif command == "on":
                 run_display_command("on")
-                redis_instance.publish("home:broadcast:shutdown", "shutdown_cancel")
+                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
                 led.white()
                 led.set_brightness(100)
         elif source == "door":
@@ -125,13 +129,13 @@ class control_per_source(View):
                 led.white()
                 led.set_brightness(100)
                 run_display_command("on")
-                redis_instance.publish("home:broadcast:shutdown", "shutdown_cancel")
+                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
                 led.white(self.DOOR)
                 led.set_brightness(10, self.DOOR)
-                redis_instance.publish("home:broadcast:shutdown", "shutdown_delay")
+                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
         elif source == "display":
             if command == "night":
                 led.set_brightness(0)
@@ -151,9 +155,9 @@ class control_per_source(View):
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
-                redis_instance.publish("home:broadcast:shutdown", "shutdown_delay")
+                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
             elif command == "on":
-                redis_instance.publish("home:broadcast:shutdown", "shutdown_cancel")
+                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
                 led.white()
                 led.set_brightness(100)
         else:

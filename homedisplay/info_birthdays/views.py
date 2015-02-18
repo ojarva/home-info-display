@@ -1,4 +1,4 @@
-from .models import Birthday
+from .models import Birthday, get_birthdays
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
@@ -13,12 +13,4 @@ import datetime
 
 class list(View):
     def get(self, request, *args, **kwargs):
-        if kwargs.get("date") == "all":
-            items = Birthday.objects.all()
-        else:
-            date = now()
-            if kwargs.get("date") == "tomorrow":
-                date = date + datetime.timedelta(days=1)
-
-            items = Birthday.objects.filter(birthday__month=date.month, birthday__day=date.day)
-        return HttpResponse(serializers.serialize("json", items), content_type="application/json")
+        return HttpResponse(json.dumps(get_birthdays(kwargs.get("date"))), content_type="application/json")

@@ -13,7 +13,7 @@ from django.core import serializers
 r = redis.StrictRedis()
 
 
-def get_repeating_data(date):
+def get_repeating_data(date, serialized=False):
     todo_tasks = []
     tasks = Task.objects.all()
     tasks = sorted(tasks, key=lambda t: t.overdue_by())
@@ -34,6 +34,8 @@ def get_repeating_data(date):
         elif date == "all":
             todo_tasks.append(task)
     todo_tasks = sorted(todo_tasks, key=lambda t: t.optional)
+    if serialized:
+        return json.loads(serializers.serialize("json", todo_tasks))
     return todo_tasks
 
 def get_all_repeating_data():
@@ -126,10 +128,15 @@ class TaskHistory(models.Model):
     task = models.ForeignKey("Task")
     completed_at = models.DateTimeField(null=True)
 
+def publish_changes():
+    for k in ("today", "tomorrow", "all"):
+        r.publish("home:broadcast:generic", json.dumps({"key": "repeating_tasks_%s" % k, "content": get_repeating_data(k, True)}))
+
+
 @receiver(post_delete, sender=Task, dispatch_uid='task_delete_signal')
 def publish_task_deleted(sender, instance, using, **kwargs):
-    r.publish("home:broadcast:repeating_tasks", json.dumps(get_all_repeating_data()))
+    publish_changes()
 
 @receiver(post_save, sender=Task, dispatch_uid="task_saved_signal")
 def publish_task_saved(sender, instance, *args, **kwargs):
-    r.publish("home:broadcast:repeating_tasks", json.dumps(get_all_repeating_data()))
+    publish_changes()
