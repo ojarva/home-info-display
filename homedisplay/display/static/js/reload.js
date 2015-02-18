@@ -5,7 +5,7 @@ var Reloader = function() {
   }
 
   ws4redis = new WS4Redis({
-    uri: websocket_root+'reload?subscribe-broadcast&publish-broadcast&echo',
+    uri: websocket_root + "reload?subscribe-broadcast&publish-broadcast&echo",
     receive_message: onReceiveItemWS,
     heartbeat_msg: "--heartbeat--"
   });

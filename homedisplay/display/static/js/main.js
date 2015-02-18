@@ -6,12 +6,12 @@ function csrfSafeMethod(method) {
 }
 function getCookie(name) {
     var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
+    if (document.cookie && document.cookie != "") {
+        var cookies = document.cookie.split(";");
         for (var i = 0; i < cookies.length; i++) {
             var cookie = jQuery.trim(cookies[i]);
             // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+            if (cookie.substring(0, name.length + 1) == (name + "=")) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
             }
@@ -19,7 +19,7 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-var csrftoken = getCookie('csrftoken');
+var csrftoken = getCookie("csrftoken");
 
 $.ajaxSetup({
     beforeSend: function(xhr, settings) {
@@ -32,7 +32,7 @@ $.ajaxSetup({
 function switchVisibleContent(elem) {
   $(".content-box").slideUp(); // Hide all content boxes
   $("html, body").animate({ scrollTop: 0 }, "fast"); // Always scroll to top.
-  $("#navbar").collapse('hide'); // Hide menu, if visible
+  $("#navbar").collapse("hide"); // Hide menu, if visible
   if (elem != "#main-content") {
     $(elem).slideDown();
   }
@@ -41,7 +41,7 @@ function switchVisibleContent(elem) {
 $(document).ready(function() {
   $(".animate-click").each(function () {
     $(this).data("original-bg-color", $(this).css("background-color"));
-  })
+  });
   $(".animate-click").on("click", function () {
     $(this).stop(true).css("background-color", $(this).data("original-bg-color")).effect("highlight", {color: "#ffffff"}, 500);
   });

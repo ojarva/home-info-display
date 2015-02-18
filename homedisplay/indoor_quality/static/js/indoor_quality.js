@@ -53,7 +53,7 @@ var IndoorAirQuality = function (options) {
         output.removeClass("warning-message").addClass("error-message");
       }
       output.find(".status").html(co2_out);
-      output.find(".co2").html(Math.round(co2)+"ppm");
+      output.find(".co2").html(Math.round(co2) + "ppm");
       clearAutoNoUpdates();
       update_timeout = setTimeout(autoNoUpdates, options.update_timeout); // 2,5 minutes
       latest_data = data;
@@ -65,16 +65,16 @@ var IndoorAirQuality = function (options) {
         return;
       }
       var temperature = data.value;
-      output.find(".temperature").html(Math.round(parseFloat(temperature)*10)/10+"&deg;C");
+      output.find(".temperature").html(Math.round(parseFloat(temperature) * 10) / 10 + "&deg;C");
     });
   }
 
-  function drawGraph(data, options) {
-    options = options || {};
-    options.xlabel = options.xlabel || "Aika";
-    options.ylabel = options.ylabel || "Arvo";
+  function drawGraph(data, goptions) {
+    goptions = options || {};
+    goptions.xlabel = goptions.xlabel || "Aika";
+    goptions.ylabel = goptions.ylabel || "Arvo";
 
-    elem = $(options.selector);
+    var elem = $(goptions.selector);
 
     if (typeof data == "undefined") {
       console.log("!!! No data available for indoor air quality graphs!");
@@ -103,31 +103,30 @@ var IndoorAirQuality = function (options) {
       .showYAxis(true)        //Show the y-axis
       .showXAxis(true)        //Show the x-axis
       .x(function(d, i) { return (new Date(d[0]).getTime()); })
-      .y(function(d, i) { return d[1]; })
-      ;
+      .y(function(d, i) { return d[1]; });
 
       chart.xAxis
-      .axisLabel(options.xlabel)
+      .axisLabel(goptions.xlabel)
       .tickFormat(function(d) {
-        return d3.time.format('%H:%M')(new Date(d))
+        return d3.time.format('%H:%M')(new Date(d));
       });
 
       chart.yAxis     //Chart y-axis settings
-      .axisLabel(options.ylabel)
+      .axisLabel(goptions.ylabel)
       .tickFormat(d3.format('.02f'));
 
-      processed_data = []
+      var processed_data = [];
       $.each(data, function () {
         processed_data.push([this.timestamp, this.value]);
       });
       processed_data.reverse();
-      var myData = [{"key": options.key,
+      var myData = [{"key": goptions.key,
                      "bar": true,
                      "color": "#ccf",
                      "values": processed_data
                    }];
 
-      d3.select(options.selector)    //Select the <svg> element you want to render the chart in.
+      d3.select(goptions.selector)    //Select the <svg> element you want to render the chart in.
       .datum(myData)         //Populate the <svg> element with chart data...
       .call(chart);          //Finally, render the chart!
 
@@ -192,16 +191,16 @@ var IndoorAirQuality = function (options) {
     });
   }
   function refreshData(key) {
-    var data_output = $(".indoor-air-"+key);
+    var data_output = $(".indoor-air-" + key);
     data_output.find("svg").hide();
     data_output.find(".spinner").show();
     $.get("/homecontroller/indoor_quality/get_json/"+key, function(data) {
       if (data.length > 12) {
-        data_output.find(".latest").html(Math.round(data[data.length-1].value*10)/10);
+        data_output.find(".latest").html(Math.round(data[data.length-1].value * 10) / 10);
         data_output.find(".data-error").hide();
         data_output.find(".spinner").hide();
         data_output.find("svg").show();
-        drawGraph(data, {key: key, selector: ".indoor-air-"+key+" svg"});
+        drawGraph(data, {key: key, selector: ".indoor-air-" + key + " svg"});
       } else {
         data_output.find(".latest").html("-");
         data_output.find("svg").slideUp();
@@ -229,7 +228,7 @@ $(document).ready(function () {
   $(".indoor-quality").on("click", function () {
     $.get("/homecontroller/indoor_quality/get_modal", function (data) {
       $("#indoor-quality-modal .air-quality-graph-content").html(data);
-      indoor_air_quality.refreshAllData()
+      indoor_air_quality.refreshAllData();
       switchVisibleContent("#indoor-quality-modal");
     });
   });

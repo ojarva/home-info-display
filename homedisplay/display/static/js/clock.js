@@ -6,22 +6,22 @@ var ClockCalendar = function (options) {
 
   function updateOffset() {
     $.get("/homecontroller/timer/current_time", function(timestamp) {
-      server_timestamp = parseInt(timestamp) + 7200000;
+      var server_timestamp = parseInt(timestamp) + 7200000; // TODO: static value
       clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date());
     });
   }
 
   function update() {
     var days = new Array("su", "ma", "ti", "ke", "to", "pe", "la");
-    var offset_fixed = new Date() - clock_offset
+    var offset_fixed = new Date() - clock_offset;
     var currentTime = new Date(offset_fixed);
     var currentDay = days[currentTime.getDay()];
     var currentDate = currentTime.getDate();
     var currentMonth = currentTime.getMonth()+1;
     $("#calendar").html(currentDay+" "+currentDate+"."+currentMonth+".");
-    var currentHours = currentTime.getHours ( );
-    var currentMinutes = currentTime.getMinutes ( );
-    var currentSeconds = currentTime.getSeconds ( );
+    var currentHours = currentTime.getHours();
+    var currentMinutes = currentTime.getMinutes();
+    var currentSeconds = currentTime.getSeconds();
     currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
     currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
     $("#clock").html(currentHours+":"+currentMinutes+":"+currentSeconds);

@@ -1,7 +1,7 @@
 var MomentAutoUpdate = function(options) {
   options = options || {};
   options.update_interval = options.update_interval || 15000;
-  options.selector = options.selector || ".auto-fromnow-update"
+  options.selector = options.selector || ".auto-fromnow-update";
 
   var update_interval;
   function update() {

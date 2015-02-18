@@ -5,7 +5,7 @@ var ShowRealtimePing = function(options) {
 
   function noUpdates(warning_class) {
     warning_class = warning_class || "error";
-    container.html("<i class='fa fa-times-circle "+warning_class+"-message'></i>");
+    container.html("<i class='fa fa-times-circle " + warning_class + "-message'></i>");
   }
   function autoNoUpdates() {
     noUpdates("warning");
@@ -18,7 +18,7 @@ var ShowRealtimePing = function(options) {
     if (invalid_timeout) {
       invalid_timeout = clearTimeout(invalid_timeout);
     }
-    container.html("<i class='fa fa-check-circle success-message'></i> "+(Math.round(parseFloat(message)*10)/10)+"ms");
+    container.html("<i class='fa fa-check-circle success-message'></i> " + (Math.round(parseFloat(message) * 10) / 10) + "ms");
     invalid_timeout = setTimeout(autoNoUpdates, options.invalid_timeout);
   }
 
@@ -28,7 +28,7 @@ var ShowRealtimePing = function(options) {
 
   function startInterval() {
     ws4redis = new WS4Redis({
-      uri: websocket_root+'ping?subscribe-broadcast&publish-broadcast&echo',
+      uri: websocket_root + "ping?subscribe-broadcast&publish-broadcast&echo",
       receive_message: onReceiveItemWS,
       heartbeat_msg: "--heartbeat--"
     });
@@ -43,7 +43,7 @@ var ShowRealtimePing = function(options) {
 
   this.startInterval = startInterval;
   this.stopInterval = stopInterval;
-}
+};
 
 var RefreshInternet = function(options) {
   options = options || {};
@@ -53,8 +53,8 @@ var RefreshInternet = function(options) {
 
   function setSignal(level) {
     output.find(".signal-bars div").removeClass("active").addClass("inactive");
-    for (a = 1; a < level+1; a++) {
-      output.find(".signal-bars .signal-"+a).addClass("active").removeClass("inactive");
+    for (a = 1; a < level + 1; a++) {
+      output.find(".signal-bars .signal-" + a).addClass("active").removeClass("inactive");
     }
   }
 
@@ -73,13 +73,13 @@ var RefreshInternet = function(options) {
 
   function update() {
     $.get("/homecontroller/internet_connection/status", function (data) {
-      var data = data[0];
+      data = data[0];
       if (typeof data == "undefined") {
         console.log("!!! No internet connection information available");
         autoNoUpdates();
         return;
       }
-      signal_bars = output.find(".signal-bars");
+      var signal_bars = output.find(".signal-bars");
       if (signal_bars.data("is-hidden")) {
         signal_bars.slideDown();
         signal_bars.data("is-hidden", false);
@@ -113,7 +113,7 @@ var RefreshInternet = function(options) {
     update();
     update_interval = setInterval(update, options.update_interval);
     ws4redis = new WS4Redis({
-      uri: websocket_root+'internet?subscribe-broadcast&publish-broadcast&echo',
+      uri: websocket_root + "internet?subscribe-broadcast&publish-broadcast&echo",
       receive_message: onReceiveItemWS,
       heartbeat_msg: "--heartbeat--"
     });
@@ -153,7 +153,7 @@ $(document).ready(function() {
     var content = "";
     var timestamp = new Date() - 0;
     $.each(charts, function() {
-      content += "<div class='smokeping-chart'><h4>"+this[0]+"</h4><img src='/smokeping/images/"+this[1]+"?"+timestamp+"'></div>";
+      content += "<div class='smokeping-chart'><h4>" + this[0] + "</h4><img src='/smokeping/images/" + this[1] + "?" + timestamp + "'></div>";
     });
     $("#internet-connection-modal .smokeping-charts").html(content);
     switchVisibleContent("#internet-connection-modal");

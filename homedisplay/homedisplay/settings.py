@@ -19,6 +19,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'compressor',
     'control_milight',
     'display',
     'django_extensions',
@@ -55,6 +56,15 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     'ws4redis.context_processors.default',
 )
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+)
+
+#COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.SlimItFilter']
+
 WSGI_APPLICATION = 'ws4redis.django_runserver.application'
 #WSGI_APPLICATION = 'homedisplay.wsgi.application'
 

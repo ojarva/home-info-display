@@ -1,5 +1,5 @@
 var ShutdownProgress = function(options) {
-  options = options || {}
+  options = options || {};
   options.timeout = options.timeout || 30000; // in ms
   var update_interval, countdown_start;
 
@@ -56,7 +56,7 @@ var ShutdownProgress = function(options) {
   }
 
   ws4redis = new WS4Redis({
-    uri: websocket_root+'shutdown?subscribe-broadcast&publish-broadcast&echo',
+    uri: websocket_root + "shutdown?subscribe-broadcast&publish-broadcast&echo",
     receive_message: onReceiveItemWS,
     heartbeat_msg: "--heartbeat--"
   });
@@ -80,6 +80,5 @@ $(document).ready(function() {
   });
   $("#shutdown-progress .yes").on("click", function() {
     shutdown_progress.shutdown();
-  })
-
+  });
 });

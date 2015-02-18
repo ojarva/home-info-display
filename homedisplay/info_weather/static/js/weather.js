@@ -4,13 +4,13 @@ var RefreshWeather = function (options) {
   var ws4redis, update_interval;
 
   function setWeatherInfo (elem, text, info) {
-    $(elem).html(text+"<br><span class='weather-temperature'>"+info.fields.apparent_temperature+"&deg;C</span> <img src='/homecontroller/static/images/"+info.fields.icon+".png'>");
+    $(elem).html(text+"<br><span class='weather-temperature'>" + info.fields.apparent_temperature + "&deg;C</span> <img src='/homecontroller/static/images/" + info.fields.icon + ".png'>");
   }
 
   function resetWeatherInfo() {
     $(".weather-info .col-md-4").each(function () {
       $(this).html("<br><i class='fa fa-question-circle'></i>");
-    })
+    });
   }
 
   function processData(data) {
@@ -38,9 +38,9 @@ var RefreshWeather = function (options) {
       desired_hours[23] = {"this_elem": "#today .weather-2", "this_text": "Yö"};
     }
     if (data.sun) {
-      sunrise = moment(data.sun.sunrise);
-      sunset = moment(data.sun.sunset);
-      $(".sun-info").html("<i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-up'></i> "+sunrise.format("HH:mm")+" (<span class='auto-fromnow-update' data-timestamp='"+sunrise+"'>"+sunrise.fromNow()+"</span>) <i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-down'></i> "+sunset.format("HH:mm")+" (<span class='auto-fromnow-update' data-timestamp='"+sunset+"'>"+sunset.fromNow()+"</span>)");
+      var sunrise = moment(data.sun.sunrise);
+      var sunset = moment(data.sun.sunset);
+      $(".sun-info").html("<i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-up'></i> " + sunrise.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunrise + "'>" + sunrise.fromNow() + "</span>) <i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-down'></i> " + sunset.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunset + "'>" + sunset.fromNow() + "</span>)");
     }
     $.each(data.hours, function () {
       var set = false, this_text, this_elem, this_data = this;
@@ -53,8 +53,8 @@ var RefreshWeather = function (options) {
         } else {
           for (var key in desired_hours) {
             if (key == this.fields.hour) {
-              this_elem = desired_hours[key]["this_elem"];
-              this_text = desired_hours[key]["this_text"];
+              this_elem = desired_hours[key].this_elem;
+              this_text = desired_hours[key].this_text;
               set = true;
             }
           }
@@ -92,7 +92,7 @@ var RefreshWeather = function (options) {
 
   function onReceiveItemWS(message) {
     try {
-      data = JSON.parse(message);
+      var data = JSON.parse(message);
       processData(data);
     } catch (e) {
       update();
@@ -104,7 +104,7 @@ var RefreshWeather = function (options) {
     update();
     update_interval = setInterval(update, options.update_interval);
     ws4redis = new WS4Redis({
-      uri: websocket_root+'weather?subscribe-broadcast&publish-broadcast&echo',
+      uri: websocket_root + "weather?subscribe-broadcast&publish-broadcast&echo",
       receive_message: onReceiveItemWS,
       heartbeat_msg: "--heartbeat--"
     });

@@ -17,24 +17,24 @@ var LightControl = function() {
         group = main_elem.data("group") || "0";
         source = main_elem.data("source");
         main_elem.animate({backgroundColor: "#ffffff"}, 250);
-        main_elem.children().removeClass().addClass("fa fa-spinner fa-spin")
+        main_elem.children().removeClass().addClass("fa fa-spinner fa-spin");
         function animate_completed(icon) {
           main_elem.data("running", false);
-          main_elem.children().removeClass().addClass("fa fa-"+icon);
+          main_elem.children().removeClass().addClass("fa fa-" + icon);
           var restore_classes = function () {
             main_elem.children().each(function() {
               $(this).removeClass().addClass($(this).data("original-classes"));
             });
             main_elem.stop().animate({backgroundColor: main_elem.data("original-color")}, 1000);
-          }
+          };
           setTimeout(restore_classes, 2000);
         }
 
         var url = "/homecontroller/lightcontrol/control/";
         if (source) {
-          url += "source/"+source+"/"+command;
+          url += "source/" + source + "/" + command;
         } else {
-          url += command+"/"+group;
+          url += command + "/" + group;
         }
 
         $.ajax({

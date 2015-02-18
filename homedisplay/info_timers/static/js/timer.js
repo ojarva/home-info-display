@@ -6,12 +6,15 @@ var Timer = function(parent_elem, options) {
       backend_interval,
       alarm_interval,
       ws4redis,
-      running = false, id_uniq = Math.random().toString().replace(".", ""), id;
+      timers = [],
+      running = false,
+      id_uniq = Math.random().toString().replace(".", ""),
+      id;
 
   var this_elem;
   options = options || {};
   options.delay = options.delay || 100;
-  options.backend_interval = options.backend_interval || 5*60*1000;
+  options.backend_interval = options.backend_interval || 5 * 60 * 1000;
 
   if (options.id) {
     setId(options.id);
@@ -27,8 +30,8 @@ var Timer = function(parent_elem, options) {
   }
 
   function onReceiveItemWS(message) {
-    console.log(id,"received message",message);
-    source = "backend";
+    console.log(id, "received message", message);
+    var source = "backend";
     if (message == "stop") {
       stopItem(source);
     } else if (message == "delete") {
@@ -47,7 +50,7 @@ var Timer = function(parent_elem, options) {
     id = new_id;
     timers.addTimerId(id);
     ws4redis = new WS4Redis({
-      uri: websocket_root+'timer-'+id+'?subscribe-broadcast&publish-broadcast&echo',
+      uri: websocket_root + "timer-" + id + "?subscribe-broadcast&publish-broadcast&echo",
       receive_message: onReceiveItemWS,
       heartbeat_msg: "--heartbeat--"
     });
@@ -60,24 +63,24 @@ var Timer = function(parent_elem, options) {
   function create() {
     // Creates HTML elements and starts timer.
     if (timer_type == "timer") {
-      $(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-"+id_uniq+"'>"+
-      " <div class='col-md-8'>"+
-      "   <div class='timer-info'>"+
-      "     "+options.name+" <span style='float: right' class='timer-timeleft'>---</span>"+
-      "   </div>"+
-      "   <div class='progress hidden-xs hidden-sm'>"+
-      "    <div class='progress-bar' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width:100%'>"+
-      "    </div>"+
-      "   </div>"+
-      " </div>"+
-      " <div class='col-md-2 timer-stop timer-control animate-click'>"+
-      "   <i class='fa fa-trash'></i>"+
-      " </div>"+
-      " <div class='col-md-2 timer-restart timer-control animate-click'>"+
-      "   <i class='fa fa-refresh'></i>"+
-      " </div>"+
+      $(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-" + id_uniq + "'>" +
+      " <div class='col-md-8'>" +
+      "   <div class='timer-info'>" +
+      "     " + options.name + " <span style='float: right' class='timer-timeleft'>---</span>" +
+      "   </div>" +
+      "   <div class='progress hidden-xs hidden-sm'>" +
+      "    <div class='progress-bar' role='progressbar' aria-valuenow='100' aria-valuemin='0' aria-valuemax='100' style='width:100%'>" +
+      "    </div>" +
+      "   </div>" +
+      " </div>" +
+      " <div class='col-md-2 timer-stop timer-control animate-click'>" +
+      "   <i class='fa fa-trash'></i>" +
+      " </div>" +
+      " <div class='col-md-2 timer-restart timer-control animate-click'>" +
+      "   <i class='fa fa-refresh'></i>" +
+      " </div>" +
       "</div>");
-      this_elem = $("#timer-"+id_uniq);
+      this_elem = $("#timer-" + id_uniq);
       this_elem.find(".timer-stop").click(function() {
         deleteItem("ui");
       });
@@ -86,19 +89,19 @@ var Timer = function(parent_elem, options) {
       });
 
     } else {
-      $(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-"+id_uniq+"'>"+
-      " <div class='col-md-8 stopclock timer-main center-content stopclock-content'>"+
-      "   00:00:00.0"+
-      " </div>"+
-      " <div class='col-md-2 timer-control animate-click stopclock-stop'>"+
-      "   <i class='fa fa-stop'></i>"+
-      " </div>"+
-      " <div class='col-md-2 timer-control animate-click stopclock-restart'>"+
-      "   <i class='fa fa-refresh'></i>"+
-      " </div>"+
+      $(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-" + id_uniq + "'>" +
+      " <div class='col-md-8 stopclock timer-main center-content stopclock-content'>" +
+      "   00:00:00.0" +
+      " </div>" +
+      " <div class='col-md-2 timer-control animate-click stopclock-stop'>" +
+      "   <i class='fa fa-stop'></i>" +
+      " </div>" +
+      " <div class='col-md-2 timer-control animate-click stopclock-restart'>" +
+      "   <i class='fa fa-refresh'></i>" +
+      " </div>" +
       "</div>");
 
-      this_elem = $("#timer-"+id_uniq);
+      this_elem = $("#timer-" + id_uniq);
       this_elem.find(".stopclock-stop").click(function() {
         stopItem("ui");
       });
@@ -111,7 +114,7 @@ var Timer = function(parent_elem, options) {
     this_elem.stop(true).slideDown("fast");
 
     if (created_by_backend) {
-      this_elem.addClass("timer-backend-id-"+id);
+      this_elem.addClass("timer-backend-id-" + id);
       if (options.running) {
         startItem("backend");
       } else {
@@ -122,7 +125,7 @@ var Timer = function(parent_elem, options) {
       $.post("/homecontroller/timer/create", {name: options.name, duration: options.duration}, function(data) {
         setId(data[0].pk);
         this_elem.addClass("timer-backend-id-" + data[0].pk);
-        start_time = new Date(data[0].fields.start_time)
+        start_time = new Date(data[0].fields.start_time);
       });
     }
   }
@@ -142,7 +145,7 @@ var Timer = function(parent_elem, options) {
     diff = diff - minutes * 60;
     var seconds = Math.floor(diff);
     var msec = diff - seconds;
-    var timer = prefix+zeroPad(hours, 2) + ":"+zeroPad(minutes, 2)+":"+zeroPad(seconds, 2)+"."+(String(Math.round(msec*10))+"00").substr(0,1);
+    var timer = prefix+zeroPad(hours, 2) + ":" + zeroPad(minutes, 2) + ":" + zeroPad(seconds, 2) + "." + (String(Math.round(msec * 10)) + "00").substr(0, 1);
     // TODO: timer/stopclock
     if (timer_type == "timer") {
       this_elem.find(".timer-timeleft").html(timer);
@@ -163,12 +166,12 @@ var Timer = function(parent_elem, options) {
       clearItemIntervals();
       this_elem.find(".stopclock-stop i").removeClass("fa-stop").addClass("fa-trash");
       if (source != "backend") {
-        $.get("/homecontroller/timer/stop/"+id, function (data) {
-          diff = ((new Date(data[0].fields.stopped_at)) - (new Date(data[0].fields.start_time))) / 1000;
+        $.get("/homecontroller/timer/stop/" + id, function (data) {
+          var diff = ((new Date(data[0].fields.stopped_at)) - (new Date(data[0].fields.start_time))) / 1000;
           update_timer_content(diff, "");
         });
       } else if (options.stopped_at) {
-        diff = (new Date(options.stopped_at) - start_time) / 1000;
+        var diff = (new Date(options.stopped_at) - start_time) / 1000;
         update_timer_content(diff, "");
       }
     }
@@ -178,10 +181,11 @@ var Timer = function(parent_elem, options) {
     if (!running) {
       return;
     }
-    var now = new Date();
-    var prefix = "";
+    var now = new Date(),
+        prefix = "",
+        diff;
     if (timer_type == "timer") {
-      var diff = parseInt(options.duration) - (now - start_time) / 1000;
+      diff = parseInt(options.duration) - (now - start_time) / 1000;
       var percent = Math.round((parseFloat(diff) / parseFloat(options.duration)) * 100);
       if (percent > 100) {
         percent = 100;
@@ -191,7 +195,7 @@ var Timer = function(parent_elem, options) {
         diff *= -1;
       }
       if (percent > 0) {
-        this_elem.find(".progress-bar").css("width", percent+"%").removeClass("progress-bar-danger").addClass("progress-bar-success");
+        this_elem.find(".progress-bar").css("width", percent + "%").removeClass("progress-bar-danger").addClass("progress-bar-success");
         this_elem.removeClass("timer-overtime");
       } else {
         this_elem.find(".progress-bar").removeClass("progress-bar-success").addClass("progress-bar-danger").css("width", "100%");
@@ -199,7 +203,7 @@ var Timer = function(parent_elem, options) {
         // TODO: play alarm
       }
     } else if (timer_type == "stopclock"){
-      var diff = (now - start_time) / 1000;
+      diff = (now - start_time) / 1000;
     }
     update_timer_content(diff, prefix);
   }
@@ -225,7 +229,7 @@ var Timer = function(parent_elem, options) {
     }
     timers.sortTimers();
     if (source != "backend" && id) {
-      $.get("/homecontroller/timer/start/"+id, function(data) {
+      $.get("/homecontroller/timer/start/" + id, function(data) {
         //TODO
       });
     }
@@ -234,7 +238,7 @@ var Timer = function(parent_elem, options) {
   function refreshFromBackend() {
     if (id) { // Don't refresh if no data is available.
       $.ajax({
-        url: "/homecontroller/timer/get/"+id,
+        url: "/homecontroller/timer/get/" + id,
         success: function (data) {
           start_time = new Date(data[0].fields.start_time);
           if (data[0].fields.running) {
@@ -266,7 +270,7 @@ var Timer = function(parent_elem, options) {
     }
     startItem(source);
     if (source != "backend" && id) {
-      $.get("/homecontroller/timer/restart/"+id, function (data) {
+      $.get("/homecontroller/timer/restart/" + id, function (data) {
         start_time = new Date(data[0].fields.start_time);
       });
     }
@@ -279,7 +283,7 @@ var Timer = function(parent_elem, options) {
       backend_interval = clearInterval(backend_interval);
     }
     if (item_source != "backend" && id) {
-      $.get("/homecontroller/timer/delete/"+id, function(data) {
+      $.get("/homecontroller/timer/delete/" + id, function(data) {
       });
     }
     try {
@@ -306,12 +310,13 @@ var Timers = function(options) {
     $.getJSON("/homecontroller/timer/list", function(data) {
       $.each(data, function() {
         var id = this.pk;
+        var timer;
         if (!hasTimer(id)) {
           if (this.fields.duration === null) {
-          // if data.duration is not null, it's timer, not countdown
-            var timer_run = new Timer(stopclock_holder, {"name": this.fields.name, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
+            // if data.duration is not null, it's timer, not countdown
+            timer = new Timer(stopclock_holder, {"name": this.fields.name, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
           } else {
-            var timer_run = new Timer(timer_holder, {"name": this.fields.name, "duration": this.fields.duration, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
+            timer = new Timer(timer_holder, {"name": this.fields.name, "duration": this.fields.duration, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
           }
         }
       });
@@ -323,7 +328,7 @@ var Timers = function(options) {
   }
 
   function hasTimer(id) {
-    currently_running = $(".timer-backend-id-"+id);
+    currently_running = $(".timer-backend-id-" + id);
     if (id in created_timer_items) {
       return false;
     }
@@ -336,17 +341,17 @@ var Timers = function(options) {
 
   function sortTimers() {
     var items = $(timer_holder).find(".timer-item");
-    items.detach().sort(function(a,b) {
-      var astts = $(a).data('end-timestamp');
-      var bstts = $(b).data('end-timestamp')
+    items.detach().sort(function(a, b) {
+      var astts = $(a).data("end-timestamp");
+      var bstts = $(b).data("end-timestamp");
       return (astts > bstts) ? (astts > bstts) ? 1 : 0 : -1;
     });
     $(timer_holder).append(items);
 
-    var items = $(stopclock_holder).find(".timer-item");
-    items.detach().sort(function(a,b) {
-      var astts = $(a).data('start-timestamp');
-      var bstts = $(b).data('start-timestamp')
+    items = $(stopclock_holder).find(".timer-item");
+    items.detach().sort(function(a, b) {
+      var astts = $(a).data("start-timestamp");
+      var bstts = $(b).data("start-timestamp");
       return (astts > bstts) ? (astts > bstts) ? 1 : 0 : -1;
     });
     $(stopclock_holder).append(items);
@@ -358,14 +363,15 @@ var Timers = function(options) {
        added timer does not have ID yet. */
    console.log("Timer global: received message", message);
     setTimeout(function () {
+      var timer;
       if (message.substring(0, 7) == "create-") {
         var data = JSON.parse(message.substring(7))[0];
         if (!hasTimer(data.pk)) {
           if (data.fields.duration === null) {
             // if data.duration is not null, it's timer, not countdown
-            var timer_run = new Timer(stopclock_holder, {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
+            timer = new Timer(stopclock_holder, {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
           } else {
-            var timer_run = new Timer(timer_holder, {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
+            timer = new Timer(timer_holder, {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
           }
         }
       }
@@ -373,7 +379,7 @@ var Timers = function(options) {
   }
 
   var ws4redis = new WS4Redis({
-    uri: websocket_root+'timers?subscribe-broadcast&publish-broadcast&echo',
+    uri: websocket_root + "timers?subscribe-broadcast&publish-broadcast&echo",
     receive_message: onReceiveWS,
     heartbeat_msg: "--heartbeat--"
   });

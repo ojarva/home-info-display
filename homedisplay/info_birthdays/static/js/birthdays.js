@@ -17,7 +17,7 @@ var Birthdays = function(elem, use_date, options) {
     $(parent_elem).children().remove();
   }
 
-  function compareBirthdays(a,b) {
+  function compareBirthdays(a, b) {
     if (a.birthday_sort < b.birthday_sort) {
       return -1;
     }
@@ -28,16 +28,16 @@ var Birthdays = function(elem, use_date, options) {
   }
 
   function formatSortString(da) {
-    var da = moment(da);
+    da = moment(da);
     var m = da.month();
     if (m < 10) {
-      m = "0"+m;
+      m = "0" + m;
     }
     var d = da.date();
     if (d < 10) {
-      d = "0"+d;
+      d = "0" + d;
     }
-    return ""+m+d;
+    return "" + m + d;
   }
 
   function update() {
@@ -57,7 +57,7 @@ var Birthdays = function(elem, use_date, options) {
           prefix = "1";
           this.next_year = true;
         }
-        this.birthday_sort = prefix+sort_string;
+        this.birthday_sort = prefix + sort_string;
         data_sortable.push(this);
       });
       data_sortable.sort(compareBirthdays);
@@ -74,10 +74,10 @@ var Birthdays = function(elem, use_date, options) {
           if (this.next_year) {
             b = b.add(1, "year");
           }
-          age = (" ("+this.birthday_moment.from(b)+")").replace(" sitten", "");
+          age = (" (" + this.birthday_moment.from(b) + ")").replace(" sitten", "");
         }
         if (options.showdate) {
-          date = " - "+this.birthday_moment.date()+"."+(this.birthday_moment.month()+1)+".";
+          date = " - " + this.birthday_moment.date() + "." + (this.birthday_moment.month() + 1)+".";
           if (this.fields.valid_year) {
             date += this.birthday_moment.year();
           }
@@ -89,7 +89,7 @@ var Birthdays = function(elem, use_date, options) {
         }
         items_in_current += 1;
         parent_elem.append("<li><i class='fa-li fa fa-birthday-cake'></i> "+name+date+age+"</li>");
-      })
+      });
     });
   }
 
@@ -110,7 +110,7 @@ var Birthdays = function(elem, use_date, options) {
     }
     wait_sync = setTimeout(runInterval, wait_time);
     ws4redis = new WS4Redis({
-      uri: websocket_root+'birthdays?subscribe-broadcast&publish-broadcast&echo',
+      uri: websocket_root + "birthdays?subscribe-broadcast&publish-broadcast&echo",
       receive_message: onReceiveItemWS,
       heartbeat_msg: "--heartbeat--"
     });
@@ -132,7 +132,7 @@ var Birthdays = function(elem, use_date, options) {
 
   this.startInterval = startInterval;
   this.stopInterval = stopInterval;
-}
+};
 
 var birthdays_today, birthdays_tomorrow, birthdays_all;
 

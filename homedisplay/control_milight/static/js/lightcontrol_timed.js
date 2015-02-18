@@ -1,10 +1,10 @@
 var LightControlTimed = function(options) {
-  options = options || {}
+  options = options || {};
   options.update_interval = options.update_interval || 1000;
   var active_days;
   var main = $(options.elem);
   if (main.length == 0) {
-    console.log("!!! Invalid selector for LightControlTimed: "+options.elem);
+    console.log("!!! Invalid selector for LightControlTimed: " + options.elem);
   }
   var ws4redis,
       action = main.data("action"),
@@ -60,7 +60,7 @@ var LightControlTimed = function(options) {
   }
 
   function getRunning() {
-    icon = main.find(".play-control i");
+    var icon = main.find(".play-control i");
     if (icon.hasClass("fa-toggle-on")) {
       return true;
     }
@@ -90,7 +90,7 @@ var LightControlTimed = function(options) {
   }
 
   function update() {
-    $.get("/homecontroller/lightcontrol/timed/get/"+ action, function (data) {
+    $.get("/homecontroller/lightcontrol/timed/get/" + action, function (data) {
       updateFields(data);
     });
   }
@@ -117,7 +117,7 @@ var LightControlTimed = function(options) {
         end_time = getEndTimeMoment(),
         now = moment(),
         verb,
-        show_progress_indicator;
+        show_progress_indicator,
         content = main.find(".time-left");
     if (now < start_time) { // Not yet started
       verb = "Alkaa";
@@ -134,7 +134,7 @@ var LightControlTimed = function(options) {
       } else {
         show_progress_indicator = true;
       }
-      content.html(verb+" "+end_time.fromNow());
+      content.html(verb + " " + end_time.fromNow());
     } else {
       // Done for today.
       start_time.add(1, "days");
@@ -154,7 +154,7 @@ var LightControlTimed = function(options) {
 
   function adjustDuration(dir) {
     var time = getDuration().replace("+", "").split(":");
-    parsed_time = moment();
+    var parsed_time = moment();
     parsed_time.hours(time[0]);
     parsed_time.minutes(time[1]);
     if (dir == "plus") {
@@ -166,7 +166,7 @@ var LightControlTimed = function(options) {
         parsed_time.subtract(15, "minutes");
       }
     }
-    main.find(".duration-content").html("+"+parsed_time.format("H:mm"));
+    main.find(".duration-content").html("+" + parsed_time.format("H:mm"));
   }
 
   function startInterval() {
@@ -214,7 +214,7 @@ var LightControlTimed = function(options) {
   });
 
   ws4redis = new WS4Redis({
-    uri: websocket_root+'lightcontrol_timed?subscribe-broadcast&publish-broadcast&echo',
+    uri: websocket_root + "lightcontrol_timed?subscribe-broadcast&publish-broadcast&echo",
     receive_message: onReceiveItemWS,
     heartbeat_msg: "--heartbeat--"
   });

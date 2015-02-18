@@ -7,7 +7,7 @@ var RepeatingTasks = function(elem, use_date) {
 
   function onReceiveItemWS(message) {
     try {
-      data = JSON.parse(message);
+      var data = JSON.parse(message);
       processData(data[this_date]);
     } catch (e) {
       console.log("repeating tasks: backend requests update");
@@ -21,14 +21,14 @@ var RepeatingTasks = function(elem, use_date) {
       var overdue_by = "", diff;
       if (this.fields.last_completed_at) {
         diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
-        overdue_by = " (<span class='auto-fromnow-update' data-timestamp='"+diff+"'>"+diff.fromNow()+"</span>)";
+        overdue_by = " (<span class='auto-fromnow-update' data-timestamp='" + diff + "'>" + diff.fromNow() + "</span>)";
       }
       if (this.fields.optional) {
         icon = "fa-question-circle";
       } else {
         icon = "fa-repeat";
       }
-      parent_elem.append("<li class='repeating-task-mark-done' data-id='"+this.pk+"'><i class='fa-li fa "+icon+"'></i> <span class='task-title'>"+this.fields.title+"</span>"+overdue_by+"</li>");
+      parent_elem.append("<li class='repeating-task-mark-done' data-id='" + this.pk + "'><i class='fa-li fa " + icon + "'></i> <span class='task-title'>" + this.fields.title + "</span>" + overdue_by + "</li>");
     });
     parent_elem.find(".repeating-task-mark-done").on("click", function() {
       var this_elem = $(this);
@@ -40,7 +40,7 @@ var RepeatingTasks = function(elem, use_date) {
   }
 
   function update() {
-    $.get("/homecontroller/repeating_tasks/get_json/"+this_date, function(data) {
+    $.get("/homecontroller/repeating_tasks/get_json/" + this_date, function(data) {
       processData(data);
     });
   }
@@ -50,7 +50,7 @@ var RepeatingTasks = function(elem, use_date) {
     update();
     update_interval = setInterval(update, 1000 * 60 * 120);
     ws4redis = new WS4Redis({
-      uri: websocket_root+'repeating_tasks?subscribe-broadcast&publish-broadcast&echo',
+      uri: websocket_root + "repeating_tasks?subscribe-broadcast&publish-broadcast&echo",
       receive_message: onReceiveItemWS,
       heartbeat_msg: "--heartbeat--"
     });
@@ -71,7 +71,7 @@ var RepeatingTasks = function(elem, use_date) {
   this.stopInterval = stopInterval;
   this.update = update;
   this.clearTasks = clearTasks;
-}
+};
 
 var tasks_today, tasks_tomorrow, tasks_all;
 
@@ -87,13 +87,13 @@ $(document).ready(function() {
   });
   $("#confirm-repeating-task .yes").on("click", function () {
     var id = $("#confirm-repeating-task").data("id");
-    $.get("/homecontroller/repeating_tasks/done/"+id, function() {
+    $.get("/homecontroller/repeating_tasks/done/" + id, function() {
     });
     switchVisibleContent("#main-content");
   });
   $("#confirm-repeating-task .snooze").on("click", function () {
     var id = $("#confirm-repeating-task").data("id");
-    $.get("/homecontroller/repeating_tasks/snooze/"+id+"/"+$(this).data("days"), function() {
+    $.get("/homecontroller/repeating_tasks/snooze/" + id + "/" + $(this).data("days"), function() {
     });
     switchVisibleContent("#main-content");
   });

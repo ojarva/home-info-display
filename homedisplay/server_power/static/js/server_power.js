@@ -6,7 +6,7 @@ var ServerPower = function(options) {
 
   function showButton(button_name) {
     main_elem.find(".action-button").hide();
-    main_elem.find("."+button_name).show();
+    main_elem.find("." + button_name).show();
   }
 
   function setStatus(status) {
@@ -34,7 +34,7 @@ var ServerPower = function(options) {
     refreshServerPower();
     interval = setInterval(refreshServerPower, options.update_interval);
     ws4redis = new WS4Redis({
-      uri: websocket_root+'server_power?subscribe-broadcast&publish-broadcast&echo',
+      uri: websocket_root + "server_power?subscribe-broadcast&publish-broadcast&echo",
       receive_message: onReceiveItemWS,
       heartbeat_msg: "--heartbeat--"
     });

@@ -1,3 +1,4 @@
+{% load compress %}
 <!DOCTYPE html>
 <html lang="en">
 <head  profile="http://www.w3.org/2005/10/profile">
@@ -13,9 +14,10 @@
   <title>Koti</title>
   <link rel="shortcut icon" type="image/png" href="/homecontroller/static/img/favicon.png"/>
 
+{% compress css %}
   <link href="/homecontroller/static/css/custom_computer.css" rel="stylesheet">
   {% include "snippets/common_css.html" %}
-
+{% endcompress %}
 </head>
 
 <body>
@@ -123,12 +125,13 @@
     {% include "snippets/modal_dialogs.html" %}
   </div> <!-- container -->
 
+{% compress js %}
   {% include "snippets/js_base.html" %}
   <script src="/homecontroller/static/js/d3.min.js"></script>
   <script src="/homecontroller/static/js/nv.d3.js"></script>
 
   {% include "snippets/js_common.html" %}
   <script src="/homecontroller/static/js/custom_computer.js"></script>
-
+{% endcompress %}
 </body>
 </html>
