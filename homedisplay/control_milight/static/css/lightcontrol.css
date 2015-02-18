@@ -34,10 +34,10 @@
 }
 
 .timed-lightcontrol .time-control .plus {
-  background-color: green;
+  background-color: #006600;
 }
 .timed-lightcontrol .time-control .minus {
-  background-color: red;
+  background-color: #cc0000;
 }
 
 .timed-lightcontrol .fading-progress {
