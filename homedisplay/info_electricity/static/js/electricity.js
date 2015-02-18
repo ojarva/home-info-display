@@ -81,7 +81,7 @@
       .attr("class", "x axis")
       .call(xAxis)
     .append("text")
-      .text("date")
+      .text("pvm")
       .attr("transform", "translate("+axisWidth+",-10)");
 
     svg.append("g")
@@ -89,7 +89,7 @@
       .attr("class", "y axis")
       .call(yAxis)
     .append("text")
-      .text("time")
+      .text("aika")
       .attr("transform", "translate(-10,"+axisHeight+") rotate(-90)");
 
     //render heatmap rects
