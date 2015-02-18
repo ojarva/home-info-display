@@ -194,9 +194,9 @@ var IndoorAirQuality = function (options) {
         drawGraph(data, {key: key, selector: ".indoor-air-" + key + " svg"});
       } else {
         data_output.find(".latest").html("-");
-        data_output.find("svg").slideUp();
-        data_output.find(".spinner").slideUp();
-        data_output.find(".data-error").slideDown();
+        data_output.find("svg").hide();
+        data_output.find(".spinner").show();
+        data_output.find(".data-error").show();
       }
     });
   }
