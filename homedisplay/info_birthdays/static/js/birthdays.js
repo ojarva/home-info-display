@@ -97,16 +97,13 @@ var Birthdays = function(elem, use_date, options) {
     });
   }
 
-  function runInterval() {
-    update_interval = setInterval(update, options.interval);
-  }
-
   function startInterval() {
     var now = new Date(), minutes, wait_time;
     stopInterval();
     update();
     update_interval = setInterval(update, options.interval);
     ws_generic.register("birthdays_" + this_date, onReceiveItemWS);
+    ge_refresh.register("birthdays_" + this_date, update);
   }
 
   function stopInterval() {
@@ -114,6 +111,7 @@ var Birthdays = function(elem, use_date, options) {
       update_interval = clearInterval(update_interval);
     }
     ws_generic.deRegister("birthdays_" + this_date);
+    ge_refresh.deRegister("birthdays_" + this_date);
   }
 
   this.startInterval = startInterval;

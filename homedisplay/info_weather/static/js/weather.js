@@ -99,6 +99,7 @@ var RefreshWeather = function (options) {
     update();
     update_interval = setInterval(update, options.update_interval);
     ws_generic.register("weather", onReceiveItemWS);
+    ge_refresh.register("weather", update);
   }
 
   function stopInterval() {
@@ -106,6 +107,7 @@ var RefreshWeather = function (options) {
       update_interval = clearInterval(update_interval);
     }
     ws_generic.deRegister("weather");
+    ge_refresh.deRegister("weather");
   }
 
   this.startInterval = startInterval;

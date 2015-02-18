@@ -182,6 +182,7 @@ var IndoorAirQuality = function (options) {
     ws_generic.register("indoor_quality", fetchTrend); // TODO: trend should be updated without polling
     ws_generic.register("indoor_co2", processCo2);
     ws_generic.register("indoor_temperature", processTemperature);
+    ge_refresh.register("indoor_quality", update);
   }
 
   function stopInterval() {
@@ -191,6 +192,7 @@ var IndoorAirQuality = function (options) {
     ws_generic.deRegister("indoor_quality");
     ws_generic.deRegister("indoor_co2");
     ws_generic.deRegister("indoor_temperature");
+    ge_refresh.deRegister("indoor_quality");
   }
 
   function refreshAllData() {

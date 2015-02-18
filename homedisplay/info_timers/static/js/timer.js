@@ -56,6 +56,7 @@ var Timer = function(parent_elem, options) {
     id = new_id;
     timers.addTimerId(id);
     ws_generic.register("timer-" + id, onReceiveItemWS);
+    ge_refresh.register("timer-" + id, refreshFromBackend);
   }
 
   function getId() {
@@ -288,6 +289,7 @@ var Timer = function(parent_elem, options) {
       });
     }
     ws_generic.deRegister("timer-" + id);
+    ge_refresh.deRegister("timer-" + id);
   }
 
   this.deleteItem = deleteItem;
@@ -373,6 +375,7 @@ var Timers = function(options) {
   }
 
   ws_generic.register("timers", onReceiveWS);
+  ge_refresh.register("timers", refreshFromServer);
 
   $(".add-timer").click(function () {
     $.post("/homecontroller/timer/create", {name: $(this).data("name"), duration: $(this).data("duration")});

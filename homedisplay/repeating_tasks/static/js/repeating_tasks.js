@@ -44,6 +44,7 @@ var RepeatingTasks = function(elem, use_date) {
     update();
     update_interval = setInterval(update, 1000 * 60 * 120);
     ws_generic.register("repeating_tasks_" + this_date, onReceiveItemWS);
+    ge_refresh.register("repeating_tasks_" + this_date, update);
   }
 
   function stopInterval() {
@@ -51,6 +52,7 @@ var RepeatingTasks = function(elem, use_date) {
       update_interval = clearInterval(update_interval);
     }
     ws_generic.deRegister("repeating_tasks_" + this_date);
+    ge_refresh.deRegister("repeating_tasks_" + this_date);
   }
 
   this.startInterval = startInterval;

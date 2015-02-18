@@ -99,6 +99,7 @@ var RefreshInternet = function(options) {
     update();
     update_interval = setInterval(update, options.update_interval);
     ws_generic.register("internet", processData);
+    ge_refresh.register("internet", update);
   }
 
   function stopInterval() {
@@ -106,6 +107,7 @@ var RefreshInternet = function(options) {
       update_interval = clearInterval(update_interval);
     }
     ws_generic.deRegister("internet");
+    ge_refresh.deRegister("internet");
   }
 
   this.startInterval = startInterval;

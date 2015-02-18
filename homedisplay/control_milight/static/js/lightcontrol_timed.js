@@ -212,7 +212,8 @@ var LightControlTimed = function(options) {
     updateBackend();
   });
 
-  ws_generic.register("lightcontrol_timed_" + action, onReceiveItemWS); // TODO: duplicate keys
+  ws_generic.register("lightcontrol_timed_" + action, onReceiveItemWS);
+  ge_refresh.register("lightcontrol_timed_" + action, update);
 
   update();
   startInterval();
