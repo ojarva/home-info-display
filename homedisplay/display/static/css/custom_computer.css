@@ -6,6 +6,15 @@ body {
   padding-top: 60px !important;
 }
 
+.lightcontrol-btn-large {
+  height: 90px !important;
+  font-size: 200% !important;
+}
+.lightcontrol-btn-small {
+  height: 70px !important;
+  font-size: 2em !important;
+}
+
 .internet-connection {
   margin-top: 20px;
   font-size: 180%;
@@ -17,8 +26,8 @@ body {
 }
 .server-power {
   margin-top: 20px;
-  font-size: 180%;
+  font-size: 150%;
 }
 .genelec-power {
-  font-size: 180%;
+  font-size: 150%;
 }
