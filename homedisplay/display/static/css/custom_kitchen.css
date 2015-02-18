@@ -4,9 +4,6 @@ body {
   padding-left: 5px;
 }
 
-
-
-
 .light-controls {
   padding-top: 60px;
   font-size: 700%;
@@ -18,12 +15,12 @@ body {
   margin-right:auto;
 }
 
-#clock {
+.timeinfo .clock {
   font-size: 860%;
   font-weight: bold;
 }
 
-#calendar {
+.timeinfo .calendar {
   padding-top: 0.25em;
   padding-bottom: 0.25em;
   font-size: 450%;

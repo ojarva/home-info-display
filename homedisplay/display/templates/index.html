@@ -20,8 +20,10 @@
       <div class="row">
         <div class="col-md-4">
           <div class="center-content darkbox">
-            <div id="clock">--:--:--</div>
-            <div id="calendar">-- --.-.</div>
+            <div class="timeinfo">
+              <div class="clock">--:--:--</div>
+              <div class="calendar">-- --.-.</div>
+            </div>
           </div>
           <div class="lightbox center-content">
             <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="display" data-command="off"><i class="fa fa-power-off"></i></div>
@@ -121,7 +123,6 @@
   <script src="/homecontroller/static/js/nv.d3.js"></script>
 
   {% include "snippets/js_common.html" %}
-  <script src="/homecontroller/static/js/clock.js"></script>
   <script src="/homecontroller/static/js/weather.js"></script>
 
 </body>

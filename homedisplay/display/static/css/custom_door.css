@@ -14,9 +14,15 @@ body {
   margin-right:auto;
 }
 
-#clock {
+.timeinfo .clock {
   font-size: 400%;
   font-weight: bold;
+}
+
+.timeinfo .calendar {
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+  font-size: 450%;
 }
 
 #screensaver {
@@ -38,12 +44,6 @@ body {
 #weather-general img {
   width: 80px;
   height: 80px;
-}
-
-#calendar {
-  padding-top: 0.25em;
-  padding-bottom: 0.25em;
-  font-size: 450%;
 }
 
 #time-info {

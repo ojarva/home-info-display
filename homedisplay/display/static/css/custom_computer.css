@@ -31,3 +31,15 @@ body {
 .genelec-power {
   font-size: 150%;
 }
+
+#birthdays-list-all .calendar {
+  font-size: 300%;
+}
+
+#lightcontrol-modal .clock {
+  font-size: 300%;
+  padding-right: 10px;
+}
+#lightcontrol-modal .calendar {
+  font-size: 200%;
+}

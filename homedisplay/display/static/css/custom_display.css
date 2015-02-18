@@ -2,9 +2,13 @@
   font-size: 200%;
 }
 
-#clock {
+.timeinfo .clock {
   font-size: 790%;
   font-weight: bold;
+}
+
+.timeinfo .calendar {
+  font-size: 457%;
 }
 
 .indoor-quality {
@@ -37,9 +41,18 @@ body {
   overflow-y: hidden;
 }
 
-#calendar {
-  font-size: 457%;
+#birthdays-list-all .calendar {
+  font-size: 300%;
 }
+
+#lightcontrol-modal .clock {
+  font-size: 300%;
+  padding-right: 10px;
+}
+#lightcontrol-modal .calendar {
+  font-size: 200%;
+}
+
 
 .action-button {
   font-size: 120%;

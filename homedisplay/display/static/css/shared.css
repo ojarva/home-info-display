@@ -92,7 +92,7 @@ body {
   color: #cccccc;
 }
 
-#calendar {
+.timeinfo .calendar {
   padding-top: 0.25em;
   padding-bottom: 0.25em;
 }

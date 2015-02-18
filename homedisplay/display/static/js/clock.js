@@ -18,13 +18,13 @@ var ClockCalendar = function (options) {
     var currentDay = days[currentTime.getDay()];
     var currentDate = currentTime.getDate();
     var currentMonth = currentTime.getMonth()+1;
-    $("#calendar").html(currentDay+" "+currentDate+"."+currentMonth+".");
+    $(".calendar").html(currentDay+" "+currentDate+"."+currentMonth+".");
     var currentHours = currentTime.getHours();
     var currentMinutes = currentTime.getMinutes();
     var currentSeconds = currentTime.getSeconds();
     currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
     currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
-    $("#clock").html(currentHours+":"+currentMinutes+":"+currentSeconds);
+    $(".clock").html(currentHours+":"+currentMinutes+":"+currentSeconds);
   }
 
   function getOffset() {
