@@ -69,8 +69,6 @@ Crontab entries
   04 *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_weather
   # Fetch internet connection information from Huawei modem
   *  *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_internet_information
-  # Update CO2 and temperature readings from 1-wire devices
-  *  *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_indoor_quality
   # Periodically average and store all air quality information from redis
   *  *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py add_air_timepoint
   # Run morning and evening transitions
