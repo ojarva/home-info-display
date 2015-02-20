@@ -1,4 +1,7 @@
+from .models import Weather
+from astral import Astral
 from django.conf import settings
+from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render, render_to_response
 from django.template import RequestContext, Template
@@ -8,9 +11,6 @@ import datetime
 import json
 import subprocess
 import time
-from astral import Astral
-from .models import Weather
-from django.core import serializers
 
 def calculate_apparent_temperature(temperature, wind, humidity):
     windchill = (13.12 + 0.6215 * temperature - 11.37 * (wind ** 0.16) + 0.3965 * temperature * (wind ** 0.16))
