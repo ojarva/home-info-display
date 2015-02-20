@@ -39,7 +39,7 @@ def get_wind_readable(wind):
     elif wind < 3.3:
         return "heikko"
     elif wind < 7.9:
-        return "kohtaleinen"
+        return "kohtalainen"
     elif wind < 13.8:
         return "navakka"
     elif wind < 20.7:
@@ -48,13 +48,15 @@ def get_wind_readable(wind):
         return "myrsky"
 
 def get_weather_data():
-    time_now = now().replace(minute=0, second=0, microsecond=0)
+    time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
     weather_objects = Weather.objects.filter(date__gte=time_now.date())
-    forecast = {"hours": []}
+    forecast = {"hours": [], "current": None, "sun": None, "next": []}
     for item in weather_objects:
         i = model_to_dict(item)
         i["apparent_temperature"] = calculate_apparent_temperature(item.temperature, float(item.wind_speed), item.humidity)
         i["wind_speed_readable"] = get_wind_readable(float(item.wind_speed))
+        if i["date"] == time_now.date() and i["hour"] == time_now.hour:
+            forecast["current"] = i
         forecast["hours"].append(i)
 
     sun_info = Astral()
@@ -63,9 +65,7 @@ def get_weather_data():
     for k in b:
         b[k] = unicode(b[k])
     forecast["sun"] = b
-    forecast["next"] = []
 
-    time_now = datetime.datetime.now()
     hour = time_now.hour
     desired_entries = [("+2h", time_now + datetime.timedelta(hours=2))]
     if hour <= 4:

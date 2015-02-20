@@ -8,9 +8,8 @@ var RefreshWeather = function (options) {
   }
 
   function resetWeatherInfo() {
-    $(".weather .weather-box span").each(function () {
-      $(this).html("<i class='fa fa-question-circle'></i>");
-    });
+    $(".weather .weather-box span").html("<i class='fa fa-question-circle'></i>");
+    $(".weather .data-field").html("<i class='fa fa-question-circle'></i>");
   }
 
   function processData(data) {
@@ -24,6 +23,8 @@ var RefreshWeather = function (options) {
         current_index = 1,
         first_date = false,
         new_day = false;
+    items.find(".temperature-now").html(data.current.apparent_temperature);
+    items.find(".wind-now").html(data.current.wind_speed_readable);
     $.each(data.next, function () {
       var this_item = items.find(".weather-" + current_index);
       if (first_date === false) {
