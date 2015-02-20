@@ -13,8 +13,10 @@ import subprocess
 import time
 
 def calculate_apparent_temperature(temperature, wind, humidity):
+    wind /= 3.6
     windchill = (13.12 + 0.6215 * temperature - 11.37 * (wind ** 0.16) + 0.3965 * temperature * (wind ** 0.16))
     href = 0.2
+
     simmer = (1.8 * temperature - 0.55 * (1 - humidity / 100) * (1.8 * temperature - 26) - 0.55 * (1 - href) * 26) / (1.8 * (1 - 0.55 * (1 - href)))
     return round(min(windchill, simmer))
 
