@@ -20,69 +20,6 @@ var IndoorAirQuality = function (options) {
     output.find(".status").html("<i class='fa fa-times warning-message'></i> Ei tietoja");
   }
 
-  function processCo2(data) {
-    if (typeof data == "undefined") {
-      console.log("!!! No indoor air quality information available.");
-      autoNoUpdates();
-      return;
-    }
-    var co2 = data.value;
-    var co2_out;
-    if (co2 < options.co2_green) {
-      co2_out = "<i class='fa fa-check success-message'></i>";
-      output.removeClass("warning-message error-message");
-    } else if (co2 < options.co2_error) {
-      co2_out = "<i class='fa fa-exclamation-triangle'></i>";
-      output.removeClass("error-message").addClass("warning-message");
-    } else {
-      co2_out = "<i class='fa fa-ban'></i>";
-      output.removeClass("warning-message").addClass("error-message");
-    }
-    output.find(".status").html(co2_out);
-    var previous_reading = output.find(".co2").data("value");
-    if (previous_reading) {
-      if (previous_reading < co2) {
-        // Gone up
-        output.find(".co2").effect("highlight", {color: "red"}, 150);
-      } else if (previous_reading > co2) {
-        // Gone down
-        output.find(".co2").effect("highlight", {color: "green"}, 150);
-      }
-    }
-    output.find(".co2").data("value", co2).html(Math.round(co2) + "ppm");
-    clearAutoNoUpdates();
-    update_timeout = setTimeout(autoNoUpdates, options.update_timeout); // 2,5 minutes
-  }
-
-  function processTemperature(data) {
-    if (typeof data == "undefined") {
-      console.log("!!! No indoor air quality information available.");
-      autoNoUpdates();
-      return;
-    }
-    var temperature = data.value;
-    var previous_reading = output.find(".temperature").data("value");
-    if (previous_reading) {
-      if (previous_reading < temperature) {
-        // Gone up
-        output.find(".temperature").effect("highlight", {color: "red"}, 150);
-      } else if (previous_reading > temperature) {
-        // Gone down
-        output.find(".temperature").effect("highlight", {color: "green"}, 150);
-      }
-    }
-    output.find(".temperature").data("value", temperature).html(Math.round(parseFloat(temperature) * 10) / 10 + "&deg;C");
-  }
-
-  function fetch() {
-    $.get("/homecontroller/indoor_quality/get_latest/co2", function (data) {
-      processCo2(data);
-    });
-    $.get("/homecontroller/indoor_quality/get_latest/temperature", function (data) {
-      processTemperature(data);
-    });
-  }
-
   function drawGraph(data, goptions) {
     goptions = goptions || {};
     goptions.xlabel = goptions.xlabel || "Aika";
@@ -150,6 +87,68 @@ var IndoorAirQuality = function (options) {
     });
   }
 
+  function processCo2(data) {
+    if (typeof data == "undefined") {
+      console.log("!!! No indoor air quality information available.");
+      autoNoUpdates();
+      return;
+    }
+    var co2 = data.value;
+    var co2_out;
+    if (co2 < options.co2_green) {
+      co2_out = "<i class='fa fa-check success-message'></i>";
+      output.removeClass("warning-message error-message");
+    } else if (co2 < options.co2_error) {
+      co2_out = "<i class='fa fa-exclamation-triangle'></i>";
+      output.removeClass("error-message").addClass("warning-message");
+    } else {
+      co2_out = "<i class='fa fa-ban'></i>";
+      output.removeClass("warning-message").addClass("error-message");
+    }
+    output.find(".status").html(co2_out);
+    var previous_reading = output.find(".co2").data("value");
+    if (previous_reading) {
+      if (previous_reading < co2) {
+        // Gone up
+        output.find(".co2").effect("highlight", {color: "red"}, 150);
+      } else if (previous_reading > co2) {
+        // Gone down
+        output.find(".co2").effect("highlight", {color: "green"}, 150);
+      }
+    }
+    output.find(".co2").data("value", co2).html(Math.round(co2) + "ppm");
+    clearAutoNoUpdates();
+    update_timeout = setTimeout(autoNoUpdates, options.update_timeout); // 2,5 minutes
+  }
+
+  function processTemperature(data) {
+    if (typeof data == "undefined") {
+      console.log("!!! No indoor air quality information available.");
+      autoNoUpdates();
+      return;
+    }
+    var temperature = data.value;
+    var previous_reading = output.find(".temperature").data("value");
+    if (previous_reading) {
+      if (previous_reading < temperature) {
+        // Gone up
+        output.find(".temperature").effect("highlight", {color: "red"}, 150);
+      } else if (previous_reading > temperature) {
+        // Gone down
+        output.find(".temperature").effect("highlight", {color: "green"}, 150);
+      }
+    }
+    output.find(".temperature").data("value", temperature).html(Math.round(parseFloat(temperature) * 10) / 10 + "&deg;C");
+  }
+
+  function fetch() {
+    $.get("/homecontroller/indoor_quality/get_latest/co2", function (data) {
+      processCo2(data);
+    });
+    $.get("/homecontroller/indoor_quality/get_latest/temperature", function (data) {
+      processTemperature(data);
+    });
+  }
 
   function fetchTrend() {
     $.get("/homecontroller/indoor_quality/get_json/co2/trend", function (data) {
@@ -195,14 +194,6 @@ var IndoorAirQuality = function (options) {
     ge_refresh.deRegister("indoor_quality");
   }
 
-  function refreshAllData() {
-    $.get("/homecontroller/indoor_quality/get_keys", function(data) {
-      $.each(data, function () {
-        refreshData(this);
-      });
-    });
-  }
-
   function refreshData(key) {
     var data_output = $(".indoor-air-" + key);
     data_output.find("svg").hide();
@@ -220,6 +211,14 @@ var IndoorAirQuality = function (options) {
         data_output.find(".spinner").slideUp();
         data_output.find(".data-error").slideDown();
       }
+    });
+  }
+
+  function refreshAllData() {
+    $.get("/homecontroller/indoor_quality/get_keys", function(data) {
+      $.each(data, function () {
+        refreshData(this);
+      });
     });
   }
 
