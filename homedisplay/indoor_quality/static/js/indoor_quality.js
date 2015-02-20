@@ -232,6 +232,12 @@ var IndoorAirQuality = function (options) {
 };
 
 var indoor_air_quality;
+var indoor_air_quality_modal_timeout;
+
+function closeIndoorAirQualityModal() {
+  $("#indoor-quality-modal .close").trigger("click");
+}
+
 $(document).ready(function () {
   indoor_air_quality = new IndoorAirQuality();
   indoor_air_quality.startInterval();
@@ -241,11 +247,13 @@ $(document).ready(function () {
       $("#indoor-quality-modal .air-quality-graph-content").html(data);
       indoor_air_quality.refreshAllData();
       switchVisibleContent("#indoor-quality-modal");
+      indoor_air_quality_modal_timeout = setTimeout(closeIndoorAirQualityModal, 60 * 1000);
     });
   });
 
   $("#indoor-quality-modal .close").on("click", function() {
     $("#indoor-quality-modal .air-quality-graph-content").children().remove();
     switchVisibleContent("#main-content");
+    indoor_air_quality_modal_timeout = clearTimeout(indoor_air_quality_modal_timeout);
   });
 });
