@@ -72,13 +72,40 @@
               <div class="close" style="font-size: 600%"><i class="fa fa-power-off"></i></div>
             </div>
           </div>
+          <div class="row weather">
+            <div class="col-md-12">
+              <span class="temperature-now">-12</span><span class="temperature-now-unit">&deg;C</span> <span class="wind-now-description">Tuuli:</span> <span class="wind-now">kohtalainen</span>
+            </div>
+          </div>
+          <div class="row center-content weather">
+            <div class="col-md-3 weather-box weather-1">
+              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
+              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
+              <span class="symbol"><i class='fa fa-question-circle'></i></span>
+            </div>
+            <div class="col-md-3 weather-box weather-2 new-day">
+              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
+              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
+              <span class="symbol"><i class='fa fa-question-circle'></i></span>
+            </div>
+            <div class="col-md-3 weather-box weather-3">
+              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
+              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
+              <span class="symbol"><i class='fa fa-question-circle'></i></span>
+            </div>
+            <div class="col-md-3 weather-box weather-4">
+              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
+              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
+              <span class="symbol"><i class='fa fa-question-circle'></i></span>
+            </div>
+          </div>
+
           <div class="item-box" id="today">
             <div class="row">
               <div class="col-md-12">
                 <h2>Tänään</h2>
               </div>
             </div>
-            {% include "snippets/weather_info.html" %}
 
             <div class="sun-info"></div>
             <div class="list-repeating-tasks">
@@ -97,8 +124,6 @@
                 <h2>Huomenna</h2>
               </div>
             </div>
-            {% include "snippets/weather_info.html" %}
-
 
             <div class="list-repeating-tasks">
               <ul class="fa-ul">

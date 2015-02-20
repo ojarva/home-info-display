@@ -1,3 +1,33 @@
+
+.weather .temperature-now {
+  font-size: 5em;
+}
+.weather .temperature-now-unit {
+  font-size: 2.5em;
+}
+.weather .wind-now-description {
+  font-size: 2.5em;
+  margin-left: 1em;
+}
+.weather .wind-now {
+  font-size: 3.0em;
+}
+
+.weather .new-day {
+  border-left: gray;
+  border-left-style: dotted;
+  border-left-width: 2px;
+}
+.weather .timestamp {
+  font-size: 1.5em;
+}
+.weather .temperature {
+  font-size: 1.25em;
+}
+.weather .weather-box {
+  min-height: 83px;
+}
+
 .main-button-box {
   font-size: 200%;
 }
