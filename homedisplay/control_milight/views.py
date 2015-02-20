@@ -88,14 +88,19 @@ class control_per_source(View):
                 led.set_brightness(0)
                 led.set_color("red")
                 led.set_brightness(0)
+                update_lightstate(0, 0, "red")
             elif command == "morning-sleeping":
                 led.off()
+                update_lightstate(self.BED, None, None, False)
                 led.white(self.KITCHEN)
                 led.set_brightness(10, self.KITCHEN)
+                update_lightstate(self.KITCHEN, 10, "white")
                 led.white(self.DOOR)
                 led.set_brightness(10, self.DOOR)
+                update_lightsate(self.DOOR, 10, "white")
                 led.set_color("red", self.TABLE)
                 led.set_brightness(0, self.TABLE)
+                update_lightstate(self.TABLE, 0, "red")
             elif command == "morning-wakeup":
                 #TODO: fade up slowly
                 led.white()
@@ -104,62 +109,85 @@ class control_per_source(View):
                 for a in range(0, 100, 5):
                     led.set_brightness(a)
                     time.sleep(0.5)
+                update_lightstate(0, 100, "white")
 
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
                 redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
+                update_lightstate(0, 0, False)
             elif command == "on":
                 run_display_command("on")
                 redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
                 led.white()
                 led.set_brightness(100)
+                update_lightstate(0, 100, "white")
+
         elif source == "door":
             if command == "night":
                 led.off()
+                update_lightstate(self.TABLE, None, None, False)
+                update_lightstate(self.BED, None, None, False)
                 for group in (self.DOOR, self.KITCHEN):
                     led.set_color("red", group)
                     led.set_brightness(10, group)
+                    update_lightstate(group, 10, "red")
+
             elif command == "morning":
                 led.off(self.BED)
+                update_lightstate(self.BED, None, None, False)
                 for group in (self.TABLE, self.KITCHEN, self.DOOR):
                     led.set_color("white", group)
                     led.set_brightness(10, group)
+                    update_lightstate(group, 10, "white")
+
             elif command == "on":
                 led.white()
                 led.set_brightness(100)
                 run_display_command("on")
+                update_lightstate(0, 100, "white")
                 redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
+                update_lightstate(0, 0, None, False)
                 led.white(self.DOOR)
                 led.set_brightness(10, self.DOOR)
+                update_lightstate(self.DOOR, 10, "white")
                 redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
         elif source == "display":
             if command == "night":
                 led.set_brightness(0)
+                update_lightstate(0, 0)
                 led.set_color("red")
                 led.set_brightness(0)
+                update_lightstate(0, 0, "red")
             elif command == "morning-sleeping":
                 led.off()
+                update_lightstate(self.BED, None, None, False)
                 led.white(self.KITCHEN)
                 led.set_brightness(10, self.KITCHEN)
+                update_lightstate(self.KITCHEN, 10, "white")
                 led.white(self.DOOR)
                 led.set_brightness(10, self.DOOR)
+                update_lightstate(self.DOOR, 10, "white")
                 led.set_color("red", self.TABLE)
                 led.set_brightness(0, self.TABLE)
+                update_lightstate(self.TABLE, 10, "red")
             elif command == "morning-all":
                 led.white()
                 led.set_brightness(30)
+                update_lightstate(0, 30, "white")
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
+                update_lightstate(0, 0, None, False)
                 redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
             elif command == "on":
                 redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
                 led.white()
                 led.set_brightness(100)
+                update_lightstate(0, 100, "white")
         else:
             raise NotImplementedError("Invalid source: %s" % source)
         return HttpResponse("ok")
@@ -177,7 +205,7 @@ class control(View):
         elif command == "off":
             led.set_brightness(0, group)
             led.off(group)
-            update_lightstate(group, None, None, False)
+            update_lightstate(group, 0, None, False)
         elif command == "morning":
             led.white(group)
             led.set_brightness(10, group)
