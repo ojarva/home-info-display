@@ -16,7 +16,7 @@ import time
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
 
-def update_lightstate(group, brightness, color, on=True):
+def update_lightstate(group, brightness, color=None, on=True):
     if group == 0:
         for a in range(1, 5):
             update_lightstate(a, brightness, color)
