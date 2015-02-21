@@ -1,13 +1,15 @@
 var LightControlTimed = function(options) {
   options = options || {};
   options.update_interval = options.update_interval || 1000;
-  var active_days;
-  var main = $(options.elem);
+  options.backend_update_interval = options.backend_update_interval || 60 * 60 * 1000;
+  var active_days,
+      main = $(options.elem),
+      update_interval,
+      backend_update_interval;
   if (main.length == 0) {
     console.log("!!! Invalid selector for LightControlTimed: " + options.elem);
   }
-  var action = main.data("action"),
-      update_interval;
+  var action = main.data("action");
 
   function onReceiveItemWS(data) {
     updateFields(data);
@@ -94,7 +96,7 @@ var LightControlTimed = function(options) {
     });
   }
 
-  function updateBackend() {
+  function postUpdate() {
     $.post("/homecontroller/lightcontrol/timed/update/" + action, {start_time: getStartTime(), duration: getDuration(), running: getRunning()}, function(data) {
       updateFields(data);
     });
@@ -172,11 +174,16 @@ var LightControlTimed = function(options) {
     stopInterval();
     updateFromNow();
     update_interval = setInterval(updateFromNow, options.update_interval);
+    update();
+    backend_update_interval = setInterval(update, options.backend_update_interval);
   }
 
   function stopInterval() {
     if (update_interval) {
       update_interval = clearInterval(update_interval);
+    }
+    if (backend_update_interval) {
+      backend_update_interval = clearInterval(backend_update_interval);
     }
   }
 
@@ -190,32 +197,31 @@ var LightControlTimed = function(options) {
 
   main.find(".duration-time").find(".plus").on("click", function() {
     adjustDuration("plus");
-    updateBackend();
+    postUpdate();
   });
   main.find(".duration-time").find(".minus").on("click", function () {
     adjustDuration("minus");
-    updateBackend();
+    postUpdate();
   });
 
   main.find(".start-time").find(".plus").on("click", function() {
     adjustStartTime("plus");
-    updateBackend();
+    postUpdate();
   });
   main.find(".start-time").find(".minus").on("click", function() {
     adjustStartTime("minus");
-    updateBackend();
+    postUpdate();
   });
 
 
   main.find(".play-control").on("click", function() {
     toggleRunning();
-    updateBackend();
+    postUpdate();
   });
 
   ws_generic.register("lightcontrol_timed_" + action, onReceiveItemWS);
   ge_refresh.register("lightcontrol_timed_" + action, update);
 
-  update();
   startInterval();
 
   this.startInterval = startInterval;
