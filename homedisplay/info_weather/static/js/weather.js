@@ -3,13 +3,10 @@ var RefreshWeather = function (options) {
   options.update_interval = options.update_interval || 1000 * 60 * 120;
   var update_interval;
 
-  function setWeatherInfo (elem, text, info) {
-    $(elem).html(text+"<br><span class='weather-temperature'>" + info.fields.apparent_temperature + "&deg;C</span> <img src='/homecontroller/static/images/" + info.fields.icon + ".png'>");
-  }
-
   function resetWeatherInfo() {
     $(".weather .weather-box span").html("<i class='fa fa-question-circle'></i>");
     $(".weather .data-field").html("<i class='fa fa-question-circle'></i>");
+    $(".weather .weather-box").removeClass("new-day"); // Remove "day changed" separator line
   }
 
   function processData(data) {
