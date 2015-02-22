@@ -46,5 +46,8 @@ class get_barchart_json(View):
                             fill_day += datetime.timedelta(days=1)
                     current_date = item.date
             consumption += float(item.usage)
+        # TODO: this gives weird results if no data exists.
+        items.append({"date": current_date.isoformat(), "consumption": consumption})
+
 
         return HttpResponse(json.dumps(items), content_type="application/json")
