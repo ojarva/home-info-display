@@ -15,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^timer/', include("info_timers.urls")),
     url(r'^birthdays/', include("info_birthdays.urls")),
     url(r'^electricity/', include("info_electricity.urls")),
+    url(r'^printer/', include("control_printer.urls")),
 )

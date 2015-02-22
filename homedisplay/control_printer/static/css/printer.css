@@ -1,0 +1,20 @@
+#print-modal .clock {
+  font-size: 400%;
+  margin-right: 40px;
+}
+
+#print-modal .calendar {
+  font-size: 200%;
+}
+
+#print-modal .modal-timeinfo {
+  margin-bottom: 30px;
+}
+
+#print-modal .printer-status {
+  font-size: 2em;
+}
+
+#print-modal .printer-jobs {
+  font-size: 2em;
+}

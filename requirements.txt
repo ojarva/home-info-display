@@ -1,3 +1,4 @@
+pycups>=1.9.72
 raven>=5.2.0
 astral
 django-compressor>=1.4

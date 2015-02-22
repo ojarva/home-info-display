@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'repeating_tasks',
     'server_power',
     'ws4redis',
+    'control_printer',
 )
 
 MIDDLEWARE_CLASSES = (
