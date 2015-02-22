@@ -25,7 +25,7 @@ class Command(BaseCommand):
             delta_to_processing_time = datetime.timedelta(hours=current_hour)
             timestamp = current_time + delta_to_processing_time
             Weather.objects.filter(date=timestamp, hour=int(timestamp.strftime("%H"))).delete()
-            a = Weather(date=timestamp, hour=int(timestamp.strftime("%H")), icon=hour["icon"], ppcp=int(hour["ppcp"]), dewpoint=int(hour["dewp"]), feels_like=int(hour["flik"]), humidity=int(hour["hmid"]), temperature=int(hour["tmp"]), description=hour["t"], wind_direction=hour["wind"]["t"], wind_gust=hour["wind"]["gust"], wind_speed=hour["wind"]["s"])
+            a = Weather(date=timestamp, hour=int(timestamp.strftime("%H")), icon=hour["icon"], ppcp=int(hour["ppcp"]), dewpoint=int(hour["dewp"]), feels_like=int(hour["flik"]), humidity=int(hour["hmid"]), temperature=int(hour["tmp"]), description=hour["t"], wind_direction=hour["wind"]["t"], wind_gust=hour["wind"]["gust"], wind_speed=int(hour["wind"]["s"]))
             a.save()
 #            self.stdout.write("Saved %s" % timestamp)
         redis_instance.publish("home:broadcast:generic", json.dumps({"key": "weather", "content": get_weather_data()}))

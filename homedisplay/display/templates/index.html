@@ -18,66 +18,25 @@
   <div class="custom-container">
     <div id="main-content">
       <div class="row">
-        <div class="col-md-4">
-          <div class="center-content darkbox">
-            <div class="timeinfo">
-              <div class="clock">--:--:--</div>
-              <div class="calendar">-- --.-.</div>
-            </div>
-          </div>
-          <div class="lightbox center-content">
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="display" data-command="off"><i class="fa fa-power-off"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-on" data-source="display" data-command="on"><i class="fa fa-sun-o"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-night" data-source="display" data-command="night"><i class="fa fa-bed"></i></div>
-            <br>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="display" data-command="morning-sleeping"><i class="fa fa-bed"></i> <i class="fa fa-user"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="display" data-command="morning-all"><i class="fa fa-arrow-right"></i><i class="fa fa-bed"></i></div>
-          </div>
 
-          <div class="timed-lightcontrols-main">
-            {% include "snippets/all_timed_lightcontrols.html" %}
-          </Div>
-        </div>
-        <div class="col-md-4">
-          <div class="item-box internet-connection">
-            {% include "snippets/internet_connection.html" %}
-          </div>
-          <div class="item-box indoor-quality">
-            {% include "snippets/indoor_quality.html" %}
-          </div>
-          <div class="item-box">
-            {% include "snippets/server_power.html" %}
-          </div>
-          <div id="timers">
-            {% include "snippets/add_timers.html" %}
-
-            <div id="stopclock-holder">
-            </div>
-
-            <div id="timer-holder">
-            </div>
-          </div>
-        </div>
         <div class="col-md-4">
           <div class="row">
-            <div class="col-md-9">
+            <div class="col-md-12">
               <div class="item-box main-button-box">
                 <div class="center-content stripe-box animate-click action-button electricity"><i class="fa fa-bolt"></i></div>
                 <div class="center-content stripe-box animate-click action-button lights"><i class="fa fa-lightbulb-o"></i></div>
                 <div class="center-content stripe-box animate-click action-button repeating"><i class="fa fa-repeat"></i></div>
                 <div class="center-content stripe-box animate-click action-button birthdays"><i class="fa fa-birthday-cake"></i></div>
+                <div class="center-content stripe-box animate-click action-button open-weather-modal"><i class="fa fa-cloud"></i></div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="close" style="font-size: 600%"><i class="fa fa-power-off"></i></div>
-            </div>
           </div>
-          <div class="row weather">
+          <div class="row weather open-weather-modal">
             <div class="col-md-12">
               <span class="temperature-now data-field"><i class='fa fa-question-circle'></i></span><span class="temperature-now-unit">&deg;C</span> <span class="wind-now-description">Tuuli:</span> <span class="wind-now data-field"><i class='fa fa-question-circle'></i></span>
             </div>
           </div>
-          <div class="row center-content weather">
+          <div class="row center-content weather open-weather-modal ">
             <div class="col-md-3 weather-box weather-1">
               <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
               <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
@@ -134,6 +93,50 @@
               <ul class="fa-ul">
               </ul>
             </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="item-box internet-connection">
+            {% include "snippets/internet_connection.html" %}
+          </div>
+          <div class="item-box indoor-quality">
+            {% include "snippets/indoor_quality.html" %}
+          </div>
+          <div class="item-box">
+            {% include "snippets/server_power.html" %}
+          </div>
+          <div id="timers">
+            {% include "snippets/add_timers.html" %}
+
+            <div id="stopclock-holder">
+            </div>
+
+            <div id="timer-holder">
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="close" style="font-size: 600%"><i class="fa fa-power-off"></i></div>
+
+          <div class="center-content darkbox">
+            <div class="timeinfo">
+              <div class="clock">--:--:--</div>
+              <div class="calendar">-- --.-.</div>
+            </div>
+          </div>
+          <div class="lightbox center-content">
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="display" data-command="off"><i class="fa fa-power-off"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-on" data-source="display" data-command="on"><i class="fa fa-sun-o"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-night" data-source="display" data-command="night"><i class="fa fa-bed"></i></div>
+            <br>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="display" data-command="morning-sleeping"><i class="fa fa-bed"></i> <i class="fa fa-user"></i></div>
+            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="display" data-command="morning-all"><i class="fa fa-arrow-right"></i><i class="fa fa-bed"></i></div>
+          </div>
+
+          <div class="timed-lightcontrols-main">
+            {% include "snippets/all_timed_lightcontrols.html" %}
           </div>
         </div>
       </div>

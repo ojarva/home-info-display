@@ -13,3 +13,25 @@
   padding-bottom: 5px;
   min-height: 108px;
 }
+
+#weather-modal .clock {
+  font-size: 400%;
+  margin-right: 40px;
+}
+
+#weather-modal .calendar {
+  font-size: 200%;
+}
+
+#weather-modal .timeinfo {
+  margin-bottom: 30px;
+}
+
+#weather-modal .weather-all .col-md-1 {
+  font-size: 130%;
+  text-align: center;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  min-height: 108px;
+  margin-bottom: 40px;
+}

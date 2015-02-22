@@ -7,6 +7,7 @@ var RefreshWeather = function (options) {
     $(".weather .weather-box span").html("<i class='fa fa-question-circle'></i>");
     $(".weather .data-field").html("<i class='fa fa-question-circle'></i>");
     $(".weather .weather-box").removeClass("new-day"); // Remove "day changed" separator line
+    $(".weather-all").children().remove();
   }
 
   function processData(data) {
@@ -36,6 +37,29 @@ var RefreshWeather = function (options) {
       this_item.find(".temperature").html(this.item.feels_like);
       this_item.find(".symbol").html("<img src='/homecontroller/static/images/" + this.item.icon + ".png'>");
       this_item.find(".temperature-unit").html("&deg;C");
+      current_index += 1;
+    });
+    var now = moment().subtract(1, "hour");
+    var current_index = 13;
+    var current_row;
+    $.each(data.hours, function () {
+      var this_timestamp = moment(this.date).add(this.hour, "hours");
+      if (this_timestamp < now) {
+        return true; // Continue
+      }
+      if (current_index > 11) {
+        current_index = 0;
+        $(".weather-all").append("<div class='row'></div>");
+        current_row = $(".weather-all .row").last();
+      }
+      current_row.append("<div class='col-md-1'><span class='timestamp'><i class='fa fa-question-circle'></i></span><br><span class='temperature'><i class='fa fa-question-circle'></i></span><span class='temperature-unit'>&deg;C</span><span class='symbol'><i class='fa fa-question-circle'></i></span><br><span class='wind-direction'></span>: <span class='wind-speed'><i class='fa fa-question-circle'></i></span><span class='wind-speed-unit'>m/s</span></div>");
+      var current_item = current_row.find(".col-md-1").last();
+      current_item.find(".timestamp").html(this.date + " "+this.hour+":00");
+      current_item.find(".temperature").html(this.feels_like);
+      current_item.find(".symbol").html("<img src='/homecontroller/static/images/" + this.icon + ".png'>");
+      current_item.find(".temperature-unit").html("&deg;C");
+      current_item.find(".wind-speed").html(Math.round(this.wind_speed / 3.6));
+      current_item.find(".wind-direction").html(this.wind_direction);
       current_index += 1;
     });
   }
@@ -75,4 +99,11 @@ var refresh_weather;
 $(document).ready(function () {
   refresh_weather = new RefreshWeather();
   refresh_weather.startInterval();
+  $(".open-weather-modal").on("click", function() {
+    switchVisibleContent("#weather-modal");
+  });
+  $("#weather-modal .close").on("click", function() {
+    switchVisibleContent("#main-content");
+  });
+
 });
