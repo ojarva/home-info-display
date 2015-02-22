@@ -29,11 +29,26 @@ $.ajaxSetup({
     }
 });
 
+var switch_visible_content_timeout;
+var switch_visible_content_currently_active;
+
+function switchToMainContent() {
+  $(switch_visible_content_currently_active).find(".close").trigger("click");
+  if (switch_visible_content_timeout) {
+    switch_visible_content_timeout = clearTimeout(switch_visible_content_timeout);
+  }
+}
+
 function switchVisibleContent(elem) {
+  if (switch_visible_content_timeout) {
+    switch_visible_content_timeout = clearTimeout(switch_visible_content_timeout);
+  }
   $(".content-box").slideUp(); // Hide all content boxes
   $("html, body").animate({ scrollTop: 0 }, "fast"); // Always scroll to top.
   $("#navbar").collapse("hide"); // Hide menu, if visible
   if (elem != "#main-content") {
+    switch_visible_content_currently_active = elem;
+    switch_visible_content_timeout = setTimeout(switchToMainContent, 60 * 1000);
     $(elem).slideDown();
   }
 }
