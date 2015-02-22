@@ -59,7 +59,7 @@ function WS4Redis(options, $) {
     if (closed) {
       return;
     }
-    console.log("Connection to "+ws.url+"closed!");
+    console.log("Connection to "+ws.url+" closed!");
     if (!timer) {
       // try to reconnect
       timer = setTimeout(function() {

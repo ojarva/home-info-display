@@ -8,7 +8,6 @@ var Birthdays = function(elem, use_date, options) {
 
   function onReceiveItemWS(message) {
     if (message == "updated") {
-      console.log("birthdays: backend requests update");
       processData(message);
     }
   }

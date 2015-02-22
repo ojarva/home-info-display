@@ -106,7 +106,6 @@ var CustomTimer = function(options) {
       seconds = $(this).data("duration");
     }
     if (typeof seconds == "undefined") {
-      console.log("No time available for custom timer");
     } else {
       var timer_run = new Timer("#timer-holder", {"name": name, "duration": seconds});
     }

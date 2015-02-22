@@ -34,7 +34,6 @@ var WsGeneric = function(options) {
     }
     if (data.key in multiregister_callbacks) {
       for (unique_key in multiregister_callbacks[data.key]) {
-        console.log(data.key, unique_key, multiregister_callbacks);
         multiregister_callbacks[data.key][unique_key](data.content);
       }
     }

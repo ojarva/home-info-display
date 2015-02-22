@@ -194,7 +194,6 @@ var LightControlTimed = function(options) {
   }
 
   function onReceiveOverride(data) {
-    console.log("Overriding");
     if (data.action == "resume") {
       resumeOverride("backend");
     } else {
