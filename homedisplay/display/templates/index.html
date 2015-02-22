@@ -96,30 +96,8 @@
           </div>
         </div>
 
-        <div class="col-md-4">
-          <div class="item-box internet-connection">
-            {% include "snippets/internet_connection.html" %}
-          </div>
-          <div class="item-box indoor-quality">
-            {% include "snippets/indoor_quality.html" %}
-          </div>
-          <div class="item-box">
-            {% include "snippets/server_power.html" %}
-          </div>
-          <div id="timers">
-            {% include "snippets/add_timers.html" %}
-
-            <div id="stopclock-holder">
-            </div>
-
-            <div id="timer-holder">
-            </div>
-          </div>
-        </div>
 
         <div class="col-md-4">
-          <div class="close" style="font-size: 600%"><i class="fa fa-power-off"></i></div>
-
           <div class="center-content darkbox">
             <div class="timeinfo">
               <div class="clock">--:--:--</div>
@@ -137,6 +115,30 @@
 
           <div class="timed-lightcontrols-main">
             {% include "snippets/all_timed_lightcontrols.html" %}
+          </div>
+        </div>
+
+
+        <div class="col-md-4">
+          <div class="close" style="font-size: 600%"><i class="fa fa-power-off"></i></div>
+
+          <div class="item-box internet-connection">
+            {% include "snippets/internet_connection.html" %}
+          </div>
+          <div class="item-box indoor-quality">
+            {% include "snippets/indoor_quality.html" %}
+          </div>
+          <div class="item-box">
+            {% include "snippets/server_power.html" %}
+          </div>
+          <div id="timers">
+            {% include "snippets/add_timers.html" %}
+
+            <div id="stopclock-holder">
+            </div>
+
+            <div id="timer-holder">
+            </div>
           </div>
         </div>
       </div>
