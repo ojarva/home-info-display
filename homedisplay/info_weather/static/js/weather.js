@@ -20,7 +20,7 @@ var RefreshWeather = function (options) {
         current_index = 1,
         first_date = false,
         new_day = false;
-    items.find(".temperature-now").html(data.current.apparent_temperature);
+    items.find(".temperature-now").html(data.current.feels_like);
     items.find(".wind-now").html(data.current.wind_speed_readable);
     $.each(data.next, function () {
       var this_item = items.find(".weather-" + current_index);
@@ -33,7 +33,7 @@ var RefreshWeather = function (options) {
         }
       }
       this_item.find(".timestamp").html(this.name);
-      this_item.find(".temperature").html(this.item.apparent_temperature);
+      this_item.find(".temperature").html(this.item.feels_like);
       this_item.find(".symbol").html("<img src='/homecontroller/static/images/" + this.item.icon + ".png'>");
       this_item.find(".temperature-unit").html("&deg;C");
       current_index += 1;

@@ -15,7 +15,7 @@ var RefreshWeather = function (options) {
   function update() {
     $.get("/homecontroller/weather/get_json?"+(new Date()).getTime(), function (data) {
       resetWeatherInfo();
-      setWeatherInfo(data.current.icon, data.current.apparent_temperature);
+      setWeatherInfo(data.current.icon, data.current.feels_like);
     });
   }
 
