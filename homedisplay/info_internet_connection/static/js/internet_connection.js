@@ -62,7 +62,7 @@ var RefreshInternet = function(options) {
 
   function processData(data) {
     if (typeof data == "undefined" || (data.status && data.status == "error")) {
-      console.log("!!! No internet connection information available");
+      console.warn("!!! No internet connection information available");
       autoNoUpdates();
       return;
     }

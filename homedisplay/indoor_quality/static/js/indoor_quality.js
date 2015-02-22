@@ -28,7 +28,7 @@ var IndoorAirQuality = function (options) {
     var elem = $(goptions.selector);
 
     if (typeof data == "undefined") {
-      console.log("!!! No data available for indoor air quality graphs!");
+      console.warn("!!! No data available for indoor air quality graphs!");
       elem.children().remove();
       elem.slideUp();
       elem.parent().find(".data-error").slideDown();
@@ -89,7 +89,7 @@ var IndoorAirQuality = function (options) {
 
   function processCo2(data) {
     if (typeof data == "undefined") {
-      console.log("!!! No indoor air quality information available.");
+      console.warn("!!! No indoor air quality information available.");
       autoNoUpdates();
       return;
     }
@@ -123,7 +123,7 @@ var IndoorAirQuality = function (options) {
 
   function processTemperature(data) {
     if (typeof data == "undefined") {
-      console.log("!!! No indoor air quality information available.");
+      console.warn("!!! No indoor air quality information available.");
       autoNoUpdates();
       return;
     }
