@@ -14,7 +14,7 @@ from django.core import serializers
 
 class get_json(View):
     def get(self, request, *args, **kwargs):
-        time_start = now() - datetime.timedelta(days=70)
+        time_start = now() - datetime.timedelta(days=83)
         items = []
         for item in Electricity.objects.filter(date__gte=time_start):
             d = {"timestamp": item.get_timestamp(), "value": {"W": float(item.usage)}}
@@ -23,7 +23,7 @@ class get_json(View):
 
 class get_barchart_json(View):
     def get(self, request, *args, **kwargs):
-        time_start = now() - datetime.timedelta(days=70)
+        time_start = now() - datetime.timedelta(days=83)
         items = []
         current_date = None
         consumption = 0

@@ -1,10 +1,10 @@
 var ElectricityInfo = function () {
   function drawHeatmap() {
     //UI configuration
-    var itemSize = 17,
+    var itemSize = 18,
         cellSize = itemSize - 1,
         width = 1600,
-        height = 500,
+        height = 480,
         margin = {top: 20, right: 20, bottom: 20, left: 41};
 
     var dayFormat_orig = d3.time.format("%j");
@@ -158,8 +158,8 @@ var ElectricityInfo = function () {
 
   function drawBarGraph() {
     var margin = {top: 20, right: 20, bottom: 30, left: 35},
-        width = 1545; //1600 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+        width = 1600 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
 
     var x = d3.scale.ordinal()
         .rangeRoundBands([0, width], .1);
