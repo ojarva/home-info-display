@@ -32,6 +32,9 @@
 .timed-lightcontrol .time-left {
   font-size: 50%;
 }
+.timed-lightcontrol .timed-type {
+  font-size: 50%;
+}
 
 .timed-lightcontrol .time-control .plus {
   background-color: #006600;

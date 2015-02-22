@@ -1,4 +1,4 @@
-from .models import LightGroup, LightAutomation
+from .models import LightGroup, LightAutomation, is_any_timed_running
 from display.views import run_display_command
 from django.conf import settings
 from django.core import serializers
@@ -16,10 +16,16 @@ import time
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
 
-def update_lightstate(group, brightness, color=None, on=True):
+def update_lightstate(group, brightness, color=None, on=True, **kwargs):
     if group == 0:
         for a in range(1, 5):
             update_lightstate(a, brightness, color)
+
+    timed_ends_at = is_any_timed_running()
+    if kwargs.get("important", False) == True:
+        if timed_ends_at != False:
+            time_until_ends = (timed_ends_at - now()).total_seconds() + 65
+            redis_instance.setex("lightcontrol-no-automatic-%s" % group, time_until_ends, True)
 
     (state, _) = LightGroup.objects.get_or_create(group_id=group)
     if brightness is not None:
@@ -37,7 +43,8 @@ class timed(View):
     def get_serialized_item(self, action):
         item = get_object_or_404(LightAutomation, action=action)
         ret = json.loads(serializers.serialize("json", [item]))
-        ret[0]["fields"]["is_active"] = item.is_active_today(now())
+        ret[0]["fields"]["start_datetime"] = item.get_start_datetime().isoformat()
+        ret[0]["fields"]["end_datetime"] = item.get_end_datetime().isoformat()
         return ret
 
     def post(self, request, *args, **kwargs):

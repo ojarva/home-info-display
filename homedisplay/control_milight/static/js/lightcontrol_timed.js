@@ -1,18 +1,27 @@
 var LightControlTimed = function(options) {
+  // TODO: this should be refactored to use latest_data.start_datetime and .end_datetime instead of parsing from html.
   options = options || {};
   options.update_interval = options.update_interval || 1000;
   options.backend_update_interval = options.backend_update_interval || 60 * 60 * 1000;
   var active_days,
       main = $(options.elem),
       update_interval,
-      backend_update_interval;
+      backend_update_interval,
+      latest_data;
   if (main.length == 0) {
     console.log("!!! Invalid selector for LightControlTimed: " + options.elem);
   }
   var action = main.data("action");
 
-  function onReceiveItemWS(data) {
-    updateFields(data);
+  function getLatestData() {
+    return latest_data;
+  }
+
+  function getStartDatetime() {
+    return moment(latest_data.fields.start_datetime);
+  }
+  function getEndDatetime() {
+    return moment(latest_data.fields.end_datetime);
   }
 
   function setStartTime(start_time) {
@@ -68,6 +77,14 @@ var LightControlTimed = function(options) {
     return false;
   }
 
+  function toggleRunning() {
+    if (getRunning()) {
+      setRunning(false);
+    } else {
+      setRunning(true);
+    }
+  }
+
   function setRunning(status) {
     //TODO: update other components as well
     if (status) {
@@ -80,14 +97,11 @@ var LightControlTimed = function(options) {
   }
 
   function updateFields(data) {
+    latest_data = data[0];
     setStartTime(data[0].fields.start_time);
     setDuration(data[0].fields.duration);
     setRunning(data[0].fields.running);
-    if (data[0].fields.is_active) {
-      showItem();
-    } else {
-      hideItem();
-    }
+    lightcontrol_timed_sort.sortTimers();
   }
 
   function update() {
@@ -114,23 +128,27 @@ var LightControlTimed = function(options) {
   }
 
   function updateFromNow() {
-    var start_time = getStartTimeMoment(),
-        end_time = getEndTimeMoment(),
+    if (!latest_data) {
+      return;
+    }
+    data = latest_data.fields;
+    var start_time = moment(data.start_datetime),
+        end_time = moment(data.end_time),
         now = moment(),
         verb,
         show_progress_indicator,
         content = main.find(".time-left");
     if (now < start_time) { // Not yet started
-      verb = "Alkaa";
+      verb = "alkaa";
       show_progress_indicator = false;
       if (!getRunning()) {
-        verb = "Alkaisi";
+        verb = "alkaisi";
       }
       content.html(verb+" "+start_time.fromNow());
     } else if (now > start_time && now < end_time) { // Currently running
-      verb = "Päättyy";
+      verb = "päättyy";
       if (!getRunning()) {
-        verb = "Päättyisi";
+        verb = "päättyisi";
         show_progress_indicator = false;
       } else {
         show_progress_indicator = true;
@@ -139,10 +157,10 @@ var LightControlTimed = function(options) {
     } else {
       // Done for today.
       start_time.add(1, "days");
-      verb = "Alkaa";
+      verb = "alkaa";
       show_progress_indicator = false;
       if (!getRunning()) {
-        verb = "Alkaisi";
+        verb = "alkaisi";
       }
       content.html(verb+" "+start_time.fromNow());
     }
@@ -170,6 +188,10 @@ var LightControlTimed = function(options) {
     main.find(".duration-content").html("+" + parsed_time.format("H:mm"));
   }
 
+  function onReceiveItemWS(data) {
+    updateFields(data);
+  }
+
   function startInterval() {
     stopInterval();
     updateFromNow();
@@ -184,14 +206,6 @@ var LightControlTimed = function(options) {
     }
     if (backend_update_interval) {
       backend_update_interval = clearInterval(backend_update_interval);
-    }
-  }
-
-  function toggleRunning() {
-    if (getRunning()) {
-      setRunning(false);
-    } else {
-      setRunning(true);
     }
   }
 
@@ -228,16 +242,41 @@ var LightControlTimed = function(options) {
   this.stopInterval = stopInterval;
   this.hideItem = hideItem;
   this.showItem = showItem;
+  this.getLatestData = getLatestData;
+  this.getStartDatetime = getStartDatetime;
+  this.getEndDatetime = getEndDatetime;
 };
 
+var ShowTimers = function() {
+  function sortTimers() {
+    console.log(lightcontrol_timed);
+    lightcontrol_timed.sort(function (a, b) {
+      return a.getStartDatetime() - b.getStartDatetime();
+    });
+    lightcontrol_timed[2].hideItem();
+    lightcontrol_timed[3].hideItem();
+    lightcontrol_timed[0].showItem();
+    lightcontrol_timed[1].showItem();
+
+    console.log(lightcontrol_timed);
+  }
+
+  this.sortTimers = sortTimers;
+};
 
 var lightcontrol_timed_evening,
     lightcontrol_timed_morning,
     lightcontrol_timed_weekend_evening,
-    lightcontrol_timed_weekend_morning;
+    lightcontrol_timed_weekend_morning,
+    lightcontrol_timed_sort;
+var lightcontrol_timed;
+
 $(document).ready(function () {
+  lightcontrol_timed_sort = new ShowTimers();
   lightcontrol_timed_morning = new LightControlTimed({"elem": ".timed-lightcontrol-morning"});
   lightcontrol_timed_evening = new LightControlTimed({"elem": ".timed-lightcontrol-evening"});
   lightcontrol_timed_weekend_morning = new LightControlTimed({"elem": ".timed-lightcontrol-morning-weekend"});
   lightcontrol_timed_weekend_evening = new LightControlTimed({"elem": ".timed-lightcontrol-evening-weekend"});
+  lightcontrol_timed = [lightcontrol_timed_evening, lightcontrol_timed_morning, lightcontrol_timed_weekend_evening, lightcontrol_timed_weekend_morning];
+
 });

@@ -18,7 +18,6 @@ function WS4Redis(options, $) {
 
   function connect(uri) {
     try {
-//      console.log("Connecting to " + uri + " ...");
       deferred = $.Deferred();
       ws = new WebSocket(uri);
       ws.onopen = on_open;
