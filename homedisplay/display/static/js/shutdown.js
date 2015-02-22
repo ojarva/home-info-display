@@ -10,7 +10,6 @@ var ShutdownProgress = function(options) {
 
   function update() {
     var time_left = options.timeout - (moment() - countdown_start);
-    console.log(time_left - 0);
     if (time_left < 0) {
       shutdown();
       return;
