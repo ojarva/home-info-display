@@ -7,21 +7,22 @@ var LightControlTimed = function(options) {
       main = $(options.elem),
       update_interval,
       backend_update_interval,
-      latest_data;
+      latest_data,
+      running;
   if (main.length == 0) {
-    console.log("!!! Invalid selector for LightControlTimed: " + options.elem);
+    console.warn("!!! Invalid selector for LightControlTimed: " + options.elem);
   }
   var action = main.data("action");
 
-  function getLatestData() {
-    return latest_data;
+  function getNextStartDatetime() {
+    if (latest_data && latest_data.fields) {
+      return moment(latest_data.fields.start_datetime);
+    }
   }
-
-  function getStartDatetime() {
-    return moment(latest_data.fields.start_datetime);
-  }
-  function getEndDatetime() {
-    return moment(latest_data.fields.end_datetime);
+  function getNextEndDatetime() {
+    if (latest_data && latest_data.fields) {
+      return moment(latest_data.fields.end_datetime);
+    }
   }
 
   function setStartTime(start_time) {
@@ -53,6 +54,12 @@ var LightControlTimed = function(options) {
     return main.find(".duration-content").html();
   }
 
+  function getDurationSeconds() {
+    var duration = getDuration().replace("+", "").split(":");
+    duration = parseInt(duration[0]) * 3600 + parseInt(duration[1]) * 60;
+    return duration;
+  }
+
   function getStartTimeMoment() {
     var time = getStartTime().split(":");
     var parsed_time = moment();
@@ -62,36 +69,12 @@ var LightControlTimed = function(options) {
     return parsed_time;
   }
 
-  function getEndTimeMoment() {
-    var start_time = getStartTimeMoment();
-    var duration = getDuration().replace("+", "").split(":");
-    duration = parseInt(duration[0]) * 3600 + parseInt(duration[1]) * 60;
-    return start_time.add(duration, "seconds");
-  }
-
-  function getRunning() {
-    var icon = main.find(".play-control i");
-    if (icon.hasClass("fa-toggle-on")) {
-      return true;
-    }
-    return false;
-  }
-
-  function toggleRunning() {
-    if (getRunning()) {
-      setRunning(false);
-    } else {
-      setRunning(true);
-    }
-  }
 
   function setRunning(status) {
-    //TODO: update other components as well
-    if (status) {
-      // Running
+    running = status;
+    if (running) {
       main.find(".play-control i").removeClass("fa-toggle-off error-message").addClass("fa-toggle-on");
     } else {
-      // Stopped
       main.find(".play-control i").removeClass("fa-toggle-on").addClass("fa-toggle-off error-message");
     }
   }
@@ -111,7 +94,7 @@ var LightControlTimed = function(options) {
   }
 
   function postUpdate() {
-    $.post("/homecontroller/lightcontrol/timed/update/" + action, {start_time: getStartTime(), duration: getDuration(), running: getRunning()}, function(data) {
+    $.post("/homecontroller/lightcontrol/timed/update/" + action, {start_time: getStartTime(), duration: getDuration(), running: running}, function(data) {
       updateFields(data);
     });
   }
@@ -125,6 +108,7 @@ var LightControlTimed = function(options) {
       start_time.subtract(15, "minutes");
     }
     setStartTime(start_time.format("HH:mm"));
+    postUpdate();
   }
 
   function updateFromNow() {
@@ -132,34 +116,34 @@ var LightControlTimed = function(options) {
       return;
     }
     data = latest_data.fields;
-    var start_time = moment(data.start_datetime),
-        end_time = moment(data.end_time),
+    var start_time = getNextStartDatetime(),
+        end_time = getNextEndDatetime(),
         now = moment(),
         verb,
         show_progress_indicator,
         content = main.find(".time-left");
-    if (now < start_time) { // Not yet started
-      verb = "alkaa";
-      show_progress_indicator = false;
-      if (!getRunning()) {
-        verb = "alkaisi";
-      }
-      content.html(verb+" "+start_time.fromNow());
-    } else if (now > start_time && now < end_time) { // Currently running
+    if (now < end_time && end_time - now < getDurationSeconds() * 1000) { // Currently running
       verb = "päättyy";
-      if (!getRunning()) {
+      if (!running) {
         verb = "päättyisi";
         show_progress_indicator = false;
       } else {
         show_progress_indicator = true;
       }
       content.html(verb + " " + end_time.fromNow());
+    } else if (now < start_time) { // Not yet started
+      verb = "alkaa";
+      show_progress_indicator = false;
+      if (!running) {
+        verb = "alkaisi";
+      }
+      content.html(verb+" "+start_time.fromNow());
     } else {
       // Done for today.
       start_time.add(1, "days");
       verb = "alkaa";
       show_progress_indicator = false;
-      if (!getRunning()) {
+      if (!running) {
         verb = "alkaisi";
       }
       content.html(verb+" "+start_time.fromNow());
@@ -186,6 +170,7 @@ var LightControlTimed = function(options) {
       }
     }
     main.find(".duration-content").html("+" + parsed_time.format("H:mm"));
+    postUpdate();
   }
 
   function onReceiveItemWS(data) {
@@ -211,25 +196,21 @@ var LightControlTimed = function(options) {
 
   main.find(".duration-time").find(".plus").on("click", function() {
     adjustDuration("plus");
-    postUpdate();
   });
   main.find(".duration-time").find(".minus").on("click", function () {
     adjustDuration("minus");
-    postUpdate();
   });
 
   main.find(".start-time").find(".plus").on("click", function() {
     adjustStartTime("plus");
-    postUpdate();
   });
   main.find(".start-time").find(".minus").on("click", function() {
     adjustStartTime("minus");
-    postUpdate();
   });
 
 
   main.find(".play-control").on("click", function() {
-    toggleRunning();
+    setRunning(!running);
     postUpdate();
   });
 
@@ -242,23 +223,19 @@ var LightControlTimed = function(options) {
   this.stopInterval = stopInterval;
   this.hideItem = hideItem;
   this.showItem = showItem;
-  this.getLatestData = getLatestData;
-  this.getStartDatetime = getStartDatetime;
-  this.getEndDatetime = getEndDatetime;
+  this.getNextStartDatetime = getNextStartDatetime;
+  this.getNextEndDatetime = getNextEndDatetime;
 };
 
 var ShowTimers = function() {
   function sortTimers() {
-    console.log(lightcontrol_timed);
     lightcontrol_timed.sort(function (a, b) {
-      return a.getStartDatetime() - b.getStartDatetime();
+      return a.getNextStartDatetime() - b.getNextStartDatetime();
     });
     lightcontrol_timed[2].hideItem();
     lightcontrol_timed[3].hideItem();
     lightcontrol_timed[0].showItem();
     lightcontrol_timed[1].showItem();
-
-    console.log(lightcontrol_timed);
   }
 
   this.sortTimers = sortTimers;
