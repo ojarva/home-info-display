@@ -16,11 +16,6 @@
   font-size: 3.0em;
 }
 
-.weather .new-day {
-  border-left: gray;
-  border-left-style: dotted;
-  border-left-width: 2px;
-}
 .weather .timestamp {
   font-size: 1.5em;
 }

@@ -39,9 +39,11 @@ var RefreshWeather = function (options) {
       this_item.find(".temperature-unit").html("&deg;C");
       current_index += 1;
     });
-    var now = moment().subtract(1, "hour");
-    var current_index = 13;
-    var current_row;
+    var now = moment().subtract(1, "hour"),
+        current_index = 13,
+        current_row,
+        current_day,
+        new_item = "<div class='col-md-1'><span class='timestamp'><i class='fa fa-question-circle'></i></span><br><span class='temperature'><i class='fa fa-question-circle'></i></span><span class='temperature-unit'>&deg;C</span><span class='symbol'><i class='fa fa-question-circle'></i></span><br><span class='wind-direction'></span><span>:</span> <span class='wind-speed'><i class='fa fa-question-circle'></i></span><span class='wind-speed-unit'>m/s</span></div>";
     $.each(data.hours, function () {
       var this_timestamp = moment(this.date).add(this.hour, "hours");
       if (this_timestamp < now) {
@@ -52,9 +54,25 @@ var RefreshWeather = function (options) {
         $(".weather-all").append("<div class='row'></div>");
         current_row = $(".weather-all .row").last();
       }
-      current_row.append("<div class='col-md-1'><span class='timestamp'><i class='fa fa-question-circle'></i></span><br><span class='temperature'><i class='fa fa-question-circle'></i></span><span class='temperature-unit'>&deg;C</span><span class='symbol'><i class='fa fa-question-circle'></i></span><br><span class='wind-direction'></span>: <span class='wind-speed'><i class='fa fa-question-circle'></i></span><span class='wind-speed-unit'>m/s</span></div>");
+      current_row.append(new_item);
       var current_item = current_row.find(".col-md-1").last();
-      current_item.find(".timestamp").html(this.date + " "+this.hour+":00");
+      if (current_day) {
+        if (current_day != this.date) {
+          current_item.addClass("new-day");
+          current_item.find(".timestamp").html(this.date+"<br>"+this.weekday_fi);
+          current_item.find("span").not(".timestamp").remove();
+          current_row.append(new_item);
+          current_item = current_row.find(".col-md-1").last();
+          current_index += 1;
+          if (current_index > 11) {
+            current_index = 0;
+            $(".weather-all").append("<div class='row'></div>");
+            current_row = $(".weather-all .row").last();
+          }
+        }
+      }
+      current_day = this.date;
+      current_item.find(".timestamp").html(this.hour+":00");
       current_item.find(".temperature").html(this.feels_like);
       current_item.find(".symbol").html("<img src='/homecontroller/static/images/" + this.icon + ".png'>");
       current_item.find(".temperature-unit").html("&deg;C");

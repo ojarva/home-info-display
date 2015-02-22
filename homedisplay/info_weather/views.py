@@ -15,6 +15,7 @@ import subprocess
 import time
 from django.forms.models import model_to_dict
 
+WEEKDAYS_FI = ["ma", "ti", "ke", "to", "pe", "la", "su"]
 
 def json_default(obj):
     if isinstance(obj, datetime.datetime):
@@ -52,6 +53,8 @@ def get_weather_data():
         i = model_to_dict(item)
         i["apparent_temperature"] = calculate_apparent_temperature(item.temperature, float(item.wind_speed), item.humidity)
         i["wind_speed_readable"] = get_wind_readable(float(item.wind_speed))
+        i["weekday"] = i["date"].weekday()
+        i["weekday_fi"] = WEEKDAYS_FI[i["weekday"]]
         if i["date"] == time_now.date() and i["hour"] == time_now.hour:
             forecast["current"] = i
         forecast["hours"].append(i)
