@@ -25,6 +25,17 @@ var LightControlTimed = function(options) {
     }
   }
 
+  function pauseOverride() {
+    main.find(".play-pause-control").slideDown();
+  }
+
+  function resumeOverride(source) {
+    main.find(".play-pause-control").slideUp();
+    if (source == "ui") {
+      $.post("/homecontroller/lightcontrol/timed/override-resume/"+ action);
+    }
+  }
+
   function setStartTime(start_time) {
     start_time = start_time.split(":");
     main.find(".start-time-content").html(start_time[0]+":"+start_time[1]);
@@ -84,6 +95,11 @@ var LightControlTimed = function(options) {
     setStartTime(data[0].fields.start_time);
     setDuration(data[0].fields.duration);
     setRunning(data[0].fields.running);
+    if (data[0].fields.is_overridden) {
+      pauseOverride();
+    } else {
+      resumeOverride("backend");
+    }
     lightcontrol_timed_sort.sortTimers();
   }
 
@@ -173,8 +189,17 @@ var LightControlTimed = function(options) {
     postUpdate();
   }
 
-  function onReceiveItemWS(data) {
+  function onReceiveItemUpdate(data) {
     updateFields(data);
+  }
+
+  function onReceiveOverride(data) {
+    console.log("Overriding");
+    if (data.action == "resume") {
+      resumeOverride("backend");
+    } else {
+      pauseOverride();
+    }
   }
 
   function startInterval() {
@@ -214,7 +239,12 @@ var LightControlTimed = function(options) {
     postUpdate();
   });
 
-  ws_generic.register("lightcontrol_timed_" + action, onReceiveItemWS);
+  main.find(".play-pause-control").on("click", function () {
+    resumeOverride("ui");
+  });
+
+  ws_generic.multiRegister("lightcontrol_timed_override", "lightcontrol_timed_override_"+ action, onReceiveOverride);
+  ws_generic.register("lightcontrol_timed_" + action, onReceiveItemUpdate);
   ge_refresh.register("lightcontrol_timed_" + action, update);
 
   startInterval();

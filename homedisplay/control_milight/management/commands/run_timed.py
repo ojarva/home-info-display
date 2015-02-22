@@ -57,6 +57,7 @@ class Command(BaseCommand):
                     group_brightness = brightness
                     if no_brighten:
                         item, _ = LightGroup.objects.get_or_create(group_id=group)
+                        print "Current brightness: %s%%" % item.current_brightness
                         if item.current_brightness is not None:
                             group_brightness = min(item.current_brightness, group_brightness)
                     print "Setting %s to %s" % (group, group_brightness)

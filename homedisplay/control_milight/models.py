@@ -3,6 +3,7 @@ from ledcontroller import LedController
 from django.conf import settings
 from django.utils import timezone
 import datetime
+import json
 import math
 import redis
 
@@ -17,17 +18,20 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
             update_lightstate(a, brightness, color)
 
     timed_ends_at = is_any_timed_running()
-    if kwargs.get("important", True) == False:
+    if kwargs.get("important", True) != False:
+        print "Entering override", timed_ends_at
         if timed_ends_at != False:
-            time_until_ends = (timed_ends_at - now()).total_seconds() + 65
-            redis_instance.setex("lightcontrol-no-automatic-%s" % group, time_until_ends, True)
+            time_until_ends = (timed_ends_at - timezone.now()).total_seconds() + 65
+            print time_until_ends
+            redis_instance.setex("lightcontrol-no-automatic-%s" % group, int(time_until_ends), True)
+            redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "pause"}}))
 
     (state, _) = LightGroup.objects.get_or_create(group_id=group)
     if brightness is not None:
         if color == "white":
             state.white_brightness = brightness
         else:
-            state.rgb_brightness = brightness
+            state.rgbw_brightness = brightness
     if color is not None:
         state.color = color
     state.on = on
@@ -57,7 +61,7 @@ class LightGroup(models.Model):
             if color == "white":
                 self.white_brightness = brightness
             else:
-                self.rgb_brightness = brightness
+                self.rgbw_brightness = brightness
         if color is not None:
             self.color = color
         self.on = on

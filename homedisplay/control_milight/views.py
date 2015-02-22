@@ -22,6 +22,10 @@ class timed(View):
         ret = json.loads(serializers.serialize("json", [item]))
         ret[0]["fields"]["start_datetime"] = item.get_start_datetime().isoformat()
         ret[0]["fields"]["end_datetime"] = item.get_end_datetime().isoformat()
+        for group in range(1, 5):
+            if redis_instance.get("lightcontrol-no-automatic-%s" % group) is not None:
+                ret[0]["fields"]["is_overridden"] = True
+                break
         return ret
 
     def post(self, request, *args, **kwargs):
@@ -46,11 +50,19 @@ class timed(View):
             item.save()
             serialized = self.get_serialized_item(action)
             redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_%s" % action, "content": serialized}))
-            return HttpResponse(json.dumps(serialized), content_type="application/json")
+            if is_any_timed_running() == False:
+                # No timed lightcontrol is running (anymore). Delete overrides.
+                for group in range(1, 5):
+                    redis_instance.delete("lightcontrol-no-automatic-%s" % group)
+                    redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "resume"}}))
 
-        else:
-            item = self.get_serialized_item(action)
-            return HttpResponse(json.dumps(item), content_type="application/json")
+            return HttpResponse(json.dumps(serialized), content_type="application/json")
+        elif command == "override-resume":
+            for group in range(1, 5):
+                redis_instance.delete("lightcontrol-no-automatic-%s" % group)
+                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "resume"}}))
+        item = self.get_serialized_item(action)
+        return HttpResponse(json.dumps(item), content_type="application/json")
 
 
     def get(self, request, *args, **kwargs):

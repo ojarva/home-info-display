@@ -15,7 +15,16 @@
 
 .timed-lightcontrol .play-control .span {
   display: inline-block;
+}
+.timed-lightcontrol .play-pause-control {
+  font-size: 2em;
+  display: inline-block;
+  float: right;
+  margin-right: 20px;
+}
 
+.timed-lightcontrol .play-pause-control .span {
+  display: inline-block;
 }
 
 .timed-lightcontrol .action-button {
