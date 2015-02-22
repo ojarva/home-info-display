@@ -22,7 +22,7 @@ class ServerPowerPublisher(object):
             status = "not_responding"
         elif alive_status == manage_server_power.SERVER_DOWN:
             status = "down"
-        self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "server_power", "content": status}))
+        self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "server_power", "content": {"status": status}}))
 
     def run(self):
         while True:

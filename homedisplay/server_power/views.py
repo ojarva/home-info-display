@@ -7,8 +7,11 @@ from django.views.generic import View
 import datetime
 import json
 import manage_server_power
+import redis
 import subprocess
 import time
+
+redis_instance = redis.StrictRedis()
 
 sp = manage_server_power.ServerPower(server_hostname=settings.SERVER_IP_ADDRESS, server_mac=settings.SERVER_MAC_ADDRESS, ssh_username=settings.SERVER_SSH_USERNAME, broadcast_ip=settings.SERVER_BROADCAST_IP)
 
@@ -22,17 +25,24 @@ class info(View):
             status["status"] = "not_responding"
         elif alive_status == manage_server_power.SERVER_DOWN:
             status["status"] = "down"
-
+        status["in_progress"] = redis_instance.get("server_power_in_progress")
         return HttpResponse(json.dumps(status), content_type="application/json")
 
 
 class startup(View):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        status = sp.is_alive()
         sp.wake_up()
+        redis_instance.setex("server_power_in_progress", 60, status)
+        redis_instance.publish("home:broadcast:generic", json.dumps({"key": "server_power", "content": {"status": status, "in_progress": status}}))
+
         return HttpResponse("ok")
 
 
 class shutdown(View):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        status = sp.is_alive()
         sp.shutdown()
+        redis_instance.setex("server_power_in_progress", 60, status)
+        redis_instance.publish("home:broadcast:generic", json.dumps({"key": "server_power", "content": {"status": status, "in_progress": status}}))
         return HttpResponse("ok")
