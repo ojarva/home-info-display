@@ -3,7 +3,7 @@ from ledcontroller import LedController
 from django.conf import settings
 import datetime
 
-__all__ = ["LightGroup", "LightTransition"]
+__all__ = ["LightGroup", "LightAutomation"]
 
 led = LedController(settings.MILIGHT_IP)
 
@@ -30,20 +30,6 @@ class LightGroup(models.Model):
         self.save()
         return self
 
-
-class LightTransition(models.Model):
-    group = models.ForeignKey("LightGroup")
-    description = models.TextField(null=True, blank=True)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
-    priority = models.PositiveSmallIntegerField(default=0)
-    start_brightness = models.PositiveSmallIntegerField(null=True)
-    to_brightness = models.PositiveSmallIntegerField(null=True)
-    to_nightmode = models.NullBooleanField(null=True)
-    to_color = models.TextField(null=True, blank=True)
-
-    def __unicode__(self):
-        return "%s (%s): %s->%s" % (self.group.group_id, self.description, self.start_brightness, self.to_brightness)
 
 class LightAutomation(models.Model):
     action = models.CharField(max_length=30)
