@@ -6,3 +6,4 @@ db.sqlite3
 homedisplay/static/
 develo/
 build/
+static/CACHE
