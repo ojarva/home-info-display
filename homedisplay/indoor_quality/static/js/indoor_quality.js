@@ -247,7 +247,6 @@ $(document).ready(function () {
       $("#indoor-quality-modal .air-quality-graph-content").html(data);
       indoor_air_quality.refreshAllData();
       switchVisibleContent("#indoor-quality-modal");
-      indoor_air_quality_modal_timeout = setTimeout(closeIndoorAirQualityModal, 60 * 1000);
     });
   });
 
