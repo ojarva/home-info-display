@@ -1,5 +1,4 @@
-from control_milight.models import LightAutomation, LightGroup
-from control_milight.views import update_lightstate
+from control_milight.models import LightAutomation, LightGroup, update_lightstate
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
@@ -51,7 +50,7 @@ class Command(BaseCommand):
             if set_white:
                 for group in allowed_groups:
                     led.white(group)
-                    update_lightstate(group, None, "white")
+                    update_lightstate(group, None, "white", important=False)
             if brightness:
                 print "Setting brightness to %s%%" % brightness
                 for group in allowed_groups:
@@ -62,4 +61,4 @@ class Command(BaseCommand):
                             group_brightness = min(item.current_brightness, group_brightness)
                     print "Setting %s to %s" % (group, group_brightness)
                     led.set_brightness(group_brightness, group)
-                    update_lightstate(group, group_brightness)
+                    update_lightstate(group, group_brightness, important=False)

@@ -4,10 +4,35 @@ from django.conf import settings
 from django.utils import timezone
 import datetime
 import math
+import redis
 
-__all__ = ["LightGroup", "LightAutomation"]
+__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running"]
 
 led = LedController(settings.MILIGHT_IP)
+redis_instance = redis.StrictRedis()
+
+def update_lightstate(group, brightness, color=None, on=True, **kwargs):
+    if group == 0:
+        for a in range(1, 5):
+            update_lightstate(a, brightness, color)
+
+    timed_ends_at = is_any_timed_running()
+    if kwargs.get("important", True) == False:
+        if timed_ends_at != False:
+            time_until_ends = (timed_ends_at - now()).total_seconds() + 65
+            redis_instance.setex("lightcontrol-no-automatic-%s" % group, time_until_ends, True)
+
+    (state, _) = LightGroup.objects.get_or_create(group_id=group)
+    if brightness is not None:
+        if color == "white":
+            state.white_brightness = brightness
+        else:
+            state.rgb_brightness = brightness
+    if color is not None:
+        state.color = color
+    state.on = on
+    state.save()
+    return state
 
 def is_any_timed_running():
     timestamp = timezone.now()
