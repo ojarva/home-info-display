@@ -16,7 +16,7 @@ class Command(BaseCommand):
         helen = helen_electricity_usage.Helen(settings.HELEN_USERNAME, settings.HELEN_PASSWORD, settings.HELEN_ID)
         logged_in = False
 
-        start_date = datetime.datetime.now() - datetime.timedelta(days=7)
+        start_date = datetime.datetime.now() - datetime.timedelta(days=50)
         current_date = start_date
         while current_date < datetime.datetime.now() - datetime.timedelta(days=1): # Current day is never available
             data = Electricity.objects.filter(date=current_date)
