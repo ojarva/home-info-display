@@ -203,6 +203,8 @@ class control(View):
             led.set_brightness(0, group)
             led.off(group)
             update_lightstate(group, 0, None, False)
+            if group == 0:
+                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
         elif command == "morning":
             led.white(group)
             led.set_brightness(10, group)
