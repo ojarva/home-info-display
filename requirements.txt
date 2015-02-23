@@ -1,6 +1,6 @@
-pycups>=1.9.72
-raven>=5.2.0
-astral
+astral>=0.8.1
+celery>=3.1.17
+django-celery>=3.1.16
 django-compressor>=1.4
 django-extensions>=1.4.9
 django-statsd>=2.0.1
@@ -11,10 +11,12 @@ hiredis>=0.1.4
 huawei-b593-status>=0.0.1
 ledcontroller>=1.0.6
 manage_server_power>=0.0.1
-numpy
+numpy>=1.9.1
+pycups>=1.9.72
+raven>=5.2.0
 requests>=2.5.1
 setproctitle
 slimit>=0.8.1
-statsd
+statsd>=3.0.1
 wakeonlan>=0.2.2
 xmltodict>=0.9.0

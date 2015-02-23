@@ -20,10 +20,13 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'compressor',
+    'control_display',
     'control_milight',
+    'control_printer',
     'display',
     'django_extensions',
     'django_statsd',
+    'djcelery',
     'indoor_quality',
     'info_birthdays',
     'info_electricity',
@@ -33,7 +36,6 @@ INSTALLED_APPS = (
     'repeating_tasks',
     'server_power',
     'ws4redis',
-    'control_printer',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -101,6 +103,11 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Celery settings
+BROKER_URL = 'redis://localhost:6379/1'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
@@ -108,5 +115,8 @@ USE_TZ = True
 STATIC_URL = '/homecontroller/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+import djcelery
+djcelery.setup_loader()
 
 from local_settings import *

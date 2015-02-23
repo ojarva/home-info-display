@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     url(r'^birthdays/', include("info_birthdays.urls")),
     url(r'^electricity/', include("info_electricity.urls")),
     url(r'^printer/', include("control_printer.urls")),
+    url(r'^control_display/', include("control_display.urls")),
 )

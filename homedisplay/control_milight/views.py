@@ -1,5 +1,5 @@
 from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate
-from display.views import run_display_command
+from control_display.utils import run_display_command, set_destination_brightness
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
@@ -186,6 +186,7 @@ class control_per_source(View):
                 update_lightstate(0, 100, "white")
         else:
             raise NotImplementedError("Invalid source: %s" % source)
+        set_destination_brightness()
         return HttpResponse("ok")
 
 
@@ -220,4 +221,5 @@ class control(View):
             update_lightstate(group, 0, "red")
         else:
             raise NotImplementedError("Invalid command: %s" % command)
+        set_destination_brightness()
         return HttpResponse("ok")

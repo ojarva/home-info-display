@@ -8,6 +8,4 @@ urlpatterns = patterns('',
     (r'^content/kitchen', TemplateView.as_view(template_name='index_kitchen.html')),
     (r'^content/door', TemplateView.as_view(template_name='index_door.html')),
     (r'^content/computer', TemplateView.as_view(template_name='index_computer.html')),
-    (r'^control/(?P<command>([a-z]+))$', views.control_display.as_view()),
-
 )

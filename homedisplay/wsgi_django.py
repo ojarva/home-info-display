@@ -2,8 +2,10 @@
 import os
 from raven import Client
 from raven.middleware import Sentry
-
 from raven_settings import DSN
+
+import djcelery
+djcelery.setup_loader()
 
 client = Client(DSN)
 

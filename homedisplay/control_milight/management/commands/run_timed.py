@@ -1,3 +1,4 @@
+from control_display.utils import set_destination_brightness
 from control_milight.models import LightAutomation, LightGroup, update_lightstate
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -63,3 +64,4 @@ class Command(BaseCommand):
                     print "Setting %s to %s" % (group, group_brightness)
                     led.set_brightness(group_brightness, group)
                     update_lightstate(group, group_brightness, important=False)
+                set_destination_brightness()

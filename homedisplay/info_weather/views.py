@@ -17,6 +17,12 @@ from django.forms.models import model_to_dict
 
 WEEKDAYS_FI = ["ma", "ti", "ke", "to", "pe", "la", "su"]
 
+def get_sun_info():
+    sun_info = Astral()
+    sun_info.solar_depression = 'civil'
+    b = sun_info[settings.SUN_CITY].sun()
+    return b
+
 def json_default(obj):
     if isinstance(obj, datetime.datetime):
         return obj.isoformat()
@@ -59,12 +65,10 @@ def get_weather_data():
             forecast["current"] = i
         forecast["hours"].append(i)
 
-    sun_info = Astral()
-    sun_info.solar_depression = 'civil'
-    b = sun_info[settings.SUN_CITY].sun()
-    for k in b:
-        b[k] = unicode(b[k])
-    forecast["sun"] = b
+    forecast["sun"] = get_sun_info()
+    for k in forecast["sun"]:
+        forecast["sun"][k] = unicode(forecast["sun"][k])
+
 
     hour = time_now.hour
     desired_entries = [("+2h", time_now + datetime.timedelta(hours=2))]

@@ -5,7 +5,7 @@ var ShutdownProgress = function(options) {
 
   function shutdown() {
     stop();
-    $.get("/homecontroller/display/control/off");
+    $.post("/homecontroller/control_display/power/off");
   }
 
   function update() {
