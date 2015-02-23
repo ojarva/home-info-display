@@ -15,7 +15,7 @@ redis_instance = redis.StrictRedis()
 def update_lightstate(group, brightness, color=None, on=True, **kwargs):
     if group == 0:
         for a in range(1, 5):
-            update_lightstate(a, brightness, color)
+            update_lightstate(a, brightness, color, on, **kwargs)
 
     timed_ends_at = is_any_timed_running()
     if kwargs.get("important", True) != False:
