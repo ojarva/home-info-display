@@ -26,13 +26,14 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
             redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "pause"}}))
 
     (state, _) = LightGroup.objects.get_or_create(group_id=group)
+    if color is not None:
+        state.color = color
+
     if brightness is not None:
-        if color == "white":
+        if state.color == "white":
             state.white_brightness = brightness
         else:
             state.rgbw_brightness = brightness
-    if color is not None:
-        state.color = color
     state.on = on
     state.save()
     return state
