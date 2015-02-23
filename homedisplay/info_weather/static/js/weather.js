@@ -65,7 +65,6 @@ var RefreshWeather = function (options) {
       current_item.find(".temperature-unit").html("&deg;C");
       current_item.find(".wind-speed").html(Math.round(this.wind_speed / 3.6));
       current_item.find(".wind-direction").html(this.wind_direction);
-      console.log(this.date, now.format("YYYY-MM-DD"), this.hour, now.hour());
       if (!highlight_set && this.date == now.format("YYYY-MM-DD") && this.hour >= now.hour()) {
         current_item.addClass("weather-today");
         highlight_set = true;
