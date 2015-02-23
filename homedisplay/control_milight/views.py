@@ -211,14 +211,21 @@ class control(View):
             led.disco(group)
             update_lightstate(group, None, "disco")
         elif command == "night":
-            (state, _) = LightGroup.objects.get_or_create(group_id=group)
-            if state.color != "red":
+            def execute(group):
+                (state, _) = LightGroup.objects.get_or_create(group_id=group)
+                if state.color != "red":
+                    led.set_brightness(0, group)
+                    led.white(group)
+                    led.set_brightness(0, group)
+                led.set_color("red", group)
                 led.set_brightness(0, group)
-                led.white(group)
-                led.set_brightness(0, group)
-            led.set_color("red", group)
-            led.set_brightness(0, group)
-            update_lightstate(group, 0, "red")
+                update_lightstate(group, 0, "red")
+
+            if group == 0:
+                for group in range(1, 5):
+                    execute(group)
+            else:
+                execute(group)
         else:
             raise NotImplementedError("Invalid command: %s" % command)
         set_destination_brightness()

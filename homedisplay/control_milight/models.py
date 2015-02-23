@@ -19,7 +19,6 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
 
     timed_ends_at = is_any_timed_running()
     if kwargs.get("important", True) != False:
-        print "Entering override", timed_ends_at
         if timed_ends_at != False:
             time_until_ends = (timed_ends_at - timezone.now()).total_seconds() + 65
             print time_until_ends
