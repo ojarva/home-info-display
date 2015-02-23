@@ -14,7 +14,7 @@ def run_display_command(cmd):
 
 def get_desired_brightness():
     brightness = 1 # Sensible default
-    min_brightness = 0
+    min_brightness = 0.3
     now = timezone.now()
 
     # Fetch sun information
@@ -39,12 +39,8 @@ def get_desired_brightness():
                 light_brightness = max(light_brightness, group_brightness)
 
     if light_brightness_set:
-        return max(min_brightness, 0.3, float(light_brightness) / 100)
-
-    #TODO: this should follow timed program schedules.
-    if now.hour > 7 and now.hour < 23:
-        return 1
-    return 0.6
+        return max(min_brightness, float(light_brightness) / 100)
+    return min_brightness
 
 def set_destination_brightness(brightness=None):
     if brightness is None:
