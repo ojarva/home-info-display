@@ -47,3 +47,12 @@
   border-left-style: dotted;
   border-left-width: 5px;
 }
+
+#weather-modal .weather-all .weather-today {
+  border-top: gray;
+  border-top-style: dotted;
+  border-top-width: 2px;
+  border-bottom: gray;
+  border-bottom-style: dotted;
+  border-bottom-width: 2px;
+}
