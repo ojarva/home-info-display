@@ -32,6 +32,8 @@ INSTALLED_APPS = (
     'info_electricity',
     'info_internet_connection',
     'info_timers',
+    'info_torrents',
+    'info_transportation',
     'info_weather',
     'repeating_tasks',
     'server_power',
@@ -116,6 +118,53 @@ STATIC_URL = '/homecontroller/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%Y-%m-%d %H:%M:%S"
+        },
+    },
+    'handlers': {
+        'django_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/django.log',
+            'formatter': 'verbose'
+        },
+        'homedisplay_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/homecontroller.log',
+            'formatter': 'verbose'
+        },
+        'statsd_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/statsd.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['django_file'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+        'homedisplay': {
+            'handlers': ['homedisplay_file'],
+            'propagate': True,
+            'level': 'DEBUG',
+        },
+        'statsd': {
+            'handlers': ['statsd_file'],
+            'propagate': False,
+            'level': 'DEBUG',
+        }
+    }
+}
 import djcelery
 djcelery.setup_loader()
 

@@ -1,4 +1,5 @@
 from .models import Timer, get_serialized_timer
+from .tasks import alarm_ending_task
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
@@ -47,9 +48,7 @@ class delete(View):
     def get(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         r.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % item.pk, "content": "delete"}))
-
         item.delete()
-
         return HttpResponse(json.dumps({"deleted": True, "id": kwargs["id"]}), content_type="application/json")
 
 class restart(View):
@@ -58,8 +57,6 @@ class restart(View):
         item.start_time = now()
         item.save()
         r.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % item.pk, "content": get_serialized_timer(item)}))
-
-
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 class start(View):
@@ -76,9 +73,10 @@ class create(View):
     @method_decorator(csrf_exempt)
     def post(self, request, *args, **kwargs):
         p = request.POST
-        item = Timer(name=p.get("name"), start_time=now(), duration=p.get("duration"))
+        item = Timer(name=p.get("name"), start_time=now(), duration=int(p.get("duration")))
         item.save()
         serialized = json.loads(serializers.serialize("json", [item]))
         r.publish("home:broadcast:generic", json.dumps({"key": "timers", "content": serialized}))
-
+        if item.duration:
+            alarm_ending_task.apply_async((item.pk,), eta=item.end_time)
         return HttpResponse(serialized, content_type="application/json")

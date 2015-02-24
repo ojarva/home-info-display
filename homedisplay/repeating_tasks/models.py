@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 
+from django.core import serializers
 from django.db import models
-from django.utils.timezone import now
-import datetime
 from django.db.models.signals import post_delete
 from django.db.models.signals import post_save
-import json
 from django.dispatch import receiver
+from django.utils.timezone import now
+import datetime
+import json
+import logging
 import redis
-from django.core import serializers
 
+logger = logging.getLogger(__name__)
 r = redis.StrictRedis()
 
 
@@ -45,10 +47,22 @@ def get_all_repeating_data():
     return data
 
 class Task(models.Model):
+    WEEKDAYS = (
+        ("ma", "maanantai"),
+        ("ti", "tiistai"),
+        ("ke", "keskiviikko"),
+        ("to", "torstai"),
+        ("pe", "perjantai"),
+        ("la", "lauantai"),
+        ("su", "sunnuntai"),
+    )
+
     title = models.TextField(verbose_name="Otsikko") #TODO: convert to CharField
     optional = models.NullBooleanField(default=False, verbose_name="Optionaalinen", help_text="Kyllä, jos tarkoituksena on tarkistaa, eikä tehdä joka kerta.")
     snooze = models.DateTimeField(null=True, blank=True)
-    repeat_every_n_seconds = models.IntegerField(verbose_name="Toista joka n:s sekunti", help_text="Toistoväli sekunteina")
+    repeat_every_n_seconds = models.IntegerField(null=True, blank=True, verbose_name="Toista joka n:s sekunti", help_text="Toistoväli sekunteina")
+    trigger_every_weekday = models.CharField(null=True, blank=True, max_length=2, choices=WEEKDAYS, verbose_name="Toista tiettynä viikonpäivänä")
+    trigger_every_day_of_month = models.SmallIntegerField(null=True, blank=True, verbose_name="Toista tiettynä päivänä kuukaudesta")
     last_completed_at = models.DateTimeField(null=True, blank=True, verbose_name="Edellinen valmistuminen", help_text="Edellinen kerta kun tehtävä on tehty")
 
     class Meta:
@@ -69,6 +83,7 @@ class Task(models.Model):
             return self.snooze
         if self.last_completed_at is None:
             return now()
+        # TODO: this does not work properly with other triggering options
         exact_expiration = self.last_completed_at + datetime.timedelta(seconds=self.repeat_every_n_seconds)
         if exact_expiration < now():
             return now()
@@ -90,6 +105,7 @@ class Task(models.Model):
         tsc = self.time_since_completion()
         if tsc is None:
             return datetime.timedelta(0)
+        # TODO: this does not work properly with other triggering options
         return self.time_since_completion() - datetime.timedelta(seconds=self.repeat_every_n_seconds)
 
     def snooze_by(self, days):
@@ -119,6 +135,7 @@ class Task(models.Model):
             return False
 
     def __unicode__(self):
+        #TODO: this does not work properly with other triggering options
         return u"%s (%sd)" % (self.title, self.repeat_every_n_seconds / 86400)
 
 class TaskHistory(models.Model):

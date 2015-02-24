@@ -1,9 +1,10 @@
-from django.db import models
-from ledcontroller import LedController
 from django.conf import settings
+from django.db import models
 from django.utils import timezone
+from ledcontroller import LedController
 import datetime
 import json
+import logging
 import math
 import redis
 
@@ -11,17 +12,20 @@ __all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_r
 
 led = LedController(settings.MILIGHT_IP)
 redis_instance = redis.StrictRedis()
+logger = logging.getLogger(__name__)
 
 def update_lightstate(group, brightness, color=None, on=True, **kwargs):
     if group == 0:
         for a in range(1, 5):
             update_lightstate(a, brightness, color, on, **kwargs)
+        return
 
+    logger.debug("Updating lightstate: group=%s, brightness=%s, color=%s, on=%s, kwargs=%s", group, brightness, color, on, kwargs)
     timed_ends_at = is_any_timed_running()
     if kwargs.get("important", True) != False:
         if timed_ends_at != False:
             time_until_ends = (timed_ends_at - timezone.now()).total_seconds() + 65
-            print time_until_ends
+            logger.info("Setting timed lightcontrol override for %s until %s", group, time_until_ends)
             redis_instance.setex("lightcontrol-no-automatic-%s" % group, int(time_until_ends), True)
             redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "pause"}}))
 
@@ -55,18 +59,6 @@ class LightGroup(models.Model):
 
     def __unicode__(self):
         return "%s (%s), color: %s, on: %s, rgbw: %s, white: %s" % (self.description, self.group_id, self.color, self.on, self.rgbw_brightness, self.white_brightness)
-
-    def set_state(self, brightness, color=None, on=True):
-        if brightness is not None:
-            if color == "white":
-                self.white_brightness = brightness
-            else:
-                self.rgbw_brightness = brightness
-        if color is not None:
-            self.color = color
-        self.on = on
-        self.save()
-        return self
 
     @property
     def current_brightness(self):
@@ -115,13 +107,6 @@ class LightAutomation(models.Model):
                 weekday = 0
         # Not active on any day.
         return None
-
-    @classmethod
-    def plus_time(cls, time1, seconds):
-        hours = math.floor(seconds / 3600)
-        seconds = hours * 3600
-        minutes = math.floor(seconds / 60)
-        datetime.time(time1.hour + hours)
 
     def is_running(self, timestamp):
         """ Returns true if timer is currently running """

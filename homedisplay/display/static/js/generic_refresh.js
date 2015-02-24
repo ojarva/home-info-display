@@ -1,3 +1,4 @@
+// TODO: implement multiRegister/multiDeRegister
 var GenericRefresh = function(options) {
   var callbacks = {},
       refresh_callback;

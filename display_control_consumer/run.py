@@ -25,11 +25,20 @@ class DisplayControlConsumer(object):
         self.redis_instance.setex("display-control-brightness", 60, brightness)
 
     def run(self):
+        # To prevent race conditions in restarts/crashes, check whether old data exists.
+        self.run_single_instance()
+        pubsub = self.redis_instance.pubsub()
+        pubsub.subscribe("display-control-set-brightness")
+        for item in pubsub.listen():
+            # Only poll redis after triggered with pubsub
+            self.run_single_instance()
+
+    def run_single_instance(self):
         while True:
             time.sleep(1)
             destination_brightness = self.redis_instance.get("display-control-destination-brightness")
             if not destination_brightness:
-                continue
+                return
             destination_brightness = float(destination_brightness)
 
             current_brightness = self.redis_instance.get("display-control-brightness")
@@ -47,7 +56,7 @@ class DisplayControlConsumer(object):
                     # Wrapped around: new brightness is smaller than destination brightness.; no action
                     print "Brightness wrapped around"
                     self.redis_instance.delete("display-control-destination-brightness")
-                    continue
+                    return
             elif current_brightness < destination_brightness:
                 # Increase brightness
                 new_brightness = current_brightness + self.STEP
@@ -56,11 +65,11 @@ class DisplayControlConsumer(object):
                 if new_brightness > destination_brightness:
                     # Wrapped around; no action
                     self.redis_instance.delete("display-control-destination-brightness")
-                    continue
+                    return
             else:
                 # Already matches. No action.
                 self.redis_instance.delete("display-control-destination-brightness")
-                continue
+                return
             print "Setting brightness to %s (destination: %s)" % (new_brightness, destination_brightness)
             self.set_brightness(new_brightness)
             self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "display_brightness", "content": new_brightness}))

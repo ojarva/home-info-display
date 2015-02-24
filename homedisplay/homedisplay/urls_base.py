@@ -17,4 +17,6 @@ urlpatterns = patterns('',
     url(r'^electricity/', include("info_electricity.urls")),
     url(r'^printer/', include("control_printer.urls")),
     url(r'^control_display/', include("control_display.urls")),
+    url(r'^torrents/', include("info_torrents.urls")),
+    url(r'^transportation/', include("info_transportation.urls")),
 )

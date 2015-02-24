@@ -7,3 +7,4 @@ homedisplay/static/
 develo/
 build/
 static/CACHE
+logs/
