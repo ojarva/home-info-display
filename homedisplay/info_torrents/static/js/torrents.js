@@ -49,7 +49,7 @@ var Torrents = function() {
 var torrents;
 
 $(document).ready(function () {
-  torrents = Torrents();
+  torrents = new Torrents();
   $(".main-button-box .linux-downloads").on("click", function () {
     torrents.update();
     switchVisibleContent("#linux-downloads-modal");
