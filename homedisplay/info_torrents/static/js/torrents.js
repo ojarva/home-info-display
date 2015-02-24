@@ -8,11 +8,11 @@ var Torrents = function() {
   function processData(items) {
     clearItems();
     $.each(items, function() {
-      $("#torrent-items").append("<tr data-hash='"+this.hash+"'><td>"+this.filename+"</td><td>"+this.size+"</td><td>"+this.downloaded_percent+"%</td><td>"+this.up_speed+"</td><td>"+this.eta+"</td><td>"+this.netdisk+"</td><td><div class='action-button animate-click stripe-box' data-action='remove'><i data-original-classes='fa fa-trash' class='fa fa-trash'></i></div> <div class='action-button animate-click stripe-box' data-action='stop'><i data-original-classes='fa fa-stop' class='fa fa-stop'></i></div> <div class='action-button animate-click stripe-box' data-action='play'><i data-original-classes='fa fa-play' class='fa fa-play'></i></div> </td></tr>")
+      $("#torrent-items").append("<tr data-hash='"+this.hash+"'><td>"+this.filename+"</td><td>"+filesize(this.size)+"</td><td>"+this.downloaded_percent+"%</td><td>"+this.up_speed+"</td><td>"+this.eta+"</td><td>"+this.netdisk+"</td><td><div class='action-button animate-click stripe-box' data-action='remove'><i data-original-classes='fa fa-trash' class='fa fa-trash'></i></div> <div class='action-button animate-click stripe-box' data-action='stop'><i data-original-classes='fa fa-stop' class='fa fa-stop'></i></div> <div class='action-button animate-click stripe-box' data-action='play'><i data-original-classes='fa fa-play' class='fa fa-play'></i></div> </td></tr>")
     });
     $("#torrent-items .action-button").on("click", function () {
       var command = $(this).data("action");
-      var hash = $(this).parent().data("hash");
+      var hash = $(this).parent().parent().data("hash");
       $(this).find("i").removeClass().addClass("fa fa-spin fa-spinner");
       $.post("/homecontroller/torrents/action/"+command+"/"+hash, function () {
         // No need to remove spinner, as whole table will be redrawn.

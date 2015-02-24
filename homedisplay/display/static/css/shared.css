@@ -21,6 +21,11 @@
   padding: 20px;
 }
 
+.table-striped>tbody>tr:nth-child(odd) {
+  background-color: #0d0d0d !important;
+}
+
+
 
 .confirm-dialog-box .yes {
   background-color: #006600;
