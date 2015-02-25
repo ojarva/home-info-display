@@ -4,7 +4,7 @@ var Namedays = function() {
 
   function update() {
     var d = new Date();
-    var nameday = data[d.getMonth()][d.getDate()];
+    var nameday = data[d.getMonth()][d.getDate() - 1];
     $("#today .list-namedays ul li").remove();
     $("#today .list-namedays ul").append("<li><i class='fa-li fa fa-calendar'></i> "+nameday+"</li>");
   }
