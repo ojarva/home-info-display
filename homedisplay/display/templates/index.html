@@ -30,6 +30,15 @@
                 <div class="center-content stripe-box animate-click action-button open-weather-modal"><i class="fa fa-cloud"></i></div>
                 <div class="center-content stripe-box animate-click action-button print-labels"><i class="fa fa-print"></i></div>
                 <div class="center-content stripe-box animate-click action-button linux-downloads"><i class="fa fa-download"></i></div>
+                <div class="server-power">
+                  <div style="display:none;" class="shutdown action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-power-off"></i></div>
+                  <div style="display:none;" class="startup action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-power-off"></i></div>
+                  <div style="display:none;" class="unknown action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-question-circle"></i></div>
+                </div>
+                <div class="genelec-power">
+                  <div class="startup action-button animate-click stripe-box"><i class="fa fa-bullhorn"></i>&nbsp;<i class="fa fa-power-off"></i></div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -62,12 +71,6 @@
           </div>
 
           <div class="item-box" id="today">
-            <div class="row">
-              <div class="col-md-12">
-                <h2>Tänään</h2>
-              </div>
-            </div>
-
             <div class="sun-info"></div>
             <div class="list-repeating-tasks">
               <ul class="fa-ul">
@@ -84,18 +87,8 @@
               </ul>
             </div>
           </div>
-          <div class="item-box" id="tomorrow">
-            <div class="row">
-              <div class="col-md-12">
-                <h2>Huomenna</h2>
-              </div>
-            </div>
 
-            <div class="list-repeating-tasks">
-              <ul class="fa-ul">
-              </ul>
-            </div>
-
+          <div id="tomorrow">
             <div class="list-birthdays">
               <ul class="fa-ul">
               </ul>
@@ -134,9 +127,6 @@
           </div>
           <div class="item-box indoor-quality">
             {% include "snippets/indoor_quality.html" %}
-          </div>
-          <div class="item-box">
-            {% include "snippets/server_power.html" %}
           </div>
           <div id="timers">
             {% include "snippets/add_timers.html" %}

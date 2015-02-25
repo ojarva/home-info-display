@@ -60,7 +60,7 @@ var Birthdays = function(elem, use_date, options) {
 
 
     $.each(data_sortable, function() {
-      var name = this.fields.name, age = "", b, date = "";
+      var name = this.fields.name, age = "", b, date = "", extra = "";
       if (this.fields.nickname) {
         name = this.fields.nickname;
       }
@@ -84,7 +84,10 @@ var Birthdays = function(elem, use_date, options) {
         items_in_current = 0;
       }
       items_in_current += 1;
-      parent_elem.append("<li><i class='fa-li fa fa-birthday-cake'></i> "+name+date+age+"</li>");
+      if (this_date == "tomorrow") {
+        extra = "(huomenna)";
+      }
+      parent_elem.append("<li><i class='fa-li fa fa-birthday-cake'></i> "+name+date+age+extra+"</li>");
     });
   }
 
