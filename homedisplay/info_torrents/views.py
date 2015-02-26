@@ -30,7 +30,7 @@ class List(View):
         items = get_list_of_torrents()
         return HttpResponse(json.dumps(items), content_type="application/json")
 
-class Action(List):
+class Action(View):
     def post(self, request, *args, **kwargs):
         client = UTorrentClient(settings.UTORRENT, settings.UTORRENT_ADMIN, settings.UTORRENT_PASSWORD)
         command = kwargs.get("command")
