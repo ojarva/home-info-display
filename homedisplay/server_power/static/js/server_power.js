@@ -7,8 +7,8 @@ var ServerPower = function(options) {
       button_in_progress_timeout;
 
   function showButton(button_name) {
-    main_elem.find(".action-button").not("." + button_name).slideUp();
-    main_elem.find("." + button_name).slideDown();
+    main_elem.find(".action-button").not("." + button_name).hide();
+    main_elem.find("." + button_name).show();
   }
 
   function setStatus(data) {
