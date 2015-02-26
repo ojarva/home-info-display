@@ -8,10 +8,12 @@ class LineAdminInline(admin.TabularInline):
         (
             None,
             {
-                'fields': ('line_number',)
+                'fields': ('line_number', 'show_line', 'only_show_next', 'icon'),
             }
         ),
     )
+    readonly_fields = ('line_number_raw',)
+
 
 class StopAdmin(admin.ModelAdmin):
     list_display = ("description", "stop_number")

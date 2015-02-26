@@ -1,0 +1,7 @@
+.transportation .departures :first-child{
+  font-size: 150%;
+}
+
+.transportation .line-number {
+  font-size: 150%;
+}
