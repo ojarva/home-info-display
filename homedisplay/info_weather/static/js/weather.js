@@ -21,8 +21,10 @@ var RefreshWeather = function (options) {
         current_index = 1,
         first_date = false,
         new_day = false;
-    items.find(".temperature-now").html(data.current.feels_like);
-    items.find(".wind-now").html(data.current.wind_speed_readable);
+    if (data && data.current && data.current.feels_like) {
+      items.find(".temperature-now").html(data.current.feels_like);
+      items.find(".wind-now").html(data.current.wind_speed_readable);
+    }
     $.each(data.next, function () {
       var this_item = items.find(".weather-" + current_index);
       if (first_date === false) {
