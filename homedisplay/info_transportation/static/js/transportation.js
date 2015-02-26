@@ -16,7 +16,7 @@ var Transportation = function() {
       $(".transportation ul").append("<li><i class='fa fa-li fa-icon-2x fa-"+this.icon+"'></i> <span class='line-number'>"+this.line+":</span> <span class='departures' data-minimum-time="+this.minimum_time+"></span></li>");
       var this_departures = $(".transportation ul li .departures").last();
       $.each(this.departures, function () {
-        this_departures.append("<span class='auto-update-timestamp' data-timestamp='"+this+"'></span> ");
+        this_departures.append("<span class='auto-update-timestamp' data-timestamp='"+this+"'><span class='minutes'></span><span class='seconds'></span></span> ");
       });
     });
     updateTimestamps();
@@ -35,7 +35,13 @@ var Transportation = function() {
       var minutes_raw = Math.floor(diff / 60);
 
       var seconds = ("00" + Math.round(diff - (60 * minutes_raw))).substr(-2, 2);
-      $(this).html(minutes_raw + ":" + seconds);
+      $(this).find(".minutes").html(minutes_raw);
+      $(this).find(".seconds").html(":" + seconds);
+    });
+    $(".transportation .departures .seconds").hide();
+    $(".transportation .departures").each(function () {
+      $(this).find(".auto-update-timestamp").first().addClass("first-departure");
+      $(this).find(".seconds").first().show();
     });
   }
 

@@ -1,4 +1,4 @@
-.transportation .departures :first-child{
+.transportation .departures .first-departure {
   font-size: 150%;
 }
 
