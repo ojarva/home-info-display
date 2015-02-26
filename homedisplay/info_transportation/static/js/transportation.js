@@ -13,7 +13,7 @@ var Transportation = function() {
     clearEntries();
     $.each(data, function() {
       // Loop over stops
-      $(".transportation ul").append("<li><i class='fa fa-li fa-icon-2x fa-"+this.icon+"'></i> <span class='line-number'>"+this.line+":</span> <span class='departures'></span></li>");
+      $(".transportation ul").append("<li><i class='fa fa-li fa-icon-2x fa-"+this.icon+"'></i> <span class='line-number'>"+this.line+":</span> <span class='departures' data-minimum-time="+this.minimum_time+"></span></li>");
       var this_departures = $(".transportation ul li .departures").last();
       $.each(this.departures, function () {
         this_departures.append("<span class='auto-update-timestamp' data-timestamp='"+this+"'></span> ");
@@ -26,6 +26,12 @@ var Transportation = function() {
     $(".transportation .auto-update-timestamp").each(function () {
       var diff = moment($(this).data("timestamp")) - moment();
       diff /= 1000;
+      if (diff < parseInt($(this).parent().data("minimum-time"))) {
+        $(this).fadeOut({duration: 900, complete: function() {
+          $(this).remove();
+        }});
+        return true; // continue
+      }
       var minutes_raw = Math.floor(diff / 60);
 
       var seconds = ("00" + Math.round(diff - (60 * minutes_raw))).substr(-2, 2);

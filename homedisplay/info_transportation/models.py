@@ -9,8 +9,8 @@ hsl = HSLApi(settings.HSL_USERNAME, settings.HSL_PASSWORD)
 def get_departures():
     lines = {}
     now = timezone.now()
-    for line in Line.objects.filter(show_line=True):
-        lines[line.line_number] = {"line": line.line_number, "icon": line.icon, "departures": []}
+    for line in Line.objects.select_related("stop__time_needed").filter(show_line=True):
+        lines[line.line_number] = {"line": line.line_number, "minimum_time": line.stop.time_needed, "icon": line.icon, "departures": []}
     for item in Data.objects.select_related("line__line_number", "line__stop__time_needed").filter(line__show_line=True, time__gte=now).order_by("time"):
         if item.line.stop.time_needed < (item.time - now).total_seconds():
             # Only show departures with enough time left
