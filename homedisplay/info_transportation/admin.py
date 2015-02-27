@@ -1,5 +1,12 @@
 from django.contrib import admin
-from .models import Stop, Line
+from .models import Stop, Line, LineShow
+
+class LineShowAdmin(admin.ModelAdmin):
+    list_display = ("description", "show_days", "show_start", "show_end")
+
+admin.site.register(LineShow, LineShowAdmin)
+
+
 
 class LineAdminInline(admin.TabularInline):
     model = Line
@@ -8,7 +15,7 @@ class LineAdminInline(admin.TabularInline):
         (
             None,
             {
-                'fields': ('line_number', 'show_line', 'icon'),
+                'fields': ('line_number', 'show_line', 'icon', 'show_times'),
             }
         ),
     )

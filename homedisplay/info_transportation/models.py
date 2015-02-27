@@ -41,6 +41,15 @@ class Stop(models.Model):
         verbose_name = "Pysäkki"
         verbose_name_plural = "Pysäkit"
 
+class LineShow(models.Model):
+    description = models.CharField(max_length=30)
+    show_start = models.TimeField(blank=True, null=True, verbose_name="Aloitusaika", help_text="Näytä lähdöt tämän ajan jälkeen")
+    show_end = models.TimeField(blank=True, null=True, verbose_name="Lopetusaika", help_text="Näytä lähdöt ennen tätä aikaa")
+    show_days = models.CharField(max_length=7, default="1111111", verbose_name="Näytä tiettyinä päivinä", help_text="ma-su, 1=päällä, 0=pois päältä")
+
+    def __unicode__(self):
+        return self.description
+
 class Line(models.Model):
     ICONS = (
         ("bus", "bus"),
@@ -51,6 +60,8 @@ class Line(models.Model):
     line_number_raw = models.CharField(max_length=20) # Line number information in raw format
     raw = models.CharField(max_length=50, verbose_name="Sisäinen numero") # This is internal identification for line. Contains whatever returned by HSL API.
     destination = models.CharField(max_length=50) # Destination for the line
+
+    show_times = models.ManyToManyField("LineShow", null=True, blank=True)
 
     show_line = models.BooleanField(blank=True, default=False, verbose_name="Näytä lähdöt")
     icon = models.CharField(max_length=10, choices=ICONS, verbose_name="Ikoni", default="bus")
