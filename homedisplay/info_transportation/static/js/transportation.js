@@ -13,7 +13,7 @@ var Transportation = function() {
     clearEntries();
     $.each(data, function() {
       // Loop over stops
-      $(".transportation ul").append("<li><i class='fa fa-li fa-icon-2x fa-"+this.icon+"'></i> <span class='line-number'>"+this.line+":</span> <span class='departures' data-minimum-time="+this.minimum_time+"></span></li>");
+      $(".transportation ul").append("<li><i class='fa fa-li fa-2x fa-"+this.icon+"'></i> <span class='line-number'>"+this.line+":</span> <span class='departures' data-minimum-time="+this.minimum_time+"></span></li>");
       var this_departures = $(".transportation ul li .departures").last();
       $.each(this.departures, function () {
         this_departures.append("<span class='auto-update-timestamp' data-timestamp='"+this+"'><span class='minutes'></span><span class='seconds'></span></span> ");

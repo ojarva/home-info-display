@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from hsl_api import HSLApi
+import datetime
 
 hsl = HSLApi(settings.HSL_USERNAME, settings.HSL_PASSWORD)
 
@@ -10,15 +11,29 @@ def get_departures():
     lines = {}
     now = timezone.now()
     for line in Line.objects.select_related("stop__time_needed").filter(show_line=True):
-        lines[line.line_number] = {"line": line.line_number, "minimum_time": line.stop.time_needed, "icon": line.icon, "departures": []}
-    for item in Data.objects.select_related("line__line_number", "line__stop__time_needed").filter(line__show_line=True, time__gte=now).order_by("time"):
+        lines[line.line_number] = {"visible": False, "line": line.line_number, "minimum_time": line.stop.time_needed, "icon": line.icon, "departures": []}
+    for item in Data.objects.filter(line__show_line=True, time__gte=now).order_by("time").prefetch_related("line"):
         if item.line.stop.time_needed < (item.time - now).total_seconds():
             # Only show departures with enough time left
+            # Check line schedules
             num = item.line.line_number
+            show_line = False
+            schedules = False
+            for schedule in item.line.show_times.all():
+                schedules = True
+                if schedule.is_valid():
+                    show_line = True
+                    break
+            if schedules is True and show_line is False:
+                continue
+            if show_line or schedules is False:
+                lines[num]["visible"] = True
+
             lines[num]["departures"].append(item.time.isoformat())
     items = []
     for line in lines:
-        items.append(lines[line])
+        if lines[line]["visible"]:
+            items.append(lines[line])
     return sorted(items, key=lambda a: a["line"])
 
 class Stop(models.Model):
@@ -42,13 +57,28 @@ class Stop(models.Model):
         verbose_name_plural = "Pysäkit"
 
 class LineShow(models.Model):
-    description = models.CharField(max_length=30)
+    description = models.CharField(max_length=30, verbose_name="Nimi")
     show_start = models.TimeField(blank=True, null=True, verbose_name="Aloitusaika", help_text="Näytä lähdöt tämän ajan jälkeen")
     show_end = models.TimeField(blank=True, null=True, verbose_name="Lopetusaika", help_text="Näytä lähdöt ennen tätä aikaa")
     show_days = models.CharField(max_length=7, default="1111111", verbose_name="Näytä tiettyinä päivinä", help_text="ma-su, 1=päällä, 0=pois päältä")
 
+    class Meta:
+        verbose_name = "Näytön aikataulu"
+        verbose_name_plural = "Näytön aikataulut"
+
     def __unicode__(self):
         return self.description
+
+    def is_valid(self):
+        now = datetime.datetime.now()
+        if self.show_start and now.time() < self.show_start:
+            return False
+        if self.show_end and now.time() > self.show_end:
+            return False
+        current_day = now.weekday()
+        if self.show_days[current_day] == "1":
+            return True
+        return False
 
 class Line(models.Model):
     ICONS = (
