@@ -96,6 +96,16 @@ class Line(models.Model):
     show_line = models.BooleanField(blank=True, default=False, verbose_name="Näytä lähdöt")
     icon = models.CharField(max_length=10, choices=ICONS, verbose_name="Ikoni", default="bus")
 
+    def is_valid(self):
+        if not self.show_line:
+            return False
+        for schedule in self.show_times.all():
+            if schedule.is_valid():
+                return True
+        if self.show_times.all().count() == 0:
+            return True
+        return False
+
     class Meta:
         unique_together = ("stop", "raw")
         verbose_name = "Linja"

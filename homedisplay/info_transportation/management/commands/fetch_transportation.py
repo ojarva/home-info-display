@@ -20,7 +20,12 @@ class Command(BaseCommand):
         data = []
         for stop in Stop.objects.all():
             lines = Line.objects.filter(show_line=True, stop=stop)
-            if len(lines) > 0:
+            fetch_stop = False
+            for line in lines:
+                if line.is_valid():
+                    fetch_stop = True
+                    break
+            if fetch_stop:
                 departures = hsl.get_timetable(stop.stop_number)
                 # O(n*m), this could be optimized.
                 for line in lines:

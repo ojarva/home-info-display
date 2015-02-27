@@ -31,7 +31,18 @@ class HSLApi(object):
 
     @classmethod
     def parse_timestamp(cls, departure_information):
-        return datetime.datetime.strptime("%s %s" % (departure_information["date"], ("0%s" % departure_information["time"])[-4:]), "%Y%m%d %H%M")
+        # For departures during next day, h>23
+        extra_time = datetime.timedelta(0)
+        time = ("0%s" % departure_information["time"])[-4:]
+        hour = int(time[0:2])
+        minute = int(time[2:])
+        if hour > 23:
+            extra_time = datetime.timedelta(days=1)
+            hour -= 24
+
+        timestamp = datetime.datetime.strptime("%s" % departure_information["date"], "%Y%m%d") + extra_time
+        timestamp = timestamp.replace(hour=hour).replace(minute=minute)
+        return timestamp
 
     def get_lines(self, stop_number):
         r = requests.get("%s?user=%s&pass=%s&request=stop&code=%s&p=00000010000" % (self.base_url, self.username, self.password, stop_number))
@@ -42,11 +53,10 @@ class HSLApi(object):
         return lines
 
     def get_timetable(self, stop_number):
-        r = requests.get("%s?user=%s&pass=%s&request=stop&code=%s&p=00000000001" % (self.base_url, self.username, self.password, stop_number))
+        r = requests.get("%s?user=%s&pass=%s&request=stop&code=%s&p=00000000001&dep_limit=20" % (self.base_url, self.username, self.password, stop_number))
         data = r.json()
         departures = []
         for departure in data[0]["departures"]:
             timestamp = self.parse_timestamp(departure)
             departures.append({"timestamp": timestamp, "line_number": departure.get("code")})
-            pass
         return departures
