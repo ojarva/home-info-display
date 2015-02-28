@@ -73,6 +73,15 @@ class TimedCustomLabel(models.Model):
 def publish_changes():
     redis_instance.publish("home:broadcast:generic", json.dumps({"key": "timer-labels", "content": get_labels()}))
 
+
+@receiver(post_delete, sender=Timer, dispatch_uid="timer_delete_signal")
+def publish_timer_deleted(sender, instance, using, **kwargs):
+    redis_instance.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % instance.pk, "content": "delete"}))
+
+@receiver(post_save, sender=Timer, dispatch_uid="timer_saved_signal")
+def publis_timer_saved(sender, instance, *args, **kwargs):
+    r.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % instance.pk, "content": get_serialized_timer(instance)}))
+
 @receiver(post_delete, sender=CustomLabel, dispatch_uid="customlabel_delete_signal")
 def publish_customlabel_deleted(sender, instance, using, **kwargs):
     publish_changes();
