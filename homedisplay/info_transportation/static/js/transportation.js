@@ -34,7 +34,7 @@ var Transportation = function() {
       }
       var minutes_raw = Math.floor(diff / 60);
 
-      var seconds = ("00" + Math.round(diff - (60 * minutes_raw))).substr(-2, 2);
+      var seconds = ("00" + Math.floor(diff - (60 * minutes_raw))).substr(-2, 2);
       $(this).find(".minutes").html(minutes_raw);
       $(this).find(".seconds").html(":" + seconds);
     });
