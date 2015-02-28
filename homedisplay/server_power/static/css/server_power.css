@@ -20,3 +20,15 @@
 .genelec-power .startup {
   background-color: #006600;
 }
+
+.display-power {
+  display: inline-block;
+}
+
+.display-power .shutdown-display {
+  background-color: #cc0000;
+}
+
+.display-power .startup-display {
+  background-color: #006600;
+}
