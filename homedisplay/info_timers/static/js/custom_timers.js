@@ -4,6 +4,31 @@ var CustomTimer = function(options) {
   var modal_elem = $(options.modal_elem);
   var time_spec = {"h_s": 0, "h_l": 3, "m_s": 3, "m_l": 2, "s_s": 5, "s_l": 2};
 
+  function clearLabels() {
+    $(".custom-timer-labels").children().remove();
+    $(".timed-custom-timer-labels").children().remove();
+  }
+
+  function processLabels(data) {
+    clearLabels();
+    $.each(data.labels, function () {
+      $(".custom-timer-labels").append("<div class='timer-description-button animate-click'>"+this+"</div>");
+    });
+    $.each(data.timed_labels, function () {
+      $(".timed-custom-timer-labels").append("<div class='timer-description-button animate-click' data-duration='"+this.duration+"'>"+this.label+"</div>");
+    });
+    modal_elem.find(".timer-description-button").on("click", function() {
+      var name = $(this).html();
+      submitTimer(name);
+    });
+  }
+
+  function updateLabels() {
+    $.get("/homecontroller/timer/get_labels", function(data) {
+      processLabels(data);
+    });
+  }
+
   function zeroPad(num, places) {
     var zero = places - num.toString().length + 1;
     return Array(+(zero > 0 && zero)).join("0") + num;
@@ -137,11 +162,6 @@ var CustomTimer = function(options) {
     processButton(content);
   });
 
-  modal_elem.find(".timer-description-button").on("click", function() {
-    var name = $(this).html();
-    submitTimer(name);
-  });
-
   $(".add-custom-timer-plus").on("click", function() {
     showCustomTimer();
   });
@@ -149,6 +169,9 @@ var CustomTimer = function(options) {
   modal_elem.find(".close").on("click", function () {
     closeCustomTimer();
   });
+  updateLabels();
+  ge_refresh.register("timer-labels", updateLabels);
+  ws_generic.register("timer-labels", processLabels);
 };
 
 var custom_timer;
