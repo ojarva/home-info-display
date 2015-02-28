@@ -167,6 +167,7 @@ var CustomTimer = function(options) {
   });
 
   modal_elem.find(".close").on("click", function () {
+    console.log("close");
     closeCustomTimer();
   });
   updateLabels();
