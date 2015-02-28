@@ -46,7 +46,7 @@ var Timer = function(parent_elem, options) {
       this_elem.find(".stopclock-stop i").removeClass("fa-stop").addClass("fa-trash");
       if (data.fields.stopped_at) {
         var diff = (new Date(options.stopped_at) - start_time) / 1000;
-        update_timer_content(diff, "");
+        updateTimerContent(diff, "");
       }
     }
   }
@@ -87,9 +87,13 @@ var Timer = function(parent_elem, options) {
       this_elem.find(".timer-stop").click(function() {
         deleteItem("ui");
       });
-      this_elem.find(".timer-restart").click(function () {
-        restartItem("ui");
-      });
+      if (options.no_refresh) {
+        this_elem.find(".timer-restart").hide();
+      } else {
+        this_elem.find(".timer-restart").click(function () {
+          restartItem("ui");
+        });
+      }
 
     } else {
       $(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-" + id_uniq + "'>" +
@@ -141,7 +145,13 @@ var Timer = function(parent_elem, options) {
     return Array(+(zero > 0 && zero)).join("0") + num;
   }
 
-  function update_timer_content(diff, prefix) {
+  function updateTimerContent(diff, prefix) {
+    if (options.auto_remove && prefix == "-") {
+      if (diff > options.auto_remove) {
+        deleteItem();
+      }
+    }
+
     var hours = Math.floor(diff / 3600);
     diff = diff - hours * 3600;
     var minutes = Math.floor(diff / 60);
@@ -170,11 +180,11 @@ var Timer = function(parent_elem, options) {
       if (source != "backend") {
         $.get("/homecontroller/timer/stop/" + id, function (data) {
           var diff = ((new Date(data[0].fields.stopped_at)) - (new Date(data[0].fields.start_time))) / 1000;
-          update_timer_content(diff, "");
+          updateTimerContent(diff, "");
         });
       } else if (options.stopped_at) {
         var diff = (new Date(options.stopped_at) - start_time) / 1000;
-        update_timer_content(diff, "");
+        updateTimerContent(diff, "");
       }
     }
   }
@@ -207,7 +217,7 @@ var Timer = function(parent_elem, options) {
     } else if (timer_type == "stopclock"){
       diff = (now - start_time) / 1000;
     }
-    update_timer_content(diff, prefix);
+    updateTimerContent(diff, prefix);
   }
 
   function clearItemIntervals() {
@@ -313,9 +323,9 @@ var Timers = function(options) {
         if (!hasTimer(id)) {
           if (this.fields.duration === null) {
             // if data.duration is not null, it's timer, not countdown
-            timer = new Timer(stopclock_holder, {"name": this.fields.name, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
+            timer = new Timer(stopclock_holder, {"name": this.fields.name, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at, "no_refresh": this.fields.no_refresh, "auto_remove": this.fields.auto_remove});
           } else {
-            timer = new Timer(timer_holder, {"name": this.fields.name, "duration": this.fields.duration, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at});
+            timer = new Timer(timer_holder, {"name": this.fields.name, "duration": this.fields.duration, "start_time": new Date(this.fields.start_time), "running": this.fields.running, "id": this.pk, stopped_at: this.fields.stopped_at, "no_refresh": this.fields.no_refresh, "auto_remove": this.fields.auto_remove});
           }
         }
       });
@@ -366,9 +376,9 @@ var Timers = function(options) {
       if (!hasTimer(data.pk)) {
         if (data.fields.duration === null) {
           // if data.duration is not null, it's timer, not countdown
-          run_timer = new Timer(stopclock_holder, {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
+          run_timer = new Timer(stopclock_holder, {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, "stopped_at": data.fields.stopped_at, "no_refresh": data.fields.no_refresh, "auto_remove": data.fields.auto_remove});
         } else {
-          run_timer = new Timer(timer_holder, {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, stopped_at: data.fields.stopped_at});
+          run_timer = new Timer(timer_holder, {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, "stopped_at": data.fields.stopped_at, "no_refresh": data.fields.no_refresh, "auto_remove": data.fields.auto_remove});
         }
       }
     }, 1000);

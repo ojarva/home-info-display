@@ -28,6 +28,9 @@ class Timer(models.Model):
     stopped_at = models.DateTimeField(null=True)
     action = models.CharField(max_length=50, null=True)
 
+    auto_remove = models.IntegerField(null=True)
+    no_refresh = models.BooleanField(default=False, blank=True)
+
     @property
     def end_time(self):
         if self.duration:
