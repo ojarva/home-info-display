@@ -132,7 +132,7 @@ var CustomTimer = function(options) {
     }
     if (typeof seconds == "undefined") {
     } else {
-      var timer_run = new Timer("#timer-holder", {"name": name, "duration": seconds});
+      $.post("/homecontroller/timer/create", {name: name, duration: seconds});
     }
     modal_elem.find(".close").click();
   }
@@ -167,7 +167,6 @@ var CustomTimer = function(options) {
   });
 
   modal_elem.find(".close").on("click", function () {
-    console.log("close");
     closeCustomTimer();
   });
   updateLabels();
