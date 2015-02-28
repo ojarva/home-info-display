@@ -80,7 +80,7 @@ def publish_timer_deleted(sender, instance, using, **kwargs):
 
 @receiver(post_save, sender=Timer, dispatch_uid="timer_saved_signal")
 def publis_timer_saved(sender, instance, *args, **kwargs):
-    r.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % instance.pk, "content": get_serialized_timer(instance)}))
+    redis_instance.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % instance.pk, "content": get_serialized_timer(instance)}))
 
 @receiver(post_delete, sender=CustomLabel, dispatch_uid="customlabel_delete_signal")
 def publish_customlabel_deleted(sender, instance, using, **kwargs):

@@ -148,8 +148,13 @@ var Timer = function(parent_elem, options) {
   function updateTimerContent(diff, prefix) {
     if (options.auto_remove && prefix == "-") {
       if (diff > options.auto_remove) {
-        deleteItem();
+        deleteItem(); // Delete item automatically if auto remove overrun is exceeded.
       }
+    }
+    if (start_time > (new Date())) {
+      this_elem.hide();
+    } else {
+      this_elem.show();
     }
 
     var hours = Math.floor(diff / 3600);
