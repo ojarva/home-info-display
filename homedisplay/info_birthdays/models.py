@@ -2,8 +2,7 @@
 
 from django.core import serializers
 from django.db import models
-from django.db.models.signals import post_save
-from django.db.models.signals import pre_delete
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils.timezone import now
 import datetime
@@ -47,7 +46,7 @@ def publish_changes():
     for k in ("today", "tomorrow", "all"):
         r.publish("home:broadcast:generic", json.dumps({"key": "birthdays_%s" % k, "content": get_birthdays(k)}))
 
-@receiver(pre_delete, sender=Birthday, dispatch_uid='birthday_delete_signal')
+@receiver(post_delete, sender=Birthday, dispatch_uid='birthday_delete_signal')
 def publish_birthday_deleted(sender, instance, using, **kwargs):
     publish_changes();
 
