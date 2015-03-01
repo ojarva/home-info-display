@@ -15,7 +15,12 @@ class ServerPowerPublisher(object):
 
     def check_server_power(self):
         status = "unknown"
-        alive_status = self.sp.is_alive()
+        try:
+            alive_status = self.sp.is_alive()
+        except socket.error:
+            # Network is unreachable. Wait until looping.
+            time.sleep(5)
+            return
         if alive_status == manage_server_power.SERVER_UP:
             status = "running"
         elif alive_status == manage_server_power.SERVER_UP_NOT_RESPONDING:
