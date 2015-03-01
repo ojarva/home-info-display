@@ -131,7 +131,7 @@ var LightControlTimed = function(options) {
     if (!latest_data) {
       return;
     }
-    data = latest_data.fields;
+    var data = latest_data.fields;
     var start_time = getNextStartDatetime(),
         end_time = getNextEndDatetime(),
         now = moment(),
