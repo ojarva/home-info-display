@@ -49,16 +49,19 @@ def run_timed_actions():
             logger.debug("Setting brightness to %s%%", brightness)
             for group in allowed_groups:
                 group_brightness = brightness
+                group_item, _ = LightGroup.objects.get_or_create(group_id=group)
                 if item.no_brighten:
-                    group_item, _ = LightGroup.objects.get_or_create(group_id=group)
                     logger.debug("Current brightness: %s%%", group_item.current_brightness)
                     if group_item.current_brightness is not None:
                         group_brightness = min(group_item.current_brightness, group_brightness)
                 if item.no_dimming:
-                    group_item, _ = LightGroup.objects.get_or_create(group_id=group)
                     logger.debug("Current brightness: %s%%", group_item.current_brightness)
                     if group_item.current_brightness is not None:
                         group_brightness = max(group_item.current_brightness, group_brightness)
+                if group_item.current_brightness:
+                    if led.get_brightness_level(group_brightness) == led.get_brightness_level(group_item.current_brightness):
+                        logger.debug("Not sending brightness update to %s: no difference in brightness level", group)
+                        continue
                 logger.debug("Setting %s to %s", (group, group_brightness))
                 led.set_brightness(group_brightness, group)
                 update_lightstate(group, group_brightness, important=False)
