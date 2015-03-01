@@ -1,4 +1,5 @@
 var RefreshWeather = function (options) {
+  "use strict";
   options = options || {};
   options.elem = options.elem || "#weather-general";
   options.update_interval = options.update_interval || FAST_UPDATE;
@@ -13,7 +14,7 @@ var RefreshWeather = function (options) {
   }
 
   function update() {
-    $.get("/homecontroller/weather/get_json?"+(new Date()).getTime(), function (data) {
+    $.get("/homecontroller/weather/get_json?" + (new Date()).getTime(), function (data) {
       resetWeatherInfo();
       if (data && data.current) {
         setWeatherInfo(data.current.icon, data.current.feels_like);
@@ -38,6 +39,7 @@ var RefreshWeather = function (options) {
 var refresh_weather;
 
 $(document).ready(function () {
+  "use strict";
   refresh_weather = new RefreshWeather({"elem": "#weather-general"});
   refresh_weather.startInterval();
 });

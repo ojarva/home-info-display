@@ -1,14 +1,26 @@
 var Printer = function () {
+  "use strict";
   var update_interval;
   function clearLabels() {
     $(".printer-labels").children().remove();
+  }
+  function removeCheck() {
+    // TODO: this should not remove all check marks.
+    $(".printer-labels i").removeClass("fa-check");
+  }
+
+  function printLabel(id) {
+    $.post("/homecontroller/printer/print_label", {"id": id}, function (data) {
+      $(".printer-labels .print-label-" + id + " i").removeClass("fa-spin fa-spinner").addClass("fa-check");
+      setTimeout(removeCheck, 2000);
+    });
   }
 
   function processLabels(data) {
     clearLabels();
     var main_elem = $(".printer-labels");
     $.each(data, function() {
-      main_elem.append("<div class='center-content stripe-box animate-click action-button print-label-"+this.pk+"' data-id='"+this.pk+"'>"+this.fields.name+" <i class='fa fa-fw'></i></div>");
+      main_elem.append("<div class='center-content stripe-box animate-click action-button print-label-" + this.pk + "' data-id='" + this.pk + "'>" + this.fields.name + " <i class='fa fa-fw'></i></div>");
     });
     // TODO: Bind click events
     main_elem.find("div").on("click", function() {
@@ -24,17 +36,7 @@ var Printer = function () {
     });
   }
 
-  function removeCheck() {
-    // TODO: this should not remove all check marks.
-    $(".printer-labels i").removeClass("fa-check");
-  }
 
-  function printLabel(id) {
-    $.post("/homecontroller/printer/print_label", {"id": id}, function (data) {
-      $(".printer-labels .print-label-"+id+" i").removeClass("fa-spin fa-spinner").addClass("fa-check");
-      setTimeout(removeCheck, 2000);
-    });
-  }
 
   function fetchStatus() {
     var main = $("#print-modal .printer-jobs-content");
@@ -45,12 +47,12 @@ var Printer = function () {
       $("#print-modal .printer-jobs .spinner").slideUp();
       main.slideDown();
       $.each(data, function (key, value) {
-        main.find("ul").append("<li data-id='"+key+"'><i class='fa-li fa fa-times-circle'></i>Luotu "+moment(value["time-at-creation"]).fromNow()+"</i>");
+        main.find("ul").append("<li data-id='" + key + "'><i class='fa-li fa fa-times-circle'></i>Luotu " + moment(value["time-at-creation"]).fromNow() + "</i>");
       });
       main.find("li").on("click", function() {
         content_switch.userAction();
         var id = $(this).data("id");
-        $.post("/homecontroller/printer/cancel_job/"+id, function () {
+        $.post("/homecontroller/printer/cancel_job/" + id, function () {
           fetchStatus();
         });
       });
@@ -65,9 +67,9 @@ var Printer = function () {
       status_main.find(".spinner").slideUp();
       status_main.find(".printer-status-content").slideDown();
       $.each(data, function (key, value) {
-        state = value["printer-state"];
-        states = {3: "odottaa", 4: "tulostaa", 5: "pysäytetty"};
-        status_main.find(".printer-status-content").append("<h2>"+key+" ("+states[state]+")</h2><p>Status: "+value["printer-state-message"]+"</p>");
+        var state = value["printer-state"];
+        var states = {3: "odottaa", 4: "tulostaa", 5: "pysäytetty"};
+        status_main.find(".printer-status-content").append("<h2>" + key + " (" + states[state] + ")</h2><p>Status: " + value["printer-state-message"] + "</p>");
       });
     });
   }
@@ -98,6 +100,7 @@ var Printer = function () {
 var printer;
 
 $(document).ready(function () {
+  "use strict";
   printer = new Printer();
   printer.startInterval();
 

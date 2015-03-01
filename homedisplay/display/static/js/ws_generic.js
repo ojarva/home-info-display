@@ -1,7 +1,8 @@
 var WsGeneric = function(options) {
   var ws4redis,
       callbacks = {},
-      multiregister_callbacks = {};
+      multiregister_callbacks = {},
+      disconnected_since;
 
   function register(key, callback) {
     if (key in callbacks) {

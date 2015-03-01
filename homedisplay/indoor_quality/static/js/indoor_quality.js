@@ -1,4 +1,5 @@
 var IndoorAirQuality = function (options) {
+  "use strict";
   options = options || {};
   options.main_elem = options.main_elem || ".indoor-quality";
   options.update_interval = options.update_interval || 30 * 60 * 1000;
@@ -27,7 +28,7 @@ var IndoorAirQuality = function (options) {
 
     var elem = $(goptions.selector);
 
-    if (typeof data == "undefined") {
+    if (typeof data === "undefined") {
       console.warn("!!! No data available for indoor air quality graphs!");
       elem.children().remove();
       elem.slideUp();
@@ -59,12 +60,12 @@ var IndoorAirQuality = function (options) {
       chart.xAxis
       .axisLabel(goptions.xlabel)
       .tickFormat(function(d) {
-        return d3.time.format('%H:%M')(new Date(d));
+        return d3.time.format("%H:%M")(new Date(d));
       });
 
       chart.yAxis     //Chart y-axis settings
       .axisLabel(goptions.ylabel)
-      .tickFormat(d3.format('.02f'));
+      .tickFormat(d3.format(".02f"));
 
       var processed_data = [];
       $.each(data, function () {
@@ -88,7 +89,7 @@ var IndoorAirQuality = function (options) {
   }
 
   function processCo2(data) {
-    if (typeof data == "undefined") {
+    if (typeof data === "undefined") {
       console.warn("!!! No indoor air quality information available.");
       autoNoUpdates();
       return;
@@ -122,7 +123,7 @@ var IndoorAirQuality = function (options) {
   }
 
   function processTemperature(data) {
-    if (typeof data == "undefined") {
+    if (typeof data === "undefined") {
       console.warn("!!! No indoor air quality information available.");
       autoNoUpdates();
       return;
@@ -152,7 +153,7 @@ var IndoorAirQuality = function (options) {
 
   function fetchTrend() {
     $.get("/homecontroller/indoor_quality/get_json/co2/trend", function (data) {
-      if (data.status == "no_data") {
+      if (data.status === "no_data") {
         output.find(".trend").html("");
         return;
       }
@@ -235,10 +236,12 @@ var indoor_air_quality;
 var indoor_air_quality_modal_timeout;
 
 function closeIndoorAirQualityModal() {
+  "use strict";
   $("#indoor-quality-modal .close").trigger("click");
 }
 
 $(document).ready(function () {
+  "use strict";
   indoor_air_quality = new IndoorAirQuality();
   indoor_air_quality.startInterval();
 

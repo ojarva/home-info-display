@@ -65,7 +65,7 @@ function WS4Redis(options, $) {
       timer = setTimeout(function() {
         connect(ws.url);
       }, timer_interval);
-      timer_interval = Math.min(timer_interval + 500, 5000);
+      timer_interval = Math.min(timer_interval + 500, 15000);
     }
   }
 

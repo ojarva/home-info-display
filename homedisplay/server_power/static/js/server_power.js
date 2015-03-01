@@ -1,4 +1,5 @@
 var ServerPower = function(options) {
+  "use strict";
   options = options || {};
   options.update_interval = options.update_interval || FAST_UPDATE;
   var main_elem = $(options.main_elem),
@@ -6,57 +7,6 @@ var ServerPower = function(options) {
       spinner_until_status_from,
       button_in_progress_timeout;
 
-  function showButton(button_name) {
-    main_elem.find(".action-button").not("." + button_name).hide();
-    main_elem.find("." + button_name).show();
-  }
-
-  function setStatus(data) {
-    if (data.in_progress) {
-      if (spinner_until_status_from) {
-        // Waiting for status change
-        if (data.in_progress != spinner_until_status_from) {
-          // Status changed
-          removeSpinners();
-        }
-      } else {
-        // Should wait for status change
-        spinner_until_status_from = data.in_progress;
-        setSpinners();
-      }
-    }
-    if (data.status == "down") {
-      showButton("startup");
-    } else if (data.status == "not_responding") {
-      showButton("unknown");
-    } else if (data.status == "running") {
-      showButton("shutdown");
-    }
-
-  }
-  function refreshServerPower() {
-    $.get("/homecontroller/server_power/status", function (data) {
-      setStatus(data);
-    });
-  }
-
-  function onReceiveItemWS(message) {
-    setStatus(message);
-  }
-
-  function startInterval() {
-    stopInterval();
-    refreshServerPower();
-    interval = setInterval(refreshServerPower, options.update_interval);
-    ws_generic.register("server_power", onReceiveItemWS);
-  }
-
-  function stopInterval() {
-    if (interval) {
-      interval = clearInterval(interval);
-    }
-    ws_generic.deRegister("server_power");
-  }
 
   function removeSpinners() {
     spinner_until_status_from = null;
@@ -68,15 +18,75 @@ var ServerPower = function(options) {
     }
   }
 
+
   function setSpinners() {
     main_elem.find(".action-button i").removeClass().addClass("fa fa-spinner fa-spin");
     // If status does not change, remove spinner.
     button_in_progress_timeout = setTimeout(removeSpinners, 60 * 1000);
   }
 
+
+  function showButton(button_name) {
+    main_elem.find(".action-button").not("." + button_name).hide();
+    main_elem.find("." + button_name).show();
+  }
+
+
+  function setStatus(data) {
+    if (data.in_progress) {
+      if (spinner_until_status_from) {
+        // Waiting for status change
+        if (data.in_progress !== spinner_until_status_from) {
+          // Status changed
+          removeSpinners();
+        }
+      } else {
+        // Should wait for status change
+        spinner_until_status_from = data.in_progress;
+        setSpinners();
+      }
+    }
+    if (data.status === "down") {
+      showButton("startup");
+    } else if (data.status === "not_responding") {
+      showButton("unknown");
+    } else if (data.status === "running") {
+      showButton("shutdown");
+    }
+  }
+
+
+  function refreshServerPower() {
+    $.get("/homecontroller/server_power/status", function (data) {
+      setStatus(data);
+    });
+  }
+
+
+  function onReceiveItemWS(message) {
+    setStatus(message);
+  }
+
+
+  function stopInterval() {
+    if (interval) {
+      interval = clearInterval(interval);
+    }
+    ws_generic.deRegister("server_power");
+  }
+
+
+  function startInterval() {
+    stopInterval();
+    refreshServerPower();
+    interval = setInterval(refreshServerPower, options.update_interval);
+    ws_generic.register("server_power", onReceiveItemWS);
+  }
+
+
   main_elem.find(".action-button i").each(function () {
     $(this).data("original-classes", $(this).attr("class"));
-  })
+  });
 
   main_elem.find(".startup").on("click", function() {
     spinner_until_status_from = "down";
@@ -100,6 +110,7 @@ var ServerPower = function(options) {
 var server_power;
 
 $(document).ready(function() {
+  "use strict";
   server_power = new ServerPower({main_elem: ".server-power"});
   server_power.startInterval();
 });

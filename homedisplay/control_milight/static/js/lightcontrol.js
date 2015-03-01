@@ -1,4 +1,5 @@
 var LightControl = function() {
+  "use strict";
 
   function initialize(selector) {
     $.each($(selector), function() {
@@ -56,6 +57,7 @@ var LightControl = function() {
 
 var light_control;
 $(document).ready(function () {
+  "use strict";
   light_control = new LightControl();
   light_control.initialize(".lightcontrol-btn");
 

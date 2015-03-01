@@ -1,7 +1,27 @@
 var ShutdownProgress = function(options) {
+  "use strict";
   options = options || {};
   options.timeout = options.timeout || 31000; // in ms
   var update_interval, countdown_start;
+
+  function stopInterval() {
+    if (update_interval) {
+      update_interval = clearInterval(update_interval);
+    }
+    $("#shutdown-progress .progress-bar").css("width", "0%");
+  }
+
+  function stop(source) {
+    if (source !== "backend") {
+      $.post("/homecontroller/control_display/power/cancel-delayed", function () {
+        stopInterval();
+        content_switch.switchContent("#main-content");
+      });
+    } else {
+      stopInterval();
+      content_switch.switchContent("#main-content");
+    }
+  }
 
   function shutdown() {
     $.post("/homecontroller/control_display/power/off");
@@ -26,21 +46,17 @@ var ShutdownProgress = function(options) {
       return;
     }
     var percent = 100 * (options.timeout - time_left) / options.timeout;
-    $("#shutdown-progress .progress-bar").css("width", percent+"%");
+    $("#shutdown-progress .progress-bar").css("width", percent + "%");
   }
 
-  function onReceiveItemWS(message) {
-    console.log("Shutdown received", message);
-    if (message == "display-off" || message == "display-on" || message == "cancel-delayed") {
-      stop("backend");
-    } else if (message == "delayed-shutdown") {
-      content_switch.switchContent("#shutdown-progress");
-      restart("backend");
-    }
+  function startInterval() {
+    stopInterval();
+    update();
+    update_interval = setInterval(update, 100);
   }
 
   function restart(source) {
-    if (source != "backend") {
+    if (source !== "backend") {
       $.post("/homecontroller/control_display/power/delayed-shutdown", function () {
         countdown_start = moment();
         startInterval();
@@ -51,30 +67,14 @@ var ShutdownProgress = function(options) {
     }
   }
 
-  function stop(source) {
-    if (source != "backend") {
-      $.post("/homecontroller/control_display/power/cancel-delayed", function () {
-        stopInterval();
-        content_switch.switchContent("#main-content");
-      });
-    } else {
-      stopInterval();
-      content_switch.switchContent("#main-content");
+  function onReceiveItemWS(message) {
+    console.log("Shutdown received", message);
+    if (message === "display-off" || message === "display-on" || message === "cancel-delayed") {
+      stop("backend");
+    } else if (message === "delayed-shutdown") {
+      content_switch.switchContent("#shutdown-progress");
+      restart("backend");
     }
-  }
-
-  function startInterval() {
-    stopInterval();
-    update();
-    update_interval = setInterval(update, 100);
-  }
-
-  function stopInterval() {
-    if (update_interval) {
-      update_interval = clearInterval(update_interval);
-    }
-    $("#shutdown-progress .progress-bar").css("width", "0%");
-
   }
 
   ws_generic.register("shutdown", onReceiveItemWS);
@@ -88,6 +88,7 @@ var ShutdownProgress = function(options) {
 
 var shutdown_progress;
 $(document).ready(function() {
+  "use strict";
   shutdown_progress = new ShutdownProgress();
   $("#main-content .close").on("click", function () {
     content_switch.switchContent("#shutdown-progress");

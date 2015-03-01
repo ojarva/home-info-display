@@ -1,4 +1,5 @@
 var ElectricityInfo = function () {
+  "use strict";
   function drawHeatmap() {
     //UI configuration
     var itemSize = 18,
@@ -228,6 +229,7 @@ var ElectricityInfo = function () {
 
 var electricity_info;
 $(document).ready(function () {
+  "use strict";
   electricity_info = new ElectricityInfo();
 
   $(".main-button-box .electricity").on("click", function() {

@@ -1,13 +1,12 @@
 var RepeatingTasks = function(elem, use_date) {
+  "use strict";
   var parent_elem = $(elem), this_date = use_date, update_interval;
+
 
   function clearTasks() {
     $(parent_elem).children().remove();
   }
 
-  function onReceiveItemWS(message) {
-    processData(message);
-  }
 
   function processData(data) {
     clearTasks();
@@ -17,6 +16,7 @@ var RepeatingTasks = function(elem, use_date) {
         diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
         overdue_by = " (<span class='auto-fromnow-update' data-timestamp='" + diff + "'>" + diff.fromNow() + "</span>)";
       }
+      var icon;
       if (this.fields.optional) {
         icon = "fa-question-circle";
       } else {
@@ -34,11 +34,27 @@ var RepeatingTasks = function(elem, use_date) {
     });
   }
 
+
+  function onReceiveItemWS(message) {
+    processData(message);
+  }
+
+
   function update() {
     $.get("/homecontroller/repeating_tasks/get_json/" + this_date, function(data) {
       processData(data);
     });
   }
+
+
+  function stopInterval() {
+    if (update_interval) {
+      update_interval = clearInterval(update_interval);
+    }
+    ws_generic.deRegister("repeating_tasks_" + this_date);
+    ge_refresh.deRegister("repeating_tasks_" + this_date);
+  }
+
 
   function startInterval() {
     stopInterval();
@@ -48,13 +64,6 @@ var RepeatingTasks = function(elem, use_date) {
     ge_refresh.register("repeating_tasks_" + this_date, update);
   }
 
-  function stopInterval() {
-    if (update_interval) {
-      update_interval = clearInterval(update_interval);
-    }
-    ws_generic.deRegister("repeating_tasks_" + this_date);
-    ge_refresh.deRegister("repeating_tasks_" + this_date);
-  }
 
   this.startInterval = startInterval;
   this.stopInterval = stopInterval;
@@ -65,6 +74,7 @@ var RepeatingTasks = function(elem, use_date) {
 var tasks_today, tasks_tomorrow, tasks_all;
 
 $(document).ready(function() {
+  "use strict";
   tasks_today = new RepeatingTasks("#today .list-repeating-tasks .fa-ul", "today");
   tasks_tomorrow = new RepeatingTasks("#tomorrow .list-repeating-tasks .fa-ul", "tomorrow");
   tasks_all = new RepeatingTasks("#repeating-tasks-all .fa-ul", "all");

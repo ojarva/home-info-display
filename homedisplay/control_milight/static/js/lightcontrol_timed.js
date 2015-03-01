@@ -1,15 +1,22 @@
+var lightcontrol_timed_evening,
+    lightcontrol_timed_morning,
+    lightcontrol_timed_weekend_evening,
+    lightcontrol_timed_weekend_morning,
+    lightcontrol_timed_sort;
+var lightcontrol_timed;
+
 var LightControlTimed = function(options) {
+  "use strict";
   // TODO: this should be refactored to use latest_data.start_datetime and .end_datetime instead of parsing from html.
   options = options || {};
   options.update_interval = options.update_interval || 1000;
   options.backend_update_interval = options.backend_update_interval || SLOW_UPDATE;
-  var active_days,
-      main = $(options.elem),
+  var main = $(options.elem),
       update_interval,
       backend_update_interval,
       latest_data,
       running;
-  if (main.length == 0) {
+  if (main.length === 0) {
     console.warn("!!! Invalid selector for LightControlTimed: " + options.elem);
   }
   var action = main.data("action");
@@ -31,22 +38,22 @@ var LightControlTimed = function(options) {
 
   function resumeOverride(source) {
     main.find(".play-pause-control").slideUp();
-    if (source == "ui") {
-      $.post("/homecontroller/lightcontrol/timed/override-resume/"+ action);
+    if (source === "ui") {
+      $.post("/homecontroller/lightcontrol/timed/override-resume/" + action);
     }
   }
 
   function setStartTime(start_time) {
     start_time = start_time.split(":");
-    main.find(".start-time-content").html(start_time[0]+":"+start_time[1]);
+    main.find(".start-time-content").html(start_time[0] + ":" + start_time[1]);
   }
 
   function setDuration(duration) {
     duration = parseInt(duration);
     var hours = Math.floor(duration / 3600);
     duration -= hours * 3600;
-    var minutes = ("00"+Math.round(duration / 60)).substr(-2);
-    main.find(".duration-content").html("+"+hours+":"+minutes);
+    var minutes = ("00" + Math.round(duration / 60)).substr(-2);
+    main.find(".duration-content").html("+" + hours + ":" + minutes);
   }
 
   function hideItem() {
@@ -118,7 +125,7 @@ var LightControlTimed = function(options) {
   function adjustStartTime(dir) {
     // TODO: this is called too early, when data is not loaded yet.
     var start_time = getStartTimeMoment();
-    if (dir == "plus") {
+    if (dir === "plus") {
       start_time.add(15, "minutes");
     } else {
       start_time.subtract(15, "minutes");
@@ -153,7 +160,7 @@ var LightControlTimed = function(options) {
       if (!running) {
         verb = "alkaisi";
       }
-      content.html(verb+" "+start_time.fromNow());
+      content.html(verb + " " + start_time.fromNow());
     } else {
       // Done for today.
       start_time.add(1, "days");
@@ -162,11 +169,11 @@ var LightControlTimed = function(options) {
       if (!running) {
         verb = "alkaisi";
       }
-      content.html(verb+" "+start_time.fromNow());
+      content.html(verb + " " + start_time.fromNow());
     }
-    if (show_progress_indicator == true) {
+    if (show_progress_indicator === true) {
       main.find(".play-control i").addClass("success-message");
-    } else if (show_progress_indicator == false) {
+    } else if (show_progress_indicator === false) {
       main.find(".play-control i").removeClass("success-message");
     }
   }
@@ -176,12 +183,12 @@ var LightControlTimed = function(options) {
     var parsed_time = moment();
     parsed_time.hours(time[0]);
     parsed_time.minutes(time[1]);
-    if (dir == "plus") {
+    if (dir === "plus") {
       if (parsed_time.hours() < 2) {
         parsed_time.add(15, "minutes");
       }
     } else {
-      if ((parsed_time.hours() == 0 && parsed_time.minutes() > 15) || parsed_time.hours() > 0) {
+      if ((parsed_time.hours() === 0 && parsed_time.minutes() > 15) || parsed_time.hours() > 0) {
         parsed_time.subtract(15, "minutes");
       }
     }
@@ -194,7 +201,7 @@ var LightControlTimed = function(options) {
   }
 
   function onReceiveOverride(data) {
-    if (data.action == "resume") {
+    if (data.action === "resume") {
       resumeOverride("backend");
     } else {
       pauseOverride();
@@ -248,7 +255,7 @@ var LightControlTimed = function(options) {
     resumeOverride("ui");
   });
 
-  ws_generic.multiRegister("lightcontrol_timed_override", "lightcontrol_timed_override_"+ action, onReceiveOverride);
+  ws_generic.multiRegister("lightcontrol_timed_override", "lightcontrol_timed_override_" + action, onReceiveOverride);
   ws_generic.register("lightcontrol_timed_" + action, onReceiveItemUpdate);
   ge_refresh.register("lightcontrol_timed_" + action, update);
 
@@ -263,6 +270,7 @@ var LightControlTimed = function(options) {
 };
 
 var ShowTimers = function() {
+  "use strict";
   function sortTimers() {
     lightcontrol_timed.sort(function (a, b) {
       return a.getNextStartDatetime() - b.getNextStartDatetime();
@@ -276,14 +284,9 @@ var ShowTimers = function() {
   this.sortTimers = sortTimers;
 };
 
-var lightcontrol_timed_evening,
-    lightcontrol_timed_morning,
-    lightcontrol_timed_weekend_evening,
-    lightcontrol_timed_weekend_morning,
-    lightcontrol_timed_sort;
-var lightcontrol_timed;
 
 $(document).ready(function () {
+  "use strict";
   lightcontrol_timed_sort = new ShowTimers();
   lightcontrol_timed_morning = new LightControlTimed({"elem": ".timed-lightcontrol-morning"});
   lightcontrol_timed_evening = new LightControlTimed({"elem": ".timed-lightcontrol-evening"});

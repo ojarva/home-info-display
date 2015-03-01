@@ -1,9 +1,10 @@
 var Birthdays = function(elem, use_date, options) {
+  "use strict";
   options = options || {};
   options.interval = options.interval || SLOW_UPDATE;
   options.showdate = options.showdate || false;
   options.maxitems = options.maxitems || 100000;
-  var parent_elem = $(elem), this_date = use_date, update_interval, wait_sync, current_item = 0, items_in_current = 0;
+  var parent_elem = $(elem), this_date = use_date, update_interval, current_item = 0, items_in_current = 0;
   parent_elem = parent_elem.slice(0, 1);
 
   function onReceiveItemWS(message) {
@@ -76,7 +77,7 @@ var Birthdays = function(elem, use_date, options) {
         age = (" (" + this.birthday_moment.from(b) + ")").replace(" sitten", "");
       }
       if (options.showdate) {
-        date = " - " + this.birthday_moment.date() + "." + (this.birthday_moment.month() + 1)+".";
+        date = " - " + this.birthday_moment.date() + "." + (this.birthday_moment.month() + 1) + ".";
         if (this.fields.valid_year) {
           date += this.birthday_moment.year();
         }
@@ -90,21 +91,20 @@ var Birthdays = function(elem, use_date, options) {
         items_in_current = 0;
       }
       items_in_current += 1;
-      if (this_date == "tomorrow") {
+      if (this_date === "tomorrow") {
         extra = "(huomenna)";
       }
-      parent_elem.append("<li><i class='fa-li fa fa-birthday-cake'></i> "+name+date+age+extra+"</li>");
+      parent_elem.append("<li><i class='fa-li fa fa-birthday-cake'></i> " + name + date + age + extra + "</li>");
     });
   }
 
   function update() {
-    $.get("/homecontroller/birthdays/get_json/"+this_date, function(data) {
+    $.get("/homecontroller/birthdays/get_json/" + this_date, function(data) {
       processData(data);
     });
   }
 
   function startInterval() {
-    var now = new Date(), minutes, wait_time;
     stopInterval();
     update();
     update_interval = setInterval(update, options.interval);
@@ -127,6 +127,7 @@ var Birthdays = function(elem, use_date, options) {
 var birthdays_today, birthdays_tomorrow, birthdays_all;
 
 $(document).ready(function() {
+  "use strict";
   birthdays_today = new Birthdays("#today .list-birthdays .fa-ul", "today");
   birthdays_tomorrow = new Birthdays("#tomorrow .list-birthdays .fa-ul", "tomorrow");
   birthdays_all = new Birthdays("#birthdays-list-all .fa-ul", "all", {interval: 60 * 60 * 1000, showdate: true, maxitems: 45});

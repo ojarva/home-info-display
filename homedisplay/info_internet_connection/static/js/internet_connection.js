@@ -1,4 +1,5 @@
 var ShowRealtimePing = function(options) {
+  "use strict";
   options = options || {};
   options.invalid_timeout = options.invalid_timeout || 10000;
   var container = $(options.output), invalid_timeout;
@@ -11,7 +12,7 @@ var ShowRealtimePing = function(options) {
     noUpdates("warning");
   }
   function update(message) {
-    if (message == "no_pings") {
+    if (message === "no_pings") {
       noUpdates();
       return;
     }
@@ -35,13 +36,14 @@ var ShowRealtimePing = function(options) {
 };
 
 var RefreshInternet = function(options) {
+  "use strict";
   options = options || {};
   options.invalid_timeout = options.invalid_timeout || 2 * 60 * 1000;
   var update_timeout, output = $(".internet-connection");
 
   function setSignal(level) {
     output.find(".signal-bars div").removeClass("active").addClass("inactive");
-    for (a = 1; a < level + 1; a++) {
+    for (var a = 1; a < level + 1; a++) {
       output.find(".signal-bars .signal-" + a).addClass("active").removeClass("inactive");
     }
   }
@@ -60,7 +62,7 @@ var RefreshInternet = function(options) {
   }
 
   function processData(data) {
-    if (typeof data == "undefined" || (data.status && data.status == "error")) {
+    if (typeof data === "undefined" || (data.status && data.status === "error")) {
       console.warn("!!! No internet connection information available");
       autoNoUpdates();
       return;
@@ -72,9 +74,9 @@ var RefreshInternet = function(options) {
     }
     var cs = data.fields.connect_status;
     var cs_out;
-    if (cs == "connected") {
+    if (cs === "connected") {
       cs_out = "<i class='fa fa-check-circle success-message'></i>";
-    } else if (cs == "connecting") {
+    } else if (cs === "connecting") {
       cs_out = "<i class='fa fa-spin fa-cog warning-message'></i>";
     } else {
       cs_out = "<i class='fa fa-times error-message'></i>";
@@ -111,6 +113,7 @@ var RefreshInternet = function(options) {
 
 var refresh_internet, show_pings;
 $(document).ready(function() {
+  "use strict";
   refresh_internet = new RefreshInternet({output: ".internet-connection"});
   refresh_internet.startInterval();
   show_pings = new ShowRealtimePing({output: ".internet-connection .ping"});

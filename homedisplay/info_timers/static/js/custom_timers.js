@@ -1,4 +1,5 @@
 var CustomTimer = function(options) {
+  "use strict";
   options = options || {};
   var duration_elem = $(options.duration_elem);
   var modal_elem = $(options.modal_elem);
@@ -9,13 +10,28 @@ var CustomTimer = function(options) {
     $(".timed-custom-timer-labels").children().remove();
   }
 
+
+  function submitTimer(name) {
+    var c = duration_elem.data("content");
+    var seconds = parseInt(c.substr(0, 3)) * 3600 + parseInt(c.substr(3, 2)) * 60 + parseInt(c.substr(5, 2));
+    if (seconds === 0) {
+      seconds = $(this).data("duration");
+    }
+    if (typeof seconds === "undefined") {
+      // Show error message?
+    } else {
+      $.post("/homecontroller/timer/create", {name: name, duration: seconds});
+    }
+    modal_elem.find(".close").click();
+  }
+
   function processLabels(data) {
     clearLabels();
     $.each(data.labels, function () {
-      $(".custom-timer-labels").append("<div class='timer-description-button animate-click'>"+this+"</div>");
+      $(".custom-timer-labels").append("<div class='timer-description-button animate-click'>" + this + "</div>");
     });
     $.each(data.timed_labels, function () {
-      $(".timed-custom-timer-labels").append("<div class='timer-description-button animate-click' data-duration='"+this.duration+"'>"+this.label+"</div>");
+      $(".timed-custom-timer-labels").append("<div class='timer-description-button animate-click' data-duration='" + this.duration + "'>" + this.label + "</div>");
     });
     modal_elem.find(".timer-description-button").on("click", function() {
       content_switch.userAction();
@@ -57,7 +73,7 @@ var CustomTimer = function(options) {
 
   function processButton(content) {
     var current_content = duration_elem.data("content");
-    if (content.substring(0, 6) == "clear-") {
+    if (content.substring(0, 6) === "clear-") {
       // backspace
       var clear_field = content.substring(6);
       current_content = nullTimeField(current_content, clear_field);
@@ -69,8 +85,8 @@ var CustomTimer = function(options) {
       if (field_data < 0) {
         var hours_field = parseInt(getTimeField(current_content, "h"));
         var minutes_field = parseInt(getTimeField(current_content, "m"));
-        if (field == "s") {
-          if (minutes_field == 0 && hours_field > 0) {
+        if (field === "s") {
+          if (minutes_field === 0 && hours_field > 0) {
             // Take 1h to minutes field.
             hours_field -= 1;
             current_content = setTimeField(current_content, "h", zeroPad(hours_field, time_spec.h_l));
@@ -84,7 +100,7 @@ var CustomTimer = function(options) {
           } else {
             field_data = 0;
           }
-        } else if (field == "m") {
+        } else if (field === "m") {
           if (hours_field > 0) {
             // Take 1 hour to minutes field.
             hours_field -= 1;
@@ -97,8 +113,8 @@ var CustomTimer = function(options) {
           field_data = 0;
         }
       }
-      if ((field == "s" || field == "m") && field_data >= 60) {
-        if (field == "s") {
+      if ((field === "s" || field === "m") && field_data >= 60) {
+        if (field === "s") {
           minutes_field = parseInt(getTimeField(current_content, "m"));
           minutes_field += 1;
           field_data -= 60;
@@ -110,7 +126,7 @@ var CustomTimer = function(options) {
           }
           current_content = setTimeField(current_content, "m", zeroPad(minutes_field, time_spec.m_l));
         }
-        if (field == "m") {
+        if (field === "m") {
           field_data -= 60;
           hours_field = parseInt(getTimeField(current_content, "h"));
           hours_field += 1;
@@ -125,18 +141,6 @@ var CustomTimer = function(options) {
     duration_elem.html(c.substr(0, 3) + ":" + c.substr(3, 2) + ":" + c.substr(5, 2));
   }
 
-  function submitTimer(name) {
-    var c = duration_elem.data("content");
-    var seconds = parseInt(c.substr(0, 3)) * 3600 + parseInt(c.substr(3, 2)) * 60 + parseInt(c.substr(5, 2));
-    if (seconds == 0) {
-      seconds = $(this).data("duration");
-    }
-    if (typeof seconds == "undefined") {
-    } else {
-      $.post("/homecontroller/timer/create", {name: name, duration: seconds});
-    }
-    modal_elem.find(".close").click();
-  }
 
   function closeCustomTimer() {
     var c = "0000000";
@@ -179,5 +183,6 @@ var CustomTimer = function(options) {
 var custom_timer;
 
 $(document).ready(function () {
+  "use strict";
   custom_timer = new CustomTimer({duration_elem: "#custom-timer-duration", modal_elem: "#add-custom-timer"});
 });
