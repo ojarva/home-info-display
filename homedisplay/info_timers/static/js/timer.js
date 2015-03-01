@@ -192,7 +192,7 @@ var Timer = function(parent_elem, options) {
       clearItemIntervals();
       this_elem.find(".stopclock-stop i").removeClass("fa-stop").addClass("fa-trash");
       if (data.fields.stopped_at) {
-        var diff = (new Date(options.stopped_at) - start_time) / 1000;
+        var diff = (new Date(data.fields.stopped_at) - start_time) / 1000;
         updateTimerContent(diff, "");
       }
     }
