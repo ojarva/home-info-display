@@ -2,7 +2,7 @@ from django.core import serializers
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.utils.timezone import now
+from django.utils import timezone
 import datetime
 import json
 import redis
@@ -35,7 +35,7 @@ class Timer(models.Model):
     def end_time(self):
         if self.duration:
             return self.start_time + datetime.timedelta(seconds=self.duration)
-        return now()
+        return timezone.now()
 
     def __unicode__(self):
         return u"%s - %s (%s)" % (self.name, self.start_time, self.duration)
@@ -79,8 +79,11 @@ def publish_timer_deleted(sender, instance, using, **kwargs):
     redis_instance.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % instance.pk, "content": "delete"}))
 
 @receiver(post_save, sender=Timer, dispatch_uid="timer_saved_signal")
-def publis_timer_saved(sender, instance, *args, **kwargs):
-    redis_instance.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % instance.pk, "content": get_serialized_timer(instance)}))
+def publis_timer_saved(sender, instance, created, *args, **kwargs):
+    if created:
+        redis_instance.publish("home:broadcast:generic", json.dumps({"key": "timers", "content": get_serialized_timer(instance)}))
+    else:
+        redis_instance.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % instance.pk, "content": get_serialized_timer(instance)}))
 
 @receiver(post_delete, sender=CustomLabel, dispatch_uid="customlabel_delete_signal")
 def publish_customlabel_deleted(sender, instance, using, **kwargs):
