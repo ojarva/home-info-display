@@ -79,7 +79,7 @@ def publish_timer_deleted(sender, instance, using, **kwargs):
     redis_instance.publish("home:broadcast:generic", json.dumps({"key": "timer-%s" % instance.pk, "content": "delete"}))
 
 @receiver(post_save, sender=Timer, dispatch_uid="timer_saved_signal")
-def publis_timer_saved(sender, instance, created, *args, **kwargs):
+def publish_timer_saved(sender, instance, created, *args, **kwargs):
     if created:
         redis_instance.publish("home:broadcast:generic", json.dumps({"key": "timers", "content": get_serialized_timer(instance)}))
     else:
