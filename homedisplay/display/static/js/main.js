@@ -29,31 +29,53 @@ $.ajaxSetup({
     }
 });
 
-var switch_visible_content_timeout;
-var switch_visible_content_currently_active;
+var ContentSwitch = function () {
+  var switch_visible_content_timeout,
+      switch_visible_content_currently_active = "#main-content";
 
-function switchToMainContent() {
-  $(switch_visible_content_currently_active).find(".close").trigger("click");
-  if (switch_visible_content_timeout) {
-    switch_visible_content_timeout = clearTimeout(switch_visible_content_timeout);
+  function mainContent() {
+    $(switch_visible_content_currently_active).find(".close").trigger("click");
+    if (switch_visible_content_timeout) {
+      switch_visible_content_timeout = clearTimeout(switch_visible_content_timeout);
+    }
   }
-}
 
-function switchVisibleContent(elem) {
-  if (switch_visible_content_timeout) {
-    switch_visible_content_timeout = clearTimeout(switch_visible_content_timeout);
+  function resetSwitchToMain() {
+    if (switch_visible_content_timeout) {
+      switch_visible_content_timeout = clearTimeout(switch_visible_content_timeout);
+    }
+    switch_visible_content_timeout = setTimeout(mainContent, 60 * 1000);
   }
-  $(".content-box").slideUp(); // Hide all content boxes
-  $("html, body").animate({ scrollTop: 0 }, "fast"); // Always scroll to top.
-  $("#navbar").collapse("hide"); // Hide menu, if visible
-  if (elem != "#main-content") {
-    switch_visible_content_currently_active = elem;
-    switch_visible_content_timeout = setTimeout(switchToMainContent, 60 * 1000);
-    $(elem).slideDown();
+
+  function switchContent(elem) {
+    if (switch_visible_content_timeout) {
+      switch_visible_content_timeout = clearTimeout(switch_visible_content_timeout);
+    }
+    $(".content-box").slideUp(); // Hide all content boxes
+    $("html, body").animate({ scrollTop: 0 }, "fast"); // Always scroll to top.
+    $("#navbar").collapse("hide"); // Hide menu, if visible
+    if (elem != "#main-content") {
+      switch_visible_content_currently_active = elem;
+      switch_visible_content_timeout = setTimeout(mainContent, 60 * 1000);
+      $(elem).slideDown();
+    }
   }
-}
+
+  function userAction() {
+    if (switch_visible_content_currently_active != "#main-content") {
+      resetSwitchToMain();
+    }
+  }
+
+  this.switchContent = switchContent;
+  this.mainContent = mainContent;
+  this.userAction = userAction;
+};
+
+var content_switch;
 
 $(document).ready(function() {
+  content_switch = new ContentSwitch();
   $(".animate-click").each(function () {
     $(this).data("original-bg-color", $(this).css("background-color"));
   });

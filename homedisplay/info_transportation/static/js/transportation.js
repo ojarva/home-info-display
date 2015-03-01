@@ -84,9 +84,9 @@ $(document).ready(function() {
   transportation.startInterval();
   // TODO
   $(".main-button-box .birthdays").on("click", function () {
-    switchVisibleContent("#birthdays-list-all");
+    content_switch.switchContent("#birthdays-list-all");
   });
   $("#birthdays-list-all .close").on("click", function() {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
 });

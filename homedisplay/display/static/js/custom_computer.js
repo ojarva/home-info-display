@@ -7,7 +7,7 @@ function refreshCallback() {
 $(document).ready(function() {
   ge_refresh.setRefreshCallback(refreshCallback);
   $(".navbar-brand").on("click", function() {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
   $(".navbar .refresh").on("click", function () {
     $(this).addClass("fa-spin");

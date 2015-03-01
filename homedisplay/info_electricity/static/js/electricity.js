@@ -233,10 +233,10 @@ $(document).ready(function () {
   $(".main-button-box .electricity").on("click", function() {
     electricity_info.drawHeatmap();
     electricity_info.drawBarGraph();
-    switchVisibleContent("#electricity-modal");
+    content_switch.switchContent("#electricity-modal");
   });
   $("#electricity-modal .close").on("click", function() {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
     $("#electricity-modal .heatmap").children().remove(); // Clean up graph
     $("#electricity-modal .bargraph").children().remove(); // Clean up graph
 

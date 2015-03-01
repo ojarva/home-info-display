@@ -30,10 +30,10 @@ var ShutdownProgress = function(options) {
   function onReceiveItemWS(message) {
     console.log("Shutdown received", message);
     if (message == "shutdown_delay") {
-      switchVisibleContent("#shutdown-progress");
+      content_switch.switchContent("#shutdown-progress");
       restart();
     } else if (message == "shutdown_cancel") {
-      switchVisibleContent("#main-content");
+      content_switch.switchContent("#main-content");
       stop();
     }
   }
@@ -45,7 +45,7 @@ var ShutdownProgress = function(options) {
 
   function stop() {
     stopInterval();
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   }
 
   function startInterval() {
@@ -76,13 +76,13 @@ var shutdown_progress;
 $(document).ready(function() {
   shutdown_progress = new ShutdownProgress();
   $("#main-content .close").on("click", function () {
-    switchVisibleContent("#shutdown-progress");
+    content_switch.switchContent("#shutdown-progress");
     shutdown_progress.restart();
   });
 
   $("#shutdown-progress .close, #shutdown-progress .cancel").on("click", function() {
     shutdown_progress.stop();
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
   $("#shutdown-progress .yes").on("click", function() {
     shutdown_progress.shutdown();

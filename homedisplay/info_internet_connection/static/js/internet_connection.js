@@ -137,10 +137,10 @@ $(document).ready(function() {
       content += "<div class='smokeping-chart'><h4>" + this[0] + "</h4><img src='/smokeping/images/" + this[1] + "?" + timestamp + "'></div>";
     });
     $("#internet-connection-modal .smokeping-charts").html(content);
-    switchVisibleContent("#internet-connection-modal");
+    content_switch.switchContent("#internet-connection-modal");
   });
 
   $("#internet-connection-modal .close").on("click", function () {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
 });

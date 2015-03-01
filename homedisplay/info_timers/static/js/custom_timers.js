@@ -18,6 +18,7 @@ var CustomTimer = function(options) {
       $(".timed-custom-timer-labels").append("<div class='timer-description-button animate-click' data-duration='"+this.duration+"'>"+this.label+"</div>");
     });
     modal_elem.find(".timer-description-button").on("click", function() {
+      content_switch.userAction();
       var name = $(this).html();
       submitTimer(name);
     });
@@ -142,11 +143,11 @@ var CustomTimer = function(options) {
     duration_elem.data("content", c);
     duration_elem.html(c.substr(0, 3) + ":" + c.substr(3, 2) + ":" + c.substr(5, 2));
 
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   }
 
   function showCustomTimer() {
-    switchVisibleContent("#add-custom-timer");
+    content_switch.switchContent("#add-custom-timer");
   }
 
   this.showCustomTimer = showCustomTimer;
@@ -158,6 +159,7 @@ var CustomTimer = function(options) {
   this.nullTimeField = nullTimeField;
 
   modal_elem.find(".add-timer-button").on("click", function () {
+    content_switch.userAction();
     var content = $(this).data("content").trim();
     processButton(content);
   });

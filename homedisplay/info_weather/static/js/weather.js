@@ -111,10 +111,10 @@ $(document).ready(function () {
   refresh_weather = new RefreshWeather();
   refresh_weather.startInterval();
   $(".open-weather-modal").on("click", function() {
-    switchVisibleContent("#weather-modal");
+    content_switch.switchContent("#weather-modal");
   });
   $("#weather-modal .close").on("click", function() {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
 
 });

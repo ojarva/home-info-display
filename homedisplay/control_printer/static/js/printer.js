@@ -12,6 +12,7 @@ var Printer = function () {
     });
     // TODO: Bind click events
     main_elem.find("div").on("click", function() {
+      content_switch.userAction();
       $(this).find("i").addClass("fa-spin fa-spinner");
       printLabel($(this).data("id"));
     });
@@ -47,6 +48,7 @@ var Printer = function () {
         main.find("ul").append("<li data-id='"+key+"'><i class='fa-li fa fa-times-circle'></i>Luotu "+moment(value["time-at-creation"]).fromNow()+"</i>");
       });
       main.find("li").on("click", function() {
+        content_switch.userAction();
         var id = $(this).data("id");
         $.post("/homecontroller/printer/cancel_job/"+id, function () {
           fetchStatus();
@@ -100,13 +102,13 @@ $(document).ready(function () {
   printer.startInterval();
 
   $(".main-button-box .print-labels").on("click", function () {
-    switchVisibleContent("#print-modal");
+    content_switch.switchContent("#print-modal");
     printer.fetchStatus();
     printer.fetchPrinters();
 
   });
 
   $("#print-modal .close").on("click", function() {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
 });

@@ -246,13 +246,13 @@ $(document).ready(function () {
     $.get("/homecontroller/indoor_quality/get_modal", function (data) {
       $("#indoor-quality-modal .air-quality-graph-content").html(data);
       indoor_air_quality.refreshAllData();
-      switchVisibleContent("#indoor-quality-modal");
+      content_switch.switchContent("#indoor-quality-modal");
     });
   });
 
   $("#indoor-quality-modal .close").on("click", function() {
     $("#indoor-quality-modal .air-quality-graph-content").children().remove();
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
     indoor_air_quality_modal_timeout = clearTimeout(indoor_air_quality_modal_timeout);
   });
 });

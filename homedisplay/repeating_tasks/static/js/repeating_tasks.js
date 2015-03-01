@@ -25,11 +25,12 @@ var RepeatingTasks = function(elem, use_date) {
       parent_elem.append("<li class='repeating-task-mark-done' data-id='" + this.pk + "'><i class='fa-li fa " + icon + "'></i> <span class='task-title'>" + this.fields.title + "</span>" + overdue_by + "</li>");
     });
     parent_elem.find(".repeating-task-mark-done").on("click", function() {
+      content_switch.userAction();
       var this_elem = $(this);
       var id = this_elem.data("id");
       $("#confirm-repeating-task").data("id", id);
       $("#confirm-repeating-task .task-title").html(this_elem.find(".task-title").html());
-      switchVisibleContent("#confirm-repeating-task");
+      content_switch.switchContent("#confirm-repeating-task");
     });
   }
 
@@ -71,31 +72,31 @@ $(document).ready(function() {
   tasks_tomorrow.startInterval();
   tasks_all.startInterval();
   $("#confirm-repeating-task .close").on("click", function() {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
   $("#confirm-repeating-task .yes").on("click", function () {
     var id = $("#confirm-repeating-task").data("id");
     $.get("/homecontroller/repeating_tasks/done/" + id, function() {
     });
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
   $("#confirm-repeating-task .snooze").on("click", function () {
     var id = $("#confirm-repeating-task").data("id");
     $.get("/homecontroller/repeating_tasks/snooze/" + id + "/" + $(this).data("days"), function() {
     });
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
 
   $("#confirm-repeating-task .cancel").on("click", function () {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
 
   $(".main-button-box .repeating").on("click", function() {
-    switchVisibleContent("#repeating-tasks-all");
+    content_switch.switchContent("#repeating-tasks-all");
   });
 
   $("#repeating-tasks-all .close").on("click", function() {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
 
 });

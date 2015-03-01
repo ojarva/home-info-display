@@ -8,6 +8,7 @@ var LightControl = function() {
       });
 
       $(this).on("click", function () {
+        content_switch.userAction();
         var main_elem = $(this), command, group, source;
         if (main_elem.data("running")) {
           return;
@@ -59,9 +60,9 @@ $(document).ready(function () {
   light_control.initialize(".lightcontrol-btn");
 
   $(".main-button-box .lights").on("click", function() {
-    switchVisibleContent("#lightcontrol-modal");
+    content_switch.switchContent("#lightcontrol-modal");
   });
   $("#lightcontrol-modal .close").on("click", function() {
-    switchVisibleContent("#main-content");
+    content_switch.switchContent("#main-content");
   });
 });
