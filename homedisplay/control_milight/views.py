@@ -1,4 +1,5 @@
 from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate
+from .utils import run_timed_actions
 from control_display.utils import run_display_command, set_destination_brightness
 from django.conf import settings
 from django.core import serializers
@@ -62,6 +63,7 @@ class timed(View):
                 redis_instance.delete("lightcontrol-no-automatic-%s" % group)
                 redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "resume"}}))
         item = self.get_serialized_item(action)
+        run_timed_actions()
         return HttpResponse(json.dumps(item), content_type="application/json")
 
 
