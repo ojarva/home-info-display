@@ -2,6 +2,7 @@ from control_milight.models import LightGroup
 from django.utils import timezone
 from info_weather.views import get_sun_info
 import datetime
+import json
 import logging
 import redis
 import subprocess
@@ -13,7 +14,14 @@ def run_display_command(cmd):
     env = {"DISPLAY": ":0"}
     logger.info("Running display command %s", cmd)
     p = subprocess.Popen(["xset", "dpms", "force", cmd], env=env)
+    content = None
+    if cmd == "off":
+        content = "display-off"
+    elif cmd == "on":
+        content = "display-on"
     p.wait()
+    if content:
+        redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": content}))
 
 def get_desired_brightness():
     logger.debug("Getting optimal brightness")

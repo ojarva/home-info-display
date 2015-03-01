@@ -1,15 +1,13 @@
 var ShutdownProgress = function(options) {
   options = options || {};
-  options.timeout = options.timeout || 30000; // in ms
+  options.timeout = options.timeout || 31000; // in ms
   var update_interval, countdown_start;
 
   function shutdown() {
-    stop();
     $.post("/homecontroller/control_display/power/off");
   }
 
   function startup() {
-    stop();
     $.post("/homecontroller/control_display/power/on");
   }
 
@@ -19,8 +17,12 @@ var ShutdownProgress = function(options) {
 
   function update() {
     var time_left = options.timeout - (moment() - countdown_start);
+    if (time_left < -15 * 1000) {
+      // Something went wrong with the backend
+      stop();
+    }
     if (time_left < 0) {
-      shutdown();
+      // WS message handles closing the dialog
       return;
     }
     var percent = 100 * (options.timeout - time_left) / options.timeout;
@@ -29,30 +31,42 @@ var ShutdownProgress = function(options) {
 
   function onReceiveItemWS(message) {
     console.log("Shutdown received", message);
-    if (message == "shutdown_delay") {
+    if (message == "display-off" || message == "display-on" || message == "cancel-delayed") {
+      stop("backend");
+    } else if (message == "delayed-shutdown") {
       content_switch.switchContent("#shutdown-progress");
-      restart();
-    } else if (message == "shutdown_cancel") {
-      content_switch.switchContent("#main-content");
-      stop();
+      restart("backend");
     }
   }
 
-  function restart() {
-    countdown_start = moment();
-    startInterval();
+  function restart(source) {
+    if (source != "backend") {
+      $.post("/homecontroller/control_display/power/delayed-shutdown", function () {
+        countdown_start = moment();
+        startInterval();
+      });
+    } else {
+      countdown_start = moment();
+      startInterval();
+    }
   }
 
-  function stop() {
-    stopInterval();
-    content_switch.switchContent("#main-content");
+  function stop(source) {
+    if (source != "backend") {
+      $.post("/homecontroller/control_display/power/cancel-delayed", function () {
+        stopInterval();
+        content_switch.switchContent("#main-content");
+      });
+    } else {
+      stopInterval();
+      content_switch.switchContent("#main-content");
+    }
   }
 
   function startInterval() {
     stopInterval();
     update();
     update_interval = setInterval(update, 100);
-
   }
 
   function stopInterval() {
