@@ -19,7 +19,7 @@ var ShutdownProgress = function(options) {
     var time_left = options.timeout - (moment() - countdown_start);
     if (time_left < -15 * 1000) {
       // Something went wrong with the backend
-      stop();
+      stop("backend");
     }
     if (time_left < 0) {
       // WS message handles closing the dialog

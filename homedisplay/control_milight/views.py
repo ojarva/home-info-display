@@ -1,6 +1,7 @@
 from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate
 from .utils import run_timed_actions
-from control_display.utils import run_display_command, set_destination_brightness
+from control_display.utils import *
+from control_display.display_utils import *
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
@@ -103,7 +104,7 @@ class control_per_source(View):
                 #TODO: fade up slowly
                 led.white()
                 run_display_command("on")
-                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
+                cancel_delayed_shutdown()
                 for a in range(0, 100, 5):
                     led.set_brightness(a)
                     time.sleep(0.5)
@@ -112,11 +113,11 @@ class control_per_source(View):
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
-                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
+                initiate_delayed_shutdown()
                 update_lightstate(0, 0, False)
             elif command == "on":
                 run_display_command("on")
-                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
+                cancel_delayed_shutdown()
                 led.white()
                 led.set_brightness(100)
                 update_lightstate(0, 100, "white")
@@ -144,7 +145,7 @@ class control_per_source(View):
                 led.set_brightness(100)
                 run_display_command("on")
                 update_lightstate(0, 100, "white")
-                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
+                cancel_delayed_shutdown()
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
@@ -152,7 +153,7 @@ class control_per_source(View):
                 led.white(self.DOOR)
                 led.set_brightness(10, self.DOOR)
                 update_lightstate(self.DOOR, 10, "white")
-                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
+                cancel_delayed_shutdown()
         elif source == "display":
             if command == "night":
                 led.set_brightness(0)
@@ -180,9 +181,9 @@ class control_per_source(View):
                 led.set_brightness(0)
                 led.off()
                 update_lightstate(0, 0, None, False)
-                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
+                initiate_delayed_shutdown()
             elif command == "on":
-                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "cancel"}))
+                cancel_delayed_shutdown()
                 led.white()
                 led.set_brightness(100)
                 update_lightstate(0, 100, "white")
@@ -201,12 +202,15 @@ class control(View):
             led.white(group)
             led.set_brightness(100, group)
             update_lightstate(group, 100, "white")
+            if group == 0:
+                cancel_delayed_shutdown()
+                run_display_command("on")
         elif command == "off":
             led.set_brightness(0, group)
             led.off(group)
             update_lightstate(group, 0, None, False)
             if group == 0:
-                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delay"}))
+                initiate_delayed_shutdown()
         elif command == "morning":
             led.white(group)
             led.set_brightness(10, group)

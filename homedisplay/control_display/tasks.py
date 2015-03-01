@@ -1,8 +1,10 @@
 from __future__ import absolute_import
 from celery import shared_task
-from control_display.utils import run_display_command
+from .display_utils import run_display_command
 import redis
 import json
+
+__all__ = ["run_display_command_task"]
 
 @shared_task
 def run_display_command_task():
