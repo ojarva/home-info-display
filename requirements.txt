@@ -1,3 +1,4 @@
+-e git://github.com/ojarva/py-utorrent.git#egg=utorrent
 astral>=0.8.1
 celery>=3.1.17
 django-celery>=3.1.16
@@ -20,4 +21,3 @@ slimit>=0.8.1
 statsd>=3.0.1
 wakeonlan>=0.2.2
 xmltodict>=0.9.0
--e git://github.com/ojarva/py-utorrent.git#egg=utorrent
