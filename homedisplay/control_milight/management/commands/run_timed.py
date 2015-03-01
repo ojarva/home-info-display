@@ -30,19 +30,13 @@ class Command(BaseCommand):
             logger.debug("Running %s, done %s%%", item.action, percent_done)
 
             brightness = None # Set brightness
-            set_white = False # Set color to white
-            action_if_off = True # Whether to take actions if light is off
-            no_brighten = False # Always take minimum of (current brightness, calculated brightness)
 
             if item.action == "evening" or item.action == "evening-weekend":
                 brightness = int((1-percent_done)*100)
-                action_if_off = False
-                no_brighten = True
             elif item.action == "morning" or item.action == "morning-weekend":
                 brightness = int(percent_done * 100)
-                set_white = True
 
-            if not action_if_off:
+            if not item.action_if_off:
                 # Don't turn on lights
                 for group in list(allowed_groups): # cast to list to avoid "Set changed size during iteration"
                     item, _ = LightGroup.objects.get_or_create(group_id=group)
@@ -50,7 +44,7 @@ class Command(BaseCommand):
                         allowed_groups.remove(group)
             logger.debug("Only run on %s", allowed_groups)
 
-            if set_white:
+            if item.set_white:
                 for group in allowed_groups:
                     led.white(group)
                     logger.debug("Set %s to white", group)
@@ -59,11 +53,16 @@ class Command(BaseCommand):
                 logger.debug("Setting brightness to %s%%", brightness)
                 for group in allowed_groups:
                     group_brightness = brightness
-                    if no_brighten:
+                    if item.no_brighten:
                         item, _ = LightGroup.objects.get_or_create(group_id=group)
                         logger.debug("Current brightness: %s%%", item.current_brightness)
                         if item.current_brightness is not None:
                             group_brightness = min(item.current_brightness, group_brightness)
+                    if item.no_dimming:
+                        item, _ = LightGroup.objects.get_or_create(group_id=group)
+                        logger.debug("Current brightness: %s%%", item.current_brightness)
+                        if item.current_brightness is not None:
+                            group_brightness = max(item.current_brightness, group_brightness)
                     logger.debug("Setting %s to %s", (group, group_brightness))
                     led.set_brightness(group_brightness, group)
                     update_lightstate(group, group_brightness, important=False)
