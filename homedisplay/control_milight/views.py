@@ -104,7 +104,6 @@ class control_per_source(View):
                 #TODO: fade up slowly
                 led.white()
                 run_display_command("on")
-                cancel_delayed_shutdown()
                 for a in range(0, 100, 5):
                     led.set_brightness(a)
                     time.sleep(0.5)
@@ -117,7 +116,6 @@ class control_per_source(View):
                 update_lightstate(0, 0, False)
             elif command == "on":
                 run_display_command("on")
-                cancel_delayed_shutdown()
                 led.white()
                 led.set_brightness(100)
                 update_lightstate(0, 100, "white")
@@ -141,11 +139,10 @@ class control_per_source(View):
                     update_lightstate(group, 10, "white")
 
             elif command == "on":
+                run_display_command("on")
                 led.white()
                 led.set_brightness(100)
-                run_display_command("on")
                 update_lightstate(0, 100, "white")
-                cancel_delayed_shutdown()
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
@@ -153,7 +150,7 @@ class control_per_source(View):
                 led.white(self.DOOR)
                 led.set_brightness(10, self.DOOR)
                 update_lightstate(self.DOOR, 10, "white")
-                cancel_delayed_shutdown()
+                initiate_delayed_shutdown()
         elif source == "display":
             if command == "night":
                 led.set_brightness(0)
@@ -175,15 +172,15 @@ class control_per_source(View):
                 update_lightstate(self.TABLE, 10, "red")
             elif command == "morning-all":
                 led.white()
-                led.set_brightness(30)
-                update_lightstate(0, 30, "white")
+                led.set_brightness(10)
+                update_lightstate(0, 10, "white")
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
                 update_lightstate(0, 0, None, False)
                 initiate_delayed_shutdown()
             elif command == "on":
-                cancel_delayed_shutdown()
+                run_display_command("on")
                 led.white()
                 led.set_brightness(100)
                 update_lightstate(0, 100, "white")
@@ -203,7 +200,6 @@ class control(View):
             led.set_brightness(100, group)
             update_lightstate(group, 100, "white")
             if group == 0:
-                cancel_delayed_shutdown()
                 run_display_command("on")
         elif command == "off":
             led.set_brightness(0, group)
