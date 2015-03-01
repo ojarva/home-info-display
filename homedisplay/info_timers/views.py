@@ -75,7 +75,10 @@ class Create(View):
     @method_decorator(csrf_exempt)
     def post(self, request, *args, **kwargs):
         p = request.POST
-        item = Timer(name=p.get("name"), start_time=timezone.now(), duration=int(p.get("duration")))
+        duration = p.get("duration")
+        if duration:
+            duration = int(duration)
+        item = Timer(name=p.get("name"), start_time=timezone.now(), duration=duration)
         item.save()
         serialized = json.loads(serializers.serialize("json", [item]))
         if item.duration:
