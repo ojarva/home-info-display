@@ -13,7 +13,7 @@ var Timer = function(parent_elem, options) {
 
   var this_elem;
   options = options || {};
-  options.delay = options.delay || 100;
+  options.delay = options.delay || 1000;
   options.backend_interval = options.backend_interval || 5 * 60 * 1000;
 
   if (options.id) {
@@ -98,7 +98,7 @@ var Timer = function(parent_elem, options) {
     } else {
       $(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-" + id_uniq + "'>" +
       " <div class='col-md-8 stopclock timer-main center-content stopclock-content'>" +
-      "   00:00:00.0" +
+      "   00:00:00" +
       " </div>" +
       " <div class='col-md-2 timer-control animate-click stopclock-stop'>" +
       "   <i class='fa fa-stop'></i>" +
@@ -162,8 +162,7 @@ var Timer = function(parent_elem, options) {
     var minutes = Math.floor(diff / 60);
     diff = diff - minutes * 60;
     var seconds = Math.floor(diff);
-    var msec = diff - seconds;
-    var timer = prefix+zeroPad(hours, 2) + ":" + zeroPad(minutes, 2) + ":" + zeroPad(seconds, 2) + "." + (String(Math.round(msec * 10)) + "00").substr(0, 1);
+    var timer = prefix+zeroPad(hours, 2) + ":" + zeroPad(minutes, 2) + ":" + zeroPad(seconds, 2);
     // TODO: timer/stopclock
     if (timer_type == "timer") {
       this_elem.find(".timer-timeleft").html(timer);
@@ -372,21 +371,16 @@ var Timers = function(options) {
   }
 
   function onReceiveWS(message) {
-    /* Ugly hack: WS message arrives before HTTP response.
-       This leads to duplicate timer items, as originally
-       added timer does not have ID yet. */
-    setTimeout(function () {
-      var run_timer;
-      var data = message[0];
-      if (!hasTimer(data.pk)) {
-        if (data.fields.duration === null) {
-          // if data.duration is not null, it's timer, not countdown
-          run_timer = new Timer(stopclock_holder, {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, "stopped_at": data.fields.stopped_at, "no_refresh": data.fields.no_refresh, "auto_remove": data.fields.auto_remove});
-        } else {
-          run_timer = new Timer(timer_holder, {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, "stopped_at": data.fields.stopped_at, "no_refresh": data.fields.no_refresh, "auto_remove": data.fields.auto_remove});
-        }
+    var run_timer;
+    var data = message[0];
+    if (!hasTimer(data.pk)) {
+      if (data.fields.duration === null) {
+        // if data.duration is not null, it's timer, not countdown
+        run_timer = new Timer(stopclock_holder, {"name": data.fields.name, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, "stopped_at": data.fields.stopped_at, "no_refresh": data.fields.no_refresh, "auto_remove": data.fields.auto_remove});
+      } else {
+        run_timer = new Timer(timer_holder, {"name": data.fields.name, "duration": data.fields.duration, "start_time": new Date(data.fields.start_time), "running": data.fields.running, "id": data.pk, "stopped_at": data.fields.stopped_at, "no_refresh": data.fields.no_refresh, "auto_remove": data.fields.auto_remove});
       }
-    }, 1000);
+    }
   }
 
   ws_generic.register("timers", onReceiveWS);
