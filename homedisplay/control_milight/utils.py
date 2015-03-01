@@ -52,7 +52,7 @@ def run_timed_actions():
                 if item.no_brighten:
                     group_item, _ = LightGroup.objects.get_or_create(group_id=group)
                     logger.debug("Current brightness: %s%%", group_item.current_brightness)
-                    if item.current_brightness is not None:
+                    if group_item.current_brightness is not None:
                         group_brightness = min(group_item.current_brightness, group_brightness)
                 if item.no_dimming:
                     group_item, _ = LightGroup.objects.get_or_create(group_id=group)
