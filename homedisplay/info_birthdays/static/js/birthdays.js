@@ -129,7 +129,7 @@ var birthdays_today, birthdays_tomorrow, birthdays_all;
 $(document).ready(function() {
   birthdays_today = new Birthdays("#today .list-birthdays .fa-ul", "today");
   birthdays_tomorrow = new Birthdays("#tomorrow .list-birthdays .fa-ul", "tomorrow");
-  birthdays_all = new Birthdays("#birthdays-list-all .fa-ul", "all", {interval: 60 * 60 * 1000, showdate: true, maxitems: 38});
+  birthdays_all = new Birthdays("#birthdays-list-all .fa-ul", "all", {interval: 60 * 60 * 1000, showdate: true, maxitems: 45});
   birthdays_today.startInterval();
   birthdays_tomorrow.startInterval();
   birthdays_all.startInterval();
