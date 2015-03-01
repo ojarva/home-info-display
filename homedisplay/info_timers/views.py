@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+import datetime
 import json
 import time
 
@@ -59,6 +60,9 @@ class Restart(View):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.start_time = timezone.now()
         item.save()
+        if item.duration:
+            alarm_ending_task.apply_async((item.pk,), eta=item.end_time+datetime.timedelta(seconds=1), expires=item.end_time+datetime.timedelta(seconds=300))
+
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 
@@ -68,6 +72,9 @@ class Start(View):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.running = True
         item.save()
+        if item.duration:
+            alarm_ending_task.apply_async((item.pk,), eta=item.end_time+datetime.timedelta(seconds=1), expires=item.end_time+datetime.timedelta(seconds=300))
+
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 
@@ -82,5 +89,5 @@ class Create(View):
         item.save()
         serialized = json.loads(serializers.serialize("json", [item]))
         if item.duration:
-            alarm_ending_task.apply_async((item.pk,), eta=item.end_time)
+            alarm_ending_task.apply_async((item.pk,), eta=item.end_time+datetime.timedelta(seconds=1), expires=item.end_time+datetime.timedelta(seconds=300))
         return HttpResponse(serialized, content_type="application/json")
