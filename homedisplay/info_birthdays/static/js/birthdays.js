@@ -4,14 +4,17 @@ var Birthdays = function(elem, use_date, options) {
   options.showdate = options.showdate || false;
   options.maxitems = options.maxitems || 100000;
   var parent_elem = $(elem), this_date = use_date, update_interval, wait_sync, current_item = 0, items_in_current = 0;
-  parent_elem = parent_elem.slice(current_item, 1);
+  parent_elem = parent_elem.slice(0, 1);
 
   function onReceiveItemWS(message) {
     processData(message);
   }
 
   function clearDates() {
-    $(parent_elem).children().remove();
+    $(elem).find("li").remove();
+    items_in_current = 0;
+    current_item = 0;
+    parent_elem = $(elem).slice(current_item, 1);
   }
 
   function compareBirthdays(a, b) {
@@ -80,6 +83,9 @@ var Birthdays = function(elem, use_date, options) {
       }
       if (items_in_current > options.maxitems) {
         current_item += 1;
+        if (current_item > 3) {
+          return false;
+        }
         parent_elem = $(elem).slice(current_item, current_item + 1);
         items_in_current = 0;
       }
