@@ -61,6 +61,10 @@ body {
   overflow-y: hidden;
 }
 
+#namedays-modal .calendar {
+  font-size: 300%;
+}
+
 #birthdays-list-all .calendar {
   font-size: 300%;
 }
