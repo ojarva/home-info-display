@@ -9,6 +9,8 @@ import json
 
 redis_instance = redis.StrictRedis()
 
+__all__ = ["get_serialized_labels", "PrintLabel"]
+
 def get_serialized_labels():
     return serializers.serialize("json", PrintLabel.objects.all())
 

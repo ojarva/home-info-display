@@ -7,6 +7,7 @@ from homedisplay.celery import app as celery_app
 logger = logging.getLogger(__name__)
 redis_instance = redis.StrictRedis()
 
+__all__ = ["cancel_delayed_shutdown", "run_display_command"]
 
 def cancel_delayed_shutdown():
     display_task = redis_instance.get("display-control-task")
@@ -23,13 +24,13 @@ def cancel_delayed_shutdown():
 def run_display_command(cmd):
     env = {"DISPLAY": ":0"}
     logger.info("Running display command %s", cmd)
-    p = subprocess.Popen(["xset", "dpms", "force", cmd], env=env)
+    process = subprocess.Popen(["xset", "dpms", "force", cmd], env=env)
     content = None
     if cmd == "off":
         content = "display-off"
     elif cmd == "on":
         content = "display-on"
-    p.wait()
+    process.wait()
     if content:
         cancel_delayed_shutdown()
         logger.info("Broadcasting display status: %s", content)

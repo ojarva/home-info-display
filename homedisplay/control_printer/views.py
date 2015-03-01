@@ -1,4 +1,4 @@
-from .models import *
+from .models import PrintLabel, get_serialized_labels
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import timezone
@@ -9,7 +9,6 @@ import cups
 import datetime
 import json
 import redis
-import time
 
 redis_instance = redis.StrictRedis()
 

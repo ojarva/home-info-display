@@ -1,7 +1,7 @@
 from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate
 from .utils import run_timed_actions
-from control_display.utils import *
-from control_display.display_utils import *
+from control_display.utils import initiate_delayed_shutdown
+from control_display.display_utils import run_display_command
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse

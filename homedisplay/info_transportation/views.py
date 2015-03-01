@@ -1,17 +1,7 @@
-from .models import *
-from django.conf import settings
-from django.core import serializers
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render
-from django.utils.timezone import now
+from .models import get_departures
+from django.http import HttpResponse
 from django.views.generic import View
-import datetime
 import json
-import redis
-import time
-
-redis_instance = redis.StrictRedis()
 
 class get_json(View):
     def get(self, request, *args, **kwargs):

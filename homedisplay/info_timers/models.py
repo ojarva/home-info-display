@@ -9,6 +9,8 @@ import redis
 
 redis_instance = redis.StrictRedis()
 
+__all__ = ["get_labels", "get_serialized_timer", "Timer", "CustomLabel", "TimedCustomLabel"]
+
 def get_labels():
     items = {"labels": [], "timed_labels": []}
     for item in CustomLabel.objects.all():

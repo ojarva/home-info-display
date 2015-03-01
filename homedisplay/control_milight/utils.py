@@ -3,7 +3,6 @@ from control_milight.models import LightAutomation, LightGroup, update_lightstat
 from django.conf import settings
 from django.utils import timezone
 from ledcontroller import LedController
-import datetime
 import logging
 import redis
 

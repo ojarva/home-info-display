@@ -6,7 +6,6 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.timezone import now
 from django.views.generic import View
-import datetime
 import json
 import numpy
 import redis

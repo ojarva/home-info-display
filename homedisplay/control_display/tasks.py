@@ -2,7 +2,6 @@ from __future__ import absolute_import
 from celery import shared_task
 from .display_utils import run_display_command
 import redis
-import json
 
 __all__ = ["run_display_command_task"]
 

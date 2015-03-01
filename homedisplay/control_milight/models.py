@@ -7,7 +7,6 @@ from ledcontroller import LedController
 import datetime
 import json
 import logging
-import math
 import redis
 
 __all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running"]
@@ -18,8 +17,8 @@ logger = logging.getLogger(__name__)
 
 def update_lightstate(group, brightness, color=None, on=True, **kwargs):
     if group == 0:
-        for a in range(1, 5):
-            update_lightstate(a, brightness, color, on, **kwargs)
+        for group_num in range(1, 5):
+            update_lightstate(group_num, brightness, color, on, **kwargs)
         return
 
     logger.debug("Updating lightstate: group=%s, brightness=%s, color=%s, on=%s, kwargs=%s", group, brightness, color, on, kwargs)

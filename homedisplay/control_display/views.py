@@ -1,10 +1,7 @@
-from .tasks import *
-from .utils import *
-from .display_utils import *
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render
+from .display_utils import run_display_command, cancel_delayed_shutdown
+from .utils import initiate_delayed_shutdown
+from django.http import HttpResponse
 from django.views.generic import View
-import json
 import redis
 import subprocess
 

@@ -3,17 +3,12 @@
 from .models import Weather
 from astral import Astral
 from django.conf import settings
-from django.core import serializers
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404, render, render_to_response
-from django.template import RequestContext, Template
-from django.utils.timezone import now
+from django.forms.models import model_to_dict
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.views.generic import View
 import datetime
 import json
-import subprocess
-import time
-from django.forms.models import model_to_dict
 
 WEEKDAYS_FI = ["ma", "ti", "ke", "to", "pe", "la", "su"]
 

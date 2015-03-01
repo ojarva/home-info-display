@@ -7,6 +7,8 @@ import datetime
 
 hsl = HSLApi(settings.HSL_USERNAME, settings.HSL_PASSWORD)
 
+__all__ = ["get_departures", "Stop", "LineShow", "Line", "Data"]
+
 def get_departures():
     lines = {}
     now = timezone.now()

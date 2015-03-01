@@ -1,16 +1,9 @@
-from .models import Task, TaskHistory
-from django.conf import settings
+from .models import Task, get_repeating_data
 from django.core import serializers
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, render_to_response, get_object_or_404
-from django.template import RequestContext, Template
-from django.utils.timezone import now
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.views.generic import View
 import datetime
-import json
-import time
-
-from .models import get_repeating_data
 
 class get_json(View):
     def get(self, request, *args, **kwargs):

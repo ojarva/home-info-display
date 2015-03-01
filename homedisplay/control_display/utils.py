@@ -1,15 +1,16 @@
-from display_utils import *
-from tasks import run_display_command_task
+from .display_utils import cancel_delayed_shutdown
+from .tasks import run_display_command_task
 from control_milight.models import LightGroup
 from django.utils import timezone
 from info_weather.views import get_sun_info
-import datetime
 import json
 import logging
 import redis
 
 logger = logging.getLogger(__name__)
 redis_instance = redis.StrictRedis()
+
+__all__ = ["initiate_delayed_shutdown", "get_desired_brightness", "set_desired_brightness"]
 
 def initiate_delayed_shutdown():
     cancel_delayed_shutdown()
@@ -21,7 +22,6 @@ def initiate_delayed_shutdown():
 
 def get_desired_brightness():
     logger.debug("Getting optimal brightness")
-    brightness = 1 # Sensible default
     min_brightness = 0.3
     now = timezone.now()
 
@@ -33,8 +33,6 @@ def get_desired_brightness():
             logger.debug("Sun is up and it's not too late. Set brightness to full")
             return 1
         min_brightness = 0.6
-    else:
-        sun_is_up = False
 
     light_brightness_set = False
     light_brightness = 0

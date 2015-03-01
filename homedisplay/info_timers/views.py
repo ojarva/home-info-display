@@ -1,4 +1,4 @@
-from .models import *
+from .models import get_labels, Timer
 from .tasks import alarm_ending_task
 from django.core import serializers
 from django.http import HttpResponse
