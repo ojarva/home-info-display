@@ -6,7 +6,7 @@ var ClockCalendar = function (options) {
 
   function updateOffset() {
     $.get("/homecontroller/timer/current_time", function(timestamp) {
-      var server_timestamp = parseInt(timestamp) + 7200000; // TODO: static value
+      var server_timestamp = parseInt(timestamp);
       clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date());
     });
   }

@@ -23,7 +23,7 @@ class GetLabels(View):
 
 class CurrentTime(View):
     def get(self, request, *args, **kwargs):
-        return HttpResponse(int(convert_to_timestamp(timezone.now())*1000))
+        return HttpResponse(int(time.time()) * 1000)
 
 
 class List(View):
