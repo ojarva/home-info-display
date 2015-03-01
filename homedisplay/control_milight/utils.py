@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 redis_instance = redis.StrictRedis()
 
 def run_timed_actions():
+    """ Runs light programs """
     led = LedController(settings.MILIGHT_IP)
     now = timezone.now()
 

@@ -10,6 +10,7 @@ hsl = HSLApi(settings.HSL_USERNAME, settings.HSL_PASSWORD)
 __all__ = ["get_departures", "Stop", "LineShow", "Line", "Data"]
 
 def get_departures():
+    """ Returns currently active departures per stop. """
     lines = {}
     now = timezone.now()
     for line in Line.objects.select_related("stop__time_needed").filter(show_line=True):

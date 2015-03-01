@@ -7,6 +7,7 @@ import json
 
 
 class get_json(View):
+    """ Returns list of timestamp-consumption pairs. """
     def get(self, request, *args, **kwargs):
         time_start = timezone.now() - datetime.timedelta(days=83)
         items = []
@@ -17,6 +18,7 @@ class get_json(View):
 
 
 class get_barchart_json(View):
+    """ Returns zero-filled list of timestamp-consumption pairs. """
     def get(self, request, *args, **kwargs):
         time_start = timezone.now() - datetime.timedelta(days=83)
         items = []

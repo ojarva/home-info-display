@@ -11,9 +11,6 @@ import datetime
 import json
 import time
 
-def convert_to_timestamp(dt):
-    return time.mktime(dt.timetuple())
-
 
 class GetLabels(View):
     def get(self, request, *args, **kwargs):

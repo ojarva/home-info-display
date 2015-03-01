@@ -8,6 +8,10 @@ import redis
 redis_instance = redis.StrictRedis()
 
 def get_list_of_torrents():
+    """ Returns list of currently active torrents.
+
+    Automatically sends redis pubsub message with current data.
+    """
     client = UTorrentClient(settings.UTORRENT, settings.UTORRENT_ADMIN, settings.UTORRENT_PASSWORD)
     status, data = client.list()
     if status != 200:
