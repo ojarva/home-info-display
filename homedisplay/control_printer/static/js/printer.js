@@ -1,4 +1,40 @@
 var Printer = function () {
+  var update_interval;
+  function clearLabels() {
+    $(".printer-labels").children().remove();
+  }
+
+  function processLabels(data) {
+    clearLabels();
+    var main_elem = $(".printer-labels");
+    $.each(data, function() {
+      main_elem.append("<div class='center-content stripe-box animate-click action-button print-label-"+this.pk+"' data-id='"+this.pk+"'>"+this.fields.name+" <i class='fa fa-fw'></i></div>");
+    });
+    // TODO: Bind click events
+    main_elem.find("div").on("click", function() {
+      $(this).find("i").addClass("fa-spin fa-spinner");
+      printLabel($(this).data("id"));
+    });
+  }
+
+  function updateLabels() {
+    $.get("/homecontroller/printer/get_labels", function(data) {
+      processLabels(data);
+    });
+  }
+
+  function removeCheck() {
+    // TODO: this should not remove all check marks.
+    $(".printer-labels i").removeClass("fa-check");
+  }
+
+  function printLabel(id) {
+    $.post("/homecontroller/printer/print_label", {"id": id}, function (data) {
+      $(".printer-labels .print-label-"+id+" i").removeClass("fa-spin fa-spinner").addClass("fa-check");
+      setTimeout(removeCheck, 2000);
+    });
+  }
+
   function fetchStatus() {
     var main = $("#print-modal .printer-jobs-content");
     main.find("li").remove();
@@ -34,14 +70,34 @@ var Printer = function () {
     });
   }
 
+
+  function startInterval() {
+    stopInterval();
+    updateLabels();
+    update_interval = setInterval(updateLabels, 60 * 60 * 1000);
+  }
+
+  function stopInterval() {
+    if (update_interval) {
+      update_interval = clearInterval(update_interval);
+    }
+  }
+
+  ge_refresh.register("printer-labels", updateLabels);
+  ws_generic.register("printer-labels", processLabels);
+
+
   this.fetchStatus = fetchStatus;
   this.fetchPrinters = fetchPrinters;
+  this.startInterval = startInterval;
+  this.stopInterval = stopInterval;
 };
 
 var printer;
 
 $(document).ready(function () {
   printer = new Printer();
+  printer.startInterval();
 
   $(".main-button-box .print-labels").on("click", function () {
     switchVisibleContent("#print-modal");

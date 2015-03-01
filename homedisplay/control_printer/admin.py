@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import *
 
-# Register your models here.
+class PrintLabelAdmin(admin.ModelAdmin):
+    list_display = ("name", "content", "include_date", "include_time")
+
+admin.site.register(PrintLabel, PrintLabelAdmin)
