@@ -76,7 +76,7 @@ var Printer = function () {
   function startInterval() {
     stopInterval();
     updateLabels();
-    update_interval = setInterval(updateLabels, 60 * 60 * 1000);
+    update_interval = setInterval(updateLabels, SLOW_UPDATE);
   }
 
   function stopInterval() {

@@ -36,9 +36,8 @@ var ShowRealtimePing = function(options) {
 
 var RefreshInternet = function(options) {
   options = options || {};
-  options.update_interval = options.update_interval || 30 * 60 * 1000;
   options.invalid_timeout = options.invalid_timeout || 2 * 60 * 1000;
-  var update_interval, update_timeout, output = $(".internet-connection");
+  var update_timeout, output = $(".internet-connection");
 
   function setSignal(level) {
     output.find(".signal-bars div").removeClass("active").addClass("inactive");
@@ -97,15 +96,11 @@ var RefreshInternet = function(options) {
   function startInterval() {
     stopInterval();
     update();
-    update_interval = setInterval(update, options.update_interval);
     ws_generic.register("internet", processData);
     ge_refresh.register("internet", update);
   }
 
   function stopInterval() {
-    if (update_interval) {
-      update_interval = clearInterval(update_interval);
-    }
     ws_generic.deRegister("internet");
     ge_refresh.deRegister("internet");
   }

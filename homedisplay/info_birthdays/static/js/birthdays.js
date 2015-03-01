@@ -1,6 +1,6 @@
 var Birthdays = function(elem, use_date, options) {
   options = options || {};
-  options.interval = options.interval || 1800000; // 30min
+  options.interval = options.interval || SLOW_UPDATE;
   options.showdate = options.showdate || false;
   options.maxitems = options.maxitems || 100000;
   var parent_elem = $(elem), this_date = use_date, update_interval, wait_sync, current_item = 0, items_in_current = 0;

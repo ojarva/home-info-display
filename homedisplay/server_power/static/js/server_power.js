@@ -1,6 +1,6 @@
 var ServerPower = function(options) {
   options = options || {};
-  options.update_interval = options.update_interval || 10 * 60 * 1000;
+  options.update_interval = options.update_interval || FAST_UPDATE;
   var main_elem = $(options.main_elem),
       interval,
       spinner_until_status_from,

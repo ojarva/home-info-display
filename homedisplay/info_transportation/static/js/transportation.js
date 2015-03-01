@@ -55,7 +55,7 @@ var Transportation = function() {
   function startInterval() {
     stopInterval();
     update();
-    update_interval = setInterval(update, 15 * 60 * 1000);
+    update_interval = setInterval(update, FAST_UPDATE);
     timestamp_update_interval = setInterval(updateTimestamps, 1000);
     ws_generic.register("public-transportation", processData);
     ge_refresh.register("public-transportation", update);

@@ -1,7 +1,7 @@
 var RefreshWeather = function (options) {
   options = options || {};
   options.elem = options.elem || "#weather-general";
-  options.update_interval = options.update_interval || 15 * 60 * 1000;
+  options.update_interval = options.update_interval || FAST_UPDATE;
   var elem = $(options.elem),
       update_interval;
   function setWeatherInfo (icon, temperature) {

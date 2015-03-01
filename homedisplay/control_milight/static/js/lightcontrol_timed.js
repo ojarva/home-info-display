@@ -2,7 +2,7 @@ var LightControlTimed = function(options) {
   // TODO: this should be refactored to use latest_data.start_datetime and .end_datetime instead of parsing from html.
   options = options || {};
   options.update_interval = options.update_interval || 1000;
-  options.backend_update_interval = options.backend_update_interval || 60 * 60 * 1000;
+  options.backend_update_interval = options.backend_update_interval || SLOW_UPDATE;
   var active_days,
       main = $(options.elem),
       update_interval,

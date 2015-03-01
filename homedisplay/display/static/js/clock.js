@@ -1,7 +1,7 @@
 var ClockCalendar = function (options) {
   options = options || {};
   options.update_interval = options.update_interval || 1000;
-  options.sync_interval = options.sync_interval || 300000; // 5min
+  options.sync_interval = options.sync_interval || FAST_UPDATE;
   var update_interval, sync_interval, clock_offset = 0;
 
   function updateOffset() {

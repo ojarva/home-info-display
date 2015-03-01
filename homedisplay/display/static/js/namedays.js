@@ -12,12 +12,12 @@ var Namedays = function() {
   function startInterval() {
     update();
     stopInterval();
-    update_interval = setInterval(update, 60 * 60 * 1000);
+    update_interval = setInterval(update, SLOW_UPDATE);
 
   }
   function stopInterval() {
     if (update_interval) {
-      update_interval = setInterval(update_interval);
+      update_interval = clearInterval(update_interval);
     }
   }
   ge_refresh.register("namedays", update);

@@ -14,7 +14,7 @@ var Timer = function(parent_elem, options) {
   var this_elem;
   options = options || {};
   options.delay = options.delay || 1000;
-  options.backend_interval = options.backend_interval || 5 * 60 * 1000;
+  options.backend_interval = options.backend_interval || FAST_UPDATE;
 
   if (options.id) {
     setId(options.id);

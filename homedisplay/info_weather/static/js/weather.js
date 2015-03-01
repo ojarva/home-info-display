@@ -1,6 +1,6 @@
 var RefreshWeather = function (options) {
   options = options || {};
-  options.update_interval = options.update_interval || 1000 * 60 * 120;
+  options.update_interval = options.update_interval || SLOW_UPDATE;
   var update_interval;
 
   function resetWeatherInfo() {
