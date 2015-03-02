@@ -92,7 +92,7 @@ var Birthdays = function(elem, use_date, options) {
       }
       items_in_current += 1;
       if (this_date === "tomorrow") {
-        extra = "(huomenna)";
+        extra = " (huomenna)";
       }
       parent_elem.append("<li><i class='fa-li fa fa-birthday-cake'></i> " + name + date + age + extra + "</li>");
     });
