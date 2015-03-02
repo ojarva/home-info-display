@@ -35,8 +35,6 @@ var GenericRefresh = function(options) {
   this.setRefreshCallback = setRefreshCallback;
 };
 
-var ge_refresh;
-
 jq(document).ready(function() {
   ge_refresh = new GenericRefresh();
 });

@@ -45,13 +45,13 @@ var WsGeneric = function(options) {
     receive_message: onReceiveItemWS,
     heartbeat_msg: "--heartbeat--"
   });
+
   this.register = register;
   this.deRegister = deRegister;
   this.multiRegister = multiRegister;
   this.multiDeRegister = multiDeRegister;
 };
 
-var ws_generic;
 
 jq(document).ready(function() {
   ws_generic = new WsGeneric();

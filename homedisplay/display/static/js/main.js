@@ -44,7 +44,6 @@ var ContentSwitch = function () {
   this.userAction = userAction;
 };
 
-var content_switch;
 
 jq(document).ready(function() {
   "use strict";
@@ -57,7 +56,3 @@ jq(document).ready(function() {
   });
 
 });
-
-var VERY_SLOW_UPDATE = 12 * 60 * 60 * 1000; // Update twice per day
-var SLOW_UPDATE = 60 * 60 * 1000; // once per hour
-var FAST_UPDATE = 10 * 60 * 1000; // once per 10 minutes

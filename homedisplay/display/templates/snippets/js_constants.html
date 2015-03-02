@@ -1,0 +1,8 @@
+<script type="text/javascript">
+  var websocket_root = "{{ WEBSOCKET_URI }}";
+  var jq, ws_generic, ge_refresh;
+  var content_switch;
+  var VERY_SLOW_UPDATE = 12 * 60 * 60 * 1000; // Update twice per day
+  var SLOW_UPDATE = 60 * 60 * 1000; // once per hour
+  var FAST_UPDATE = 10 * 60 * 1000; // once per 10 minutes
+</script>

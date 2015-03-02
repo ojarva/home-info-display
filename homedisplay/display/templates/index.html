@@ -1,3 +1,4 @@
+{% load pipeline %}
 <!DOCTYPE html>
 <html lang="en">
 <head  profile="http://www.w3.org/2005/10/profile">
@@ -10,8 +11,8 @@
   <title>Info</title>
 
   <link rel="shortcut icon" type="image/png" href="/homecontroller/static/img/favicon.png"/>
-  <link href="/homecontroller/static/css/custom_display.css" rel="stylesheet">
-  {% include "snippets/common_css.html" %}
+  {% stylesheet 'display' %}
+  {% stylesheet 'base' %}
 </head>
 
 <body>
@@ -148,15 +149,13 @@
     {% include "snippets/modal_dialogs.html" %}
   </div>
 
-  {% include "snippets/js_base.html" %}
+  {% include "snippets/js_constants.html" %}
 
-  <script src="/homecontroller/static/js/d3.min.js"></script>
-  <script src="/homecontroller/static/js/nv.d3.js"></script>
+  {% javascript 'base' %}
 
-  {% include "snippets/js_common.html" %}
-  <script src="/homecontroller/static/js/custom_display.js"></script>
-  <script src="/homecontroller/static/js/weather.js"></script>
-  <script src="/homecontroller/static/js/namedays.js"></script>
+  {% javascript 'computer-display-common' %}
+
+  {% javascript 'display' %}
 
 </body>
 </html>

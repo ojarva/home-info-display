@@ -1,14 +1,12 @@
+{% load pipeline %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Door</title>
-  <link href="/homecontroller/static/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/homecontroller/static/css/custom_door.css?4" rel="stylesheet">
-  <link href="/homecontroller/static/css/font-awesome.css" rel="stylesheet">
-  <link href="/homecontroller/static/jquery-ui/jquery-ui.min.css" rel="stylesheet">
 
+  {% stylesheet 'door' %}
 </head>
 
 <body>
@@ -46,9 +44,10 @@
     </div>
   </div>
 
-  {% include "snippets/js_base.html" %}
+  {% include "snippets/js_constants.html" %}
 
-  <script src="/homecontroller/static/js/clock.js?1"></script>
-  <script src="/homecontroller/static/js/weather_door.js"></script>
+  {% javascript 'base' %}
+
+  {% javascript 'door' %}
 </body>
 </html>

@@ -19,7 +19,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'compressor',
     'control_display',
     'control_milight',
     'control_music',
@@ -36,10 +35,152 @@ INSTALLED_APPS = (
     'info_torrents',
     'info_transportation',
     'info_weather',
+    'pipeline',
     'repeating_tasks',
     'server_power',
     'ws4redis',
 )
+
+PIPELINE_CSS = {
+    'base': {
+        'source_filenames': (
+            "sass/_bootstrap.scss",
+            "jquery-ui/jquery-ui.css",
+            "css/font-awesome.css",
+            "css/nv.d3.css",
+            "sass/shared.scss",
+            "css/server_power.css",
+            "css/electricity.css",
+            "css/lightcontrol.css",
+            "css/internet_connection.css",
+            "css/repeating_tasks.css",
+            "css/indoor_quality.css",
+            "css/timer.css",
+            "css/weather.css",
+            "css/printer.css",
+            "css/torrents.css",
+            "css/transportation.css",
+        ),
+        'output_filename': 'css/generated/base.css',
+    },
+    'display': {
+        'source_filenames': (
+            "css/custom_display.css",
+        ),
+        'output_filename': 'css/generated/display.css',
+    },
+    'door': {
+        'source_filenames': (
+            "css/bootstrap.css",
+            "css/custom_door.css",
+            "css/font-awesome.css",
+            "jquery-ui/jquery-ui.css",
+        ),
+        'output_filename': 'css/generated/door.css',
+    },
+    'computer': {
+        'source_filenames': (
+            "css/custom_computer.css",
+        ),
+        'output_filename': 'css/generated/computer.css',
+    },
+    'kitchen': {
+        'source_filenames': (
+            "css/bootstrap.css",
+            "jquery-ui/jquery-ui.css",
+            "css/font-awesome.css",
+            "css/shared.css",
+            "css/custom_kitchen.css",
+            "css/timer.css",
+        ),
+        'output_filename': 'css/generated/kitchen.css',
+    }
+}
+
+PIPELINE_JS = {
+    'base': {
+        'source_filenames': (
+            "js/jquery-1.11.2.js",
+            "js/jquery-noconflict.js",
+            "js/bootstrap.js",
+            "jquery-ui/jquery-ui.js",
+            "js/moment-with-locales.js",
+            "js/ws4redis_v2.js",
+            "js/ws_generic.js",
+            "js/generic_refresh.js",
+            "js/main.js",
+            "js/lightcontrol.js",
+        ),
+        'output_filename': 'js/generated/base.js',
+    },
+    'computer-display-common': {
+        'source_filenames': (
+            "js/d3.js",
+            "js/nv.d3.js",
+            "js/filesize.js",
+            "js/reload.js",
+            "js/display.js",
+            "js/timer.js",
+            "js/custom_timers.js",
+            "js/electricity.js",
+            "js/internet_connection.js",
+            "js/repeating_tasks.js",
+            "js/indoor_quality.js",
+            "js/server_power.js",
+            "js/birthdays.js",
+            "js/moment_auto_update.js",
+            "js/lightcontrol_timed.js",
+            "js/clock.js",
+            "js/printer.js",
+            "js/torrents.js",
+            "js/transportation.js",
+        ),
+        'output_filename': 'js/generated/common.js',
+    },
+    'door': {
+        'source_filenames': (
+          "js/clock.js",
+          "js/weather_door.js",
+        ),
+        'output_filename': 'js/generated/door.js',
+    },
+    'kitchen': {
+        'source_filenames': (
+          "js/timer.js",
+          "js/clock.js",
+          "js/custom_timers.js",
+        ),
+        'output_filename': 'js/generated/kitchen.js',
+    },
+    'display': {
+        'source_filenames': (
+          "js/custom_display.js",
+          "js/weather.js",
+          "js/namedays.js",
+        ),
+        'output_filename': 'js/generated/display.js',
+    },
+    'computer': {
+        'source_filenames': (
+            "js/custom_computer.js",
+        ),
+        'output_filename': 'js/generated/computer.js',
+    }
+}
+
+
+STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
+PIPELINE_ENABLED=True
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.closure.ClosureCompressor'
+PIPELINE_CLOSURE_BINARY = "/usr/bin/env closure-compiler"
+#PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
+PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
+
+PIPELINE_COMPILERS = (
+  'pipeline.compilers.sass.SASSCompiler',
+)
+
+PIPELINE_SASS_BINARY = "/usr/bin/env sassc"
 
 MIDDLEWARE_CLASSES = (
     'django_statsd.middleware.StatsdMiddleware',
@@ -66,10 +207,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'compressor.finders.CompressorFinder',
 )
-
-#COMPRESS_JS_FILTERS = ['compressor.filters.jsmin.SlimItFilter']
 
 WSGI_APPLICATION = 'ws4redis.django_runserver.application'
 #WSGI_APPLICATION = 'homedisplay.wsgi.application'
