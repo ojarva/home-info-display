@@ -5,10 +5,10 @@ var MomentAutoUpdate = function(options) {
 
   var update_interval;
   function update() {
-    var elem = $(options.selector);
-    $.each(elem, function () {
-      var ts = $(this).data("timestamp");
-      $(this).html(moment(ts).fromNow());
+    var elem = jq(options.selector);
+    jq.each(elem, function () {
+      var ts = jq(this).data("timestamp");
+      jq(this).html(moment(ts).fromNow());
     });
   }
 
@@ -30,7 +30,7 @@ var MomentAutoUpdate = function(options) {
 };
 
 var moment_auto_update;
-$(document).ready(function() {
+jq(document).ready(function() {
   moment_auto_update = new MomentAutoUpdate();
   moment_auto_update.startInterval();
 });

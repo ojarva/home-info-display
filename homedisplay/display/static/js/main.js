@@ -1,40 +1,12 @@
 moment.locale("fi");
 
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != "") {
-        var cookies = document.cookie.split(";");
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + "=")) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-var csrftoken = getCookie("csrftoken");
-
-$.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
-
 var ContentSwitch = function () {
+  "use strict";
   var switch_visible_content_timeout,
       switch_visible_content_currently_active = "#main-content";
 
   function mainContent() {
-    $(switch_visible_content_currently_active).find(".close").trigger("click");
+    jq(switch_visible_content_currently_active).find(".close").trigger("click");
     if (switch_visible_content_timeout) {
       switch_visible_content_timeout = clearTimeout(switch_visible_content_timeout);
     }
@@ -51,13 +23,13 @@ var ContentSwitch = function () {
     if (switch_visible_content_timeout) {
       switch_visible_content_timeout = clearTimeout(switch_visible_content_timeout);
     }
-    $(".content-box").hide(); // Hide all content boxes
-    $("html, body").animate({ scrollTop: 0 }, "fast"); // Always scroll to top.
-    $("#navbar").collapse("hide"); // Hide menu, if visible
-    if (elem != "#main-content") {
+    jq(".content-box").hide(); // Hide all content boxes
+    jq("html, body").animate({ scrollTop: 0 }, "fast"); // Always scroll to top.
+    jq("#navbar").collapse("hide"); // Hide menu, if visible
+    if (elem !== "#main-content") {
       switch_visible_content_currently_active = elem;
       switch_visible_content_timeout = setTimeout(mainContent, 60 * 1000);
-      $(elem).show();
+      jq(elem).show();
     }
   }
 
@@ -74,13 +46,14 @@ var ContentSwitch = function () {
 
 var content_switch;
 
-$(document).ready(function() {
+jq(document).ready(function() {
+  "use strict";
   content_switch = new ContentSwitch();
-  $(".animate-click").each(function () {
-    $(this).data("original-bg-color", $(this).css("background-color"));
+  jq(".animate-click").each(function () {
+    jq(this).data("original-bg-color", jq(this).css("background-color"));
   });
-  $(".animate-click").on("click", function () {
-    $(this).stop(true).css("background-color", $(this).data("original-bg-color")).effect("highlight", {color: "#ffffff"}, 500);
+  jq(".animate-click").on("click", function () {
+    jq(this).stop(true).css("background-color", jq(this).data("original-bg-color")).effect("highlight", {color: "#ffffff"}, 500);
   });
 
 });

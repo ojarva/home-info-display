@@ -5,7 +5,7 @@ var ClockCalendar = function (options) {
   var update_interval, sync_interval, clock_offset = 0;
 
   function updateOffset() {
-    $.get("/homecontroller/timer/current_time", function(timestamp) {
+    jq.get("/homecontroller/timer/current_time", function(timestamp) {
       var server_timestamp = parseInt(timestamp);
       clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date());
     });
@@ -18,13 +18,13 @@ var ClockCalendar = function (options) {
     var currentDay = days[currentTime.getDay()];
     var currentDate = currentTime.getDate();
     var currentMonth = currentTime.getMonth()+1;
-    $(".calendar").html(currentDay+" "+currentDate+"."+currentMonth+".");
+    jq(".calendar").html(currentDay+" "+currentDate+"."+currentMonth+".");
     var currentHours = currentTime.getHours();
     var currentMinutes = currentTime.getMinutes();
     var currentSeconds = currentTime.getSeconds();
     currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
     currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
-    $(".clock").html(currentHours+":"+currentMinutes+":"+currentSeconds);
+    jq(".clock").html(currentHours+":"+currentMinutes+":"+currentSeconds);
   }
 
   function getOffset() {
@@ -57,7 +57,7 @@ var ClockCalendar = function (options) {
 
 var clock_calendar_handler;
 
-$(document).ready(function() {
+jq(document).ready(function() {
     clock_calendar_handler = new ClockCalendar();
     clock_calendar_handler.startInterval();
 });

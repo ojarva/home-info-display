@@ -228,19 +228,19 @@ var ElectricityInfo = function () {
 
 
 var electricity_info;
-$(document).ready(function () {
+jq(document).ready(function () {
   "use strict";
   electricity_info = new ElectricityInfo();
 
-  $(".main-button-box .electricity").on("click", function() {
+  jq(".main-button-box .electricity").on("click", function() {
     electricity_info.drawHeatmap();
     electricity_info.drawBarGraph();
     content_switch.switchContent("#electricity-modal");
   });
-  $("#electricity-modal .close").on("click", function() {
+  jq("#electricity-modal .close").on("click", function() {
     content_switch.switchContent("#main-content");
-    $("#electricity-modal .heatmap").children().remove(); // Clean up graph
-    $("#electricity-modal .bargraph").children().remove(); // Clean up graph
+    jq("#electricity-modal .heatmap").children().remove(); // Clean up graph
+    jq("#electricity-modal .bargraph").children().remove(); // Clean up graph
 
   });
 });

@@ -1,5 +1,5 @@
 var Reloader = function() {
-
+  "use strict";
   function onReceiveItemWS(message) {
     window.location.reload();
   }
@@ -19,6 +19,7 @@ var Reloader = function() {
 };
 
 var reloader_instance;
-$(document).ready(function() {
+jq(document).ready(function() {
+  "use strict";
   reloader_instance = new Reloader();
 });

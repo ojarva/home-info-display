@@ -28,13 +28,13 @@ var Timer = function(parent_elem, options) {
 
 
   function deleteItem(item_source) {
-    this_elem.slideUp("fast", function () { $(this).remove(); });
+    this_elem.slideUp("fast", function () { jq(this).remove(); });
     clearItemIntervals();
     if (backend_interval) {
       backend_interval = clearInterval(backend_interval);
     }
     if (item_source !== "backend" && id) {
-      $.get("/homecontroller/timer/delete/" + id, function(data) {
+      jq.get("/homecontroller/timer/delete/" + id, function(data) {
       });
     }
     ws_generic.deRegister("timer-" + id);
@@ -119,7 +119,7 @@ var Timer = function(parent_elem, options) {
     }
     timers.sortTimers();
     if (source !== "backend" && id) {
-      $.get("/homecontroller/timer/start/" + id, function(data) {
+      jq.get("/homecontroller/timer/start/" + id, function(data) {
         //TODO
       });
     }
@@ -137,7 +137,7 @@ var Timer = function(parent_elem, options) {
       clearItemIntervals();
       this_elem.find(".stopclock-stop i").removeClass("fa-stop").addClass("fa-trash");
       if (source !== "backend") {
-        $.get("/homecontroller/timer/stop/" + id, function (data) {
+        jq.get("/homecontroller/timer/stop/" + id, function (data) {
           var diff = ((new Date(data[0].fields.stopped_at)) - (new Date(data[0].fields.start_time))) / 1000;
           updateTimerContent(diff, "");
         });
@@ -151,7 +151,7 @@ var Timer = function(parent_elem, options) {
 
   function refreshFromBackend() {
     if (id) { // Don't refresh if no data is available.
-      $.ajax({
+      jq.ajax({
         url: "/homecontroller/timer/get/" + id,
         success: function (data) {
           start_time = new Date(data[0].fields.start_time);
@@ -238,7 +238,7 @@ var Timer = function(parent_elem, options) {
     }
     startItem(source);
     if (source !== "backend" && id) {
-      $.get("/homecontroller/timer/restart/" + id, function (data) {
+      jq.get("/homecontroller/timer/restart/" + id, function (data) {
         start_time = new Date(data[0].fields.start_time);
       });
     }
@@ -248,7 +248,7 @@ var Timer = function(parent_elem, options) {
   function create() {
     // Creates HTML elements and starts timer.
     if (timer_type === "timer") {
-      $(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-" + id_uniq + "'>" +
+      jq(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-" + id_uniq + "'>" +
       " <div class='col-md-8'>" +
       "   <div class='timer-info'>" +
       "     " + options.name + " <span style='float: right' class='timer-timeleft'>---</span>" +
@@ -265,7 +265,7 @@ var Timer = function(parent_elem, options) {
       "   <i class='fa fa-refresh'></i>" +
       " </div>" +
       "</div>");
-      this_elem = $("#timer-" + id_uniq);
+      this_elem = jq("#timer-" + id_uniq);
       this_elem.find(".timer-stop").click(function() {
         deleteItem("ui");
       });
@@ -278,7 +278,7 @@ var Timer = function(parent_elem, options) {
       }
 
     } else {
-      $(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-" + id_uniq + "'>" +
+      jq(parent_elem).append("<div class='row timer-item' style='display:none' id='timer-" + id_uniq + "'>" +
       " <div class='col-md-8 stopclock timer-main center-content stopclock-content'>" +
       "   00:00:00" +
       " </div>" +
@@ -290,7 +290,7 @@ var Timer = function(parent_elem, options) {
       " </div>" +
       "</div>");
 
-      this_elem = $("#timer-" + id_uniq);
+      this_elem = jq("#timer-" + id_uniq);
       this_elem.find(".stopclock-stop").click(function() {
         stopItem("ui");
       });
@@ -311,7 +311,7 @@ var Timer = function(parent_elem, options) {
       }
     } else {
       restartItem("ui");
-      $.post("/homecontroller/timer/create", {name: options.name, duration: options.duration}, function(data) {
+      jq.post("/homecontroller/timer/create", {name: options.name, duration: options.duration}, function(data) {
         setId(data[0].pk);
         this_elem.addClass("timer-backend-id-" + data[0].pk);
         start_time = new Date(data[0].fields.start_time);
@@ -337,7 +337,7 @@ var Timers = function(options) {
 
 
   function hasTimer(id) {
-    var currently_running = $(".timer-backend-id-" + id);
+    var currently_running = jq(".timer-backend-id-" + id);
     if (id in created_timer_items) {
       return true;
     }
@@ -350,8 +350,8 @@ var Timers = function(options) {
 
 
   function refreshFromServer() {
-    $.getJSON("/homecontroller/timer/list", function(data) {
-      $.each(data, function() {
+    jq.getJSON("/homecontroller/timer/list", function(data) {
+      jq.each(data, function() {
         var id = this.pk;
         var timer;
         if (!hasTimer(id)) {
@@ -373,21 +373,21 @@ var Timers = function(options) {
 
 
   function sortTimers() {
-    var items = $(timer_holder).find(".timer-item");
+    var items = jq(timer_holder).find(".timer-item");
     items.detach().sort(function(a, b) {
-      var astts = $(a).data("end-timestamp");
-      var bstts = $(b).data("end-timestamp");
+      var astts = jq(a).data("end-timestamp");
+      var bstts = jq(b).data("end-timestamp");
       return (astts > bstts) ? (astts > bstts) ? 1 : 0 : -1;
     });
-    $(timer_holder).append(items);
+    jq(timer_holder).append(items);
 
-    items = $(stopclock_holder).find(".timer-item");
+    items = jq(stopclock_holder).find(".timer-item");
     items.detach().sort(function(a, b) {
-      var astts = $(a).data("start-timestamp");
-      var bstts = $(b).data("start-timestamp");
+      var astts = jq(a).data("start-timestamp");
+      var bstts = jq(b).data("start-timestamp");
       return (astts > bstts) ? (astts > bstts) ? 1 : 0 : -1;
     });
-    $(stopclock_holder).append(items);
+    jq(stopclock_holder).append(items);
   }
 
   function onReceiveWS(message) {
@@ -406,11 +406,11 @@ var Timers = function(options) {
   ws_generic.register("timers", onReceiveWS);
   ge_refresh.register("timers", refreshFromServer);
 
-  $(".add-timer").click(function () {
-    $.post("/homecontroller/timer/create", {name: $(this).data("name"), duration: $(this).data("duration")});
+  jq(".add-timer").click(function () {
+    jq.post("/homecontroller/timer/create", {name: jq(this).data("name"), duration: jq(this).data("duration")});
   });
-  $(".add-stopclock").click(function () {
-    $.post("/homecontroller/timer/create", {name: "Ajastin"});
+  jq(".add-stopclock").click(function () {
+    jq.post("/homecontroller/timer/create", {name: "Ajastin"});
   });
 
   refreshFromServer();
@@ -423,7 +423,7 @@ var Timers = function(options) {
 };
 
 
-$(document).ready(function () {
+jq(document).ready(function () {
   "use strict";
   timers = new Timers({stopclock_holder: "#stopclock-holder", timer_holder: "#timer-holder"});
 });

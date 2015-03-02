@@ -4,42 +4,42 @@ var Transportation = function() {
 
 
   function clearEntries() {
-    $(".transportation ul li").remove();
+    jq(".transportation ul li").remove();
   }
 
 
   function updateTimestamps() {
-    $(".transportation .auto-update-timestamp").each(function () {
-      var diff = moment($(this).data("timestamp")) - moment();
+    jq(".transportation .auto-update-timestamp").each(function () {
+      var diff = moment(jq(this).data("timestamp")) - moment();
       diff /= 1000;
-      if (diff < parseInt($(this).parent().data("minimum-time"))) {
-        $(this).fadeOut({duration: 900, complete: function() {
-          $(this).remove();
+      if (diff < parseInt(jq(this).parent().data("minimum-time"))) {
+        jq(this).fadeOut({duration: 900, complete: function() {
+          jq(this).remove();
         }});
         return true; // continue
       }
       var minutes_raw = Math.floor(diff / 60);
 
       var seconds = ("00" + Math.floor(diff - (60 * minutes_raw))).substr(-2, 2);
-      $(this).find(".minutes").html(minutes_raw);
-      $(this).find(".seconds").html(":" + seconds);
+      jq(this).find(".minutes").html(minutes_raw);
+      jq(this).find(".seconds").html(":" + seconds);
     });
-    $(".transportation .departures .seconds").hide();
-    $(".transportation .departures").each(function () {
-      $(this).find(".auto-update-timestamp").first().addClass("first-departure");
-      $(this).find(".seconds").first().show();
+    jq(".transportation .departures .seconds").hide();
+    jq(".transportation .departures").each(function () {
+      jq(this).find(".auto-update-timestamp").first().addClass("first-departure");
+      jq(this).find(".seconds").first().show();
     });
   }
 
 
   function processData(data) {
     clearEntries();
-    $.each(data, function() {
+    jq.each(data, function() {
       // Loop over stops
-      $(".transportation ul").append("<li><i class='fa fa-li fa-2x fa-" + this.icon + "'></i> <span class='line-number'>" + this.line + ":</span> <span class='departures' data-minimum-time=" + this.minimum_time + "></span></li>");
-      var this_departures = $(".transportation ul li .departures").last();
+      jq(".transportation ul").append("<li><i class='fa fa-li fa-2x fa-" + this.icon + "'></i> <span class='line-number'>" + this.line + ":</span> <span class='departures' data-minimum-time=" + this.minimum_time + "></span></li>");
+      var this_departures = jq(".transportation ul li .departures").last();
       var departures_for_stop = 0;
-      $.each(this.departures, function () {
+      jq.each(this.departures, function () {
         this_departures.append("<span class='auto-update-timestamp' data-timestamp='" + this + "'><span class='minutes'></span><span class='seconds'></span></span> ");
         departures_for_stop += 1;
         if (departures_for_stop > 7) {
@@ -52,7 +52,7 @@ var Transportation = function() {
 
 
   function update() {
-    $.get("/homecontroller/transportation/get_json", function(data) {
+    jq.get("/homecontroller/transportation/get_json", function(data) {
       processData(data);
     });
   }
@@ -84,15 +84,15 @@ var Transportation = function() {
 
 var transportation;
 
-$(document).ready(function() {
+jq(document).ready(function() {
   "use strict";
   transportation = new Transportation();
   transportation.startInterval();
   // TODO
-  $(".main-button-box .birthdays").on("click", function () {
+  jq(".main-button-box .birthdays").on("click", function () {
     content_switch.switchContent("#birthdays-list-all");
   });
-  $("#birthdays-list-all .close").on("click", function() {
+  jq("#birthdays-list-all .close").on("click", function() {
     content_switch.switchContent("#main-content");
   });
 });

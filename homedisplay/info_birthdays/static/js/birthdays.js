@@ -4,7 +4,7 @@ var Birthdays = function(elem, use_date, options) {
   options.interval = options.interval || SLOW_UPDATE;
   options.showdate = options.showdate || false;
   options.maxitems = options.maxitems || 100000;
-  var parent_elem = $(elem), this_date = use_date, update_interval, current_item = 0, items_in_current = 0;
+  var parent_elem = jq(elem), this_date = use_date, update_interval, current_item = 0, items_in_current = 0;
   parent_elem = parent_elem.slice(0, 1);
 
   function onReceiveItemWS(message) {
@@ -12,10 +12,10 @@ var Birthdays = function(elem, use_date, options) {
   }
 
   function clearDates() {
-    $(elem).find("li").remove();
+    jq(elem).find("li").remove();
     items_in_current = 0;
     current_item = 0;
-    parent_elem = $(elem).slice(current_item, 1);
+    parent_elem = jq(elem).slice(current_item, 1);
   }
 
   function compareBirthdays(a, b) {
@@ -46,7 +46,7 @@ var Birthdays = function(elem, use_date, options) {
     var now, now_str, data_sortable = [];
     now = moment().subtract(1, "days");
     now_str = formatSortString(now);
-    $.each(data, function() {
+    jq.each(data, function() {
       var a, sort_string, prefix;
       a = moment(this.fields.birthday);
       sort_string = formatSortString(a);
@@ -63,7 +63,7 @@ var Birthdays = function(elem, use_date, options) {
     data_sortable.sort(compareBirthdays);
 
 
-    $.each(data_sortable, function() {
+    jq.each(data_sortable, function() {
       var name = this.fields.name, age = "", b, date = "", extra = "";
       if (this.fields.nickname) {
         name = this.fields.nickname;
@@ -87,7 +87,7 @@ var Birthdays = function(elem, use_date, options) {
         if (current_item > 3) {
           return false;
         }
-        parent_elem = $(elem).slice(current_item, current_item + 1);
+        parent_elem = jq(elem).slice(current_item, current_item + 1);
         items_in_current = 0;
       }
       items_in_current += 1;
@@ -99,7 +99,7 @@ var Birthdays = function(elem, use_date, options) {
   }
 
   function update() {
-    $.get("/homecontroller/birthdays/get_json/" + this_date, function(data) {
+    jq.get("/homecontroller/birthdays/get_json/" + this_date, function(data) {
       processData(data);
     });
   }
@@ -126,7 +126,7 @@ var Birthdays = function(elem, use_date, options) {
 
 var birthdays_today, birthdays_tomorrow, birthdays_all;
 
-$(document).ready(function() {
+jq(document).ready(function() {
   "use strict";
   birthdays_today = new Birthdays("#today .list-birthdays .fa-ul", "today");
   birthdays_tomorrow = new Birthdays("#tomorrow .list-birthdays .fa-ul", "tomorrow");
@@ -134,10 +134,10 @@ $(document).ready(function() {
   birthdays_today.startInterval();
   birthdays_tomorrow.startInterval();
   birthdays_all.startInterval();
-  $(".main-button-box .birthdays").on("click", function () {
+  jq(".main-button-box .birthdays").on("click", function () {
     content_switch.switchContent("#birthdays-list-all");
   });
-  $("#birthdays-list-all .close").on("click", function() {
+  jq("#birthdays-list-all .close").on("click", function() {
     content_switch.switchContent("#main-content");
   });
 });

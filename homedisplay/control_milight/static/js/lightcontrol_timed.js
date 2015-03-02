@@ -11,7 +11,7 @@ var LightControlTimed = function(options) {
   options = options || {};
   options.update_interval = options.update_interval || 1000;
   options.backend_update_interval = options.backend_update_interval || SLOW_UPDATE;
-  var main = $(options.elem),
+  var main = jq(options.elem),
       update_interval,
       backend_update_interval,
       latest_data,
@@ -39,7 +39,7 @@ var LightControlTimed = function(options) {
   function resumeOverride(source) {
     main.find(".play-pause-control").slideUp();
     if (source === "ui") {
-      $.post("/homecontroller/lightcontrol/timed/override-resume/" + action);
+      jq.post("/homecontroller/lightcontrol/timed/override-resume/" + action);
     }
   }
 
@@ -57,11 +57,11 @@ var LightControlTimed = function(options) {
   }
 
   function hideItem() {
-    $(".timed-lightcontrols-main").find(options.elem).slideUp();
+    jq(".timed-lightcontrols-main").find(options.elem).slideUp();
   }
 
   function showItem() {
-    $(".timed-lightcontrols-main").find(options.elem).slideDown();
+    jq(".timed-lightcontrols-main").find(options.elem).slideDown();
   }
 
   function getStartTime() {
@@ -111,13 +111,13 @@ var LightControlTimed = function(options) {
   }
 
   function update() {
-    $.get("/homecontroller/lightcontrol/timed/get/" + action, function (data) {
+    jq.get("/homecontroller/lightcontrol/timed/get/" + action, function (data) {
       updateFields(data);
     });
   }
 
   function postUpdate() {
-    $.post("/homecontroller/lightcontrol/timed/update/" + action, {start_time: getStartTime(), duration: getDuration(), running: running}, function(data) {
+    jq.post("/homecontroller/lightcontrol/timed/update/" + action, {start_time: getStartTime(), duration: getDuration(), running: running}, function(data) {
       updateFields(data);
     });
   }
@@ -255,6 +255,10 @@ var LightControlTimed = function(options) {
     resumeOverride("ui");
   });
 
+  main.find(".open-light-dialog").on("click", function () {
+    content_switch.switchContent("#lightcontrol-modal");
+  });
+
   ws_generic.multiRegister("lightcontrol_timed_override", "lightcontrol_timed_override_" + action, onReceiveOverride);
   ws_generic.register("lightcontrol_timed_" + action, onReceiveItemUpdate);
   ge_refresh.register("lightcontrol_timed_" + action, update);
@@ -285,7 +289,7 @@ var ShowTimers = function() {
 };
 
 
-$(document).ready(function () {
+jq(document).ready(function () {
   "use strict";
   lightcontrol_timed_sort = new ShowTimers();
   lightcontrol_timed_morning = new LightControlTimed({"elem": ".timed-lightcontrol-morning"});

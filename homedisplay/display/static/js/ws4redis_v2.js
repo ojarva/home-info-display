@@ -13,12 +13,12 @@ function WS4Redis(options, $) {
   if ($ === undefined) {
     $ = jQuery;
   }
-  opts = $.extend({ heartbeat_msg: null }, options);
+  opts = jq.extend({ heartbeat_msg: null }, options);
   connect(opts.uri);
 
   function connect(uri) {
     try {
-      deferred = $.Deferred();
+      deferred = jq.Deferred();
       ws = new WebSocket(uri);
       ws.onopen = on_open;
       ws.onmessage = on_message;

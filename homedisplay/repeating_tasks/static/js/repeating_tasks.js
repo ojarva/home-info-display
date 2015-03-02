@@ -1,16 +1,16 @@
 var RepeatingTasks = function(elem, use_date) {
   "use strict";
-  var parent_elem = $(elem), this_date = use_date, update_interval;
+  var parent_elem = jq(elem), this_date = use_date, update_interval;
 
 
   function clearTasks() {
-    $(parent_elem).children().remove();
+    jq(parent_elem).children().remove();
   }
 
 
   function processData(data) {
     clearTasks();
-    $.each(data, function() {
+    jq.each(data, function() {
       var overdue_by = "", diff;
       if (this.fields.last_completed_at) {
         diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
@@ -26,10 +26,10 @@ var RepeatingTasks = function(elem, use_date) {
     });
     parent_elem.find(".repeating-task-mark-done").on("click", function() {
       content_switch.userAction();
-      var this_elem = $(this);
+      var this_elem = jq(this);
       var id = this_elem.data("id");
-      $("#confirm-repeating-task").data("id", id);
-      $("#confirm-repeating-task .task-title").html(this_elem.find(".task-title").html());
+      jq("#confirm-repeating-task").data("id", id);
+      jq("#confirm-repeating-task .task-title").html(this_elem.find(".task-title").html());
       content_switch.switchContent("#confirm-repeating-task");
     });
   }
@@ -41,7 +41,7 @@ var RepeatingTasks = function(elem, use_date) {
 
 
   function update() {
-    $.get("/homecontroller/repeating_tasks/get_json/" + this_date, function(data) {
+    jq.get("/homecontroller/repeating_tasks/get_json/" + this_date, function(data) {
       processData(data);
     });
   }
@@ -73,7 +73,7 @@ var RepeatingTasks = function(elem, use_date) {
 
 var tasks_today, tasks_tomorrow, tasks_all;
 
-$(document).ready(function() {
+jq(document).ready(function() {
   "use strict";
   tasks_today = new RepeatingTasks("#today .list-repeating-tasks .fa-ul", "today");
   tasks_tomorrow = new RepeatingTasks("#tomorrow .list-repeating-tasks .fa-ul", "tomorrow");
@@ -81,31 +81,31 @@ $(document).ready(function() {
   tasks_today.startInterval();
   tasks_tomorrow.startInterval();
   tasks_all.startInterval();
-  $("#confirm-repeating-task .close").on("click", function() {
+  jq("#confirm-repeating-task .close").on("click", function() {
     content_switch.switchContent("#main-content");
   });
-  $("#confirm-repeating-task .yes").on("click", function () {
-    var id = $("#confirm-repeating-task").data("id");
-    $.get("/homecontroller/repeating_tasks/done/" + id, function() {
+  jq("#confirm-repeating-task .yes").on("click", function () {
+    var id = jq("#confirm-repeating-task").data("id");
+    jq.get("/homecontroller/repeating_tasks/done/" + id, function() {
     });
     content_switch.switchContent("#main-content");
   });
-  $("#confirm-repeating-task .snooze").on("click", function () {
-    var id = $("#confirm-repeating-task").data("id");
-    $.get("/homecontroller/repeating_tasks/snooze/" + id + "/" + $(this).data("days"), function() {
+  jq("#confirm-repeating-task .snooze").on("click", function () {
+    var id = jq("#confirm-repeating-task").data("id");
+    jq.get("/homecontroller/repeating_tasks/snooze/" + id + "/" + jq(this).data("days"), function() {
     });
     content_switch.switchContent("#main-content");
   });
 
-  $("#confirm-repeating-task .cancel").on("click", function () {
+  jq("#confirm-repeating-task .cancel").on("click", function () {
     content_switch.switchContent("#main-content");
   });
 
-  $(".main-button-box .repeating").on("click", function() {
+  jq(".main-button-box .repeating").on("click", function() {
     content_switch.switchContent("#repeating-tasks-all");
   });
 
-  $("#repeating-tasks-all .close").on("click", function() {
+  jq("#repeating-tasks-all .close").on("click", function() {
     content_switch.switchContent("#main-content");
   });
 

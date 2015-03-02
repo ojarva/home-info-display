@@ -3,7 +3,7 @@ var Namedays = function() {
       update_interval;
 
   function clearItems() {
-    $("#namedays-modal ul li").remove();
+    jq("#namedays-modal ul li").remove();
   }
 
   function addItems() {
@@ -14,7 +14,7 @@ var Namedays = function() {
     var items_in_current = 1000;
     for (i = 0; i < 365; i++) {
       if (items_in_current > 45) {
-        current_elem = $("#namedays-modal ul").slice(current_index, current_index + 1);
+        current_elem = jq("#namedays-modal ul").slice(current_index, current_index + 1);
         items_in_current = 0;
         current_index++;
       }
@@ -32,8 +32,8 @@ var Namedays = function() {
     addItems();
     var d = new Date();
     var nameday = data[d.getMonth()][d.getDate() - 1];
-    $("#today .list-namedays ul li").remove();
-    $("#today .list-namedays ul").append("<li><i class='fa-li fa fa-calendar'></i> "+nameday+"</li>");
+    jq("#today .list-namedays ul li").remove();
+    jq("#today .list-namedays ul").append("<li><i class='fa-li fa fa-calendar'></i> "+nameday+"</li>");
   }
 
   function startInterval() {
@@ -56,14 +56,14 @@ var Namedays = function() {
 
 var name_days;
 
-$(document).ready(function () {
+jq(document).ready(function () {
   name_days = new Namedays();
   name_days.startInterval();
 
-  $(".list-namedays").on("click", function () {
+  jq(".list-namedays").on("click", function () {
     content_switch.switchContent("#namedays-modal");
   });
-  $("#namedays-modal .close").on("click", function() {
+  jq("#namedays-modal .close").on("click", function() {
     content_switch.switchContent("#main-content");
   });
 });

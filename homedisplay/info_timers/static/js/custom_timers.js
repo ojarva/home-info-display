@@ -1,13 +1,13 @@
 var CustomTimer = function(options) {
   "use strict";
   options = options || {};
-  var duration_elem = $(options.duration_elem);
-  var modal_elem = $(options.modal_elem);
+  var duration_elem = jq(options.duration_elem);
+  var modal_elem = jq(options.modal_elem);
   var time_spec = {"h_s": 0, "h_l": 3, "m_s": 3, "m_l": 2, "s_s": 5, "s_l": 2};
 
   function clearLabels() {
-    $(".custom-timer-labels").children().remove();
-    $(".timed-custom-timer-labels").children().remove();
+    jq(".custom-timer-labels").children().remove();
+    jq(".timed-custom-timer-labels").children().remove();
   }
 
 
@@ -15,33 +15,33 @@ var CustomTimer = function(options) {
     var c = duration_elem.data("content");
     var seconds = parseInt(c.substr(0, 3)) * 3600 + parseInt(c.substr(3, 2)) * 60 + parseInt(c.substr(5, 2));
     if (seconds === 0) {
-      seconds = $(this).data("duration");
+      seconds = jq(this).data("duration");
     }
     if (typeof seconds === "undefined") {
       // Show error message?
     } else {
-      $.post("/homecontroller/timer/create", {name: name, duration: seconds});
+      jq.post("/homecontroller/timer/create", {name: name, duration: seconds});
     }
     modal_elem.find(".close").click();
   }
 
   function processLabels(data) {
     clearLabels();
-    $.each(data.labels, function () {
-      $(".custom-timer-labels").append("<div class='timer-description-button animate-click'>" + this + "</div>");
+    jq.each(data.labels, function () {
+      jq(".custom-timer-labels").append("<div class='timer-description-button animate-click'>" + this + "</div>");
     });
-    $.each(data.timed_labels, function () {
-      $(".timed-custom-timer-labels").append("<div class='timer-description-button animate-click' data-duration='" + this.duration + "'>" + this.label + "</div>");
+    jq.each(data.timed_labels, function () {
+      jq(".timed-custom-timer-labels").append("<div class='timer-description-button animate-click' data-duration='" + this.duration + "'>" + this.label + "</div>");
     });
     modal_elem.find(".timer-description-button").on("click", function() {
       content_switch.userAction();
-      var name = $(this).html();
+      var name = jq(this).html();
       submitTimer(name);
     });
   }
 
   function updateLabels() {
-    $.get("/homecontroller/timer/get_labels", function(data) {
+    jq.get("/homecontroller/timer/get_labels", function(data) {
       processLabels(data);
     });
   }
@@ -164,11 +164,11 @@ var CustomTimer = function(options) {
 
   modal_elem.find(".add-timer-button").on("click", function () {
     content_switch.userAction();
-    var content = $(this).data("content").trim();
+    var content = jq(this).data("content").trim();
     processButton(content);
   });
 
-  $(".add-custom-timer-plus").on("click", function() {
+  jq(".add-custom-timer-plus").on("click", function() {
     showCustomTimer();
   });
 
@@ -182,7 +182,7 @@ var CustomTimer = function(options) {
 
 var custom_timer;
 
-$(document).ready(function () {
+jq(document).ready(function () {
   "use strict";
   custom_timer = new CustomTimer({duration_elem: "#custom-timer-duration", modal_elem: "#add-custom-timer"});
 });

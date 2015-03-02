@@ -2,7 +2,7 @@ var ShowRealtimePing = function(options) {
   "use strict";
   options = options || {};
   options.invalid_timeout = options.invalid_timeout || 10000;
-  var container = $(options.output), invalid_timeout;
+  var container = jq(options.output), invalid_timeout;
 
   function noUpdates(warning_class) {
     warning_class = warning_class || "error";
@@ -39,7 +39,7 @@ var RefreshInternet = function(options) {
   "use strict";
   options = options || {};
   options.invalid_timeout = options.invalid_timeout || 2 * 60 * 1000;
-  var update_timeout, output = $(".internet-connection");
+  var update_timeout, output = jq(".internet-connection");
 
   function setSignal(level) {
     output.find(".signal-bars div").removeClass("active").addClass("inactive");
@@ -90,7 +90,7 @@ var RefreshInternet = function(options) {
   }
 
   function update() {
-    $.get("/homecontroller/internet_connection/status", function (data) {
+    jq.get("/homecontroller/internet_connection/status", function (data) {
       processData(data);
     });
   }
@@ -112,14 +112,14 @@ var RefreshInternet = function(options) {
 };
 
 var refresh_internet, show_pings;
-$(document).ready(function() {
+jq(document).ready(function() {
   "use strict";
   refresh_internet = new RefreshInternet({output: ".internet-connection"});
   refresh_internet.startInterval();
   show_pings = new ShowRealtimePing({output: ".internet-connection .ping"});
   show_pings.startInterval();
 
-  $(".internet-connection").on("click", function() {
+  jq(".internet-connection").on("click", function() {
     var charts = [["idler", "Internet/idler_last_10800.png"],
                   ["Google", "Internet/google_last_10800.png"],
                   ["Saunalahti", "Internet/saunalahti_last_10800.png"],
@@ -131,14 +131,14 @@ $(document).ready(function() {
                   ];
     var content = "";
     var timestamp = new Date() - 0;
-    $.each(charts, function() {
+    jq.each(charts, function() {
       content += "<div class='smokeping-chart'><h4>" + this[0] + "</h4><img src='/smokeping/images/" + this[1] + "?" + timestamp + "'></div>";
     });
-    $("#internet-connection-modal .smokeping-charts").html(content);
+    jq("#internet-connection-modal .smokeping-charts").html(content);
     content_switch.switchContent("#internet-connection-modal");
   });
 
-  $("#internet-connection-modal .close").on("click", function () {
+  jq("#internet-connection-modal .close").on("click", function () {
     content_switch.switchContent("#main-content");
   });
 });

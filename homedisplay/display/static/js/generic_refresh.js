@@ -37,6 +37,6 @@ var GenericRefresh = function(options) {
 
 var ge_refresh;
 
-$(document).ready(function() {
+jq(document).ready(function() {
   ge_refresh = new GenericRefresh();
 });

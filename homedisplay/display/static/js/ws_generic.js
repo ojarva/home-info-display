@@ -53,6 +53,6 @@ var WsGeneric = function(options) {
 
 var ws_generic;
 
-$(document).ready(function() {
+jq(document).ready(function() {
   ws_generic = new WsGeneric();
 });

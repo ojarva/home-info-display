@@ -2,7 +2,7 @@ var ServerPower = function(options) {
   "use strict";
   options = options || {};
   options.update_interval = options.update_interval || FAST_UPDATE;
-  var main_elem = $(options.main_elem),
+  var main_elem = jq(options.main_elem),
       interval,
       spinner_until_status_from,
       button_in_progress_timeout;
@@ -11,7 +11,7 @@ var ServerPower = function(options) {
   function removeSpinners() {
     spinner_until_status_from = null;
     main_elem.find(".action-button i").each(function () {
-      $(this).removeClass().addClass($(this).data("original-classes"));
+      jq(this).removeClass().addClass(jq(this).data("original-classes"));
     });
     if (button_in_progress_timeout) {
       button_in_progress_timeout = clearTimeout(button_in_progress_timeout);
@@ -57,7 +57,7 @@ var ServerPower = function(options) {
 
 
   function refreshServerPower() {
-    $.get("/homecontroller/server_power/status", function (data) {
+    jq.get("/homecontroller/server_power/status", function (data) {
       setStatus(data);
     });
   }
@@ -85,20 +85,20 @@ var ServerPower = function(options) {
 
 
   main_elem.find(".action-button i").each(function () {
-    $(this).data("original-classes", $(this).attr("class"));
+    jq(this).data("original-classes", jq(this).attr("class"));
   });
 
   main_elem.find(".startup").on("click", function() {
     spinner_until_status_from = "down";
     setSpinners();
-    $.post("/homecontroller/server_power/startup", function () {
+    jq.post("/homecontroller/server_power/startup", function () {
     });
   });
 
   main_elem.find(".shutdown").on("click", function() {
     spinner_until_status_from = "running";
     setSpinners();
-    $.post("/homecontroller/server_power/shutdown", function () {
+    jq.post("/homecontroller/server_power/shutdown", function () {
     });
   });
 
@@ -109,7 +109,7 @@ var ServerPower = function(options) {
 
 var server_power;
 
-$(document).ready(function() {
+jq(document).ready(function() {
   "use strict";
   server_power = new ServerPower({main_elem: ".server-power"});
   server_power.startInterval();

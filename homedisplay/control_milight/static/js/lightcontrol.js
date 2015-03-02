@@ -2,15 +2,15 @@ var LightControl = function() {
   "use strict";
 
   function initialize(selector) {
-    $.each($(selector), function() {
-      $(this).data("original-color", $(this).css("background-color"));
-      $(this).children().each(function () {
-        $(this).data("original-classes", $(this).attr("class"));
+    jq.each(jq(selector), function() {
+      jq(this).data("original-color", jq(this).css("background-color"));
+      jq(this).children().each(function () {
+        jq(this).data("original-classes", jq(this).attr("class"));
       });
 
-      $(this).on("click", function () {
+      jq(this).on("click", function () {
         content_switch.userAction();
-        var main_elem = $(this), command, group, source;
+        var main_elem = jq(this), command, group, source;
         if (main_elem.data("running")) {
           return;
         }
@@ -25,7 +25,7 @@ var LightControl = function() {
           main_elem.children().removeClass().addClass("fa fa-" + icon);
           var restore_classes = function () {
             main_elem.children().each(function() {
-              $(this).removeClass().addClass($(this).data("original-classes"));
+              jq(this).removeClass().addClass(jq(this).data("original-classes"));
             });
             main_elem.stop().animate({backgroundColor: main_elem.data("original-color")}, 1000);
           };
@@ -39,7 +39,7 @@ var LightControl = function() {
           url += command + "/" + group;
         }
 
-        $.ajax({
+        jq.ajax({
           url: url,
           success: function () {
             animate_completed("check");
@@ -56,15 +56,15 @@ var LightControl = function() {
 };
 
 var light_control;
-$(document).ready(function () {
+jq(document).ready(function () {
   "use strict";
   light_control = new LightControl();
   light_control.initialize(".lightcontrol-btn");
 
-  $(".main-button-box .lights").on("click", function() {
+  jq(".main-button-box .lights").on("click", function() {
     content_switch.switchContent("#lightcontrol-modal");
   });
-  $("#lightcontrol-modal .close").on("click", function() {
+  jq("#lightcontrol-modal .close").on("click", function() {
     content_switch.switchContent("#main-content");
   });
 });

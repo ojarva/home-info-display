@@ -4,21 +4,21 @@ var Torrents = function() {
 
 
   function clearItems() {
-    $("#torrent-items tr").remove();
+    jq("#torrent-items tr").remove();
   }
 
 
   function processData(items) {
     clearItems();
-    $.each(items, function() {
-      $("#torrent-items").append("<tr data-hash='" + this.hash + "'><td>" + this.filename + "</td><td>" + filesize(this.size) + "</td><td>" + this.downloaded_percent + "%</td><td>" + this.up_speed + "</td><td>" + this.eta + "</td><td>" + this.netdisk + "</td><td><div class='action-button animate-click stripe-box' data-action='remove'><i data-original-classes='fa fa-trash' class='fa fa-trash'></i></div> <div class='action-button animate-click stripe-box' data-action='stop'><i data-original-classes='fa fa-stop' class='fa fa-stop'></i></div> <div class='action-button animate-click stripe-box' data-action='play'><i data-original-classes='fa fa-play' class='fa fa-play'></i></div> </td></tr>");
+    jq.each(items, function() {
+      jq("#torrent-items").append("<tr data-hash='" + this.hash + "'><td>" + this.filename + "</td><td>" + filesize(this.size) + "</td><td>" + this.downloaded_percent + "%</td><td>" + this.up_speed + "</td><td>" + this.eta + "</td><td>" + this.netdisk + "</td><td><div class='action-button animate-click stripe-box' data-action='remove'><i data-original-classes='fa fa-trash' class='fa fa-trash'></i></div> <div class='action-button animate-click stripe-box' data-action='stop'><i data-original-classes='fa fa-stop' class='fa fa-stop'></i></div> <div class='action-button animate-click stripe-box' data-action='play'><i data-original-classes='fa fa-play' class='fa fa-play'></i></div> </td></tr>");
     });
-    $("#torrent-items .action-button").on("click", function () {
+    jq("#torrent-items .action-button").on("click", function () {
       content_switch.userAction();
-      var command = $(this).data("action");
-      var hash = $(this).parent().parent().data("hash");
-      $(this).find("i").removeClass().addClass("fa fa-spin fa-spinner");
-      $.post("/homecontroller/torrents/action/" + command + "/" + hash, function () {
+      var command = jq(this).data("action");
+      var hash = jq(this).parent().parent().data("hash");
+      jq(this).find("i").removeClass().addClass("fa fa-spin fa-spinner");
+      jq.post("/homecontroller/torrents/action/" + command + "/" + hash, function () {
         // No need to remove spinner, as whole table will be redrawn.
       });
     });
@@ -26,7 +26,7 @@ var Torrents = function() {
 
 
   function update() {
-    $.get("/homecontroller/torrents/list", function(data) {
+    jq.get("/homecontroller/torrents/list", function(data) {
       processData(data);
     });
   }
@@ -55,14 +55,14 @@ var Torrents = function() {
 };
 var torrents;
 
-$(document).ready(function () {
+jq(document).ready(function () {
   "use strict";
   torrents = new Torrents();
-  $(".main-button-box .linux-downloads").on("click", function () {
+  jq(".main-button-box .linux-downloads").on("click", function () {
     torrents.update();
     content_switch.switchContent("#linux-downloads-modal");
   });
-  $("#linux-downloads-modal .close").on("click", function() {
+  jq("#linux-downloads-modal .close").on("click", function() {
     content_switch.switchContent("#main-content");
   });
 });

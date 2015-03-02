@@ -5,10 +5,10 @@ var RefreshWeather = function (options) {
   var update_interval;
 
   function resetWeatherInfo() {
-    $(".weather .weather-box span").html("<i class='fa fa-question-circle'></i>");
-    $(".weather .data-field").html("<i class='fa fa-question-circle'></i>");
-    $(".weather .weather-box").removeClass("new-day"); // Remove "day changed" separator line
-    $(".weather-all").children().remove();
+    jq(".weather .weather-box span").html("<i class='fa fa-question-circle'></i>");
+    jq(".weather .data-field").html("<i class='fa fa-question-circle'></i>");
+    jq(".weather .weather-box").removeClass("new-day"); // Remove "day changed" separator line
+    jq(".weather-all").children().remove();
   }
 
   function processData(data) {
@@ -16,9 +16,9 @@ var RefreshWeather = function (options) {
     if (data.sun) {
       var sunrise = moment(data.sun.sunrise);
       var sunset = moment(data.sun.sunset);
-      $(".sun-info").html("<i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-up'></i> " + sunrise.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunrise + "'>" + sunrise.fromNow() + "</span>) <i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-down'></i> " + sunset.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunset + "'>" + sunset.fromNow() + "</span>)");
+      jq(".sun-info").html("<i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-up'></i> " + sunrise.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunrise + "'>" + sunrise.fromNow() + "</span>) <i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-down'></i> " + sunset.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunset + "'>" + sunset.fromNow() + "</span>)");
     }
-    var items = $(".weather"),
+    var items = jq(".weather"),
         current_index = 1,
         first_date = false,
         new_day = false;
@@ -26,7 +26,7 @@ var RefreshWeather = function (options) {
       items.find(".temperature-now").html(data.current.feels_like);
       items.find(".wind-now").html(data.current.wind_speed_readable);
     }
-    $.each(data.next, function () {
+    jq.each(data.next, function () {
       var this_item = items.find(".weather-" + current_index);
       if (first_date === false) {
         first_date = this.item.date;
@@ -49,15 +49,15 @@ var RefreshWeather = function (options) {
         highlight_set = false,
         last_header,
         new_item = "<div class='col-md-1'><span class='timestamp'><i class='fa fa-question-circle'></i></span><br><span class='temperature'><i class='fa fa-question-circle'></i></span><span class='temperature-unit'>&deg;C</span><span class='symbol'><i class='fa fa-question-circle'></i></span><br><span class='wind-direction'></span><span>:</span> <span class='wind-speed'><i class='fa fa-question-circle'></i></span><span class='wind-speed-unit'>m/s</span></div>";
-    $.each(data.hours, function () {
+    jq.each(data.hours, function () {
       if (this.hour % 2 !== 0) {
         return true; // continue
       }
       if (current_index > 11) {
         current_index = 0;
-        $(".weather-all").append("<div class='row'><div class='col-md-12'><h2></h2></div></div><div class='row'></div>");
-        current_row = $(".weather-all .row").last();
-        last_header = $(".weather-all h2").last();
+        jq(".weather-all").append("<div class='row'><div class='col-md-12'><h2></h2></div></div><div class='row'></div>");
+        current_row = jq(".weather-all .row").last();
+        last_header = jq(".weather-all h2").last();
         last_header.html(this.weekday_fi + " " + this.date);
       }
       current_row.append(new_item);
@@ -78,7 +78,7 @@ var RefreshWeather = function (options) {
   }
 
   function update() {
-    $.get("/homecontroller/weather/get_json", function (data) {
+    jq.get("/homecontroller/weather/get_json", function (data) {
       processData(data);
     });
   }
@@ -109,14 +109,14 @@ var RefreshWeather = function (options) {
 };
 
 var refresh_weather;
-$(document).ready(function () {
+jq(document).ready(function () {
   "use strict";
   refresh_weather = new RefreshWeather();
   refresh_weather.startInterval();
-  $(".open-weather-modal").on("click", function() {
+  jq(".open-weather-modal").on("click", function() {
     content_switch.switchContent("#weather-modal");
   });
-  $("#weather-modal .close").on("click", function() {
+  jq("#weather-modal .close").on("click", function() {
     content_switch.switchContent("#main-content");
   });
 

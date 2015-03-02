@@ -8,12 +8,12 @@ var ShutdownProgress = function(options) {
     if (update_interval) {
       update_interval = clearInterval(update_interval);
     }
-    $("#shutdown-progress .progress-bar").css("width", "0%");
+    jq("#shutdown-progress .progress-bar").css("width", "0%");
   }
 
   function stop(source) {
     if (source !== "backend") {
-      $.post("/homecontroller/control_display/power/cancel-delayed", function () {
+      jq.post("/homecontroller/control_display/power/cancel-delayed", function () {
         stopInterval();
         content_switch.switchContent("#main-content");
       });
@@ -24,15 +24,15 @@ var ShutdownProgress = function(options) {
   }
 
   function shutdown() {
-    $.post("/homecontroller/control_display/power/off");
+    jq.post("/homecontroller/control_display/power/off");
   }
 
   function startup() {
-    $.post("/homecontroller/control_display/power/on");
+    jq.post("/homecontroller/control_display/power/on");
   }
 
   function restartDisplay() {
-    $.post("/homecontroller/control_display/restart");
+    jq.post("/homecontroller/control_display/restart");
   }
 
   function update() {
@@ -46,7 +46,7 @@ var ShutdownProgress = function(options) {
       return;
     }
     var percent = 100 * (options.timeout - time_left) / options.timeout;
-    $("#shutdown-progress .progress-bar").css("width", percent + "%");
+    jq("#shutdown-progress .progress-bar").css("width", percent + "%");
   }
 
   function startInterval() {
@@ -57,7 +57,7 @@ var ShutdownProgress = function(options) {
 
   function restart(source) {
     if (source !== "backend") {
-      $.post("/homecontroller/control_display/power/delayed-shutdown", function () {
+      jq.post("/homecontroller/control_display/power/delayed-shutdown", function () {
         countdown_start = moment();
         startInterval();
       });
@@ -87,29 +87,29 @@ var ShutdownProgress = function(options) {
 };
 
 var shutdown_progress;
-$(document).ready(function() {
+jq(document).ready(function() {
   "use strict";
   shutdown_progress = new ShutdownProgress();
-  $("#main-content .close").on("click", function () {
+  jq("#main-content .close").on("click", function () {
     content_switch.switchContent("#shutdown-progress");
     shutdown_progress.restart();
   });
 
-  $("#shutdown-progress .close, #shutdown-progress .cancel").on("click", function() {
+  jq("#shutdown-progress .close, #shutdown-progress .cancel").on("click", function() {
     shutdown_progress.stop();
     content_switch.switchContent("#main-content");
   });
-  $("#shutdown-progress .yes").on("click", function() {
+  jq("#shutdown-progress .yes").on("click", function() {
     shutdown_progress.shutdown();
   });
 
-  $(".display-power .shutdown-display").on("click", function () {
+  jq(".display-power .shutdown-display").on("click", function () {
     shutdown_progress.shutdown();
   });
-  $(".display-power .startup-display").on("click", function () {
+  jq(".display-power .startup-display").on("click", function () {
     shutdown_progress.startup();
   });
-  $(".display-power .restart-browser").on("click", function () {
+  jq(".display-power .restart-browser").on("click", function () {
     shutdown_progress.restartDisplay();
   });
 });
