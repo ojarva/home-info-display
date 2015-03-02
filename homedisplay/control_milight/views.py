@@ -1,7 +1,7 @@
-from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action
+from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action, get_serialized_lightgroup
 from .utils import run_timed_actions
 from control_display.display_utils import run_display_command
-from control_display.utils import initiate_delayed_shutdown
+from control_display.utils import initiate_delayed_shutdown, set_destination_brightness
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
@@ -18,6 +18,7 @@ import time
 
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
+
 
 class TimedProgram(View):
     def post(self, request, *args, **kwargs):
@@ -70,7 +71,7 @@ class ControlPerSource(View):
     KITCHEN = 3
     DOOR = 4
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         source = kwargs.get("source")
         command = kwargs.get("command")
         if source == "computer":
@@ -182,7 +183,7 @@ class ControlPerSource(View):
 
 
 class Control(View):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         command = kwargs.get("command")
         group = int(kwargs.get("group"))
 
@@ -225,3 +226,11 @@ class Control(View):
             raise NotImplementedError("Invalid command: %s" % command)
         set_destination_brightness()
         return HttpResponse("ok")
+
+    def get(self, request, *args, **kwargs):
+        group = int(kwargs.get("group", 0))
+        items = LightGroup.objects.all()
+        if group is not 0:
+            items = items.filter(group_id=group)
+        serialized = [get_serialized_lightgroup(a) for a in items]
+        return HttpResponse(json.dumps(serialized), content_type="application/json")

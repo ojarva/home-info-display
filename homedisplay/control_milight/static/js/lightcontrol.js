@@ -1,6 +1,10 @@
 var LightControl = function() {
   "use strict";
 
+  var color_map = {"white": "valkoinen",
+                   "red": "punainen",
+                   "blue": "sininen"};
+
   function initialize(selector) {
     jq.each(jq(selector), function() {
       jq(this).data("original-color", jq(this).css("background-color"));
@@ -41,6 +45,7 @@ var LightControl = function() {
 
         jq.ajax({
           url: url,
+          type: "POST",
           success: function () {
             animate_completed("check");
           },
@@ -52,7 +57,37 @@ var LightControl = function() {
     });
   }
 
+  function processData(data) {
+    console.log("processData", data);
+    jq.each(data, function () {
+      var group_id = this.fields.group_id;
+      jq(".light-group-"+group_id+"-name").html(this.fields.description);
+      jq(".light-group-"+group_id+"-brightness").html(this.fields.current_brightness+"%").data("brightness", this.fields.current_brightness);
+      var color = this.fields.color;
+      var color_elem = jq(".light-group-"+group_id+"-color");
+      if (color in color_map) {
+        color_elem.html(color_map[color]);
+      }
+      color_elem.data(color);
+      jq(".light-group-"+group_id+"-on").data(this.fields.on);
+      if (this.fields.on) {
+        jq(".light-group-"+group_id+"-on").html("<i class='fa fa-toggle-on'></i>");
+      } else {
+        jq(".light-group-"+group_id+"-on").html("<i class='fa fa-toggle-off'></i>");
+      }
+    });
+  }
+
+  function update() {
+    jq.get("/homecontroller/lightcontrol/status", function(data) {
+      processData(data);
+    });
+  }
+
+  ws_generic.register("lightcontrol", processData);
+  ge_refresh.register("lightcontrol", update);
   this.initialize = initialize;
+  this.update = update;
 };
 
 var light_control;
@@ -60,6 +95,7 @@ jq(document).ready(function () {
   "use strict";
   light_control = new LightControl();
   light_control.initialize(".lightcontrol-btn");
+  light_control.update();
 
   jq(".main-button-box .lights").on("click", function() {
     content_switch.switchContent("#lightcontrol-modal");

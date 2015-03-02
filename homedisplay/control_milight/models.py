@@ -13,11 +13,16 @@ import json
 import logging
 import redis
 
-__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running", "get_serialized_timed_action"]
+__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running", "get_serialized_timed_action", "get_serialized_lightgroup"]
 
 led = LedController(settings.MILIGHT_IP)
 redis_instance = redis.StrictRedis()
 logger = logging.getLogger(__name__)
+
+def get_serialized_lightgroup(item):
+    ret = json.loads(serializers.serialize("json", [item]))[0]
+    ret["fields"]["current_brightness"] = item.current_brightness
+    return ret
 
 def get_serialized_timed_action(item):
     ret = json.loads(serializers.serialize("json", [item]))
@@ -152,3 +157,7 @@ class LightAutomation(models.Model):
 @receiver(post_save, sender=LightAutomation, dispatch_uid="lightautomation_post_save")
 def publish_lightautomation_saved(sender, instance, *args, **kwargs):
     publish_ws("lightcontrol_timed_%s" % instance.action, get_serialized_timed_action(instance))
+
+@receiver(post_save, sender=LightGroup, dispatch_uid="lightgroup_post_save")
+def publish_lightgroup_saved(sender, instance, *args, **kwargs):
+    publish_ws("lightcontrol", [get_serialized_lightgroup(instance)])
