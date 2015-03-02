@@ -2,6 +2,7 @@ from control_display.utils import set_destination_brightness
 from control_milight.models import LightAutomation, LightGroup, update_lightstate
 from django.conf import settings
 from django.utils import timezone
+from homedisplay.utils import publish_ws
 from ledcontroller import LedController
 import logging
 import redis
@@ -47,6 +48,7 @@ def run_timed_actions():
                 update_lightstate(group, None, "white", important=False)
         if brightness:
             logger.debug("Setting brightness to %s%%", brightness)
+            publish_ws("lightcontrol-timed-brightness-%s" % item.action, brightness)
             for group in allowed_groups:
                 group_brightness = brightness
                 group_item, _ = LightGroup.objects.get_or_create(group_id=group)

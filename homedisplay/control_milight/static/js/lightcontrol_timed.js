@@ -145,6 +145,11 @@ var LightControlTimed = function(options) {
         verb,
         show_progress_indicator,
         content = main.find(".time-left");
+    if (running) {
+      main.find(".current-brightness").show();
+    } else {
+      main.find(".current-brightness").hide();
+    }
     if (now < end_time && end_time - now < getDurationSeconds() * 1000) { // Currently running
       verb = "päättyy";
       if (!running) {
@@ -259,8 +264,14 @@ var LightControlTimed = function(options) {
     content_switch.switchContent("#lightcontrol-modal");
   });
 
+  function onReceiveBrightness(data) {
+    // TODO: there is cases where this is not cleaned up properly
+    main.find(".current-brightness").html(data+"%");
+  }
+
   ws_generic.multiRegister("lightcontrol_timed_override", "lightcontrol_timed_override_" + action, onReceiveOverride);
   ws_generic.register("lightcontrol_timed_" + action, onReceiveItemUpdate);
+  ws_generic.register("lightcontrol-timed-brightness-" + action, onReceiveBrightness);
   ge_refresh.register("lightcontrol_timed_" + action, update);
 
   startInterval();

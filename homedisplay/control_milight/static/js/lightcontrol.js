@@ -58,7 +58,6 @@ var LightControl = function() {
   }
 
   function processData(data) {
-    console.log("processData", data);
     jq.each(data, function () {
       var group_id = this.fields.group_id;
       jq(".light-group-"+group_id+"-name").html(this.fields.description);

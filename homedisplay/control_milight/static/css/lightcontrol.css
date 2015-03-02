@@ -53,6 +53,12 @@
 .timed-lightcontrol .time-left {
   font-size: 50%;
 }
+
+.timed-lightcontrol .current-brightness {
+  font-size: 50%;
+}
+
+
 .timed-lightcontrol .timed-type {
   font-size: 50%;
 }
