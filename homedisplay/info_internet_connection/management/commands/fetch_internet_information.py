@@ -1,10 +1,10 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.timezone import now
+from homedisplay.utils import publish_ws
 from info_internet_connection.models import Internet, get_latest_serialized
 import datetime
 import huawei_b593_status
 import json
-import redis
 
 
 #{'WIFI': 'off', 'SIG': '5', 'Mode': '4g', 'Roam': 'home', 'SIM': 'normal', 'Connect': 'connected'}
@@ -15,7 +15,6 @@ class Command(BaseCommand):
     help = 'Fetches home 4g router status information'
 
     def handle(self, *args, **options):
-        r = redis.StrictRedis()
         status = huawei_b593_status.HuaweiStatus()
         data = status.read()
         age_threshold = datetime.timedelta(minutes=2)
@@ -34,4 +33,4 @@ class Command(BaseCommand):
         latest_data.connect_status = data["Connect"]
         latest_data.update_timestamp = now()
         latest_data.save()
-        r.publish("home:broadcast:generic", json.dumps({"key": "internet", "content": get_latest_serialized()}))
+        publish_ws("internet", get_latest_serialized())

@@ -6,6 +6,7 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
+from homedisplay.utils import publish_ws
 from ledcontroller import LedController
 import datetime
 import json
@@ -41,7 +42,7 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
             time_until_ends = (timed_ends_at - timezone.now()).total_seconds() + 65
             logger.info("Setting timed lightcontrol override for %s until %s", group, time_until_ends)
             redis_instance.setex("lightcontrol-no-automatic-%s" % group, int(time_until_ends), True)
-            redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "pause"}}))
+            publish_ws("lightcontrol_timed_override", {"action": "pause"})
 
     (state, _) = LightGroup.objects.get_or_create(group_id=group)
     if color is not None:
@@ -150,4 +151,4 @@ class LightAutomation(models.Model):
 
 @receiver(post_save, sender=LightAutomation, dispatch_uid="lightautomation_post_save")
 def publish_lightautomation_saved(sender, instance, *args, **kwargs):
-    redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_%s" % instance.action, "content": get_serialized_timed_action(instance)}))
+    publish_ws("lightcontrol_timed_%s" % instance.action, get_serialized_timed_action(instance))

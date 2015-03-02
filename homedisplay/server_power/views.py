@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, render, render_to_response
 from django.template import RequestContext, Template
 from django.utils.timezone import now
 from django.views.generic import View
+from homedisplay.utils import publish_ws
 import datetime
 import json
 import manage_server_power
@@ -34,8 +35,7 @@ class startup(View):
         status = sp.is_alive()
         sp.wake_up()
         redis_instance.setex("server_power_in_progress", 60, status)
-        redis_instance.publish("home:broadcast:generic", json.dumps({"key": "server_power", "content": {"status": status, "in_progress": status}}))
-
+        publish_ws("server_power", {"status": status, "in_progress": status})
         return HttpResponse("ok")
 
 
@@ -44,5 +44,5 @@ class shutdown(View):
         status = sp.is_alive()
         sp.shutdown()
         redis_instance.setex("server_power_in_progress", 60, status)
-        redis_instance.publish("home:broadcast:generic", json.dumps({"key": "server_power", "content": {"status": status, "in_progress": status}}))
+        publish_ws("server_power", {"status": status, "in_progress": status})
         return HttpResponse("ok")

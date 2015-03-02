@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-
-import redis
+from homedisplay.utils import publish_ws
 import time
 import json
 
@@ -10,5 +9,4 @@ class Command(BaseCommand):
     help = 'Reloads remote displays'
 
     def handle(self, *args, **options):
-        r = redis.StrictRedis()
-        r.publish("home:broadcast:generic", json.dumps({"key": "reload", "content": time.time()}))
+        publish_ws("reload", time.time())

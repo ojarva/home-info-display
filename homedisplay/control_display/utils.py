@@ -2,6 +2,7 @@ from .display_utils import cancel_delayed_shutdown
 from .tasks import run_display_command_task
 from control_milight.models import LightGroup
 from django.utils import timezone
+from homedisplay.utils import publish_ws
 from info_weather.views import get_sun_info
 import json
 import logging
@@ -21,7 +22,7 @@ def initiate_delayed_shutdown():
     redis_instance.setex("display-control-command", 120, "off")
     display_task = run_display_command_task.apply_async(countdown=30, expires=120)
     redis_instance.set("display-control-task", display_task.task_id)
-    redis_instance.publish("home:broadcast:generic", json.dumps({"key": "shutdown", "content": "delayed-shutdown"}))
+    publish_ws("shutdown", "delayed-shutdown")
 
 
 def get_desired_brightness():

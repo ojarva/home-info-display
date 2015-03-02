@@ -1,11 +1,11 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from django.utils import timezone
+from homedisplay.utils import publish_ws
 from info_transportation.hsl_api import HSLApi
 from info_transportation.models import Stop, Line, Data, get_departures
-from django.utils import timezone
 import datetime
 import json
-import redis
 import requests
 
 class Command(BaseCommand):
@@ -14,7 +14,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         hsl = HSLApi(settings.HSL_USERNAME, settings.HSL_PASSWORD)
-        redis_instance = redis.StrictRedis()
         now = timezone.now()
         Data.objects.filter(time__lte=now).delete()
         data = []
@@ -36,4 +35,4 @@ class Command(BaseCommand):
                             if created:
                                 a.save()
 
-        redis_instance.publish("home:broadcast:generic", json.dumps({"key": "public-transportation", "content": get_departures()}))
+        publish_ws("public-transportation", get_departures())

@@ -1,7 +1,7 @@
 from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action
 from .utils import run_timed_actions
-from control_display.utils import initiate_delayed_shutdown
 from control_display.display_utils import run_display_command
+from control_display.utils import initiate_delayed_shutdown
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse
@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render
 from django.utils.timezone import now
 from django.views.generic import View
+from homedisplay.utils import publish_ws
 from ledcontroller import LedController
 import datetime
 import json
@@ -43,14 +44,14 @@ class TimedProgram(View):
                 # No timed lightcontrol is running (anymore). Delete overrides.
                 for group in range(1, 5):
                     redis_instance.delete("lightcontrol-no-automatic-%s" % group)
-                    redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "resume"}}))
+                    publish_ws("lightcontrol_timed_override", {"action": "resume"})
             else:
                 run_timed_actions()
             return HttpResponse(json.dumps(get_serialized_timed_action(item)), content_type="application/json")
         elif command == "override-resume":
             for group in range(1, 5):
                 redis_instance.delete("lightcontrol-no-automatic-%s" % group)
-                redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "resume"}}))
+                publish_ws("lightcontrol_timed_override", {"action": "resume"})
             run_timed_actions()
         instance = get_object_or_404(LightAutomation, action=action)
         item = get_serialized_timed_action(instance)

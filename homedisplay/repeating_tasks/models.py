@@ -6,13 +6,12 @@ from django.db.models.signals import post_delete
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.timezone import now
+from homedisplay.utils import publish_ws
 import datetime
 import json
 import logging
-import redis
 
 logger = logging.getLogger(__name__)
-r = redis.StrictRedis()
 
 
 def get_repeating_data(date, serialized=False):
@@ -147,7 +146,7 @@ class TaskHistory(models.Model):
 
 def publish_changes():
     for k in ("today", "tomorrow", "all"):
-        r.publish("home:broadcast:generic", json.dumps({"key": "repeating_tasks_%s" % k, "content": get_repeating_data(k, True)}))
+        publish_ws("repeating_tasks_%s" % k, get_repeating_data(k, True))
 
 
 @receiver(post_delete, sender=Task, dispatch_uid='task_delete_signal')

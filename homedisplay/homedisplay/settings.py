@@ -22,6 +22,7 @@ INSTALLED_APPS = (
     'compressor',
     'control_display',
     'control_milight',
+    'control_music',
     'control_printer',
     'display',
     'django_extensions',
