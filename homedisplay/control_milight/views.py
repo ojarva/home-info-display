@@ -1,4 +1,4 @@
-from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate
+from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action
 from .utils import run_timed_actions
 from control_display.utils import initiate_delayed_shutdown
 from control_display.display_utils import run_display_command
@@ -18,18 +18,7 @@ import time
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
 
-class timed(View):
-    def get_serialized_item(self, action):
-        item = get_object_or_404(LightAutomation, action=action)
-        ret = json.loads(serializers.serialize("json", [item]))
-        ret[0]["fields"]["start_datetime"] = item.get_start_datetime().isoformat()
-        ret[0]["fields"]["end_datetime"] = item.get_end_datetime().isoformat()
-        for group in range(1, 5):
-            if redis_instance.get("lightcontrol-no-automatic-%s" % group) is not None:
-                ret[0]["fields"]["is_overridden"] = True
-                break
-        return ret
-
+class TimedProgram(View):
     def post(self, request, *args, **kwargs):
         action = kwargs.get("action")
         command = kwargs.get("command")
@@ -50,8 +39,6 @@ class timed(View):
                 item.running = running
 
             item.save()
-            serialized = self.get_serialized_item(action)
-            redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_%s" % action, "content": serialized}))
             if is_any_timed_running() == False:
                 # No timed lightcontrol is running (anymore). Delete overrides.
                 for group in range(1, 5):
@@ -59,22 +46,24 @@ class timed(View):
                     redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "resume"}}))
             else:
                 run_timed_actions()
-            return HttpResponse(json.dumps(serialized), content_type="application/json")
+            return HttpResponse(json.dumps(get_serialized_timed_action(item)), content_type="application/json")
         elif command == "override-resume":
             for group in range(1, 5):
                 redis_instance.delete("lightcontrol-no-automatic-%s" % group)
                 redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "resume"}}))
             run_timed_actions()
-        item = self.get_serialized_item(action)
+        instance = get_object_or_404(LightAutomation, action=action)
+        item = get_serialized_timed_action(instance)
         return HttpResponse(json.dumps(item), content_type="application/json")
 
 
     def get(self, request, *args, **kwargs):
         action = kwargs.get("action")
-        item = self.get_serialized_item(action)
+        instance = get_object_or_404(LightAutomation, action=action)
+        item = get_serialized_timed_action(instance)
         return HttpResponse(json.dumps(item), content_type="application/json")
 
-class control_per_source(View):
+class ControlPerSource(View):
     BED = 1
     TABLE = 2
     KITCHEN = 3
@@ -191,7 +180,7 @@ class control_per_source(View):
         return HttpResponse("ok")
 
 
-class control(View):
+class Control(View):
     def get(self, request, *args, **kwargs):
         command = kwargs.get("command")
         group = int(kwargs.get("group"))

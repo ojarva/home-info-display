@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from django.conf import settings
+from django.core import serializers
 from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from django.utils import timezone
 from ledcontroller import LedController
 import datetime
@@ -9,11 +12,21 @@ import json
 import logging
 import redis
 
-__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running"]
+__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running", "get_serialized_timed_action"]
 
 led = LedController(settings.MILIGHT_IP)
 redis_instance = redis.StrictRedis()
 logger = logging.getLogger(__name__)
+
+def get_serialized_timed_action(item):
+    ret = json.loads(serializers.serialize("json", [item]))
+    ret[0]["fields"]["start_datetime"] = item.get_start_datetime().isoformat()
+    ret[0]["fields"]["end_datetime"] = item.get_end_datetime().isoformat()
+    for group in range(1, 5):
+        if redis_instance.get("lightcontrol-no-automatic-%s" % group) is not None:
+            ret[0]["fields"]["is_overridden"] = True
+            break
+    return ret
 
 def update_lightstate(group, brightness, color=None, on=True, **kwargs):
     if group == 0:
@@ -134,3 +147,7 @@ class LightAutomation(models.Model):
         if not self.is_running(timestamp):
             return
         return float((timestamp - self.get_start_datetime()).total_seconds()) / self.duration
+
+@receiver(post_save, sender=LightAutomation, dispatch_uid="lightautomation_post_save")
+def publish_lightautomation_saved(sender, instance, *args, **kwargs):
+    redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_%s" % instance.action, "content": get_serialized_timed_action(instance)}))

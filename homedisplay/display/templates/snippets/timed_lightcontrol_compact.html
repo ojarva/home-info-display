@@ -1,0 +1,30 @@
+<!-- {{ time }} -->
+<div class="timed-lightcontrol timed-lightcontrol-compact timed-lightcontrol-{{ time }} item-box dark-box" data-action="{{ time }}">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="animation-direction open-light-dialog">
+        {{ type }}
+      </div>
+      <div style="float:right" class="center-content open-light-dialog">
+        <span class="duration-content">+-:--</span>
+      </div>
+      <div style="float:right" class="center-content open-light-dialog">
+        <span class="start-time-content">--:--</span>
+      </div>
+      <div class="play-control play-control">
+        <span class="animate-click">
+          <i class="fa-fw fa fa-toggle-on"></i>
+        </span>
+      </div>
+      <div class="play-pause-control warning-message" style="display:none">
+        <span class="animate-click">
+          <i class="fa-fw fa fa-pause"></i>
+      </div>
+    </div>
+  </div>
+  <div class="row open-light-dialog">
+    <div class="col-md-12">
+      <span class="time-left"></span>
+    </div>
+  </div>
+</div>

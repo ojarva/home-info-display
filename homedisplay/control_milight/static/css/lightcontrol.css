@@ -1,23 +1,35 @@
 .timed-lightcontrol {
   font-size: 200%;
 }
+
 .timed-lightcontrol .animation-direction {
-  font-size: 2em;
   display: inline-block;
   float: left;
 }
-.timed-lightcontrol .play-control {
+
+.timed-lightcontrol-normal .animation-direction {
   font-size: 2em;
+}
+
+.timed-lightcontrol .play-control {
   display: inline-block;
   float: right;
   margin-right: 20px;
 }
 
+.timed-lightcontrol-normal .play-control {
+  font-size: 2em;
+}
+
 .timed-lightcontrol .play-control .span {
   display: inline-block;
 }
-.timed-lightcontrol .play-pause-control {
+
+.timed-lightcontrol-normal .play-pause-control {
   font-size: 2em;
+}
+
+.timed-lightcontrol .play-pause-control {
   display: inline-block;
   float: right;
   margin-right: 20px;
@@ -55,6 +67,7 @@
 .timed-lightcontrol .fading-progress {
   padding-top: 10px;
 }
+
 
 .lightcontrol-btn {
   margin-left: 1px;
