@@ -41,9 +41,7 @@ INSTALLED_APPS = (
     'ws4redis',
 )
 
-PIPELINE_CSS = {
-    'base': {
-        'source_filenames': (
+PIPELINE_BASE_CSS = [
             "sass/_bootstrap.scss",
             "jquery-ui/jquery-ui.css",
             "css/font-awesome.css",
@@ -60,13 +58,13 @@ PIPELINE_CSS = {
             "css/printer.css",
             "css/torrents.css",
             "css/transportation.css",
-        ),
-        'output_filename': 'css/generated/base.css',
-    },
+]
+
+PIPELINE_CSS = {
     'display': {
-        'source_filenames': (
+        'source_filenames': [
             "css/custom_display.css",
-        ),
+        ] + PIPELINE_BASE_CSS,
         'output_filename': 'css/generated/display.css',
     },
     'door': {
@@ -79,9 +77,9 @@ PIPELINE_CSS = {
         'output_filename': 'css/generated/door.css',
     },
     'computer': {
-        'source_filenames': (
+        'source_filenames': [
             "css/custom_computer.css",
-        ),
+        ] + PIPELINE_BASE_CSS,
         'output_filename': 'css/generated/computer.css',
     },
     'kitchen': {
@@ -97,24 +95,22 @@ PIPELINE_CSS = {
     }
 }
 
-PIPELINE_JS = {
-    'base': {
-        'source_filenames': (
-            "js/jquery-1.11.2.js",
-            "js/jquery-noconflict.js",
-            "js/bootstrap.js",
-            "jquery-ui/jquery-ui.js",
-            "js/moment-with-locales.js",
-            "js/ws4redis_v2.js",
-            "js/ws_generic.js",
-            "js/generic_refresh.js",
-            "js/main.js",
-            "js/lightcontrol.js",
-        ),
-        'output_filename': 'js/generated/base.js',
-    },
-    'computer-display-common': {
-        'source_filenames': (
+PIPELINE_BASE_JS = [
+    "js/jquery-1.11.2.js",
+    "js/jquery-noconflict.js",
+    "js/bootstrap.js",
+    "jquery-ui/jquery-ui.js",
+    "js/moment-with-locales.js",
+    "js/ws4redis_v2.js",
+    "js/ws_generic.js",
+    "js/generic_refresh.js",
+    "js/main.js",
+    "js/lightcontrol.js",
+    "js/clock.js",
+
+]
+
+PIPELINE_COMPUTER_DISPLAY_COMMON = [
             "js/d3.js",
             "js/nv.d3.js",
             "js/filesize.js",
@@ -130,40 +126,44 @@ PIPELINE_JS = {
             "js/birthdays.js",
             "js/moment_auto_update.js",
             "js/lightcontrol_timed.js",
-            "js/clock.js",
             "js/printer.js",
             "js/torrents.js",
             "js/transportation.js",
-        ),
-        'output_filename': 'js/generated/common.js',
-    },
+]
+
+PIPELINE_JS = {
     'door': {
-        'source_filenames': (
-          "js/clock.js",
-          "js/weather_door.js",
-        ),
+        'source_filenames':
+            PIPELINE_BASE_JS + [
+            "js/weather_door.js",
+        ],
         'output_filename': 'js/generated/door.js',
     },
     'kitchen': {
-        'source_filenames': (
-          "js/timer.js",
-          "js/clock.js",
-          "js/custom_timers.js",
-        ),
+        'source_filenames':
+            PIPELINE_BASE_JS + [
+            "js/timer.js",
+            "js/custom_timers.js",
+        ],
         'output_filename': 'js/generated/kitchen.js',
     },
     'display': {
-        'source_filenames': (
-          "js/custom_display.js",
-          "js/weather.js",
-          "js/namedays.js",
-        ),
+        'source_filenames':
+            PIPELINE_BASE_JS +
+            PIPELINE_COMPUTER_DISPLAY_COMMON +
+            ["js/custom_display.js",
+            "js/weather.js",
+            "js/namedays.js",
+        ],
         'output_filename': 'js/generated/display.js',
     },
     'computer': {
-        'source_filenames': (
+        'source_filenames':
+            PIPELINE_BASE_JS +
+            PIPELINE_COMPUTER_DISPLAY_COMMON +
+            [
             "js/custom_computer.js",
-        ),
+        ],
         'output_filename': 'js/generated/computer.js',
     }
 }
