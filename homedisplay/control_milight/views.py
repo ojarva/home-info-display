@@ -58,7 +58,7 @@ class timed(View):
                     redis_instance.delete("lightcontrol-no-automatic-%s" % group)
                     redis_instance.publish("home:broadcast:generic", json.dumps({"key": "lightcontrol_timed_override", "content": {"action": "resume"}}))
             else:
-
+                run_timed_actions()
             return HttpResponse(json.dumps(serialized), content_type="application/json")
         elif command == "override-resume":
             for group in range(1, 5):
