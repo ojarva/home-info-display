@@ -1,4 +1,4 @@
-from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action, get_serialized_lightgroup
+from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action, get_serialized_lightgroup, get_serialized_lightgroups
 from .utils import run_timed_actions
 from control_display.display_utils import run_display_command
 from control_display.utils import initiate_delayed_shutdown, set_destination_brightness
@@ -18,38 +18,6 @@ import time
 
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
-
-def get_morning_light_level(group_id=None):
-    max_brightness = 0
-    items = LightGroup.objects.filter(on=True)
-    if group_id is None or group_id == 0:
-        # Process all groups
-        for g in items:
-            max_brightness = max(g.current_brightness or 0, max_brightness)
-        return min(10, max_brightness)
-    else:
-        # Process only a single group
-        for g in items:
-            if g.group_id == group_id:
-                # Current group
-                if g.color != "white":
-                    # Color is not white -> change to white & 0
-                    return 0
-                # Color is white
-                brightness = g.current_brightness
-                if brightness is None:
-                    return 0
-            # Take maximum brightness
-            max_brightness = max(g.current_brightness or 0, current_brightness)
-
-    return min(10, max_brightness)
-
-
-def set_morning_light(group):
-    brightness = get_morning_light_level(group)
-    led.white(group)
-    led.set_brightness(brightness, group)
-    update_lightstate(group, brightness, "white")
 
 
 class TimedProgram(View):
@@ -206,7 +174,7 @@ class ControlPerSource(View):
         else:
             raise NotImplementedError("Invalid source: %s" % source)
         set_destination_brightness()
-        return HttpResponse("ok")
+        return HttpResponse(json.dumps(get_serialized_lightgroups()), content_type="application/json")
 
 
 class Control(View):
@@ -250,7 +218,7 @@ class Control(View):
         else:
             raise NotImplementedError("Invalid command: %s" % command)
         set_destination_brightness()
-        return HttpResponse("ok")
+        return HttpResponse(json.dumps(get_serialized_lightgroups()), content_type="application/json")
 
     def get(self, request, *args, **kwargs):
         group = int(kwargs.get("group", 0))

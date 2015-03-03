@@ -42,22 +42,22 @@ INSTALLED_APPS = (
 )
 
 PIPELINE_BASE_CSS = [
-            "sass/_bootstrap.scss",
-            "jquery-ui/jquery-ui.css",
-            "css/font-awesome.css",
-            "css/nv.d3.css",
-            "sass/shared.scss",
-            "css/server_power.css",
-            "css/electricity.css",
-            "css/lightcontrol.css",
-            "css/internet_connection.css",
-            "css/repeating_tasks.css",
-            "css/indoor_quality.css",
-            "css/timer.css",
-            "css/weather.css",
-            "css/printer.css",
-            "css/torrents.css",
-            "css/transportation.css",
+    "sass/_bootstrap.scss",
+    "jquery-ui/jquery-ui.css",
+    "css/font-awesome.css",
+    "css/nv.d3.css",
+    "sass/shared.scss",
+    "css/server_power.css",
+    "css/electricity.css",
+    "css/lightcontrol.css",
+    "css/internet_connection.css",
+    "css/repeating_tasks.css",
+    "css/indoor_quality.css",
+    "css/timer.css",
+    "css/weather.css",
+    "css/printer.css",
+    "css/torrents.css",
+    "css/transportation.css",
 ]
 
 PIPELINE_CSS = {
@@ -107,28 +107,28 @@ PIPELINE_BASE_JS = [
     "js/main.js",
     "js/lightcontrol.js",
     "js/clock.js",
+    "js/reload.js",
 
 ]
 
 PIPELINE_COMPUTER_DISPLAY_COMMON = [
-            "js/d3.js",
-            "js/nv.d3.js",
-            "js/filesize.js",
-            "js/reload.js",
-            "js/display.js",
-            "js/timer.js",
-            "js/custom_timers.js",
-            "js/electricity.js",
-            "js/internet_connection.js",
-            "js/repeating_tasks.js",
-            "js/indoor_quality.js",
-            "js/server_power.js",
-            "js/birthdays.js",
-            "js/moment_auto_update.js",
-            "js/lightcontrol_timed.js",
-            "js/printer.js",
-            "js/torrents.js",
-            "js/transportation.js",
+    "js/d3.js",
+    "js/nv.d3.js",
+    "js/filesize.js",
+    "js/display.js",
+    "js/timer.js",
+    "js/custom_timers.js",
+    "js/electricity.js",
+    "js/internet_connection.js",
+    "js/repeating_tasks.js",
+    "js/indoor_quality.js",
+    "js/server_power.js",
+    "js/birthdays.js",
+    "js/moment_auto_update.js",
+    "js/lightcontrol_timed.js",
+    "js/printer.js",
+    "js/torrents.js",
+    "js/transportation.js",
 ]
 
 PIPELINE_JS = {
@@ -173,7 +173,7 @@ STATICFILES_STORAGE = 'pipeline.storage.PipelineStorage'
 PIPELINE_ENABLED=True
 PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.closure.ClosureCompressor'
 PIPELINE_CLOSURE_BINARY = "/usr/bin/env closure-compiler"
-#PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
+PIPELINE_JS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
 PIPELINE_CSS_COMPRESSOR = 'pipeline.compressors.NoopCompressor'
 
 PIPELINE_COMPILERS = (

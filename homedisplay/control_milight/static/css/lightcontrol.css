@@ -1,3 +1,11 @@
+.lights-morning-dim i {
+  color: #B3B1A2 !important;
+}
+
+.lights-morning-bright i {
+  color: #FFFFFF !important;
+}
+
 .timed-lightcontrol {
   font-size: 200%;
 }

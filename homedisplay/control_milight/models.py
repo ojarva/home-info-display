@@ -19,9 +19,48 @@ led = LedController(settings.MILIGHT_IP)
 redis_instance = redis.StrictRedis()
 logger = logging.getLogger(__name__)
 
+
+def get_morning_light_level(group_id=None):
+    # TODO: this is called relatively often, and this fetches all LightGroup objects on every iteration.
+    max_brightness = 0
+    items = LightGroup.objects.filter(on=True)
+    if group_id is None or group_id == 0:
+        # Process all groups
+        for g in items:
+            max_brightness = max(g.current_brightness or 0, max_brightness)
+        return min(10, max_brightness)
+    else:
+        # Process only a single group
+        for g in items:
+            if g.group_id == group_id:
+                # Current group
+                if g.color != "white":
+                    # Color is not white -> change to white & 0
+                    return 0
+                # Color is white
+                brightness = g.current_brightness
+                if brightness is None:
+                    return 0
+            # Take maximum brightness
+            max_brightness = max(g.current_brightness or 0, max_brightness)
+
+    return min(10, max_brightness)
+
+
+def set_morning_light(group):
+    brightness = get_morning_light_level(group)
+    led.white(group)
+    led.set_brightness(brightness, group)
+    update_lightstate(group, brightness, "white")
+
+
+def get_serialized_lightgroups():
+    return [get_serialized_lightgroup(item) for item in LightGroup.objects.all()]
+
 def get_serialized_lightgroup(item):
     ret = json.loads(serializers.serialize("json", [item]))[0]
     ret["fields"]["current_brightness"] = item.current_brightness
+    ret["fields"]["morning_light_level"] = get_morning_light_level(item.group_id)
     return ret
 
 def get_serialized_timed_action(item):
@@ -160,4 +199,4 @@ def publish_lightautomation_saved(sender, instance, *args, **kwargs):
 
 @receiver(post_save, sender=LightGroup, dispatch_uid="lightgroup_post_save")
 def publish_lightgroup_saved(sender, instance, *args, **kwargs):
-    publish_ws("lightcontrol", [get_serialized_lightgroup(instance)])
+    publish_ws("lightcontrol", get_serialized_lightgroups())

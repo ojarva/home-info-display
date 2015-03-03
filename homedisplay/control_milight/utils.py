@@ -1,5 +1,5 @@
 from control_display.utils import set_destination_brightness
-from control_milight.models import LightAutomation, LightGroup, update_lightstate
+from .models import LightAutomation, LightGroup, update_lightstate
 from django.conf import settings
 from django.utils import timezone
 from homedisplay.utils import publish_ws
@@ -9,6 +9,7 @@ import redis
 
 logger = logging.getLogger(__name__)
 redis_instance = redis.StrictRedis()
+
 
 def run_timed_actions():
     """ Runs light programs """

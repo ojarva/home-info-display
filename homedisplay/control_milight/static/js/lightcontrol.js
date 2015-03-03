@@ -58,6 +58,7 @@ var LightControl = function() {
   }
 
   function processData(data) {
+    var max_brightness = 0;
     jq.each(data, function () {
       var group_id = this.fields.group_id;
       jq(".light-group-"+group_id+"-name").html(this.fields.description);
@@ -74,14 +75,28 @@ var LightControl = function() {
       } else {
         jq(".light-group-"+group_id+"-on").html("<i class='fa fa-toggle-off'></i>");
       }
+      max_brightness = Math.max(max_brightness, this.fields.morning_light_level);
+
+      if (this.fields.morning_light_level < 10) {
+        jq(".lights-morning-auto-"+group_id).addClass("lights-morning-dim").removeClass("lights-morning-bright");
+      } else {
+        jq(".lights-morning-auto-"+group_id).addClass("lights-morning-bright").removeClass("lights-morning-dim");
+      }
     });
+    if (max_brightness < 10) {
+      jq(".lights-morning-auto").addClass("lights-morning-dim").removeClass("lights-morning-bright");
+    } else {
+      jq(".lights-morning-auto").addClass("lights-morning-bright").removeClass("lights-morning-dim");
+    }
   }
+
 
   function update() {
     jq.get("/homecontroller/lightcontrol/status", function(data) {
       processData(data);
     });
   }
+
 
   ws_generic.register("lightcontrol", processData);
   ge_refresh.register("lightcontrol", update);
