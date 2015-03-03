@@ -19,6 +19,38 @@ import time
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
 
+def get_morning_light_level(group_id=None):
+    max_brightness = 0
+    items = LightGroup.objects.filter(on=True)
+    if group_id is None or group_id == 0:
+        # Process all groups
+        for g in items:
+            max_brightness = max(g.current_brightness or 0, max_brightness)
+        return min(10, max_brightness)
+    else:
+        # Process only a single group
+        for g in items:
+            if g.group_id == group_id:
+                # Current group
+                if g.color != "white":
+                    # Color is not white -> change to white & 0
+                    return 0
+                # Color is white
+                brightness = g.current_brightness
+                if brightness is None:
+                    return 0
+            # Take maximum brightness
+            max_brightness = max(g.current_brightness or 0, current_brightness)
+
+    return min(10, max_brightness)
+
+
+def set_morning_light(group):
+    brightness = get_morning_light_level(group)
+    led.white(group)
+    led.set_brightness(brightness, group)
+    update_lightstate(group, brightness, "white")
+
 
 class TimedProgram(View):
     def post(self, request, *args, **kwargs):
@@ -126,10 +158,7 @@ class ControlPerSource(View):
                 led.off(self.BED)
                 update_lightstate(self.BED, None, None, False)
                 for group in (self.TABLE, self.KITCHEN, self.DOOR):
-                    led.set_color("white", group)
-                    led.set_brightness(10, group)
-                    update_lightstate(group, 10, "white")
-
+                    set_morning_light(group)
             elif command == "on":
                 run_display_command("on")
                 led.white()
@@ -163,9 +192,7 @@ class ControlPerSource(View):
                 led.set_brightness(0, self.TABLE)
                 update_lightstate(self.TABLE, 10, "red")
             elif command == "morning-all":
-                led.white()
-                led.set_brightness(10)
-                update_lightstate(0, 10, "white")
+                set_morning_light(0)
             elif command == "off":
                 led.set_brightness(0)
                 led.off()
@@ -200,9 +227,7 @@ class Control(View):
             if group == 0:
                 initiate_delayed_shutdown()
         elif command == "morning":
-            led.white(group)
-            led.set_brightness(10, group)
-            update_lightstate(group, 10, "white")
+            set_morning_light(group)
         elif command == "disco":
             led.disco(group)
             update_lightstate(group, None, "disco")
