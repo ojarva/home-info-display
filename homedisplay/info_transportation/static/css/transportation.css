@@ -5,3 +5,19 @@
 .transportation .line-number {
   font-size: 250%;
 }
+
+.transportation .type-bus {
+  color: #4097F5;
+}
+
+.transportation .type-tram{
+  color: #09992D;
+}
+
+.transportation .type-train{
+  color: #E61919;
+}
+
+.transportation .type-metro{
+  color: #F78605;
+}

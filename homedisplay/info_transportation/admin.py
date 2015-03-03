@@ -15,7 +15,7 @@ class LineAdminInline(admin.TabularInline):
         (
             None,
             {
-                'fields': ('line_number', 'show_line', 'icon', 'show_times'),
+                'fields': ('line_number', 'show_line', 'icon', 'show_times', 'type'),
             }
         ),
     )

@@ -14,7 +14,7 @@ def get_departures():
     lines = {}
     now = timezone.now()
     for line in Line.objects.select_related("stop__time_needed").filter(show_line=True):
-        lines[line.line_number] = {"visible": False, "line": line.line_number, "minimum_time": line.stop.time_needed, "icon": line.icon, "departures": []}
+        lines[line.line_number] = {"visible": False, "line": line.line_number, "minimum_time": line.stop.time_needed, "icon": line.icon, "type": line.type, "departures": []}
     for item in Data.objects.filter(line__show_line=True, time__gte=now).order_by("time").prefetch_related("line"):
         if item.line.stop.time_needed < (item.time - now).total_seconds():
             # Only show departures with enough time left
@@ -88,6 +88,13 @@ class Line(models.Model):
         ("bus", "bus"),
         ("train", "train"),
     )
+
+    TYPES = (
+        ("bus", "bus"),
+        ("tram", "tram"),
+        ("train", "train"),
+        ("metro", "metro"),
+    )
     stop = models.ForeignKey("Stop")
     line_number = models.CharField(max_length=20, verbose_name="Numero") # Line number in human readable format.
     line_number_raw = models.CharField(max_length=20) # Line number information in raw format
@@ -98,6 +105,7 @@ class Line(models.Model):
 
     show_line = models.BooleanField(blank=True, default=False, verbose_name="Näytä lähdöt")
     icon = models.CharField(max_length=10, choices=ICONS, verbose_name="Ikoni", default="bus")
+    type = models.CharField(max_length=10, choices=TYPES, verbose_name="Tyyppi", help_text="Liikennevälinetyyppi", default="bus")
 
     def is_valid(self):
         if not self.show_line:
