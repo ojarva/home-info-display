@@ -7,8 +7,18 @@ var ClockCalendar = function (options) {
   function updateOffset() {
     jq.get("/homecontroller/timer/current_time", function(timestamp) {
       var server_timestamp = parseInt(timestamp);
-      clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date());
+      clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date()); // In milliseconds
     });
+  }
+
+  function getMoment() {
+    // Get moment with current offset
+    return moment().add(getOffset());
+  }
+
+  function getDate() {
+    // Get javascript date with current offset
+    return (new Date(new Date() + getOffset()));
   }
 
   function update() {
@@ -31,14 +41,6 @@ var ClockCalendar = function (options) {
     return clock_offset;
   }
 
-  function startInterval() {
-    stopInterval();
-    update();
-    updateOffset();
-    update_interval = setInterval(update, options.update_interval);
-    sync_interval = setInterval(updateOffset, options.sync_interval);
-  }
-
   function stopInterval() {
     if (update_interval) {
       update_interval = clearInterval(update_interval);
@@ -48,16 +50,28 @@ var ClockCalendar = function (options) {
     }
   }
 
+  function startInterval() {
+    stopInterval();
+    update();
+    updateOffset();
+    update_interval = setInterval(update, options.update_interval);
+    sync_interval = setInterval(updateOffset, options.sync_interval);
+  }
+
+  ge_refresh.register("clock-sync", updateOffset);
+
   this.updateOffset = updateOffset;
   this.getOffset = getOffset;
   this.update = update;
   this.startInterval = startInterval;
   this.stopInterval = stopInterval;
+  this.getMoment = getMoment;
+  this.getDate = getDate;
 };
 
-var clock_calendar_handler;
+var clock;
 
 jq(document).ready(function() {
-    clock_calendar_handler = new ClockCalendar();
-    clock_calendar_handler.startInterval();
+    clock = new ClockCalendar();
+    clock.startInterval();
 });

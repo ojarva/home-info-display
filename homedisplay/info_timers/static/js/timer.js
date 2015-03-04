@@ -54,7 +54,8 @@ var Timer = function(parent_elem, options) {
         deleteItem(); // Delete item automatically if auto remove overrun is exceeded.
       }
     }
-    if (start_time > (new Date())) {
+    if (start_time > (clock.getDate())) {
+      // Not yet started
       this_elem.hide();
     } else {
       this_elem.show();
@@ -79,7 +80,7 @@ var Timer = function(parent_elem, options) {
     if (!running) {
       return;
     }
-    var now = new Date(),
+    var now = clock.getDate(),
         prefix = "",
         diff;
     if (timer_type === "timer") {
@@ -234,7 +235,7 @@ var Timer = function(parent_elem, options) {
       this_elem.stop(true).css("background-color", this_elem.data("original-bg-color")).effect("highlight", {color: "#006600"}, 500);
     }
     if (source !== "backend") {
-      start_time = new Date();
+      start_time = clock.getDate();
     }
     startItem(source);
     if (source !== "backend" && id) {
