@@ -1,4 +1,5 @@
 import os
+import platform
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 SECRET_KEY = '4bqp(_+0m5___@j!@kc-(4feec=wf=!d#9p@el5q)4$#g9qir4'
@@ -8,6 +9,8 @@ DEBUG = True
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
+
+
 
 
 # Application definition
@@ -289,7 +292,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['django_file'],
-            'propagate': True,
+            'propagate': False,
             'level': 'DEBUG',
         },
         'homedisplay': {
@@ -301,10 +304,24 @@ LOGGING = {
             'handlers': ['statsd_file'],
             'propagate': False,
             'level': 'DEBUG',
+        },
+        '': {
+            'handlers': ['homedisplay_file'],
+            'propagate': True,
+            'level': 'DEBUG',
         }
     }
 }
 import djcelery
 djcelery.setup_loader()
+
+
+
+if platform.system() == "Darwin":
+    # Development environment
+    print "Warning: using development environment settings"
+    RUN_XSET = False
+else:
+    RUN_XSET = True
 
 from local_settings import *

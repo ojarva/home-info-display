@@ -13,11 +13,11 @@ import json
 import logging
 import redis
 
-__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running", "get_serialized_timed_action", "get_serialized_lightgroup"]
+__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running", "get_serialized_timed_action", "get_serialized_lightgroup", "get_morning_light_level", "set_morning_light"]
 
 led = LedController(settings.MILIGHT_IP)
 redis_instance = redis.StrictRedis()
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
 
 def get_morning_light_level(group_id=None):
@@ -26,9 +26,11 @@ def get_morning_light_level(group_id=None):
     items = LightGroup.objects.filter(on=True)
     if group_id is None or group_id == 0:
         # Process all groups
-        for g in items:
-            max_brightness = max(g.current_brightness or 0, max_brightness)
-        return min(10, max_brightness)
+        c = items.filter(color='white').count()
+        if c > 0:
+            # If any light is on and white, brightness should be 10
+            max_brightness = 10
+
     else:
         # Process only a single group
         for g in items:
@@ -36,24 +38,31 @@ def get_morning_light_level(group_id=None):
                 # Current group
                 if g.color != "white":
                     # Color is not white -> change to white & 0
+                    logger.debug("Group %s is not white. Morning light brightness should be 0", g.group_id)
                     return 0
                 # Color is white
                 brightness = g.current_brightness
                 if brightness is None:
+                    logger.debug("Group %s brightness is not available. Morning light brightness should be 0", g.group_id)
                     return 0
                 # Current group is on and white. Brightness is always 10.
+                logger.debug("Group %s is on and white. Morning light brightness should be 10.", g.group_id)
                 return 10
             # Take maximum brightness
             max_brightness = max(g.current_brightness or 0, max_brightness)
-    return min(10, max_brightness)
+    # Maximum brightness is 10, do not go over it.
+    current_brightness = min(10, max_brightness)
+    logger.debug("Group %s morning light brightness should be %s.", group_id, current_brightness)
+    return current_brightness
 
 
 def set_morning_light(group):
     brightness = get_morning_light_level(group)
+    logger.debug("set_morning_light: morning light level for group %s is %s", group, brightness)
     led.white(group)
     led.set_brightness(brightness, group)
     update_lightstate(group, brightness, "white")
-
+    logger.info("Set morning light for group %s. Brightness is %s", group, brightness)
 
 def get_serialized_lightgroups():
     return [get_serialized_lightgroup(item) for item in LightGroup.objects.all()]
@@ -81,23 +90,29 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
         return
 
     logger.debug("Updating lightstate: group=%s, brightness=%s, color=%s, on=%s, kwargs=%s", group, brightness, color, on, kwargs)
-    timed_ends_at = is_any_timed_running()
     if kwargs.get("important", True) != False:
+        timed_ends_at = is_any_timed_running()
+        logger.debug("Lightstate: important is True")
         if timed_ends_at != False:
             time_until_ends = (timed_ends_at - timezone.now()).total_seconds() + 65
+            logger.debug("Next timed task ends at %s (%s seconds)", timed_ends_at, time_until_ends)
             logger.info("Setting timed lightcontrol override for %s until %s", group, time_until_ends)
             redis_instance.setex("lightcontrol-no-automatic-%s" % group, int(time_until_ends), True)
             publish_ws("lightcontrol_timed_override", {"action": "pause"})
 
     (state, _) = LightGroup.objects.get_or_create(group_id=group)
     if color is not None:
+        logger.debug("Setting color for group %s, from %s to %s", group, state.color, color)
         state.color = color
 
     if brightness is not None:
         if state.color == "white":
+            logger.debug("Setting white brightness for group %s, from %s to %s", group, state.white_brightness, brightness)
             state.white_brightness = brightness
         else:
+            logger.debug("Setting rgb brightness for group %s, from %s to %s", group, state.rgbw_brightness, brightness)
             state.rgbw_brightness = brightness
+    logger.debug("Setting state on=%s for group %s (was %s)", on, group, state.on)
     state.on = on
     state.save()
     return state

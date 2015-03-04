@@ -4,9 +4,8 @@ from control_display.display_utils import run_display_command
 from control_display.utils import initiate_delayed_shutdown, set_destination_brightness
 from django.conf import settings
 from django.core import serializers
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.shortcuts import render
 from django.utils.timezone import now
 from django.views.generic import View
 from homedisplay.utils import publish_ws

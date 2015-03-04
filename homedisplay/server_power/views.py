@@ -9,7 +9,6 @@ import datetime
 import json
 import manage_server_power
 import redis
-import subprocess
 import time
 
 redis_instance = redis.StrictRedis()

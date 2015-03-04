@@ -4,7 +4,8 @@ from celery import shared_task
 from django.utils import timezone
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
+
 
 @shared_task
 def add_sauna_timer_task():

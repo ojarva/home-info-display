@@ -7,7 +7,8 @@ from ledcontroller import LedController
 import logging
 import redis
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
+
 redis_instance = redis.StrictRedis()
 
 

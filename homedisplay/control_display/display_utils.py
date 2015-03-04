@@ -1,11 +1,14 @@
-import redis
-import json
-import subprocess
-import logging
+from django.conf import settings
 from homedisplay.celery import app as celery_app
 from homedisplay.utils import publish_ws
+import json
+import logging
+import redis
+import subprocess
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
+print "Logger", "%s.%s" % ("homecontroller", __name__)
+logger.info("Initializing...")
 redis_instance = redis.StrictRedis()
 
 __all__ = ["cancel_delayed_shutdown", "run_display_command"]
@@ -27,13 +30,16 @@ def run_display_command(cmd):
     """ Runs xset command. This method does not validate command, but it is escaped properly. """
     env = {"DISPLAY": ":0"}
     logger.info("Running display command %s", cmd)
-    process = subprocess.Popen(["xset", "dpms", "force", cmd], env=env)
+    if settings.RUN_XSET is False:
+        logger.warn("Skipping xset, as RUN_XSET is False")
+    else:
+        process = subprocess.Popen(["xset", "dpms", "force", cmd], env=env)
+        process.wait()
     content = None
     if cmd == "off":
         content = "display-off"
     elif cmd == "on":
         content = "display-on"
-    process.wait()
     if content:
         cancel_delayed_shutdown()
         logger.info("Broadcasting display status: %s", content)

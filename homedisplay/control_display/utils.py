@@ -8,7 +8,8 @@ import json
 import logging
 import redis
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
+
 redis_instance = redis.StrictRedis()
 
 __all__ = ["initiate_delayed_shutdown", "get_desired_brightness", "set_destination_brightness"]

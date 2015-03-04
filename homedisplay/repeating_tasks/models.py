@@ -11,7 +11,8 @@ import datetime
 import json
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
+
 
 
 def get_repeating_data(date, serialized=False):
