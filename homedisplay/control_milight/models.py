@@ -41,9 +41,10 @@ def get_morning_light_level(group_id=None):
                 brightness = g.current_brightness
                 if brightness is None:
                     return 0
+                # Current group is on and white. Brightness is always 10.
+                return 10
             # Take maximum brightness
             max_brightness = max(g.current_brightness or 0, max_brightness)
-
     return min(10, max_brightness)
 
 
