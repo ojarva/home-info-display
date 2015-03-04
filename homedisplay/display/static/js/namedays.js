@@ -30,7 +30,7 @@ var Namedays = function() {
 
   function update() {
     addItems();
-    var d = new Date();
+    var d = clock.getDate();
     var nameday = data[d.getMonth()][d.getDate() - 1];
     jq("#today .list-namedays ul li").remove();
     jq("#today .list-namedays ul").append("<li><i class='fa-li fa fa-calendar'></i> "+nameday+"</li>");
