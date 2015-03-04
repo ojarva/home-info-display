@@ -8,7 +8,7 @@ var Namedays = function() {
 
   function addItems() {
     clearItems();
-    var now = moment();
+    var now = clock.getMoment();
     var current_elem;
     var current_index = 0;
     var items_in_current = 1000;

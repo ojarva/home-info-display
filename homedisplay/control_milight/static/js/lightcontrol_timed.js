@@ -141,7 +141,7 @@ var LightControlTimed = function(options) {
     var data = latest_data.fields;
     var start_time = getNextStartDatetime(),
         end_time = getNextEndDatetime(),
-        now = moment(),
+        now = clock.getMoment(),
         verb,
         show_progress_indicator,
         content = main.find(".time-left");

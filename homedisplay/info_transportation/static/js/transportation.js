@@ -9,8 +9,9 @@ var Transportation = function() {
 
 
   function updateTimestamps() {
+    var now = clock.getMoment();
     jq(".transportation .auto-update-timestamp").each(function () {
-      var diff = moment(jq(this).data("timestamp")) - moment();
+      var diff = moment(jq(this).data("timestamp")) - now;
       diff /= 1000;
       if (diff < parseInt(jq(this).parent().data("minimum-time"))) {
         jq(this).fadeOut({duration: 900, complete: function() {

@@ -44,7 +44,7 @@ var RefreshWeather = function (options) {
     });
     current_index = 13;
 
-    var now = moment(),
+    var now = clock.getMoment(),
         current_row,
         highlight_set = false,
         last_header,

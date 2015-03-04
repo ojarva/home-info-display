@@ -44,7 +44,7 @@ var Birthdays = function(elem, use_date, options) {
   function processData(data) {
     clearDates();
     var now, now_str, data_sortable = [];
-    now = moment().subtract(1, "days");
+    now = clock.getMoment().subtract(1, "days");
     now_str = formatSortString(now);
     jq.each(data, function() {
       var a, sort_string, prefix;
