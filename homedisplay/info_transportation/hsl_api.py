@@ -48,6 +48,8 @@ class HSLApi(object):
         r = requests.get("%s?user=%s&pass=%s&request=stop&code=%s&p=00000010000" % (self.base_url, self.username, self.password, stop_number))
         data = r.json()
         lines = []
+        if "lines" not in data[0]:
+            return lines
         for line in data[0]["lines"]:
             lines.append(line.strip())
         return lines
@@ -56,6 +58,8 @@ class HSLApi(object):
         r = requests.get("%s?user=%s&pass=%s&request=stop&code=%s&p=00000000001&dep_limit=20" % (self.base_url, self.username, self.password, stop_number))
         data = r.json()
         departures = []
+        if "departures" not in data[0]:
+            return departures
         for departure in data[0]["departures"]:
             timestamp = self.parse_timestamp(departure)
             departures.append({"timestamp": timestamp, "line_number": departure.get("code")})
