@@ -66,7 +66,7 @@ def run_timed_actions():
                     if led.get_brightness_level(group_brightness) == led.get_brightness_level(group_item.current_brightness):
                         logger.debug("Not sending brightness update to %s: no difference in brightness level", group)
                         continue
-                logger.debug("Setting %s to %s", (group, group_brightness))
+                logger.debug("Setting %s to %s", group, group_brightness)
                 led.set_brightness(group_brightness, group)
                 update_lightstate(group, group_brightness, important=False)
             set_destination_brightness()
