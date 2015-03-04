@@ -36,7 +36,7 @@ var Transportation = function() {
     clearEntries();
     jq.each(data, function() {
       // Loop over stops
-      jq(".transportation ul").append("<li><i class='fa fa-li fa-2x fa-" + this.icon + "'></i> <span class='line-number'>" + this.line + ":</span> <span class='departures' data-minimum-time=" + this.minimum_time + "></span></li>");
+      jq(".transportation ul").append("<li><i class='fa fa-li fa-2x fa-" + this.icon + " type-" + this.type + "'></i> <span class='line-number'>" + this.line + ":</span> <span class='departures' data-minimum-time=" + this.minimum_time + "></span></li>");
       var this_departures = jq(".transportation ul li .departures").last();
       var departures_for_stop = 0;
       jq.each(this.departures, function () {
