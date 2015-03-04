@@ -193,6 +193,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'display.middleware.authentication.SpecialAuthenticationMiddleware',
     'django_statsd.middleware.StatsdMiddlewareTimer',
 )
 
@@ -316,6 +317,7 @@ import djcelery
 djcelery.setup_loader()
 
 
+SESSION_COOKIE_AGE = 360 * 24 * 60 * 60
 
 if platform.system() == "Darwin":
     # Development environment
