@@ -104,7 +104,7 @@ class ControlPerSource(View):
                 led.set_brightness(0)
                 led.off()
                 initiate_delayed_shutdown()
-                update_lightstate(0, 0, False)
+                update_lightstate(0, 0, None, False)
             elif command == "on":
                 run_display_command("on")
                 led.white()

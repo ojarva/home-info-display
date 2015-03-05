@@ -1,4 +1,4 @@
-var LightControl = function() {
+var LightControl = function () {
   "use strict";
 
   var color_map = {"white": "valkoinen",
@@ -63,30 +63,29 @@ var LightControl = function() {
   function delayedProcessData() {
     var max_brightness = 0;
     var data = latest_data;
-    console.log(data);
     if (data && data.groups) {
       jq.each(data.groups, function () {
         var group_id = this.fields.group_id;
-        jq(".light-group-"+group_id+"-name").html(this.fields.description);
-        jq(".light-group-"+group_id+"-brightness").html(this.fields.current_brightness+"%").data("brightness", this.fields.current_brightness);
+        jq(".light-group-" + group_id + "-name").html(this.fields.description);
+        jq(".light-group-" + group_id + "-brightness").html(this.fields.current_brightness + "%").data("brightness", this.fields.current_brightness);
         var color = this.fields.color;
-        var color_elem = jq(".light-group-"+group_id+"-color");
+        var color_elem = jq(".light-group-" + group_id + "-color");
         if (color in color_map) {
           color_elem.html(color_map[color]);
         }
         color_elem.data(color);
-        jq(".light-group-"+group_id+"-on").data(this.fields.on);
+        jq(".light-group-" + group_id + "-on").data(this.fields.on);
         if (this.fields.on) {
-          jq(".light-group-"+group_id+"-on").html("<i class='fa fa-toggle-on'></i>");
+          jq(".light-group-" + group_id + "-on").html("<i class='fa fa-toggle-on'></i>");
         } else {
-          jq(".light-group-"+group_id+"-on").html("<i class='fa fa-toggle-off'></i>");
+          jq(".light-group-" + group_id + "-on").html("<i class='fa fa-toggle-off'></i>");
         }
         max_brightness = Math.max(max_brightness, this.fields.morning_light_level);
 
         if (this.fields.morning_light_level < 10) {
-          jq(".lights-morning-auto-"+group_id).addClass("lights-morning-dim").removeClass("lights-morning-bright");
+          jq(".lights-morning-auto-" + group_id).addClass("lights-morning-dim").removeClass("lights-morning-bright");
         } else {
-          jq(".lights-morning-auto-"+group_id).addClass("lights-morning-bright").removeClass("lights-morning-dim");
+          jq(".lights-morning-auto-" + group_id).addClass("lights-morning-bright").removeClass("lights-morning-dim");
         }
       });
       if (max_brightness < 10) {
@@ -98,11 +97,9 @@ var LightControl = function() {
     if (data && data.main_buttons) {
       jq.each(data.main_buttons, function(key, value) {
         if (value) {
-          console.log(key, value, "show", jq(".lights-"+key).find(".active-mode"));
-          jq(".lights-"+key).find(".active-mode").show();
+          jq(".lights-" + key).find(".active-mode").show();
         } else {
-          console.log(key, value, "hide", jq(".lights-"+key).find(".active-mode"));
-          jq(".lights-"+key).find(".active-mode").hide();
+          jq(".lights-" + key).find(".active-mode").hide();
         }
       });
     }
