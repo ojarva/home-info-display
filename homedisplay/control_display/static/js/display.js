@@ -68,7 +68,6 @@ var ShutdownProgress = function(options) {
   }
 
   function onReceiveItemWS(message) {
-    console.log("Shutdown received", message);
     if (message === "display-off" || message === "display-on" || message === "cancel-delayed") {
       stop("backend");
     } else if (message === "delayed-shutdown") {

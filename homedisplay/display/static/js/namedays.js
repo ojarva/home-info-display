@@ -48,6 +48,7 @@ var Namedays = function() {
     }
   }
   ge_refresh.register("namedays", update);
+  ge_intervals.register("namedays", "daily", update);
 
   this.update = update;
   this.startInterval = startInterval;

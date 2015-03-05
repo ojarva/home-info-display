@@ -69,9 +69,57 @@ var ClockCalendar = function (options) {
   this.getDate = getDate;
 };
 
-var clock;
+var TimedRefresh = function() {
+  var last_run_on_hour = clock.getDate().getHours(),
+      last_run_on_day = clock.getDate().getDay(), // This is not unique, but if delay between checks is more than a month, something is seriously wrong.
+      intervals = {};
+
+  function register(key, interval, callback) {
+    if (!(interval in intervals)) {
+        intervals[interval] = {};
+    }
+    intervals[interval][key] = callback;
+  }
+
+  function deRegister(key, interval) {
+    if (interval in intervals) {
+      delete intervals[interval][key];
+    }
+  }
+
+  function executeCallbacks(interval) {
+    if (!(interval in internals)) {
+      console.warn("Interval ", interval, " does not exist");
+      return;
+    }
+    for (key in intervals[interval]) {
+      intervals[interval][key]();
+    }
+  }
+
+  function runIntervals() {
+    var now = clock.getDate();
+    var hour = now.getHours(),
+        day = now.getDay();
+    if (hour != last_run_on_hour) {
+      last_run_on_hour = hour;
+      executeCallbacks("hourly");
+    }
+    if (day != last_run_on_day) {
+      last_run_on_day = day;
+      executeCallbacks("daily");
+    }
+  }
+
+  // Missing intervals by 5 seconds is not optimal, but good enough.
+  setInterval(runIntervals, 5000);
+
+  this.register = register;
+  this.deRegister = deRegister;
+}
 
 jq(document).ready(function() {
     clock = new ClockCalendar();
     clock.startInterval();
+    ge_intervals = new TimedRefresh();
 });

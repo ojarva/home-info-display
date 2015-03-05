@@ -110,6 +110,7 @@ var Birthdays = function(elem, use_date, options) {
     update_interval = setInterval(update, options.interval);
     ws_generic.register("birthdays_" + this_date, onReceiveItemWS);
     ge_refresh.register("birthdays_" + this_date, update);
+    ge_intervals.register("birthdays_" + this_date, "daily", update);
   }
 
   function stopInterval() {
@@ -118,6 +119,7 @@ var Birthdays = function(elem, use_date, options) {
     }
     ws_generic.deRegister("birthdays_" + this_date);
     ge_refresh.deRegister("birthdays_" + this_date);
+    ge_intervals.deRegister("birthdays_" + this_date, "daily");
   }
 
   this.startInterval = startInterval;

@@ -48,20 +48,18 @@ var RepeatingTasks = function(elem, use_date) {
 
 
   function stopInterval() {
-    if (update_interval) {
-      update_interval = clearInterval(update_interval);
-    }
     ws_generic.deRegister("repeating_tasks_" + this_date);
     ge_refresh.deRegister("repeating_tasks_" + this_date);
+    ge_intervals.deRegister("repeating_tasks_" + this_date, "daily");
   }
 
 
   function startInterval() {
     stopInterval();
     update();
-    update_interval = setInterval(update, 1000 * 60 * 120);
     ws_generic.register("repeating_tasks_" + this_date, onReceiveItemWS);
     ge_refresh.register("repeating_tasks_" + this_date, update);
+    ge_intervals.register("repeating_tasks_" + this_date, "daily", update);
   }
 
 
