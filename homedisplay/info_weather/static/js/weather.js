@@ -13,7 +13,7 @@ var RefreshWeather = function (options) {
 
   function processData(data) {
     resetWeatherInfo();
-    if (data.sun) {
+    if (data.sun !== undefined) {
       var sunrise = moment(data.sun.sunrise);
       var sunset = moment(data.sun.sunset);
       jq(".sun-info").html("<i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-up'></i> " + sunrise.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunrise + "'>" + sunrise.fromNow() + "</span>) <i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-down'></i> " + sunset.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunset + "'>" + sunset.fromNow() + "</span>)");
@@ -22,7 +22,7 @@ var RefreshWeather = function (options) {
         current_index = 1,
         first_date = false,
         new_day = false;
-    if (data && data.current && data.current.feels_like) {
+    if (data !== undefined && data.current !== undefined && data.current.feels_like !== undefined) {
       items.find(".temperature-now").html(data.current.feels_like);
       items.find(".wind-now").html(data.current.wind_speed_readable);
     }

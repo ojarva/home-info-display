@@ -48,6 +48,7 @@ def get_wind_readable(wind):
 
 def get_weather_data():
     time_now = datetime.datetime.now().replace(minute=0, second=0, microsecond=0)
+    date = time_now.date()
     weather_objects = Weather.objects.filter(date__gte=time_now.date())
     forecast = {"hours": [], "current": None, "sun": None, "next": []}
     for item in weather_objects:
@@ -56,7 +57,7 @@ def get_weather_data():
         i["wind_speed_readable"] = get_wind_readable(float(item.wind_speed))
         i["weekday"] = i["date"].weekday()
         i["weekday_fi"] = WEEKDAYS_FI[i["weekday"]]
-        if i["date"] == time_now.date() and i["hour"] == time_now.hour:
+        if i["date"] == date and i["hour"] == time_now.hour:
             forecast["current"] = i
         forecast["hours"].append(i)
 

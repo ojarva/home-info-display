@@ -5,6 +5,9 @@ class Weather(models.Model):
         unique_together = (("date", "hour"))
         ordering = ["date", "hour"]
 
+    def __unicode__(self):
+        return u"%s - %s" % (self.date, self.hour)
+
     date = models.DateField()
     hour = models.PositiveSmallIntegerField()
 
