@@ -3,12 +3,14 @@ var LightControl = function() {
 
   var color_map = {"white": "valkoinen",
                    "red": "punainen",
-                   "blue": "sininen"};
+                   "blue": "sininen"},
+       latest_data,
+       delayed_process;
 
   function initialize(selector) {
     jq.each(jq(selector), function() {
       jq(this).data("original-color", jq(this).css("background-color"));
-      jq(this).children().each(function () {
+      jq(this).children().not(".active-mode").each(function () {
         jq(this).data("original-classes", jq(this).attr("class"));
       });
 
@@ -23,13 +25,14 @@ var LightControl = function() {
         group = main_elem.data("group") || "0";
         source = main_elem.data("source");
         main_elem.animate({backgroundColor: "#ffffff"}, 250);
-        main_elem.children().removeClass().addClass("fa fa-spinner fa-spin");
+        main_elem.children().not(".active-mode").removeClass().addClass("fa fa-spinner fa-spin");
         function animate_completed(icon) {
           main_elem.data("running", false);
-          main_elem.children().removeClass().addClass("fa fa-" + icon);
+          main_elem.children().not(".active-mode").removeClass().addClass("fa fa-" + icon);
           var restore_classes = function () {
-            main_elem.children().each(function() {
-              jq(this).removeClass().addClass(jq(this).data("original-classes"));
+            main_elem.children().not(".active-mode").each(function() {
+              var elem = jq(this);
+              elem.removeClass().addClass(elem.data("original-classes"));
             });
             main_elem.stop().animate({backgroundColor: main_elem.data("original-color")}, 1000);
           };
@@ -57,37 +60,61 @@ var LightControl = function() {
     });
   }
 
-  function processData(data) {
+  function delayedProcessData() {
     var max_brightness = 0;
-    jq.each(data, function () {
-      var group_id = this.fields.group_id;
-      jq(".light-group-"+group_id+"-name").html(this.fields.description);
-      jq(".light-group-"+group_id+"-brightness").html(this.fields.current_brightness+"%").data("brightness", this.fields.current_brightness);
-      var color = this.fields.color;
-      var color_elem = jq(".light-group-"+group_id+"-color");
-      if (color in color_map) {
-        color_elem.html(color_map[color]);
-      }
-      color_elem.data(color);
-      jq(".light-group-"+group_id+"-on").data(this.fields.on);
-      if (this.fields.on) {
-        jq(".light-group-"+group_id+"-on").html("<i class='fa fa-toggle-on'></i>");
-      } else {
-        jq(".light-group-"+group_id+"-on").html("<i class='fa fa-toggle-off'></i>");
-      }
-      max_brightness = Math.max(max_brightness, this.fields.morning_light_level);
+    var data = latest_data;
+    console.log(data);
+    if (data && data.groups) {
+      jq.each(data.groups, function () {
+        var group_id = this.fields.group_id;
+        jq(".light-group-"+group_id+"-name").html(this.fields.description);
+        jq(".light-group-"+group_id+"-brightness").html(this.fields.current_brightness+"%").data("brightness", this.fields.current_brightness);
+        var color = this.fields.color;
+        var color_elem = jq(".light-group-"+group_id+"-color");
+        if (color in color_map) {
+          color_elem.html(color_map[color]);
+        }
+        color_elem.data(color);
+        jq(".light-group-"+group_id+"-on").data(this.fields.on);
+        if (this.fields.on) {
+          jq(".light-group-"+group_id+"-on").html("<i class='fa fa-toggle-on'></i>");
+        } else {
+          jq(".light-group-"+group_id+"-on").html("<i class='fa fa-toggle-off'></i>");
+        }
+        max_brightness = Math.max(max_brightness, this.fields.morning_light_level);
 
-      if (this.fields.morning_light_level < 10) {
-        jq(".lights-morning-auto-"+group_id).addClass("lights-morning-dim").removeClass("lights-morning-bright");
+        if (this.fields.morning_light_level < 10) {
+          jq(".lights-morning-auto-"+group_id).addClass("lights-morning-dim").removeClass("lights-morning-bright");
+        } else {
+          jq(".lights-morning-auto-"+group_id).addClass("lights-morning-bright").removeClass("lights-morning-dim");
+        }
+      });
+      if (max_brightness < 10) {
+        jq(".lights-morning-auto").addClass("lights-morning-dim").removeClass("lights-morning-bright");
       } else {
-        jq(".lights-morning-auto-"+group_id).addClass("lights-morning-bright").removeClass("lights-morning-dim");
+        jq(".lights-morning-auto").addClass("lights-morning-bright").removeClass("lights-morning-dim");
       }
-    });
-    if (max_brightness < 10) {
-      jq(".lights-morning-auto").addClass("lights-morning-dim").removeClass("lights-morning-bright");
-    } else {
-      jq(".lights-morning-auto").addClass("lights-morning-bright").removeClass("lights-morning-dim");
     }
+    if (data && data.main_buttons) {
+      jq.each(data.main_buttons, function(key, value) {
+        if (value) {
+          console.log(key, value, "show", jq(".lights-"+key).find(".active-mode"));
+          jq(".lights-"+key).find(".active-mode").show();
+        } else {
+          console.log(key, value, "hide", jq(".lights-"+key).find(".active-mode"));
+          jq(".lights-"+key).find(".active-mode").hide();
+        }
+      });
+    }
+  }
+
+  function processData(data) {
+    // Usually there is multiple updates for this. Delay processing a bit.
+    latest_data = data;
+    if (delayed_process) {
+      delayed_process = clearTimeout(delayed_process);
+    }
+    delayed_process = setTimeout(delayedProcessData, 100);
   }
 
 

@@ -8,6 +8,10 @@
 .weather .temperature-now-unit {
   font-size: 2.5em;
 }
+.weather .wind-direction-now {
+  font-size: 3em;
+}
+
 .weather .wind-now-description {
   font-size: 2.5em;
   margin-left: 1em;

@@ -43,7 +43,7 @@
           </div>
           <div class="row weather open-weather-modal">
             <div class="col-md-12 weather-main">
-              <span class="temperature-now data-field"><i class='fa fa-question-circle'></i></span><span class="temperature-now-unit">&deg;C</span> <span class="wind-now-description">Tuuli:</span> <span class="wind-now data-field"><i class='fa fa-question-circle'></i></span>
+              <span class="temperature-now data-field"><i class='fa fa-question-circle'></i></span><span class="temperature-now-unit">&deg;C</span> <span class="wind-now-description">Tuuli:</span> <span class="wind-now data-field"><i class='fa fa-question-circle'></i></span> <span class="wind-direction-now data-field"></span>
             </div>
           </div>
           <div class="row center-content weather open-weather-modal ">
@@ -109,12 +109,12 @@
             </div>
           </div>
           <div class="lightbox center-content">
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="display" data-command="off"><i class="fa fa-power-off"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-on" data-source="display" data-command="on"><i class="fa fa-sun-o"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-night" data-source="display" data-command="night"><i class="fa fa-bed"></i></div>
+            {% include "snippets/large_button.html" with mode="off" command="off" icon="power-off" %}
+            {% include "snippets/large_button.html" with mode="on" command="on" icon="sun-o" %}
+            {% include "snippets/large_button.html" with mode="night" command="night" icon="bed" %}
             <br>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="display" data-command="morning-sleeping"><i class="fa fa-bed"></i> <i class="fa fa-user"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning lights-morning-auto" data-source="display" data-command="morning-all"><i class="fa fa-arrow-right"></i><i class="fa fa-bed"></i></div>
+            {% include "snippets/large_button.html" with mode="morning" command="morning-sleeping" icon="bed" icon2="user" %}
+            {% include "snippets/large_button.html" with mode="morning lights-morning-auto" command="morning-all" icon="arrow-right" icon2="bed" %}
           </div>
 
           <div class="timed-lightcontrols-main">

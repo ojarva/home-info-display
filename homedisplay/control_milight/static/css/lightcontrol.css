@@ -1,3 +1,15 @@
+.lightcontrol-btn-large .active-mode {
+  position: absolute;
+  font-size: 0.5em;
+  top: 0px;
+  left: 5px;
+  display: none;
+}
+
+.lightcontrol-btn-large {
+  position: relative;
+}
+
 .lights-morning-dim {
 }
 

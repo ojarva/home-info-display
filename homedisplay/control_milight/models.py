@@ -64,6 +64,32 @@ def set_morning_light(group):
     update_lightstate(group, brightness, "white")
     logger.info("Set morning light for group %s. Brightness is %s", group, brightness)
 
+
+def get_main_buttons():
+    all_off = True
+    all_on = True
+    all_on_white_bright = True
+    all_on_white_dim = True
+    all_on_red_dim = True
+    for group in LightGroup.objects.all():
+        if group.on:
+            all_off = False
+            if group.color != "white":
+                all_on_white_bright = False
+                all_on_white_dim = False
+            elif group.current_brightness != 100:
+                all_on_white_bright != False
+            if group.current_brightness > 10:
+                all_on_white_dim = False
+            if group.color != "red":
+                all_on_red_dim = False
+        else:
+            all_on = False
+            all_on_white_bright = False
+            all_on_white_dim = False
+            all_on_red_dim = False
+    return {"on": all_on_white_bright, "off": all_off, "night": all_on_red_dim, "lights-morning-auto": all_on_white_dim}
+
 def get_serialized_lightgroups():
     return [get_serialized_lightgroup(item) for item in LightGroup.objects.all()]
 
@@ -215,4 +241,4 @@ def publish_lightautomation_saved(sender, instance, *args, **kwargs):
 
 @receiver(post_save, sender=LightGroup, dispatch_uid="lightgroup_post_save")
 def publish_lightgroup_saved(sender, instance, *args, **kwargs):
-    publish_ws("lightcontrol", get_serialized_lightgroups())
+    publish_ws("lightcontrol", {"groups": get_serialized_lightgroups(), "main_buttons": get_main_buttons()})
