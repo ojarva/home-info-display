@@ -1,7 +1,8 @@
 body {
   background-color: black;
   color: #bbb;
-
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .light-controls {

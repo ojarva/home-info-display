@@ -2,6 +2,8 @@ body {
   background-color: black;
   color: #bbb;
   padding-left: 5px;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .light-controls {
