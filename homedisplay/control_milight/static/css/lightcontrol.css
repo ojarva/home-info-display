@@ -1,9 +1,8 @@
-.lights-morning-dim i {
-  color: #9C9C9C !important;
+.lights-morning-dim {
 }
 
-.lights-morning-bright i {
-  color: #FFFFFF !important;
+.lights-morning-bright {
+  background-color: #5C5C5C !important;
 }
 
 .timed-lightcontrol {
