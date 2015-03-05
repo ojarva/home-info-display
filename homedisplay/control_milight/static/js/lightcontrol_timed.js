@@ -136,6 +136,7 @@ var LightControlTimed = function(options) {
 
   function updateFromNow() {
     if (!latest_data) {
+      main.find(".current-brightness").hide();
       return;
     }
     var data = latest_data.fields;
@@ -145,11 +146,6 @@ var LightControlTimed = function(options) {
         verb,
         show_progress_indicator,
         content = main.find(".time-left");
-    if (running) {
-      main.find(".current-brightness").show();
-    } else {
-      main.find(".current-brightness").hide();
-    }
     if (now < end_time && end_time - now < getDurationSeconds() * 1000) { // Currently running
       verb = "päättyy";
       if (!running) {
@@ -178,8 +174,11 @@ var LightControlTimed = function(options) {
     }
     if (show_progress_indicator === true) {
       main.find(".play-control i").addClass("success-message");
+      main.find(".current-brightness").show();
+
     } else if (show_progress_indicator === false) {
       main.find(".play-control i").removeClass("success-message");
+      main.find(".current-brightness").hide();
     }
   }
 
