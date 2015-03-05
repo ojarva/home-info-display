@@ -2319,6 +2319,14 @@
             return this.from(moment(), withoutSuffix);
         },
 
+        fromNowSynced : function (withoutSuffix) {
+          if (clock !== undefined) {
+            return this.from(clock.getMoment(), withoutSuffix);
+          } else {
+            return this.fromNow(withoutSuffix);
+          }
+        },
+
         calendar : function (time) {
             // We want to compare the start of today, vs this.
             // Getting start-of-today depends on whether we're locat/utc/offset

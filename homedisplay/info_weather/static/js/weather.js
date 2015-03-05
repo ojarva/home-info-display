@@ -13,10 +13,11 @@ var RefreshWeather = function (options) {
 
   function processData(data) {
     resetWeatherInfo();
+    debug.log("Processing weather data with " + data.hours.length + " items");
     if (data.sun !== undefined) {
       var sunrise = moment(data.sun.sunrise);
       var sunset = moment(data.sun.sunset);
-      jq(".sun-info").html("<i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-up'></i> " + sunrise.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunrise + "'>" + sunrise.fromNow() + "</span>) <i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-down'></i> " + sunset.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunset + "'>" + sunset.fromNow() + "</span>)");
+      jq(".sun-info").html("<i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-up'></i> " + sunrise.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunrise + "'>" + sunrise.fromNowSynced() + "</span>) <i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-down'></i> " + sunset.format("HH:mm") + " (<span class='auto-fromnow-update' data-timestamp='" + sunset + "'>" + sunset.fromNowSynced() + "</span>)");
     }
     var items = jq(".weather"),
         current_index = 1,

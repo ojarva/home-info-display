@@ -28,6 +28,7 @@ var IndoorAirQuality = function (options) {
     var elem = jq(goptions.selector);
 
     if (typeof data === "undefined") {
+      debug.warn("No data available for indoor air quality graphs");
       console.warn("!!! No data available for indoor air quality graphs!");
       elem.children().remove();
       elem.slideUp();

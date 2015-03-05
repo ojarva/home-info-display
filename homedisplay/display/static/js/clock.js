@@ -79,7 +79,7 @@ var TimedRefresh = function() {
         intervals[interval] = {};
     }
     intervals[interval][key] = callback;
-    console.debug("Registered interval", interval, key);
+    debug.log("Registered interval " + interval + " for key " + key);
   }
 
   function deRegister(key, interval) {
@@ -90,7 +90,7 @@ var TimedRefresh = function() {
 
   function executeCallbacks(interval) {
     if (!(interval in intervals)) {
-      console.warn("Interval ", interval, " does not exist");
+      debug.warn("Interval " + interval + " does not exist");
       return;
     }
     for (key in intervals[interval]) {

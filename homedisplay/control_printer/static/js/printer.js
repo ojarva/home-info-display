@@ -47,7 +47,7 @@ var Printer = function () {
       jq("#print-modal .printer-jobs .spinner").slideUp();
       main.slideDown();
       jq.each(data, function (key, value) {
-        main.find("ul").append("<li data-id='" + key + "'><i class='fa-li fa fa-times-circle'></i>Luotu " + moment(value["time-at-creation"]).fromNow() + "</i>");
+        main.find("ul").append("<li data-id='" + key + "'><i class='fa-li fa fa-times-circle'></i>Luotu " + moment(value["time-at-creation"]).fromNowSynced() + "</i>");
       });
       main.find("li").on("click", function() {
         content_switch.userAction();

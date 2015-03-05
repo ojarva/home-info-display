@@ -14,7 +14,7 @@ var RepeatingTasks = function(elem, use_date) {
       var overdue_by = "", diff;
       if (this.fields.last_completed_at) {
         diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds");
-        overdue_by = " (<span class='auto-fromnow-update' data-timestamp='" + diff + "'>" + diff.fromNow() + "</span>)";
+        overdue_by = " (<span class='auto-fromnow-update' data-timestamp='" + diff + "'>" + diff.fromNowSynced() + "</span>)";
       }
       var icon;
       if (this.fields.optional) {

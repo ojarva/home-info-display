@@ -8,7 +8,7 @@ var MomentAutoUpdate = function(options) {
     var elem = jq(options.selector);
     jq.each(elem, function () {
       var ts = jq(this).data("timestamp");
-      jq(this).html(moment(ts).fromNow());
+      jq(this).html(moment(ts).fromNowSynced());
     });
   }
 

@@ -73,13 +73,14 @@ body {
   font-size: 300%;
 }
 
-#lightcontrol-modal .clock {
+#lightcontrol-modal .clock, #debug-modal .clock {
   font-size: 300%;
   padding-right: 10px;
 }
-#lightcontrol-modal .calendar {
+#lightcontrol-modal .calendar, #debug-modal .calendar {
   font-size: 200%;
 }
+
 
 .action-button {
   font-size: 120%;

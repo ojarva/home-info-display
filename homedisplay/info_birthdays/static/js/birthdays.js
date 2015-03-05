@@ -41,6 +41,7 @@ var Birthdays = function(elem, use_date, options) {
   }
 
   function processData(data) {
+    debug.log("Processing " + data.length + " birthdays for " + this_date);
     clearDates();
     var now, now_str, data_sortable = [];
     now = clock.getMoment().subtract(1, "days");

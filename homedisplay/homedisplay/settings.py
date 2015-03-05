@@ -61,6 +61,7 @@ PIPELINE_BASE_CSS = [
     "css/printer.css",
     "css/torrents.css",
     "css/transportation.css",
+    "css/debug.css",
 ]
 
 PIPELINE_CSS = {
@@ -111,6 +112,7 @@ PIPELINE_BASE_JS = [
     "js/lightcontrol.js",
     "js/clock.js",
     "js/reload.js",
+    "js/debug.js",
 
 ]
 

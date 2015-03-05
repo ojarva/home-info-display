@@ -18,6 +18,7 @@ var LightControlTimed = function(options) {
       running;
   if (main.length === 0) {
     console.warn("!!! Invalid selector for LightControlTimed: " + options.elem);
+    debug.warn("Invalid selector for LightControlTimed: " + options.elem);
   }
   var action = main.data("action");
 
@@ -154,14 +155,14 @@ var LightControlTimed = function(options) {
       } else {
         show_progress_indicator = true;
       }
-      content.html(verb + " " + end_time.fromNow());
+      content.html(verb + " " + end_time.fromNowSynced());
     } else if (now < start_time) { // Not yet started
       verb = "alkaa";
       show_progress_indicator = false;
       if (!running) {
         verb = "alkaisi";
       }
-      content.html(verb + " " + start_time.fromNow());
+      content.html(verb + " " + start_time.fromNowSynced());
     } else {
       // Done for today.
       start_time.add(1, "days");
@@ -170,7 +171,7 @@ var LightControlTimed = function(options) {
       if (!running) {
         verb = "alkaisi";
       }
-      content.html(verb + " " + start_time.fromNow());
+      content.html(verb + " " + start_time.fromNowSynced());
     }
     if (show_progress_indicator === true) {
       main.find(".play-control i").addClass("success-message");

@@ -53,7 +53,10 @@ function WS4Redis(options, $) {
   }
 
   function on_open() {
-    console.log("Connected to "+ws.url);
+    console.log("Connected to " + ws.url);
+    if (debug && debug.log) {
+      debug.log("Connected to websocket");
+    }
     timer_interval = 500;
     deferred.resolve();
     if (opts.heartbeat_msg && heartbeat_interval === null) {
@@ -66,7 +69,7 @@ function WS4Redis(options, $) {
     if (closed) {
       return;
     }
-    console.log("Connection to "+ws.url+" closed!");
+    console.log("Connection to " + ws.url + " closed!");
     if (!timer) {
       // try to reconnect
       timer = setTimeout(function() {
@@ -78,6 +81,9 @@ function WS4Redis(options, $) {
 
   function on_error(evt) {
     console.error("Websocket connection is broken!");
+    if (debug && debug.error) {
+      debug.error("Websocket disconnected");
+    }
     deferred.reject(new Error(evt));
   }
 
