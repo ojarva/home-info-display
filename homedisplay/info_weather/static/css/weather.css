@@ -1,3 +1,64 @@
+
+.fa-rotate-22_5 {
+ transform: rotate(22.5deg);
+}
+
+.fa-rotate-45 {
+ transform: rotate(45.0deg);
+}
+
+.fa-rotate-67_5 {
+ transform: rotate(67.5deg);
+}
+
+.fa-rotate-90 {
+ transform: rotate(90.0deg);
+}
+
+.fa-rotate-112_5 {
+ transform: rotate(112.5deg);
+}
+
+.fa-rotate-135 {
+ transform: rotate(135.0deg);
+}
+
+.fa-rotate-157_5 {
+ transform: rotate(157.5deg);
+}
+
+.fa-rotate-180 {
+ transform: rotate(180.0deg);
+}
+
+.fa-rotate-202_5 {
+ transform: rotate(202.5deg);
+}
+
+.fa-rotate-225 {
+ transform: rotate(225.0deg);
+}
+
+.fa-rotate-247_5 {
+ transform: rotate(247.5deg);
+}
+
+.fa-rotate-270 {
+ transform: rotate(270.0deg);
+}
+
+.fa-rotate-292_5 {
+ transform: rotate(292.5deg);
+}
+
+.fa-rotate-315 {
+ transform: rotate(315.0deg);
+}
+
+.fa-rotate-337_5 {
+ transform: rotate(337.5deg);
+}
+
 .weather-temperature {
   font-size: 175%;
 }

@@ -22,9 +22,11 @@ var RefreshWeather = function (options) {
         current_index = 1,
         first_date = false,
         new_day = false;
-    if (data !== undefined && data.current !== undefined && data.current.feels_like !== undefined) {
+    if (data !== undefined && data.current !== null && data.current.feels_like !== null) {
       items.find(".temperature-now").html(data.current.feels_like);
       items.find(".wind-now").html(data.current.wind_speed_readable);
+      var direction = (data.current.wind_direction_degrees + "").replace(".", "_");
+      items.find(".wind-direction-now").html("<i class='fa fa-fw fa-long-arrow-up fa-rotate-"+direction+"'></i>");
     }
     jq.each(data.next, function () {
       var this_item = items.find(".weather-" + current_index);
@@ -48,7 +50,7 @@ var RefreshWeather = function (options) {
         current_row,
         highlight_set = false,
         last_header,
-        new_item = "<div class='col-md-1'><span class='timestamp'><i class='fa fa-question-circle'></i></span><br><span class='temperature'><i class='fa fa-question-circle'></i></span><span class='temperature-unit'>&deg;C</span><span class='symbol'><i class='fa fa-question-circle'></i></span><br><span class='wind-direction'></span><span>:</span> <span class='wind-speed'><i class='fa fa-question-circle'></i></span><span class='wind-speed-unit'>m/s</span></div>";
+        new_item = "<div class='col-md-1'><span class='timestamp'><i class='fa fa-question-circle'></i></span><br><span class='temperature'><i class='fa fa-question-circle'></i></span><span class='temperature-unit'>&deg;C</span><span class='symbol'><i class='fa fa-question-circle'></i></span><br><span class='wind-direction'></span><span> </span> <span class='wind-speed'><i class='fa fa-question-circle'></i></span><span class='wind-speed-unit'>m/s</span></div>";
     jq.each(data.hours, function () {
       if (this.hour % 2 !== 0) {
         return true; // continue
@@ -68,7 +70,10 @@ var RefreshWeather = function (options) {
       current_item.find(".symbol").html("<img src='/homecontroller/static/images/" + this.icon + ".png'>");
       current_item.find(".temperature-unit").html("&deg;C");
       current_item.find(".wind-speed").html(Math.round(this.wind_speed / 3.6));
-      current_item.find(".wind-direction").html(this.wind_direction);
+      if (this.wind_direction_degrees !== null) {
+        var direction = (this.wind_direction_degrees + "").replace(".", "_");
+        current_item.find(".wind-direction").html("<i class='fa fa-fw fa-long-arrow-up fa-rotate-"+direction+"'></i>");
+      }
       if (!highlight_set && this.date === now.format("YYYY-MM-DD") && (now.hour() === this.hour || now.hour() - 1 === this.hour)) {
         current_item.addClass("weather-today");
         highlight_set = true;

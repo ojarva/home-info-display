@@ -55,6 +55,7 @@ def get_weather_data():
         i = model_to_dict(item)
         i["apparent_temperature"] = calculate_apparent_temperature(item.temperature, float(item.wind_speed), item.humidity)
         i["wind_speed_readable"] = get_wind_readable(float(item.wind_speed))
+        i["wind_direction_degrees"] = item.get_wind_direction_degrees()
         i["weekday"] = i["date"].weekday()
         i["weekday_fi"] = WEEKDAYS_FI[i["weekday"]]
         if i["date"] == date and i["hour"] == time_now.hour:
