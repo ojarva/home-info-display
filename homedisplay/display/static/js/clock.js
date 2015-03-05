@@ -88,7 +88,7 @@ var TimedRefresh = function() {
   }
 
   function executeCallbacks(interval) {
-    if (!(interval in internals)) {
+    if (!(interval in intervals)) {
       console.warn("Interval ", interval, " does not exist");
       return;
     }
