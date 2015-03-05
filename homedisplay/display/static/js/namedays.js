@@ -8,20 +8,24 @@ var Namedays = function() {
 
   function addItems() {
     clearItems();
-    var now = clock.getMoment();
-    var current_elem;
-    var current_index = 0;
-    var items_in_current = 1000;
+    var now = clock.getMoment(),
+        current_elem,
+        current_index = 0,
+        items_in_current = 1000,
+        day,
+        month;
     for (i = 0; i < 365; i++) {
+      day = now.date() - 1;
+      month = now.month()
       if (items_in_current > 45) {
         current_elem = jq("#namedays-modal ul").slice(current_index, current_index + 1);
         items_in_current = 0;
         current_index++;
       }
-      if (data[now.month()].length == now.day()) {
+      if (data[month].length == day) {
         // 29th of Feb
       } else {
-        current_elem.append("<li>"+data[now.month()][now.day()]+" "+now.format("DD.MM (dd)")+"</li>")
+        current_elem.append("<li>"+data[month][day]+" "+now.format("DD.MM (dd)")+"</li>")
         items_in_current += 1;
       }
       now.add(1, "day");
