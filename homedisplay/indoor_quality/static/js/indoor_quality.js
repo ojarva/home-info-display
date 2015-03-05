@@ -2,7 +2,6 @@ var IndoorAirQuality = function (options) {
   "use strict";
   options = options || {};
   options.main_elem = options.main_elem || ".indoor-quality";
-  options.update_interval = options.update_interval || 30 * 60 * 1000;
   options.update_timeout = options.update_timeout || 2 * 60 * 1000;
   options.co2_green = options.co2_green || 1000;
   options.co2_error = options.co2_error || 1500;
@@ -175,9 +174,7 @@ var IndoorAirQuality = function (options) {
   }
 
   function startInterval() {
-    stopInterval();
     update();
-    update_interval = setInterval(update, options.update_interval);
     update_timeout = setTimeout(autoNoUpdates, 5000);
     ws_generic.register("indoor_quality", fetchTrend); // TODO: trend should be updated without polling
     ws_generic.register("indoor_co2", processCo2);
@@ -186,9 +183,6 @@ var IndoorAirQuality = function (options) {
   }
 
   function stopInterval() {
-    if (update_interval) {
-      update_interval = clearInterval(update_interval);
-    }
     ws_generic.deRegister("indoor_quality");
     ws_generic.deRegister("indoor_co2");
     ws_generic.deRegister("indoor_temperature");

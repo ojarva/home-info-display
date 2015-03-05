@@ -1,7 +1,6 @@
 var Birthdays = function(elem, use_date, options) {
   "use strict";
   options = options || {};
-  options.interval = options.interval || SLOW_UPDATE;
   options.showdate = options.showdate || false;
   options.maxitems = options.maxitems || 100000;
   var parent_elem = jq(elem), this_date = use_date, update_interval, current_item = 0, items_in_current = 0;
@@ -105,18 +104,13 @@ var Birthdays = function(elem, use_date, options) {
   }
 
   function startInterval() {
-    stopInterval();
     update();
-    update_interval = setInterval(update, options.interval);
     ws_generic.register("birthdays_" + this_date, onReceiveItemWS);
     ge_refresh.register("birthdays_" + this_date, update);
     ge_intervals.register("birthdays_" + this_date, "daily", update);
   }
 
   function stopInterval() {
-    if (update_interval) {
-      update_interval = clearInterval(update_interval);
-    }
     ws_generic.deRegister("birthdays_" + this_date);
     ge_refresh.deRegister("birthdays_" + this_date);
     ge_intervals.deRegister("birthdays_" + this_date, "daily");

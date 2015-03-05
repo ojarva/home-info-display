@@ -1,8 +1,15 @@
 
 function WS4Redis(options, $) {
   'use strict';
-  var opts, ws, deferred, timer, timer_interval = 0, closed = false;
-  var heartbeat_interval = null, missed_heartbeats = 0;
+  var opts,
+      ws,
+      deferred,
+      timer,
+      timer_interval = 0,
+      closed = false,
+      heartbeat_interval = null,
+      missed_heartbeats = 0,
+      disconnected_since;
 
   if (this === undefined) {
     return new WS4Redis(options, $);

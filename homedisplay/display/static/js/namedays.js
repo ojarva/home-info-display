@@ -42,17 +42,13 @@ var Namedays = function() {
 
   function startInterval() {
     update();
-    stopInterval();
-    update_interval = setInterval(update, SLOW_UPDATE);
-
+    ge_refresh.register("namedays", update);
+    ge_intervals.register("namedays", "daily", update);
   }
   function stopInterval() {
-    if (update_interval) {
-      update_interval = clearInterval(update_interval);
-    }
+    ge_refresh.deRegister("namedays");
+    ge_intervals.deRegister("namedays", "daily");
   }
-  ge_refresh.register("namedays", update);
-  ge_intervals.register("namedays", "daily", update);
 
   this.update = update;
   this.startInterval = startInterval;

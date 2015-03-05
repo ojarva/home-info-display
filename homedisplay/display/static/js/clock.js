@@ -79,6 +79,7 @@ var TimedRefresh = function() {
         intervals[interval] = {};
     }
     intervals[interval][key] = callback;
+    console.debug("Registered interval", interval, key);
   }
 
   function deRegister(key, interval) {
@@ -116,6 +117,7 @@ var TimedRefresh = function() {
 
   this.register = register;
   this.deRegister = deRegister;
+  this.executeCallbacks = executeCallbacks;
 }
 
 jq(document).ready(function() {
