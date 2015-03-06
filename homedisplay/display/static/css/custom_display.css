@@ -1,3 +1,6 @@
+.transportation ul div {
+  display: inline;
+}
 .weather-main {
   margin-left: 20px;
   margin-bottom: 20px;

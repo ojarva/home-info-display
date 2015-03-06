@@ -14,8 +14,11 @@ var Transportation = function() {
       var diff = moment(jq(this).data("timestamp")) - now;
       diff /= 1000;
       if (diff < parseInt(jq(this).parent().data("minimum-time"))) {
-        jq(this).fadeOut({duration: 900, complete: function() {
+        jq(this).hide("drop", {duration: 900, "direction": "left", complete: function() {
+          var next_departure = jq(this).parent().children().first();
+          next_departure.hide().addClass("first-departure");
           jq(this).remove();
+          next_departure.show("drop", {"duration": 900, "direction": "left"});
         }});
         return true; // continue
       }
