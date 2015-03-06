@@ -74,14 +74,30 @@ class LineShow(models.Model):
 
     def is_valid(self):
         now = datetime.datetime.now()
-        if self.show_start and now.time() < self.show_start:
-            return False
-        if self.show_end and now.time() > self.show_end:
-            return False
         current_day = now.weekday()
-        if self.show_days[current_day] == "1":
+        if self.show_days[current_day] != "1":
+            return False
+        if self.show_end and self.show_start:
+            if self.show_end < self.show_start:
+                # Over midnight
+                if now.time() > self.show_start:
+                    return True
+                if now.time() < self.show_end:
+                    return True
+                return False
+        valid_start = valid_end = None
+        if self.show_start:
+            if now.time() < self.show_start:
+                valid_start = True
+            else:
+                return False
+        if self.show_end:
+            if now.time() > self.show_end:
+                return True
+            else:
+                return False
+        if valid_start:
             return True
-        return False
 
 class Line(models.Model):
     ICONS = (
