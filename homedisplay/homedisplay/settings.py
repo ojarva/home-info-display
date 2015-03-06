@@ -141,6 +141,7 @@ PIPELINE_JS = {
         'source_filenames':
             PIPELINE_BASE_JS + [
             "js/weather_door.js",
+            "js/custom_door.js",
         ],
         'output_filename': 'js/generated/door.js',
     },

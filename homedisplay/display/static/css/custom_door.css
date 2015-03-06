@@ -1,8 +1,22 @@
 body {
-  background-color: black;
-  color: #bbb;
   overflow-x: hidden;
   overflow-y: hidden;
+
+  color: #bbb;
+  background-color: black;
+}
+
+.screensaver {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: black;
 }
 
 .light-controls {
@@ -10,9 +24,10 @@ body {
 }
 
 .center-content {
-  text-align: center;
-  margin-left:auto;
   margin-right:auto;
+  margin-left:auto;
+
+  text-align: center;
 }
 
 .timeinfo .clock {
@@ -23,64 +38,105 @@ body {
 .timeinfo .calendar {
   padding-top: 0.25em;
   padding-bottom: 0.25em;
+
   font-size: 450%;
 }
 
-#screensaver {
-  background-color: black;
-  display: block;
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 100%;
-}
-
-
 #weather-general {
   float: left;
-  font-size: 550%;
+
   text-align: center;
+
+  font-size: 550%;
 }
+
 #weather-general img {
   width: 80px;
   height: 80px;
 }
 
 #time-info {
-  background-color: #131313;
   height: 300px;
   padding-top: 25px;
+
+  background-color: #131313;
 }
 
 #lights-off {
   background-color: #111111;
 }
+
 #lights-full {
-  background-color: #006600;
   color: #E6FFD7;
+  background-color: #006600;
 }
+
 #lights-morning {
   background-color: #222222;
 }
+
 #lights-night {
-  background-color: #cc0000;
   color: #ffeded;
+  background-color: #cc0000;
+}
+
+.action-button {
+  display: inline-block;
+
+  margin-top: 15px;
+  margin-right: 15px;
+  margin-bottom: 5px;
+  margin-left: 15px;
+  padding: 15px;
+}
+
+.light-box {
+  background-color: #111;
+}
+
+.dark-box {
+  background-color: #0d0d0d;
+}
+
+.cancel {
+  background-color: #cc0000;
+
+}
+
+.item-box {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 20px;
 }
 
 .col-md-6 {
-  width: 50% !important;
-  float: left;
   position: relative;
+
+  float: left;
+
+  width: 50% !important;
   min-height: 1px;
-  padding-left: 40px;
   padding-right: 40px;
+  padding-left: 40px;
 }
 
 .light-controls div {
   height: 330px;
+  padding-top: 60px;
 }
 
-.light-controls div {
-  padding-top: 60px;
+.door-shutdown-options {
+  position: fixed;
+  top: 300px;
+  left: 0px;
+
+  display: none;
+
+  width: 100%;
+  height: 660px;
+
+  opacity: 0.95;
+  background-color: black;
+
+  font-size: 200%;
 }
