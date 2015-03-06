@@ -55,6 +55,7 @@ var ShutdownProgress = function(options) {
     update_interval = setInterval(update, 100);
   }
 
+
   function restart(source) {
     if (source !== "backend") {
       jq.post("/homecontroller/control_display/power/delayed-shutdown", function () {
@@ -71,7 +72,9 @@ var ShutdownProgress = function(options) {
     if (message === "display-off" || message === "display-on" || message === "cancel-delayed") {
       stop("backend");
     } else if (message === "delayed-shutdown") {
-      content_switch.switchContent("#shutdown-progress");
+      if (!(jq("#shutdown-progress").is(":visible"))) {
+        content_switch.switchContent("#shutdown-progress");
+      }
       restart("backend");
     }
   }
