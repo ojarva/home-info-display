@@ -78,7 +78,7 @@ def get_main_buttons():
                 all_on_white_bright = False
                 all_on_white_dim = False
             elif group.current_brightness != 100:
-                all_on_white_bright != False
+                all_on_white_bright = False
             if group.current_brightness > 10:
                 all_on_white_dim = False
             if group.color != "red":
