@@ -22,7 +22,8 @@ var RepeatingTasks = function(elem, use_date) {
       } else {
         icon = "fa-repeat";
       }
-      parent_elem.append("<li class='repeating-task-mark-done' data-id='" + this.pk + "'><i class='fa-li fa " + icon + "'></i> <span class='task-title'>" + this.fields.title + "</span>" + overdue_by + "</li>");
+      var added_elem = parent_elem.append("<li class='repeating-task-mark-done' data-id='" + this.pk + "' data-snooze-to-show='" + this.fields.snooze_to_show + "'><i class='fa-li fa " + icon + "'></i> <span class='task-title'>" + this.fields.title + "</span>" + overdue_by + "</li>");
+      added_elem.find("li").data("history", JSON.stringify(this.fields.history));
     });
     parent_elem.find(".repeating-task-mark-done").on("click", function() {
       content_switch.userAction();
@@ -30,6 +31,23 @@ var RepeatingTasks = function(elem, use_date) {
       var id = this_elem.data("id");
       jq("#confirm-repeating-task").data("id", id);
       jq("#confirm-repeating-task .task-title").html(this_elem.find(".task-title").html());
+
+      var snooze_to_show = this_elem.data("snooze-to-show");
+      var snooze_immediately = jq("#confirm-repeating-task .snooze-immediately");
+      if (snooze_to_show < 0) {
+        snooze_immediately.show();
+        snooze_immediately.data("days", snooze_to_show);
+      } else {
+        snooze_immediately.hide();
+      }
+
+      var task_history = jq("#confirm-repeating-task .task-history ul");
+      task_history.children().remove();
+      var tasks = JSON.parse(this_elem.data("history"))
+      jq.each(tasks, function () {
+        var parsed = moment(this.fields.completed_at);
+        task_history.append("<li>" + parsed.format("YYYY-MM-DD") + " (" + parsed.fromNowSynced() + ")</li>");
+      });
       content_switch.switchContent("#confirm-repeating-task");
     });
   }
@@ -84,13 +102,13 @@ jq(document).ready(function() {
   });
   jq("#confirm-repeating-task .yes").on("click", function () {
     var id = jq("#confirm-repeating-task").data("id");
-    jq.get("/homecontroller/repeating_tasks/done/" + id, function() {
+    jq.post("/homecontroller/repeating_tasks/done/" + id, function() {
     });
     content_switch.switchContent("#main-content");
   });
   jq("#confirm-repeating-task .snooze").on("click", function () {
     var id = jq("#confirm-repeating-task").data("id");
-    jq.get("/homecontroller/repeating_tasks/snooze/" + id + "/" + jq(this).data("days"), function() {
+    jq.post("/homecontroller/repeating_tasks/snooze/" + id + "/" + jq(this).data("days"), function() {
     });
     content_switch.switchContent("#main-content");
   });

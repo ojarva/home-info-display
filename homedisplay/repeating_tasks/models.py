@@ -17,7 +17,7 @@ logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
 def get_repeating_data(date, serialized=False):
     todo_tasks = []
-    tasks = Task.objects.all()
+    tasks = Task.objects.all().prefetch_related("tasks")
     tasks = sorted(tasks, key=lambda t: t.overdue_by())
     tasks.reverse()
     if date == "today":
@@ -30,20 +30,27 @@ def get_repeating_data(date, serialized=False):
         day_starts = day_ends = None
     for task in tasks:
         exp_at = task.expires_at()
+        task_serialized = json.loads(serializers.serialize("json", [task]))[0]
+        task_serialized["fields"]["history"] = json.loads(serializers.serialize("json", TaskHistory.objects.filter(task=task)))
+
+        snooze_to_show = None
+        expires_at = task.expires_at()
+        if expires_at > now():
+            snooze_to_show = (now() - expires_at).days - 1
+        task_serialized["fields"]["snooze_to_show"] = snooze_to_show
+
         if day_starts and day_ends:
             if day_starts < exp_at and day_ends > exp_at:
-                todo_tasks.append(task)
+                todo_tasks.append(task_serialized)
         elif date == "all":
-            todo_tasks.append(task)
-    todo_tasks = sorted(todo_tasks, key=lambda t: t.optional)
-    if serialized:
-        return json.loads(serializers.serialize("json", todo_tasks))
+            todo_tasks.append(task_serialized)
+    todo_tasks = sorted(todo_tasks, key=lambda t: t["fields"]["optional"])
     return todo_tasks
 
 def get_all_repeating_data():
     data = {}
     for spec in ("today", "tomorrow", "all"):
-        data[spec] = json.loads(serializers.serialize("json", get_repeating_data(spec)))
+        data[spec] = get_repeating_data(spec)
     return data
 
 class Task(models.Model):
@@ -60,6 +67,8 @@ class Task(models.Model):
     title = models.TextField(verbose_name="Otsikko") #TODO: convert to CharField
     optional = models.NullBooleanField(default=False, verbose_name="Optionaalinen", help_text="Kyllä, jos tarkoituksena on tarkistaa, eikä tehdä joka kerta.")
     snooze = models.DateTimeField(null=True, blank=True)
+    show_immediately = models.BooleanField(default=False, blank=True)
+
     repeat_every_n_seconds = models.IntegerField(null=True, blank=True, verbose_name="Toista joka n:s sekunti", help_text="Toistoväli sekunteina")
     trigger_every_weekday = models.CharField(null=True, blank=True, max_length=2, choices=WEEKDAYS, verbose_name="Toista tiettynä viikonpäivänä")
     trigger_every_day_of_month = models.SmallIntegerField(null=True, blank=True, verbose_name="Toista tiettynä päivänä kuukaudesta")
@@ -79,6 +88,8 @@ class Task(models.Model):
 
     def expires_at(self):
         """ Returns datetime when this task expires """
+        if self.show_immediately:
+            return now()
         if self.snooze:
             return self.snooze
         if self.last_completed_at is None:
@@ -96,6 +107,8 @@ class Task(models.Model):
             > 0 if task is overdue
 
         """
+        if self.show_immediately:
+            return datetime.timedelta(0)
         if self.snooze:
             if self.snooze < now():
                 self.snooze = None
@@ -141,13 +154,17 @@ class Task(models.Model):
 class TaskHistory(models.Model):
     class Meta:
         get_latest_by = "completed_at"
+        ordering = ("-completed_at", )
 
-    task = models.ForeignKey("Task")
+    def __unicode__(self):
+        return u"%s completed at %s" % (self.task, self.completed_at)
+
+    task = models.ForeignKey("Task", related_name="tasks")
     completed_at = models.DateTimeField(null=True)
 
 def publish_changes():
     for k in ("today", "tomorrow", "all"):
-        publish_ws("repeating_tasks_%s" % k, get_repeating_data(k, True))
+        publish_ws("repeating_tasks_%s" % k, get_repeating_data(k))
 
 
 @receiver(post_delete, sender=Task, dispatch_uid='task_delete_signal')
