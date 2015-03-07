@@ -1,4 +1,5 @@
 from control_display.utils import set_destination_brightness
+from control_display.display_utils import run_display_command
 from .models import LightAutomation, LightGroup, update_lightstate
 from django.conf import settings
 from django.utils import timezone
@@ -27,6 +28,9 @@ def run_timed_actions():
             continue
         percent_done = item.percent_done(now)
         logger.debug("Running %s, done %s%%", item.action, percent_done)
+
+        if item.turn_display_on:
+            run_display_command("on")
 
         brightness = None # Set brightness
 

@@ -179,6 +179,7 @@ class LightAutomation(models.Model):
     duration = models.IntegerField(verbose_name="Kestoaika sekunteina") # in seconds
     active_days = models.CharField(max_length=7, default="0000000", verbose_name="Päivät", help_text="ma-su, 0=pois, 1=päällä")
 
+    turn_display_on = models.BooleanField(default=False, blank=True, verbose_name="Käynnistä näyttö", help_text="Käynnistä näyttö ohjelman alussa")
     action_if_off = models.BooleanField(default=True, blank=True, verbose_name="Suorita sammutetuille", help_text="Suorita ohjelma myös sammutetuille valoille")
     set_white = models.BooleanField(default=False, blank=True, verbose_name="Vaihda väri valkoiseksi", help_text="Vaihda ohjelman aikana väri valkoiseksi")
     no_brighten = models.BooleanField(default=False, blank=True, verbose_name="Älä lisää valojen kirkkautta", help_text="Jos raksitettu, valojen kirkkautta ei koskaan lisätä")
