@@ -10,6 +10,9 @@ var ClockCalendar = function (options) {
 
   function processOffset(timestamp) {
     var server_timestamp = parseInt(timestamp);
+    if (server_timestamp < 1425731077393) {
+      console.error("Invalid timestamp from server");
+    }
     clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date()); // In milliseconds
   }
 
