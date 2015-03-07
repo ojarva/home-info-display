@@ -4,10 +4,18 @@ var ClockCalendar = function (options) {
   options.sync_interval = options.sync_interval || FAST_UPDATE;
   var update_interval, sync_interval, clock_offset = 0;
 
+  function getOffset() {
+    return clock_offset;
+  }
+
+  function processOffset(timestamp) {
+    var server_timestamp = parseInt(timestamp);
+    clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date()); // In milliseconds
+  }
+
   function updateOffset() {
     jq.get("/homecontroller/timer/current_time", function(timestamp) {
-      var server_timestamp = parseInt(timestamp);
-      clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date()); // In milliseconds
+      processOffset(timestamp);
     });
   }
 
@@ -23,8 +31,7 @@ var ClockCalendar = function (options) {
 
   function update() {
     var days = new Array("su", "ma", "ti", "ke", "to", "pe", "la");
-    var offset_fixed = new Date() - clock_offset;
-    var currentTime = new Date(offset_fixed);
+    var currentTime = getDate();
     var currentDay = days[currentTime.getDay()];
     var currentDate = currentTime.getDate();
     var currentMonth = currentTime.getMonth()+1;
@@ -35,10 +42,6 @@ var ClockCalendar = function (options) {
     currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;
     currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;
     jq(".clock").html(currentHours+":"+currentMinutes+":"+currentSeconds);
-  }
-
-  function getOffset() {
-    return clock_offset;
   }
 
   function stopInterval() {
@@ -59,6 +62,7 @@ var ClockCalendar = function (options) {
   }
 
   ge_refresh.register("clock-sync", updateOffset);
+  ws_generic.multiRegister("clock-sync", "clock-sync-main", processOffset);
 
   this.updateOffset = updateOffset;
   this.getOffset = getOffset;
