@@ -1,8 +1,6 @@
 var RefreshWeather = function (options) {
   "use strict";
   options = options || {};
-  options.update_interval = options.update_interval || SLOW_UPDATE;
-  var update_interval;
 
   function resetWeatherInfo() {
     jq(".weather .weather-box span").html("<i class='fa fa-question-circle'></i>");
@@ -122,5 +120,4 @@ jq(document).ready(function () {
   jq("#weather-modal .close").on("click", function() {
     content_switch.switchContent("#main-content");
   });
-
 });

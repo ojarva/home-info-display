@@ -26,7 +26,7 @@ var ClockCalendar = function (options) {
 
   function getDate() {
     // Get javascript date with current offset
-    return (new Date(new Date() + getOffset()));
+    return (new Date(new Date() - getOffset()));
   }
 
   function update() {
