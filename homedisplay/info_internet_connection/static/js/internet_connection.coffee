@@ -61,7 +61,7 @@ RefreshInternet = (options) ->
 
 
   processData = (data) ->
-    if not data? or not data.status? or data.status == "error"
+    if not data? or (data.status? and data.status == "error")
       debug.warn "No internet connection information is available"
       console.warn "!!! No internet connection information available"
       autoNoUpdates()
