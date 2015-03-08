@@ -231,32 +231,32 @@ var LightControlTimed = function(options) {
   }
 
   main.find(".duration-time").find(".plus").on("click", function() {
-    content_switch.userAction();
+    content_switch.userActivity();
     adjustDuration("plus");
   });
   main.find(".duration-time").find(".minus").on("click", function () {
-    content_switch.userAction();
+    content_switch.userActivity();
     adjustDuration("minus");
   });
 
   main.find(".start-time").find(".plus").on("click", function() {
-    content_switch.userAction();
+    content_switch.userActivity();
     adjustStartTime("plus");
   });
   main.find(".start-time").find(".minus").on("click", function() {
-    content_switch.userAction();
+    content_switch.userActivity();
     adjustStartTime("minus");
   });
 
 
   main.find(".play-control").on("click", function() {
-    content_switch.userAction();
+    content_switch.userActivity();
     setRunning(!running);
     postUpdate();
   });
 
   main.find(".play-pause-control").on("click", function () {
-    content_switch.userAction();
+    content_switch.userActivity();
     resumeOverride("ui");
   });
 

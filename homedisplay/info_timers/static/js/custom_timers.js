@@ -34,7 +34,7 @@ var CustomTimer = function(options) {
       jq(".timed-custom-timer-labels").append("<div class='timer-description-button animate-click' data-duration='" + this.duration + "'>" + this.label + "</div>");
     });
     modal_elem.find(".timer-description-button").on("click", function() {
-      content_switch.userAction();
+      content_switch.userActivity();
       var name = jq(this).html();
       submitTimer(name);
     });
@@ -163,7 +163,7 @@ var CustomTimer = function(options) {
   this.nullTimeField = nullTimeField;
 
   modal_elem.find(".add-timer-button").on("click", function () {
-    content_switch.userAction();
+    content_switch.userActivity();
     var content = jq(this).data("content").trim();
     processButton(content);
   });

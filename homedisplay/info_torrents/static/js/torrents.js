@@ -14,7 +14,7 @@ var Torrents = function() {
       jq("#torrent-items").append("<tr data-hash='" + this.hash + "'><td>" + this.filename + "</td><td>" + filesize(this.size) + "</td><td>" + this.downloaded_percent + "%</td><td>" + this.up_speed + "</td><td>" + this.eta + "</td><td>" + this.netdisk + "</td><td><div class='action-button animate-click stripe-box' data-action='remove'><i data-original-classes='fa fa-trash' class='fa fa-trash'></i></div> <div class='action-button animate-click stripe-box' data-action='stop'><i data-original-classes='fa fa-stop' class='fa fa-stop'></i></div> <div class='action-button animate-click stripe-box' data-action='play'><i data-original-classes='fa fa-play' class='fa fa-play'></i></div> </td></tr>");
     });
     jq("#torrent-items .action-button").on("click", function () {
-      content_switch.userAction();
+      content_switch.userActivity();
       var command = jq(this).data("action");
       var hash = jq(this).parent().parent().data("hash");
       jq(this).find("i").removeClass().addClass("fa fa-spin fa-spinner");

@@ -49,7 +49,7 @@ var LightControl = function () {
       });
 
       jq(this).on("click", function () {
-        content_switch.userAction();
+        content_switch.userActivity();
         var main_elem = jq(this), command, group, source;
         if (main_elem.data("running")) {
           return;

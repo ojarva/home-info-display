@@ -41,7 +41,7 @@ var ContentSwitch = function () {
 
   this.switchContent = switchContent;
   this.mainContent = mainContent;
-  this.userAction = userAction;
+  this.userActivity = userAction;
 };
 
 
@@ -53,6 +53,10 @@ jq(document).ready(function() {
   });
   jq(".animate-click").on("click", function () {
     jq(this).stop(true).css("background-color", jq(this).data("original-bg-color")).effect("highlight", {color: "#ffffff"}, 500);
+  });
+
+  jq("body").on("click", function () {
+    content_switch.userActivity();
   });
 
 });

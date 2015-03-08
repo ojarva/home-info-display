@@ -26,7 +26,7 @@ var RepeatingTasks = function(elem, use_date) {
       added_elem.find("li").data("history", JSON.stringify(this.fields.history));
     });
     parent_elem.find(".repeating-task-mark-done").on("click", function() {
-      content_switch.userAction();
+      content_switch.userActivity();
       var this_elem = jq(this);
       var id = this_elem.data("id");
       jq("#confirm-repeating-task").data("id", id);

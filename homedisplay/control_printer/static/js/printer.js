@@ -24,7 +24,7 @@ var Printer = function () {
     });
     // TODO: Bind click events
     main_elem.find("div").on("click", function() {
-      content_switch.userAction();
+      content_switch.userActivity();
       jq(this).find("i").addClass("fa-spin fa-spinner");
       printLabel(jq(this).data("id"));
     });
@@ -50,7 +50,7 @@ var Printer = function () {
         main.find("ul").append("<li data-id='" + key + "'><i class='fa-li fa fa-times-circle'></i>Luotu " + moment(value["time-at-creation"]).fromNowSynced() + "</i>");
       });
       main.find("li").on("click", function() {
-        content_switch.userAction();
+        content_switch.userActivity();
         var id = jq(this).data("id");
         jq.post("/homecontroller/printer/cancel_job/" + id, function () {
           fetchStatus();
