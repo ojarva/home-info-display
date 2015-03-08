@@ -1,4 +1,4 @@
-.brightness-slider {
+.brightness-slider-container .brightness-slider {
   margin-top: 40px;
   margin-bottom: 25px;
   max-width: 520px;
@@ -6,9 +6,27 @@
   height: 30px;
 }
 
-.brightness-slider .ui-slider-handle {
+.brightness-slider-container .ui-widget-content {
+  background: white 50% top repeat-x
+}
+
+.brightness-slider-container .brightness-slider .ui-slider-handle {
   height: 40px;
 }
+
+.brightness-slider-container .brightness-slider .ui-widget-header {
+  background: gray;
+}
+
+.brightness-slider-container  .brightness-slider .ui-state-hover, .brightness-slider .ui-state-focus {
+  border: 1px solid #cccccc;
+  background: #f6f6f6;
+}
+
+.brightness-slider-container .ui-corner-all {
+  border-radius: 0px !important;
+}
+
 
 .lightcontrol-btn-large .active-mode {
   position: absolute;

@@ -5,6 +5,11 @@ var LightSlider = function (elem) {
       update_timeout;
 
   function updateBackend() {
+    if (value > 95) {
+      value = 100;
+      this_elem.slider("value", value);
+    }
+
     jq.post("/homecontroller/lightcontrol/control/brightness/" + group_id + "/" + value);
   }
 
@@ -12,6 +17,7 @@ var LightSlider = function (elem) {
     value: 0,
     min: 0,
     max: 100,
+    range: "max",
     slide: function( event, ui ) {
       if (update_timeout) {
         update_timeout = clearTimeout(update_timeout);
@@ -94,10 +100,13 @@ var LightControl = function () {
     if (data && data.groups) {
       jq.each(data.groups, function () {
         var group_id = this.fields.group_id;
+        var color = this.fields.color;
         jq(".light-group-" + group_id + "-name").html(this.fields.description);
         jq(".light-group-" + group_id + "-brightness").html(this.fields.current_brightness + "%").data("brightness", this.fields.current_brightness);
+
         jq(".brightness-slider-group-" + group_id).slider("value", this.fields.current_brightness);
-        var color = this.fields.color;
+        jq(".brightness-slider-group-" + group_id).css("background-color", color);
+
         var color_elem = jq(".light-group-" + group_id + "-color");
         if (color in color_map) {
           color_elem.html(color_map[color]);
