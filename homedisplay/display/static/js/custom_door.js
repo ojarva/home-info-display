@@ -37,4 +37,5 @@ var DoorScreensaver = function () {
 var door_screensaver;
 jq(document).ready(function () {
   door_screensaver = new DoorScreensaver();
+  jq(".content-box").css("height", jq(window).height());
 });

@@ -11,4 +11,6 @@ jq(document).ready(function () {
   setInterval(function () {
     window.getSelection().empty();
   }, 1000);
+
+  jq(".content-box").css("height", jq(window).height());
 });
