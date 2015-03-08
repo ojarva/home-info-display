@@ -1,4 +1,6 @@
 #electricity-modal {
+  opacity: 1 !important;
+
   .bar {
     fill: gray;
   }

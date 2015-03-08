@@ -1,29 +1,30 @@
-<div class="custom-container">
-  <div class="close" style="font-size: 600%"><i class="fa fa-times-circle-o"></i></div>
-  <div class="days-hours-heatmap">
-    <!-- calibration and render type controller -->
-    <div class="calibration" role="calibration">
-      <div class="group" role="example">
-        <svg width="180" height="17">
-        </svg>
-        <div role="description" class="description">
-          <label>Vähemmän</label>
-          <label>Enemmän</label>
-        </div>
-      </div>
-      <div role="toggleDisplay" class="display-control">
-        <div>
-          <input type="radio" name="displayType" checked/>
-          <label>Yhteensä</label>
-        </div>
-        <div>
-          <input type="radio" name="displayType"/>
-          <label>Päivittäin</label>
-        </div>
+{% extends "snippets/modal_base.html" %}
+
+{% block modal-content %}
+<div class="days-hours-heatmap">
+  <!-- calibration and render type controller -->
+  <div class="calibration" role="calibration">
+    <div class="group" role="example">
+      <svg width="180" height="17">
+      </svg>
+      <div role="description" class="description">
+        <label>Vähemmän</label>
+        <label>Enemmän</label>
       </div>
     </div>
-    <!-- heatmap -->
-    <svg role="heatmap" class="heatmap"></svg>
-    <svg role="bargraph" class="bargraph"></svg>
+    <div role="toggleDisplay" class="display-control">
+      <div>
+        <input type="radio" name="displayType" checked/>
+        <label>Yhteensä</label>
+      </div>
+      <div>
+        <input type="radio" name="displayType"/>
+        <label>Päivittäin</label>
+      </div>
+    </div>
   </div>
+  <!-- heatmap -->
+  <svg role="heatmap" class="heatmap"></svg>
+  <svg role="bargraph" class="bargraph"></svg>
 </div>
+{% endblock %}

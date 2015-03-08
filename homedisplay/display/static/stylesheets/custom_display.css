@@ -40,7 +40,7 @@
   font-size: 200%;
 }
 
-.timeinfo {
+#main-content .timeinfo {
   .clock {
     font-size: 790%;
     font-weight: bold;
@@ -72,22 +72,16 @@ body {
   overflow-y: hidden;
 }
 
-#namedays-modal .calendar {
-  font-size: 300%;
-}
+#modals {
+  .calendar {
+    font-size: 200%;
+  }
 
-#birthdays-list-all .calendar {
-  font-size: 300%;
+  .clock {
+    font-size: 300%;
+    padding-right: 15px;
+  }
 }
-
-#lightcontrol-modal .clock, #debug-modal .clock {
-  font-size: 300%;
-  padding-right: 10px;
-}
-#lightcontrol-modal .calendar, #debug-modal .calendar {
-  font-size: 200%;
-}
-
 
 .action-button {
   font-size: 120%;

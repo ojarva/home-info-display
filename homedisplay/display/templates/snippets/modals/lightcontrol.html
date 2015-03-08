@@ -1,10 +1,7 @@
-<div class="custom-container">
-  <div class="close" style="font-size: 600%"><i class="fa fa-times-circle-o"></i></div>
-  <div class="row">
+{% extends "snippets/modal_base.html" %}
+
+{% block modal-content %}
     <div class="col-md-6">
-      <div class="row">
-        <span class="clock"></span> <span class="calendar"></span>
-      </div>
       {% include "snippets/lightcontrol-per-group-row.html" with group="1" %}
       {% include "snippets/lightcontrol-per-group-row.html" with group="2" %}
       {% include "snippets/lightcontrol-per-group-row.html" with group="3" %}
@@ -22,5 +19,4 @@
 
       {% include "snippets/timed_lightcontrol.html" with time="evening-weekend" icon1="fa-arrow-right" icon2="fa-bed" type="Ilta" %}
     </div>
-  </div>
-</div>
+{% endblock %}
