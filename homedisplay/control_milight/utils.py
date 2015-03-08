@@ -53,6 +53,10 @@ def run_timed_actions():
                 logger.debug("Set %s to white", group)
                 update_lightstate(group, None, "white", important=False)
         if brightness:
+            if brightness > 95:
+                brightness = 100
+            elif brightness < 5:
+                brightness = 0
             logger.debug("Setting brightness to %s%%", brightness)
             publish_ws("lightcontrol-timed-brightness-%s" % item.action, brightness)
             for group in allowed_groups:
