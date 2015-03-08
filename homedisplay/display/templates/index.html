@@ -157,9 +157,11 @@
   {% include "includes/js_constants.html" %}
   {% include "includes/base_js.html" %}
   {% include "includes/computer_display_common_js.html" %}
-  <script src="{% static "js/custom_display.js" %}" type="text/javascript"></script>
-  <script src="{% static "js/weather.js" %}" type="text/javascript"></script>
-  <script src="{% static "js/namedays.js" %}" type="text/javascript"></script>
+  <script src="{% static "js/custom_display.coffee" %}" type="text/coffeescript"></script>
+  <script src="{% static "js/weather.coffee" %}" type="text/coffeescript"></script>
+  <script src="{% static "js/namedays.coffee" %}" type="text/coffeescript"></script>
+  <script src="{% static "js/transportation.coffee" %}" type="text/coffeescript"></script>
+
   {% endcompress %}
 
 </body>

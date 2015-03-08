@@ -45,7 +45,7 @@ INSTALLED_APPS = (
 )
 
 COMPRESS_PRECOMPILERS = (
-    ('text/coffeescript', 'coffee --compile --stdio'),
+    ('text/coffeescript', '~/node_modules/.bin/coffee --compile --stdio'),
     ('text/less', 'lessc {infile} {outfile}'),
     ('text/x-sass', 'sassc {infile} {outfile}'),
     ('text/x-scss', 'sassc {infile} {outfile}'),
