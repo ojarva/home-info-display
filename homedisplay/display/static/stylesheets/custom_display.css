@@ -40,14 +40,21 @@
   font-size: 200%;
 }
 
-#main-content .timeinfo {
-  .clock {
-    font-size: 790%;
-    font-weight: bold;
+#main-content {
+  .center-column {
+    height: 1080px; /* TODO */
+    background-color: #070707;
   }
 
-  .calendar {
-    font-size: 457%;
+  .timeinfo {
+    .clock {
+      font-size: 790%;
+      font-weight: bold;
+    }
+
+    .calendar {
+      font-size: 457%;
+    }
   }
 }
 

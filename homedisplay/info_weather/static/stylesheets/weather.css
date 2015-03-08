@@ -112,6 +112,9 @@
   }
 }
 
+.sun-info {
+  margin-top: 10px;
+}
 
 .weather .new-day {
   border-left: gray;
