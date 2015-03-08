@@ -27,7 +27,8 @@ MomentAutoUpdate = (options) ->
   this.update = update
   return this
 
-moment_auto_update
+moment_auto_update = null
+
 jq ->
   moment_auto_update = new MomentAutoUpdate()
   moment_auto_update.startInterval()
