@@ -3,10 +3,10 @@ jq(document).ready(function () {
   // This file should not be included in any other UI.
 
   // Disabling right click menu is evil. However, Ubuntu&Chrome&touchscreen means problems when context menu is triggered.
-  jq("body").bind("contextmenu", function () {
+/*  jq("body").bind("contextmenu", function () {
     return false;
   });
-
+*/
   // Clear text selection. It's easy to accidentally select text, and rather difficult to de-select.
   setInterval(function () {
     window.getSelection().empty();

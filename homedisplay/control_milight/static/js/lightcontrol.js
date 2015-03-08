@@ -1,3 +1,28 @@
+var LightSlider = function (elem) {
+  var this_elem = jq(elem),
+      group_id = this_elem.data("id"),
+      value = 0,
+      update_timeout;
+
+  function updateBackend() {
+    jq.post("/homecontroller/lightcontrol/control/brightness/" + group_id + "/" + value);
+  }
+
+  var slider = this_elem.slider({
+    value: 0,
+    min: 0,
+    max: 100,
+    slide: function( event, ui ) {
+      if (update_timeout) {
+        update_timeout = clearTimeout(update_timeout);
+      }
+      update_timeout = setTimeout(updateBackend, 100);
+      value = ui.value;
+    }
+  });
+
+};
+
 var LightControl = function () {
   "use strict";
 
@@ -8,6 +33,9 @@ var LightControl = function () {
        delayed_process;
 
   function initialize(selector) {
+    jq.each(jq(".brightness-slider"), function() {
+      LightSlider(this);
+    });
     jq.each(jq(selector), function() {
       jq(this).data("original-color", jq(this).css("background-color"));
       jq(this).children().not(".active-mode").each(function () {
@@ -68,6 +96,7 @@ var LightControl = function () {
         var group_id = this.fields.group_id;
         jq(".light-group-" + group_id + "-name").html(this.fields.description);
         jq(".light-group-" + group_id + "-brightness").html(this.fields.current_brightness + "%").data("brightness", this.fields.current_brightness);
+        jq(".brightness-slider-group-" + group_id).slider("value", this.fields.current_brightness);
         var color = this.fields.color;
         var color_elem = jq(".light-group-" + group_id + "-color");
         if (color in color_map) {

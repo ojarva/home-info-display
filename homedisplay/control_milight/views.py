@@ -214,6 +214,10 @@ class Control(View):
                     execute(group)
             else:
                 execute(group)
+        elif command == "brightness":
+            brightness = int(kwargs.get("parameter"))
+            led.set_brightness(brightness, group)
+            update_lightstate(group, brightness)
         else:
             raise NotImplementedError("Invalid command: %s" % command)
         set_destination_brightness()

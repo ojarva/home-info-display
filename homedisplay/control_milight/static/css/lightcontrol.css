@@ -1,3 +1,15 @@
+.brightness-slider {
+  margin-top: 40px;
+  margin-bottom: 25px;
+  max-width: 520px;
+  margin-left: 15px;
+  height: 30px;
+}
+
+.brightness-slider .ui-slider-handle {
+  height: 40px;
+}
+
 .lightcontrol-btn-large .active-mode {
   position: absolute;
   font-size: 0.5em;
