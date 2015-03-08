@@ -104,6 +104,7 @@ PIPELINE_BASE_JS = [
     "js/jquery-noconflict.js",
     "js/bootstrap.js",
     "jquery-ui/jquery-ui.js",
+    "js/jquery.ui.touch-punch.js",
     "js/moment-with-locales.js",
     "js/ws4redis_v2.js",
     "js/ws_generic.js",
