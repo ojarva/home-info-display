@@ -12,5 +12,6 @@ jq(document).ready(function () {
     window.getSelection().empty();
   }, 1000);
 
-  jq(".content-box").css("height", jq(window).height());
+  var height = jq(window).height();
+  jq(".content-box").css("height", height).css("min-height", height);
 });
