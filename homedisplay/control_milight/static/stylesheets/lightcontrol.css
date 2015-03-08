@@ -20,10 +20,27 @@
       background: gray;
     }
 
-   .ui-state-hover, .brightness-slider .ui-state-focus {
+   .ui-state-hover, .ui-state-focus {
       border: 1px solid #cccccc;
       background: #f6f6f6;
     }
+
+    .ui-slider {
+      z-index: 0;
+    }
+
+    .ui-slider-range {
+      z-index: 0;
+    }
+
+    .ui-slider-handle {
+      z-index: 0;
+    }
+
+    .ui-widget-header {
+      background: gray;
+    }
+
   }
 
   .ui-corner-all {

@@ -79,13 +79,24 @@ body {
       margin-left: -.3em;
     }
 
+    .ui-slider {
+      z-index: 0;
+    }
+    .ui-slider-range {
+      z-index: 0;
+    }
+    .ui-slider-handle {
+      z-index: 0;
+    }
+
     .ui-widget-header {
       background: gray;
     }
 
     .ui-state-hover, .ui-state-focus {
       border-radius: 0px !important;
-
+      border: 1px solid #cccccc;
+      background: #f6f6f6 url("images/ui-bg_glass_100_f6f6f6_1x400.png") 50% 50% repeat-x;
     }
   }
 
