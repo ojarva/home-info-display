@@ -1,4 +1,4 @@
-{% load pipeline %}
+{% load compress staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Door</title>
 
-  {% stylesheet 'door' %}
+  {% compress css %}
+  <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/custom_door.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "css/font-awesome.css" %}">
+  <link rel="stylesheet" type="text/css" href="{% static "jquery-ui/jquery-ui.css" %}">
+  {% endcompress %}
 </head>
 
 <body>
@@ -63,8 +68,12 @@
 
   <div class="screensaver">
   </div>
-  {% include "snippets/js_constants.html" %}
 
-  {% javascript 'door' %}
+  {% compress js %}
+  {% include "snippets/js_constants.html" %}
+  {% include "includes/base_js.html" %}
+  <script src="{% static "js/weather_door.js" %}" type="text/javascript"></script>
+  <script src="{% static "js/custom_door.js" %}" type="text/javascript"></script>
+  {% endcompress %}
 </body>
 </html>

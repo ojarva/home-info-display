@@ -2,8 +2,8 @@
 astral>=0.8.1
 celery>=3.1.17
 django-celery>=3.1.16
+django-compressor>=1.4
 django-extensions>=1.4.9
-django-pipeline>=1.4.6
 django-statsd>=2.0.1
 django-websocket-redis
 Django>=1.7.5
