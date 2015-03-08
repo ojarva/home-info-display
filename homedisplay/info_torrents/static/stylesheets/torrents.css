@@ -1,12 +1,14 @@
-#linux-downloads-modal .clock {
-  font-size: 400%;
-  margin-right: 40px;
-}
+#linux-downloads-modal {
+  .clock {
+    font-size: 400%;
+    margin-right: 40px;
+  }
+  .calendar {
+    font-size: 200%;
+  }
 
-#linux-downloads-modal .calendar {
-  font-size: 200%;
-}
+  .modal-timeinfo {
+    margin-bottom: 30px;
+  }
 
-#linux-downloads-modal .modal-timeinfo {
-  margin-bottom: 30px;
 }

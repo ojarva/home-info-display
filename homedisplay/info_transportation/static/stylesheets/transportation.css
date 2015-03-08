@@ -1,23 +1,25 @@
-.transportation .departures .first-departure {
-  font-size: 250%;
-}
+.transportation {
+  .departures .first-departure {
+    font-size: 250%;
+  }
 
-.transportation .line-number {
-  font-size: 250%;
-}
+  .line-number {
+    font-size: 250%;
+  }
 
-.transportation .type-bus {
-  color: #4097F5;
-}
+  .type-bus {
+    color: #4097F5;
+  }
 
-.transportation .type-tram{
-  color: #09992D;
-}
+  .type-tram{
+    color: #09992D;
+  }
 
-.transportation .type-train{
-  color: #E61919;
-}
+  .type-train{
+    color: #E61919;
+  }
 
-.transportation .type-metro{
-  color: #F78605;
+  .type-metro{
+    color: #F78605;
+  }
 }

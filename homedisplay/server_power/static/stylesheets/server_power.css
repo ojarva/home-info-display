@@ -1,34 +1,36 @@
-.server-power .shutdown {
-  background-color: #cc0000;
-}
-
-.server-power .startup {
-  background-color: #006600;
-}
-
 .server-power {
   display: inline-block;
+
+  .shutdown {
+    background-color: #cc0000;
+  }
+
+  .startup {
+    background-color: #006600;
+  }
 }
+
 .genelec-power {
   display: inline-block;
-}
 
-.genelec-power .shutdown {
-  background-color: #cc0000;
-}
+  .shutdown {
+    background-color: #cc0000;
+  }
 
-.genelec-power .startup {
-  background-color: #006600;
+  .startup {
+    background-color: #006600;
+  }
+
 }
 
 .display-power {
   display: inline-block;
-}
 
-.display-power .shutdown-display {
-  background-color: #cc0000;
-}
+  .shutdown-display {
+    background-color: #cc0000;
+  }
 
-.display-power .startup-display {
-  background-color: #006600;
+  .startup-display {
+    background-color: #006600;
+  }
 }

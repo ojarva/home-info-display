@@ -1,28 +1,30 @@
-#electricity-modal .bar {
-  fill: gray;
+#electricity-modal {
+  .bar {
+    fill: gray;
+  }
+  .bar:hover {
+    fill: brown;
+  }
+
+  .axis {
+    font: 10px sans-serif;
+  }
+
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+
+  .x.axis path {
+    display: none;
+  }
+  .bargraph {
+    margin-left: -21px;
+  }
 }
 
-#electricity-modal .bar:hover {
-  fill: brown;
-}
-
-#electricity-modal .axis {
-  font: 10px sans-serif;
-}
-
-#electricity-modal .axis path,
-#electricity-modal .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-#electricity-modal .x.axis path {
-  display: none;
-}
-#electricity-modal .bargraph {
-  margin-left: -21px;
-}
 
 .days-hours-heatmap{padding: 20px 0 20px 0;width: 1600px;margin: 0 auto;}
 .days-hours-heatmap .calibration{margin-bottom: 15px;width:400px;}

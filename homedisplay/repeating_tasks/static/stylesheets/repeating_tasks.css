@@ -1,8 +1,10 @@
-#confirm-repeating-task .snooze {
-  background-color: #303030;
-}
+#confirm-repeating-task  {
+  .snooze {
+    background-color: #303030;
+  }
 
-#confirm-repeating-task .task-history {
-  margin-top: 2em;
-  font-size: 1.5em;
+  .task-history {
+    margin-top: 2em;
+    font-size: 1.5em;
+  }
 }

@@ -17,16 +17,20 @@ body {
   margin-right:auto;
 }
 
-.timeinfo .clock {
-  font-size: 860%;
-  font-weight: bold;
+.timeinfo {
+  .clock {
+    font-size: 860%;
+    font-weight: bold;
+  }
+
+  .calendar {
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    font-size: 450%;
+  }
+
 }
 
-.timeinfo .calendar {
-  padding-top: 0.25em;
-  padding-bottom: 0.25em;
-  font-size: 450%;
-}
 
 #time-info {
   margin-top: 15px;
@@ -57,32 +61,40 @@ body {
   padding-right: 40px;
 }
 
-.brightness-slider-container .brightness-slider {
-  margin-top: 60px;
-  margin-bottom: 25px;
-  margin-left: 30px;
-  height: 30px;
-}
+.brightness-slider-container {
+  .brightness-slider {
+    margin-top: 60px;
+    margin-bottom: 25px;
+    margin-left: 30px;
+    height: 30px;
+  }
+  .ui-widget-content {
+    background: white 50% top repeat-x;
+  }
 
-.brightness-slider-container .ui-widget-content {
-  background: white 50% top repeat-x
-}
+  .brightness-slider {
+    .ui-slider-handle {
+      height: 90px;
+      width: 45px;
+      margin-left: -.3em;
+    }
 
-.brightness-slider-container .brightness-slider .ui-slider-handle {
-  height: 90px;
-  width: 45px;
-  margin-left: -.3em;
-}
+    .ui-widget-header {
+      background: gray;
+    }
 
-.brightness-slider-container .brightness-slider .ui-widget-header {
-  background: gray;
-}
+    .ui-state-hover, .ui-state-focus {
+      border-radius: 0px !important;
 
-.brightness-slider-container  .brightness-slider .ui-state-hover, .brightness-slider .ui-state-focus {
-  border: 1px solid #cccccc;
-  background: #f6f6f6;
-}
+    }
+  }
 
-.brightness-slider-container .ui-corner-all {
-  border-radius: 0px !important;
+  .brightness-slider  {
+    border: 1px solid #cccccc;
+    background: #f6f6f6;
+  }
+
+  .ui-corner-all {
+    border-radius: 0px !important;
+  }
 }

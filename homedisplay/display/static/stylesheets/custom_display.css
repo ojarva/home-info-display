@@ -5,61 +5,65 @@
   margin-left: 20px;
   margin-bottom: 20px;
 }
-.weather .temperature-now {
-  font-size: 5em;
-}
-.weather .temperature-now-unit {
-  font-size: 2.5em;
-}
-.weather .wind-direction-now {
-  font-size: 3em;
-}
 
-.weather .wind-now-description {
-  font-size: 2.5em;
-  margin-left: 1em;
-}
-.weather .wind-now {
-  font-size: 3.0em;
-}
+.weather {
+  .temperature-now {
+    font-size: 5em;
+  }
+  .temperature-now-unit {
+    font-size: 2.5em;
+  }
+  .wind-direction-now {
+    font-size: 3em;
+  }
 
-.weather .timestamp {
-  font-size: 1.5em;
-}
-.weather .temperature {
-  font-size: 1.25em;
-}
-.weather .weather-box {
-  min-height: 83px;
+  .wind-now-description {
+    font-size: 2.5em;
+    margin-left: 1em;
+  }
+  .wind-now {
+    font-size: 3.0em;
+  }
+
+  .timestamp {
+    font-size: 1.5em;
+  }
+  .temperature {
+    font-size: 1.25em;
+  }
+  .weather-box {
+    min-height: 83px;
+  }
 }
 
 .main-button-box {
   font-size: 200%;
 }
 
-.timeinfo .clock {
-  font-size: 790%;
-  font-weight: bold;
-}
+.timeinfo {
+  .clock {
+    font-size: 790%;
+    font-weight: bold;
+  }
 
-.timeinfo .calendar {
-  font-size: 457%;
+  .calendar {
+    font-size: 457%;
+  }
 }
 
 .indoor-quality {
   font-size: 200%;
-}
+  .status {
+    font-size: 200%;
+  }
 
-.indoor-quality .status {
-  font-size: 200%;
 }
 
 .internet-connection {
   font-size: 200%;
-}
-
-.internet-connection .connected {
-  font-size: 200%;
+  .connected {
+    font-size: 200%;
+  }
 }
 
 body {
