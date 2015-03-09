@@ -1,0 +1,13 @@
+{% extends "snippets/modal_base.html" %}
+
+{% block modal-content %}
+<div class="col-md-12">
+  <div class="center-container">
+    <div class="wifi-info">
+      <span class="label">SSID:</span> <span class="ssid"></span><br/>
+      <span class="label">Passphrase:</span> <span class="passphrase"></span>
+    </div>
+    <div id="wifi-qr"></div>
+  </div>
+</div>
+{% endblock %}

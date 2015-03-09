@@ -1,3 +1,19 @@
+#wifi-settings {
+  .wifi-info {
+    margin-bottom: 5em;
+    .ssid, .passphrase {
+      font-family: Courier New;
+      font-size: 2.5em;
+    }
+  }
+
+  .center-container {
+    width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 .internet-connection {
   .age {
     font-size: 50%;

@@ -35,6 +35,9 @@
                 <div class="center-content stripe-box animate-click action-button print-labels"><i class="fa fa-print"></i></div>
                 <div class="center-content stripe-box animate-click action-button linux-downloads"><i class="fa fa-download"></i></div>
                 <div class="center-content stripe-box animate-click action-button debug-modal"><i class="fa fa-bug"></i></div>
+                <div class="center-content stripe-box animate-click action-button open-wifi-settings">
+                  <i class="fa fa-wifi"></i>
+                </div>
                 <div class="server-power">
                   <div style="display:none;" class="shutdown action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-power-off"></i></div>
                   <div style="display:none;" class="startup action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-power-off"></i></div>
@@ -157,6 +160,8 @@
   {% include "includes/js_constants.html" %}
   {% include "includes/base_js.html" %}
   {% include "includes/computer_display_common_js.html" %}
+  <script src="{% static "js/vendor/jquery.qrcode.js" %}" type="text/javascript"></script>
+  <script src="{% static "js/wifi.coffee" %}" type="text/coffeescript"></script>
   <script src="{% static "js/custom_display.coffee" %}" type="text/coffeescript"></script>
   <script src="{% static "js/weather.coffee" %}" type="text/coffeescript"></script>
   <script src="{% static "js/namedays.coffee" %}" type="text/coffeescript"></script>
