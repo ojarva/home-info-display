@@ -4,7 +4,7 @@ class SpecialAuthenticationMiddleware(object):
 
     def process_request(self, request):
         ip = request.META["REMOTE_ADDR"]
-        if ip.startswith("192.168.1.") or ip is "127.0.0.1":
+        if ip.startswith("192.168.1.") or ip == "127.0.0.1":
             # Do not request authentication if IP is in LAN, or localhost
             return None
         if request.user.is_authenticated():
