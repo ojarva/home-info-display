@@ -49,36 +49,8 @@
               </div>
             </div>
           </div>
-          <div class="row weather open-weather-modal">
-            <div class="col-md-12 weather-main">
-              <span class="temperature-now data-field"><i class='fa fa-question-circle'></i></span><span class="temperature-now-unit">&deg;C</span> <span class="wind-now-description">Tuuli:</span> <span class="wind-now data-field"><i class='fa fa-question-circle'></i></span> <span class="wind-direction-now data-field"></span>
-            </div>
-          </div>
-          <div class="row center-content weather open-weather-modal ">
-            <div class="col-md-3 weather-box weather-1">
-              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
-              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
-              <span class="symbol"><i class='fa fa-question-circle'></i></span>
-            </div>
-            <div class="col-md-3 weather-box weather-2 new-day">
-              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
-              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
-              <span class="symbol"><i class='fa fa-question-circle'></i></span>
-            </div>
-            <div class="col-md-3 weather-box weather-3">
-              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
-              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
-              <span class="symbol"><i class='fa fa-question-circle'></i></span>
-            </div>
-            <div class="col-md-3 weather-box weather-4">
-              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
-              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
-              <span class="symbol"><i class='fa fa-question-circle'></i></span>
-            </div>
-          </div>
 
           <div class="item-box" id="today">
-            <div class="sun-info"></div>
             <div class="list-repeating-tasks">
               <ul class="fa-ul">
               </ul>
@@ -140,6 +112,40 @@
           <div class="item-box indoor-quality">
             {% include "snippets/indoor_quality.html" %}
           </div>
+
+          <div class="row weather open-weather-modal">
+            <div class="col-md-12 weather-main">
+              <span class="temperature-now data-field"><i class='fa fa-question-circle'></i></span><span class="temperature-now-unit">&deg;C</span> <span class="wind-now-description">Tuuli:</span> <span class="wind-now data-field"><i class='fa fa-question-circle'></i></span> <span class="wind-direction-now data-field"></span>
+            </div>
+          </div>
+          <div class="row center-content weather open-weather-modal ">
+            <div class="col-md-3 weather-box weather-1">
+              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
+              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
+              <span class="symbol"><i class='fa fa-question-circle'></i></span>
+            </div>
+            <div class="col-md-3 weather-box weather-2 new-day">
+              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
+              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
+              <span class="symbol"><i class='fa fa-question-circle'></i></span>
+            </div>
+            <div class="col-md-3 weather-box weather-3">
+              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
+              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
+              <span class="symbol"><i class='fa fa-question-circle'></i></span>
+            </div>
+            <div class="col-md-3 weather-box weather-4">
+              <span class="timestamp"><i class='fa fa-question-circle'></i></span><br>
+              <span class="temperature"><i class='fa fa-question-circle'></i></span><span class="temperature-unit">&deg;C</span>
+              <span class="symbol"><i class='fa fa-question-circle'></i></span>
+            </div>
+          </div>
+
+          <div class="item-box">
+            <div class="sun-info"></div>
+          </div>
+
+
           <div id="timers">
             {% include "snippets/add_timers.html" %}
 
