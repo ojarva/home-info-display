@@ -7,6 +7,22 @@
     }
   }
 
+  #wifi-clients {
+    font-size: 1.5em;
+
+    div {
+      margin-bottom: 10px;
+    }
+
+    .mac {
+      font-family: Courier New;
+    }
+    .last-seen {
+      display: inline-block;
+      min-width: 3em;
+    }
+  }
+
   .center-container {
     width: 620px;
     margin-left: auto;
