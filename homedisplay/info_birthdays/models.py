@@ -4,7 +4,6 @@ from django.core import serializers
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.utils.timezone import now
 from homedisplay.utils import publish_ws
 import datetime
 import json
@@ -13,7 +12,7 @@ def get_birthdays(selected_date):
     if selected_date == "all":
         items = Birthday.objects.all()
     else:
-        date = now()
+        date = datetime.date.today()
         if selected_date == "tomorrow":
             date = date + datetime.timedelta(days=1)
 

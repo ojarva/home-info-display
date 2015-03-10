@@ -2,12 +2,11 @@ Birthdays = (elem, use_date, options) ->
   options = options || {}
   options.showdate = options.showdate || false
   options.maxitems = options.maxitems || 100000
-  parent_elem = jq elem
   this_date = use_date
   update_interval = null
   current_item = 0
   items_in_current = 0
-  parent_elem = parent_elem.slice(0, 1)
+  parent_elem = jq(elem).slice 0, 1
 
   onReceiveItemWS = (message) ->
     processData message
@@ -48,6 +47,8 @@ Birthdays = (elem, use_date, options) ->
     data_sortable = []
     now = clock.getMoment().subtract 1, "days"
     now_str = formatSortString now
+
+    # Add sortable field
     jq.each data, ->
       a = moment this.fields.birthday
       sort_string = formatSortString a
@@ -61,9 +62,10 @@ Birthdays = (elem, use_date, options) ->
       this.birthday_sort = prefix + sort_string
       data_sortable.push this
 
+    # Sort
     data_sortable.sort compareBirthdays
 
-
+    # Loop over sorted entries
     jq.each data_sortable, ->
       name = this.fields.name
       age = ""
@@ -98,7 +100,7 @@ Birthdays = (elem, use_date, options) ->
       if this_date == "tomorrow"
         extra = " (huomenna)"
 
-      parent_elem.append("<li><i class='fa-li fa fa-birthday-cake'></i> " + name + date + age + extra + "</li>")
+      parent_elem.append "<li><i class='fa-li fa fa-birthday-cake'></i> " + name + date + age + extra + "</li>"
 
   update = ->
     jq.get "/homecontroller/birthdays/get_json/" + this_date, (data) ->
