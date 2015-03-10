@@ -1,4 +1,6 @@
 WifiInfo = ->
+  hostname_database = {}
+
   initialize = ->
     # This shouldn't be called more than once
     jq.get "/homecontroller/internet_connection/wifi/info", (data) ->
@@ -16,9 +18,22 @@ WifiInfo = ->
     elem = jq "#wifi-clients"
     elem.children().remove()
     jq.each data.devices, ->
-      elem.append "<div class='wifi-client'><span class='mac'>" + this.mac + "</span> <span class='last-seen'>" + this.last_seen + "</span> <span class='label'>rssi:</span> <span class='rssi'>" + this.rssi + "</span><span class='unit'>dBm</span> <span class='bandwidth'>" + this.current_bandwidth + "/" + this.maximum_bandwidth + "</span><span class='label'>Mbit/s</span></div>"
+      hostname_from_lease = hostname_database[@mac]
+      if hostname_from_lease?
+        hostname = "<span class='hostname'>" + hostname_from_lease + "</span>"
+      else
+        hostname = ""
+      elem.append "<div class='wifi-client'><div class='device-info'><span class='mac'>" + @mac + "</span>" + hostname + "</div> <div class='generic-info'><span class='last-seen'>" + @last_seen + "</span> <span class='rssi-container'><span class='label'>rssi:</span> <span class='rssi'>" + @rssi + "</span><span class='unit'>dBm</span></span> <span class='bandwidth'>" + @current_bandwidth + "/" + @maximum_bandwidth + "</span><span class='label'>Mbit/s</span></div></div>"
+
+  updateMacs = (data) ->
+    elem = jq "#wifi-clients"
+    jq.each data.devices, ->
+      hostname_database[@mac] = @hostname
+    console.log "hostname_database ", hostname_database
+    return hostname_database
 
   ws_generic.multiRegister "unifi-status", "unifi-status-main", updateUnifi
+  ws_generic.multiRegister "dhcp-leases", "unifi-status-main", updateMacs
 
   initialize()
   return this

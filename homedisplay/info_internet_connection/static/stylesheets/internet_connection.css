@@ -10,16 +10,23 @@
   #wifi-clients {
     font-size: 1.5em;
 
-    div {
-      margin-bottom: 10px;
+    .wifi-client {
+      margin-bottom: 20px;
     }
 
     .mac {
       font-family: Courier New;
+      margin-left: 10px;
+      min-width: 14em;
+      display: inline-block
     }
     .last-seen {
       display: inline-block;
-      min-width: 3em;
+      min-width: 3.5em;
+    }
+    .rssi-container {
+      display: inline-block;
+      min-width: 10.5em;
     }
   }
 
