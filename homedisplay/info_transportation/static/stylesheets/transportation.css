@@ -1,4 +1,6 @@
 .transportation {
+  margin-left: 20px;
+
   .departures .first-departure {
     font-size: 250%;
   }
