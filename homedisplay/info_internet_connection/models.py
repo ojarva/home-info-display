@@ -36,3 +36,22 @@ class Internet(models.Model):
     mode = models.CharField(max_length=12, choices=MODES, null=True, blank=True)
     sim = models.CharField(max_length=12, choices=SIM_MODES, null=True, blank=True)
     connect_status = models.CharField(max_length=12, choices=CONNECT_MODES, null=True, blank=True)
+
+class MacDb(models.Model):
+    mac = models.CharField(max_length=17, unique=True)
+    hostname = models.CharField(max_length=255, null=True, blank=True)
+
+    def __unicode__(self):
+        return u""
+
+class ConnectedClient(models.Model):
+    mac = models.CharField(max_length=17, unique=True)
+    rssi = models.IntegerField(null=True, blank=True)
+    bandwidth_in = models.IntegerField(null=True, blank=True)
+    bandwidth_out = models.IntegerField(null=True, blank=True)
+    tx = models.BigIntegerField(null=True, blank=True)
+    rx = models.BigIntegerField(null=True, blank=True)
+
+
+    def __unicode__(self):
+        return u""

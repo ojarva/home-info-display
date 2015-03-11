@@ -22,9 +22,9 @@ MomentAutoUpdate = (options) ->
     if update_interval?
       update_interval = clearInterval update_interval
 
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
-  this.update = update
+  @startInterval = startInterval
+  @stopInterval = stopInterval
+  @update = update
   return this
 
 moment_auto_update = null

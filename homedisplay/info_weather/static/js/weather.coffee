@@ -29,15 +29,15 @@ RefreshWeather = (options) ->
     jq.each data.next, ->
       this_item = weather.find(".weather-" + current_index)
       if first_date == false
-        first_date = this.item.date
+        first_date = @item.date
       else if new_day == false
-        if first_date != this.item.date
+        if first_date != @item.date
           this_item.addClass "new-day"
           new_day = true
 
-      this_item.find(".timestamp").html(this.name)
-      this_item.find(".temperature").html(this.item.feels_like)
-      this_item.find(".symbol").html("<img src='/homecontroller/static/images/" + this.item.icon + ".png'>")
+      this_item.find(".timestamp").html(@name)
+      this_item.find(".temperature").html(@item.feels_like)
+      this_item.find(".symbol").html("<img src='/homecontroller/static/images/" + @item.icon + ".png'>")
       this_item.find(".temperature-unit").html("&deg;C")
       current_index += 1
 
@@ -49,7 +49,7 @@ RefreshWeather = (options) ->
     last_header = null
     new_item = "<div class='col-md-1'><span class='timestamp'><i class='fa fa-question-circle'></i></span><br><span class='temperature'><i class='fa fa-question-circle'></i></span><span class='temperature-unit'>&deg;C</span><span class='symbol'><i class='fa fa-question-circle'></i></span><br><span class='wind-direction'></span><span> </span> <span class='wind-speed'><i class='fa fa-question-circle'></i></span><span class='wind-speed-unit'>m/s</span></div>";
     jq.each data.hours, ->
-      if this.hour % 2 != 0
+      if @hour % 2 != 0
         return true # continue
 
       if current_index > 11
@@ -57,21 +57,21 @@ RefreshWeather = (options) ->
         jq(".weather-all").append("<div class='row'><div class='col-md-12'><h2></h2></div></div><div class='row'></div>")
         current_row = jq(".weather-all .row").last()
         last_header = jq(".weather-all h2").last()
-        last_header.html(this.weekday_fi + " " + this.date)
+        last_header.html(@weekday_fi + " " + @date)
 
       current_row.append(new_item)
       current_item = current_row.find(".col-md-1").last()
 
-      current_item.find(".timestamp").html(this.hour + ":00")
-      current_item.find(".temperature").html(this.feels_like)
-      current_item.find(".symbol").html("<img src='/homecontroller/static/images/" + this.icon + ".png'>")
+      current_item.find(".timestamp").html(@hour + ":00")
+      current_item.find(".temperature").html(@feels_like)
+      current_item.find(".symbol").html("<img src='/homecontroller/static/images/" + @icon + ".png'>")
       current_item.find(".temperature-unit").html("&deg;C")
-      current_item.find(".wind-speed").html(Math.round(this.wind_speed / 3.6))
-      if this.wind_direction_degrees?
-        direction = (this.wind_direction_degrees + "").replace(".", "_")
+      current_item.find(".wind-speed").html(Math.round(@wind_speed / 3.6))
+      if @wind_direction_degrees?
+        direction = (@wind_direction_degrees + "").replace(".", "_")
         current_item.find(".wind-direction").html("<i class='fa fa-fw fa-long-arrow-up fa-rotate-"+direction+"'></i>")
 
-      if !highlight_set and this.date == now.format("YYYY-MM-DD") and (now.hour() == this.hour or now.hour() - 1 == this.hour)
+      if !highlight_set and @date == now.format("YYYY-MM-DD") and (now.hour() == @hour or now.hour() - 1 == @hour)
         current_item.addClass("weather-today")
         highlight_set = true
 
@@ -95,8 +95,8 @@ RefreshWeather = (options) ->
     ge_refresh.deRegister "weather"
     ge_intervals.deRegister "weather", "hourly"
 
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
+  @startInterval = startInterval
+  @stopInterval = stopInterval
   return this
 
 

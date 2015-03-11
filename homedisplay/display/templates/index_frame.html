@@ -1,0 +1,14 @@
+{% load compress staticfiles %}
+<html>
+<head>
+  {% compress js %}
+    <script src="{% static "js/vendor/jquery-1.11.2.js" %}" type="text/javascript"></script>
+    <script src="{% static "js/jquery-noconflict.js" %}" type="text/javascript"></script>
+    {% include "includes/js_constants.html" %}
+    <script src="{% static "js/frame.coffee" %}" type="text/coffeescript"></script>
+  {% endcompress %}
+</head>
+  <frameset cols="100%">
+    <frame id="content-frame" src="{{ frame_src }}">
+  </frameset>
+</html>

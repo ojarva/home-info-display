@@ -40,10 +40,10 @@ Transportation = () ->
     clearEntries()
     jq.each data, ->
       # Loop over stops
-      jq(".transportation ul").append("<li><i class='fa fa-li fa-2x fa-" + this.icon + " type-" + this.type + "'></i> <span class='line-number'>" + this.line + ":</span> <span class='departures' data-minimum-time=" + this.minimum_time + "></span></li>")
+      jq(".transportation ul").append("<li><i class='fa fa-li fa-2x fa-" + @icon + " type-" + @type + "'></i> <span class='line-number'>" + @line + ":</span> <span class='departures' data-minimum-time=" + @minimum_time + "></span></li>")
       this_departures = jq(".transportation ul li .departures").last()
       departures_for_stop = 0
-      jq.each this.departures, ->
+      jq.each @departures, ->
         this_departures.append("<span class='auto-update-timestamp' data-timestamp='" + this + "'><span class='minutes'></span><span class='seconds'></span></span> ")
         departures_for_stop += 1
         if departures_for_stop > 7
@@ -78,9 +78,9 @@ Transportation = () ->
     ws_generic.deRegister("public-transportation")
     ge_refresh.deRegister("public-transportation")
 
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
-  this.update = update
+  @startInterval = startInterval
+  @stopInterval = stopInterval
+  @update = update
   return this
 
 transportation = null

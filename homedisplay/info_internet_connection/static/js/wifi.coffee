@@ -23,13 +23,12 @@ WifiInfo = ->
         hostname = "<span class='hostname'>" + hostname_from_lease + "</span>"
       else
         hostname = ""
-      elem.append "<div class='wifi-client'><div class='device-info'><span class='mac'>" + @mac + "</span>" + hostname + "</div> <div class='generic-info'><span class='last-seen'>" + @last_seen + "</span> <span class='rssi-container'><span class='label'>rssi:</span> <span class='rssi'>" + @rssi + "</span><span class='unit'>dBm</span></span> <span class='bandwidth'>" + @current_bandwidth + "/" + @maximum_bandwidth + "</span><span class='label'>Mbit/s</span></div></div>"
+      elem.append "<div class='wifi-client'><div class='device-info'><span class='mac'>#{@mac}</span>#{hostname}</div> <div class='generic-info'><span class='last-seen'>#{@last_seen}</span> <span class='rssi-container'><span class='label'>rssi:</span> <span class='rssi'>#{@rssi}</span><span class='unit'>dBm</span></span> <span class='bandwidth'>#{@bandwidth_in}/#{@bandwidth_out}</span><span class='label'>Mbit/s</span></div></div>"
 
   updateMacs = (data) ->
     elem = jq "#wifi-clients"
     jq.each data.devices, ->
       hostname_database[@mac] = @hostname
-    console.log "hostname_database ", hostname_database
     return hostname_database
 
   ws_generic.multiRegister "unifi-status", "unifi-status-main", updateUnifi

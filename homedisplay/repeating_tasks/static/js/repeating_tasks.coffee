@@ -15,19 +15,19 @@ RepeatingTasks = (elem, use_date) ->
     jq.each data, ->
       overdue_by = ""
       diff = null
-      if this.fields.last_completed_at
-        diff = moment(this.fields.last_completed_at).add(this.fields.repeat_every_n_seconds, "seconds")
+      if @fields.last_completed_at
+        diff = moment(@fields.last_completed_at).add(@fields.repeat_every_n_seconds, "seconds")
         overdue_by = " (<span class='auto-fromnow-update' data-timestamp='" + diff + "'>" + diff.fromNowSynced() + "</span>)"
 
       icon = null
-      if this.fields.optional
+      if @fields.optional
         icon = "fa-question-circle"
       else
         icon = "fa-repeat"
 
-      added_elem = parent_elem.append("<li class='repeating-task-mark-done' data-id='" + this.pk + "' data-snooze-to-show='" + this.fields.snooze_to_show + "'><i class='fa-li fa " + icon + "'></i> <span class='task-title'>" + this.fields.title + "</span>" + overdue_by + "</li>")
+      added_elem = parent_elem.append("<li class='repeating-task-mark-done' data-id='" + @pk + "' data-snooze-to-show='" + @fields.snooze_to_show + "'><i class='fa-li fa " + icon + "'></i> <span class='task-title'>" + @fields.title + "</span>" + overdue_by + "</li>")
       added_elem.find("li").data
-        "history": JSON.stringify(this.fields.history)
+        "history": JSON.stringify(@fields.history)
 
     parent_elem.find(".repeating-task-mark-done").on "click", ->
       content_switch.userActivity()
@@ -49,7 +49,7 @@ RepeatingTasks = (elem, use_date) ->
       task_history.children().remove()
       tasks = JSON.parse this_elem.data("history")
       jq.each tasks, ->
-        parsed = moment this.fields.completed_at
+        parsed = moment @fields.completed_at
         task_history.append("<li>" + parsed.format("YYYY-MM-DD") + " (" + parsed.fromNowSynced() + ")</li>")
 
       content_switch.switchContent "#confirm-repeating-task"
@@ -65,6 +65,7 @@ RepeatingTasks = (elem, use_date) ->
     ws_generic.deRegister "repeating_tasks_" + this_date
     ge_refresh.deRegister "repeating_tasks_" + this_date
     ge_intervals.deRegister "repeating_tasks_" + this_date, "daily"
+    return
 
   startInterval = ->
     stopInterval()
@@ -72,11 +73,12 @@ RepeatingTasks = (elem, use_date) ->
     ws_generic.register "repeating_tasks_" + this_date, onReceiveItemWS
     ge_refresh.register "repeating_tasks_" + this_date, update
     ge_intervals.register "repeating_tasks_" + this_date, "daily", update
+    return
 
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
-  this.update = update
-  this.clearTasks = clearTasks
+  @startInterval = startInterval
+  @stopInterval = stopInterval
+  @update = update
+  @clearTasks = clearTasks
   return this
 
 tasks_today = null

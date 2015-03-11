@@ -21,7 +21,7 @@ Printer = ->
     clearLabels()
     main_elem = jq ".printer-labels"
     jq.each data, ->
-      main_elem.append("<div class='center-content stripe-box animate-click action-button print-label-" + this.pk + "' data-id='" + this.pk + "'>" + this.fields.name + " <i class='fa fa-fw'></i></div>")
+      main_elem.append("<div class='center-content stripe-box animate-click action-button print-label-" + @pk + "' data-id='" + @pk + "'>" + @fields.name + " <i class='fa fa-fw'></i></div>")
 
     #TODO: Bind click events
     main_elem.find("div").on "click", ->
@@ -79,10 +79,10 @@ Printer = ->
   ws_generic.register "printer-labels", processLabels
 
 
-  this.fetchStatus = fetchStatus
-  this.fetchPrinters = fetchPrinters
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
+  @fetchStatus = fetchStatus
+  @fetchPrinters = fetchPrinters
+  @startInterval = startInterval
+  @stopInterval = stopInterval
   return this
 
 printer = null

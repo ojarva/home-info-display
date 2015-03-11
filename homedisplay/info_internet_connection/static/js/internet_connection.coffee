@@ -32,8 +32,8 @@ ShowRealtimePing = (options) ->
     ws_generic.deRegister "ping"
 
 
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
+  @startInterval = startInterval
+  @stopInterval = stopInterval
   return this
 
 RefreshInternet = (options) ->
@@ -105,8 +105,8 @@ RefreshInternet = (options) ->
     ge_refresh.deRegister "internet"
 
 
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
+  @startInterval = startInterval
+  @stopInterval = stopInterval
   return this
 
 refresh_internet = null

@@ -91,8 +91,8 @@ ServerPower = (options) ->
     jq.post "/homecontroller/server_power/shutdown"
 
 
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
+  @startInterval = startInterval
+  @stopInterval = stopInterval
   return this
 
 server_power = null

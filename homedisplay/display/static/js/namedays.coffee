@@ -45,9 +45,9 @@ Namedays = ->
     ge_refresh.deRegister "namedays"
     ge_intervals.deRegister "namedays", "daily"
 
-  this.update = update
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
+  @update = update
+  @startInterval = startInterval
+  @stopInterval = stopInterval
   return this
 
 name_days = null

@@ -15,7 +15,7 @@
 </head>
 
 <body>
-  <div>
+  <div id="main-content">
     <div class="row">
       <div class="col-md-6 center-content" id="time-info">
         <div class="timeinfo">
@@ -66,11 +66,17 @@
     </div>
   </div>
 
-  <div class="screensaver">
+  <div id="screensaver">
+    <div class="center-content">
+      <div class="clock-hours"></div>
+      <div class="clock-minutes"></div>
+    </div>
   </div>
 
-  {% compress js %}
+  {% include "snippets/modals/disconnected.html" %}
   {% include "includes/js_constants.html" %}
+
+  {% compress js %}
   {% include "includes/base_js.html" %}
   <script src="{% static "js/weather_door.coffee" %}" type="text/coffeescript"></script>
   <script src="{% static "js/custom_door.coffee" %}" type="text/coffeescript"></script>

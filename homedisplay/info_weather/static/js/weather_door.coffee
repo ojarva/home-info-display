@@ -28,9 +28,9 @@ RefreshWeather = (options) ->
     if update_interval?
       update_interval = clearInterval(update_interval)
 
-  this.update = update
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
+  @update = update
+  @startInterval = startInterval
+  @stopInterval = stopInterval
   this
 
 

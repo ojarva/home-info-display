@@ -4,10 +4,10 @@ DoorScreensaver = ->
   timeout = 2 * 60 * 1000
 
   startScreensaver = ->
-    jq(".screensaver").slideDown()
+    jq("#screensaver").slideDown()
 
   activity = ->
-    jq(".screensaver").fadeOut("fast")
+    jq("#screensaver").fadeOut("fast")
     last_activity = new Date()
 
   update = ->
@@ -26,6 +26,10 @@ DoorScreensaver = ->
 
   jq("body").on "click", ->
     activity()
+
+  @startScreensaver = startScreensaver
+  @activity = activity
+  return this
 
 door_screensaver = null;
 

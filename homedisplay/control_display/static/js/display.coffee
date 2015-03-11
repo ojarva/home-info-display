@@ -70,11 +70,11 @@ ShutdownProgress = (options) ->
 
   ws_generic.register "shutdown", onReceiveItemWS
 
-  this.restart = restart
-  this.stop = stop
-  this.shutdown = shutdown
-  this.startup = startup
-  this.restartDisplay = restartDisplay
+  @restart = restart
+  @stop = stop
+  @shutdown = shutdown
+  @startup = startup
+  @restartDisplay = restartDisplay
   return this
 
 shutdown_progress = null

@@ -50,16 +50,16 @@ Birthdays = (elem, use_date, options) ->
 
     # Add sortable field
     jq.each data, ->
-      a = moment this.fields.birthday
+      a = moment @fields.birthday
       sort_string = formatSortString a
-      this.birthday_moment = a
+      @birthday_moment = a
       prefix = "0"
-      this.next_year = false
+      @next_year = false
       if sort_string < now_str
         prefix = "1"
-        this.next_year = true
+        @next_year = true
 
-      this.birthday_sort = prefix + sort_string
+      @birthday_sort = prefix + sort_string
       data_sortable.push this
 
     # Sort
@@ -67,26 +67,26 @@ Birthdays = (elem, use_date, options) ->
 
     # Loop over sorted entries
     jq.each data_sortable, ->
-      name = this.fields.name
+      name = @fields.name
       age = ""
       b = null
       date = ""
       extra = ""
-      if this.fields.nickname
-        name = this.fields.nickname
+      if @fields.nickname
+        name = @fields.nickname
 
-      if this.fields.valid_year
-        b = moment this.birthday_moment
+      if @fields.valid_year
+        b = moment @birthday_moment
         b = b.year now.year()
-        if this.next_year
+        if @next_year
           b = b.add 1, "year"
 
-        age = (" (" + this.birthday_moment.from(b) + ")").replace(" sitten", "")
+        age = (" (" + @birthday_moment.from(b) + ")").replace(" sitten", "")
 
       if options.showdate
-        date = " - " + this.birthday_moment.date() + "." + (this.birthday_moment.month() + 1) + "."
-        if this.fields.valid_year
-          date += this.birthday_moment.year()
+        date = " - " + @birthday_moment.date() + "." + (@birthday_moment.month() + 1) + "."
+        if @fields.valid_year
+          date += @birthday_moment.year()
 
       if items_in_current > options.maxitems
         current_item += 1
@@ -119,8 +119,8 @@ Birthdays = (elem, use_date, options) ->
     ge_intervals.deRegister "birthdays_" + this_date, "daily"
 
 
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
+  @startInterval = startInterval
+  @stopInterval = stopInterval
   return this
 
 birthdays_today = null

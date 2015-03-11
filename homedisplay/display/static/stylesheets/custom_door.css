@@ -6,7 +6,19 @@ body {
   background-color: black;
 }
 
-.screensaver {
+#disconnected {
+  opacity: 0.5;
+  i {
+    font-size: 600px;
+  }
+  z-index: 10;
+}
+
+.error-message {
+  color: #E85656;
+}
+
+#screensaver {
   position: fixed;
   top: 0px;
   left: 0px;
@@ -17,6 +29,11 @@ body {
   height: 100%;
 
   background-color: black;
+
+  .clock-minutes, .clock-hours {
+    font-size: 300px;
+    color: #313131;
+  }
 }
 
 .light-controls {
@@ -139,4 +156,22 @@ body {
   background-color: black;
 
   font-size: 200%;
+}
+
+.content-box {
+  position: absolute;
+  display: block;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  min-height: 2000px;
+  padding-left: 40px;
+  padding-right: 40px;
+  background-color: black;
+  opacity: 0.92;
+  display: none;
+
+  .close {
+    z-index: 10;
+  }
 }
