@@ -44,10 +44,11 @@ jq ->
     jq(this).data "original-bg-color", jq(this).css("background-color")
 
   jq(".animate-click").on "click", ->
-    jq(this).stop(true).css(
-      "background-color"
-    , jq(this).data "original-bg-color")
-    .effect "highlight", {color: "#ffffff"}, 500
+    jq(this).stop(true).css
+      "background-color": jq(this).data "original-bg-color"
+    .effect "highlight",
+      color: "#ffffff"
+      500
 
   jq("body").on "click", ->
     obj.content_switch.userActivity()

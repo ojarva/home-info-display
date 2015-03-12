@@ -43,7 +43,5 @@ WsGeneric = (options) ->
   this.multiDeRegister = multiDeRegister
   return this
 
-obj = this
-
-jq ->
-  obj.ws_generic = new WsGeneric()
+jq =>
+  this.ws_generic = new WsGeneric()

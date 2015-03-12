@@ -8,7 +8,7 @@ Torrents = ->
   processData = (items) ->
     clearItems()
     jq.each items, ->
-      jq("#torrent-items").append "<tr data-hash='" + @hash + "'><td>" + @filename + "</td><td>" + filesize(@size) + "</td><td>" + @downloaded_percent + "%</td><td>" + @up_speed + "</td><td>" + @eta + "</td><td>" + @netdisk + "</td><td><div class='action-button animate-click stripe-box' data-action='remove'><i data-original-classes='fa fa-trash' class='fa fa-trash'></i></div> <div class='action-button animate-click stripe-box' data-action='stop'><i data-original-classes='fa fa-stop' class='fa fa-stop'></i></div> <div class='action-button animate-click stripe-box' data-action='play'><i data-original-classes='fa fa-play' class='fa fa-play'></i></div> </td></tr>"
+      jq("#torrent-items").append "<tr data-hash='#{@hash}'><td>#{@filename}</td><td>#{filesize(@size)}</td><td>#{@downloaded_percent}%</td><td>#{@up_speed}</td><td>#{@eta}</td><td>#{@netdisk}</td><td><div class='action-button animate-click stripe-box' data-action='remove'><i data-original-classes='fa fa-trash' class='fa fa-trash'></i></div> <div class='action-button animate-click stripe-box' data-action='stop'><i data-original-classes='fa fa-stop' class='fa fa-stop'></i></div> <div class='action-button animate-click stripe-box' data-action='play'><i data-original-classes='fa fa-play' class='fa fa-play'></i></div> </td></tr>"
 
     jq("#torrent-items .action-button").on "click", ->
       content_switch.userActivity()
@@ -16,8 +16,7 @@ Torrents = ->
       hash = jq(this).parent().parent().data("hash")
       jq(this).find("i").removeClass().addClass("fa fa-spin fa-spinner")
       # No need to remove spinner, as whole table will be redrawn.
-      jq.post "/homecontroller/torrents/action/" + command + "/" + hash
-
+      jq.post "/homecontroller/torrents/action/#{command}/#{hash}"
 
   update = ->
     jq.get "/homecontroller/torrents/list", (data) ->

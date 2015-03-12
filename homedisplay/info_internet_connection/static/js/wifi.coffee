@@ -8,7 +8,7 @@ WifiInfo = ->
       elem.find(".ssid").html data.ssid
       elem.find(".passphrase").html data.passphrase
       jq("#wifi-qr").qrcode
-        "text": "WIFI:S:" + data.ssid + ";T:WPA;P:" + data.passphrase + ";;"
+        "text": "WIFI:S:#{data.ssid};T:WPA;P:#{data.passphrase};;"
         "background": "white"
         "render": "div"
         "size": 600
@@ -20,7 +20,7 @@ WifiInfo = ->
     jq.each data.devices, ->
       hostname_from_lease = hostname_database[@mac]
       if hostname_from_lease?
-        hostname = "<span class='hostname'>" + hostname_from_lease + "</span>"
+        hostname = "<span class='hostname'>#{hostname_from_lease}</span>"
       else
         hostname = ""
       elem.append "<div class='wifi-client'><div class='device-info'><span class='mac'>#{@mac}</span>#{hostname}</div> <div class='generic-info'><span class='last-seen'>#{@last_seen}</span> <span class='rssi-container'><span class='label'>rssi:</span> <span class='rssi'>#{@rssi}</span><span class='unit'>dBm</span></span> <span class='bandwidth'>#{@bandwidth_in}/#{@bandwidth_out}</span><span class='label'>Mbit/s</span></div></div>"
@@ -37,10 +37,8 @@ WifiInfo = ->
   initialize()
   return this
 
-wifi_info = null
-
-jq ->
-  wifi_info = new WifiInfo()
+jq =>
+  this.wifi_info = new WifiInfo()
 
   jq(".main-button-box .open-wifi-settings").on "click", ->
     content_switch.switchContent "#wifi-settings"

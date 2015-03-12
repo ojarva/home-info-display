@@ -86,16 +86,15 @@ Printer = ->
   @stopInterval = stopInterval
   return this
 
-printer = null
-
-jq ->
-  printer = new Printer()
-  printer.startInterval()
+jq =>
+  obj = this
+  obj.printer = new Printer()
+  obj.printer.startInterval()
 
   jq(".main-button-box .print-labels").on "click", ->
     content_switch.switchContent "#print-modal"
-    printer.fetchStatus()
-    printer.fetchPrinters()
+    obj.printer.fetchStatus()
+    obj.printer.fetchPrinters()
 
   jq("#print-modal .close").on "click", ->
     content_switch.switchContent "#main-content"

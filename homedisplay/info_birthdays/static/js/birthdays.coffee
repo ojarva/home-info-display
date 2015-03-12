@@ -32,17 +32,17 @@ Birthdays = (elem, use_date, options) ->
     da = moment da
     m = da.month()
     if m < 10
-      m = "0" + m
+      m = "0#{m}"
 
     d = da.date()
     if d < 10
-      d = "0" + d
+      d = "0#{d}"
 
-    return "" + m + d
+    return "#{m}#{d}"
 
 
   processData = (data) ->
-    debug.log("Processing " + data.length + " birthdays for " + this_date)
+    debug.log("Processing #{data.length} birthdays for #{this_date}")
     clearDates()
     data_sortable = []
     now = clock.getMoment().subtract 1, "days"
@@ -69,7 +69,6 @@ Birthdays = (elem, use_date, options) ->
     jq.each data_sortable, ->
       name = @fields.name
       age = ""
-      b = null
       date = ""
       extra = ""
       if @fields.nickname
@@ -100,44 +99,40 @@ Birthdays = (elem, use_date, options) ->
       if this_date == "tomorrow"
         extra = " (huomenna)"
 
-      parent_elem.append "<li><i class='fa-li fa fa-birthday-cake'></i> " + name + date + age + extra + "</li>"
+      parent_elem.append "<li><i class='fa-li fa fa-birthday-cake'></i> #{name}#{date}#{age}#{extra}</li>"
 
   update = ->
-    jq.get "/homecontroller/birthdays/get_json/" + this_date, (data) ->
+    jq.get "/homecontroller/birthdays/get_json/#{this_date}", (data) ->
       processData data
 
 
   startInterval = ->
     update()
-    ws_generic.register "birthdays_" + this_date, onReceiveItemWS
-    ge_refresh.register "birthdays_" + this_date, update
-    ge_intervals.register "birthdays_" + this_date, "daily", update
+    ws_generic.register "birthdays_#{this_date}", onReceiveItemWS
+    ge_refresh.register "birthdays_#{this_date}", update
+    ge_intervals.register "birthdays_#{this_date}", "daily", update
 
   stopInterval = ->
-    ws_generic.deRegister "birthdays_" + this_date
-    ge_refresh.deRegister "birthdays_" + this_date
-    ge_intervals.deRegister "birthdays_" + this_date, "daily"
+    ws_generic.deRegister "birthdays_#{this_date}"
+    ge_refresh.deRegister "birthdays_#{this_date}"
+    ge_intervals.deRegister "birthdays_#{this_date}", "daily"
 
 
   @startInterval = startInterval
   @stopInterval = stopInterval
   return this
 
-birthdays_today = null
-birthdays_tomorrow = null
-birthdays_all = null
-
-jq ->
-  birthdays_today = new Birthdays "#today .list-birthdays .fa-ul", "today"
-  birthdays_tomorrow = new Birthdays "#tomorrow .list-birthdays .fa-ul", "tomorrow"
-  birthdays_all = new Birthdays "#birthdays-list-all .fa-ul", "all",
+jq =>
+  this.birthdays_today = new Birthdays "#today .list-birthdays .fa-ul", "today"
+  this.birthdays_tomorrow = new Birthdays "#tomorrow .list-birthdays .fa-ul", "tomorrow"
+  this.birthdays_all = new Birthdays "#birthdays-list-all .fa-ul", "all",
     interval: 60 * 60 * 1000
     showdate: true
     maxitems: 45
 
-  birthdays_today.startInterval()
-  birthdays_tomorrow.startInterval()
-  birthdays_all.startInterval()
+  this.birthdays_today.startInterval()
+  this.birthdays_tomorrow.startInterval()
+  this.birthdays_all.startInterval()
 
   jq(".main-button-box .birthdays").on "click", ->
     content_switch.switchContent "#birthdays-list-all"

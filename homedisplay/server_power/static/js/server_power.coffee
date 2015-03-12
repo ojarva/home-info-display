@@ -16,19 +16,15 @@ ServerPower = (options) ->
       button_in_progress_timeout = clearTimeout button_in_progress_timeout
 
 
-
-
   setSpinners = ->
     main_elem.find(".action-button i").removeClass().addClass("fa fa-spinner fa-spin")
     # If status does not change, remove spinner.
     button_in_progress_timeout = setTimeout removeSpinners, 60 * 1000
 
 
-
   showButton = (button_name) ->
-    main_elem.find(".action-button").not("." + button_name).hide()
-    main_elem.find("." + button_name).show()
-
+    main_elem.find(".action-button").not(".#{button_name}").hide()
+    main_elem.find(".#{button_name}").show()
 
 
   setStatus = (data) ->
@@ -44,13 +40,13 @@ ServerPower = (options) ->
         spinner_until_status_from = data.in_progress
         setSpinners()
 
-
     if data.status == "down"
       showButton "startup"
      else if data.status == "not_responding"
       showButton "unknown"
      else if data.status == "running"
       showButton "shutdown"
+
 
   refreshServerPower = ->
     jq.get "/homecontroller/server_power/status", (data) ->
@@ -60,6 +56,7 @@ ServerPower = (options) ->
   onReceiveItemWS = (message) ->
     setStatus message
 
+
   stopInterval = ->
     if interval?
       interval = clearInterval interval
@@ -67,13 +64,11 @@ ServerPower = (options) ->
     ws_generic.deRegister "server_power"
 
 
-
   startInterval = ->
     stopInterval()
     refreshServerPower()
     interval = setInterval refreshServerPower, options.update_interval
     ws_generic.register "server_power", onReceiveItemWS
-
 
 
   main_elem.find(".action-button i").each ->
@@ -95,9 +90,7 @@ ServerPower = (options) ->
   @stopInterval = stopInterval
   return this
 
-server_power = null
-
-jq ->
-  server_power = new ServerPower
+jq =>
+  this.server_power = new ServerPower
     main_elem: ".server-power"
-  server_power.startInterval()
+  this.server_power.startInterval()

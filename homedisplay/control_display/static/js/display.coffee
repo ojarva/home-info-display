@@ -77,26 +77,25 @@ ShutdownProgress = (options) ->
   @restartDisplay = restartDisplay
   return this
 
-shutdown_progress = null
-
-jq ->
-  shutdown_progress = new ShutdownProgress()
+jq =>
+  obj = @
+  @shutdown_progress = new ShutdownProgress()
   jq("#main-content .close").on "click", ->
     content_switch.switchContent "#shutdown-progress"
-    shutdown_progress.restart()
+    obj.shutdown_progress.restart()
 
   jq("#shutdown-progress .close, #shutdown-progress .cancel").on "click", ->
-    shutdown_progress.stop()
+    obj.shutdown_progress.stop()
     content_switch.switchContent "#main-content"
 
   jq("#shutdown-progress .yes").on "click", ->
-    shutdown_progress.shutdown()
+    obj.shutdown_progress.shutdown()
 
   jq(".display-power .shutdown-display").on "click", ->
-    shutdown_progress.shutdown()
+    obj.shutdown_progress.shutdown()
 
   jq(".display-power .startup-display").on "click", ->
-    shutdown_progress.startup();
+    obj.shutdown_progress.startup();
 
   jq(".display-power .restart-browser").on "click", ->
-    shutdown_progress.restartDisplay()
+    obj.shutdown_progress.restartDisplay()

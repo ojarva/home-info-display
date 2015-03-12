@@ -24,7 +24,7 @@ RefreshWeather = (options) ->
       weather.find(".temperature-now").html(data.current.feels_like)
       weather.find(".wind-now").html(data.current.wind_speed_readable)
       direction = (data.current.wind_direction_degrees + "").replace(".", "_")
-      weather.find(".wind-direction-now").html("<i class='fa fa-fw fa-long-arrow-up fa-rotate-"+direction+"'></i>")
+      weather.find(".wind-direction-now").html("<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{direction}'></i>")
 
     jq.each data.next, ->
       this_item = weather.find(".weather-" + current_index)
@@ -37,7 +37,7 @@ RefreshWeather = (options) ->
 
       this_item.find(".timestamp").html(@name)
       this_item.find(".temperature").html(@item.feels_like)
-      this_item.find(".symbol").html("<img src='/homecontroller/static/images/" + @item.icon + ".png'>")
+      this_item.find(".symbol").html("<img src='/homecontroller/static/images/#{@item.icon}.png'>")
       this_item.find(".temperature-unit").html("&deg;C")
       current_index += 1
 
@@ -64,12 +64,12 @@ RefreshWeather = (options) ->
 
       current_item.find(".timestamp").html(@hour + ":00")
       current_item.find(".temperature").html(@feels_like)
-      current_item.find(".symbol").html("<img src='/homecontroller/static/images/" + @icon + ".png'>")
+      current_item.find(".symbol").html("<img src='/homecontroller/static/images/#{@icon}.png'>")
       current_item.find(".temperature-unit").html("&deg;C")
       current_item.find(".wind-speed").html(Math.round(@wind_speed / 3.6))
       if @wind_direction_degrees?
         direction = (@wind_direction_degrees + "").replace(".", "_")
-        current_item.find(".wind-direction").html("<i class='fa fa-fw fa-long-arrow-up fa-rotate-"+direction+"'></i>")
+        current_item.find(".wind-direction").html("<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{direction}'></i>")
 
       if !highlight_set and @date == now.format("YYYY-MM-DD") and (now.hour() == @hour or now.hour() - 1 == @hour)
         current_item.addClass("weather-today")
@@ -99,13 +99,9 @@ RefreshWeather = (options) ->
   @stopInterval = stopInterval
   return this
 
-
-refresh_weather = null
-
-jq ->
-
-  refresh_weather = new RefreshWeather()
-  refresh_weather.startInterval()
+jq =>
+  this.refresh_weather = new RefreshWeather()
+  this.refresh_weather.startInterval()
   jq(".open-weather-modal").on "click", ->
     content_switch.switchContent "#weather-modal"
 

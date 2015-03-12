@@ -14,18 +14,16 @@ RepeatingTasks = (elem, use_date) ->
     clearTasks()
     jq.each data, ->
       overdue_by = ""
-      diff = null
       if @fields.last_completed_at
         diff = moment(@fields.last_completed_at).add(@fields.repeat_every_n_seconds, "seconds")
-        overdue_by = " (<span class='auto-fromnow-update' data-timestamp='" + diff + "'>" + diff.fromNowSynced() + "</span>)"
+        overdue_by = " (<span class='auto-fromnow-update' data-timestamp='#{diff}'>" + diff.fromNowSynced() + "</span>)"
 
-      icon = null
       if @fields.optional
         icon = "fa-question-circle"
       else
         icon = "fa-repeat"
 
-      added_elem = parent_elem.append("<li class='repeating-task-mark-done' data-id='" + @pk + "' data-snooze-to-show='" + @fields.snooze_to_show + "'><i class='fa-li fa " + icon + "'></i> <span class='task-title'>" + @fields.title + "</span>" + overdue_by + "</li>")
+      added_elem = parent_elem.append("<li class='repeating-task-mark-done' data-id='#{@pk}' data-snooze-to-show='#{@fields.snooze_to_show}'><i class='fa-li fa #{icon}'></i> <span class='task-title'>#{@fields.title}</span>#{overdue_by}</li>")
       added_elem.find("li").data
         "history": JSON.stringify(@fields.history)
 
@@ -58,21 +56,21 @@ RepeatingTasks = (elem, use_date) ->
     processData message
 
   update = ->
-    jq.get "/homecontroller/repeating_tasks/get_json/" + this_date, (data) ->
+    jq.get "/homecontroller/repeating_tasks/get_json/#{this_date}", (data) ->
       processData data
 
   stopInterval = ->
-    ws_generic.deRegister "repeating_tasks_" + this_date
-    ge_refresh.deRegister "repeating_tasks_" + this_date
-    ge_intervals.deRegister "repeating_tasks_" + this_date, "daily"
+    ws_generic.deRegister "repeating_tasks_#{this_date}"
+    ge_refresh.deRegister "repeating_tasks_#{this_date}"
+    ge_intervals.deRegister "repeating_tasks_#{this_date}", "daily"
     return
 
   startInterval = ->
     stopInterval()
     update()
-    ws_generic.register "repeating_tasks_" + this_date, onReceiveItemWS
-    ge_refresh.register "repeating_tasks_" + this_date, update
-    ge_intervals.register "repeating_tasks_" + this_date, "daily", update
+    ws_generic.register "repeating_tasks_#{this_date}", onReceiveItemWS
+    ge_refresh.register "repeating_tasks_#{this_date}", update
+    ge_intervals.register "repeating_tasks_#{this_date}", "daily", update
     return
 
   @startInterval = startInterval
@@ -81,28 +79,24 @@ RepeatingTasks = (elem, use_date) ->
   @clearTasks = clearTasks
   return this
 
-tasks_today = null
-tasks_tomorrow = null
-tasks_all = null
-
-jq ->
-  tasks_today = new RepeatingTasks "#today .list-repeating-tasks .fa-ul", "today"
-  tasks_tomorrow = new RepeatingTasks "#tomorrow .list-repeating-tasks .fa-ul", "tomorrow"
-  tasks_all = new RepeatingTasks "#repeating-tasks-all .fa-ul", "all"
-  tasks_today.startInterval()
-  tasks_tomorrow.startInterval()
-  tasks_all.startInterval()
+jq =>
+  this.tasks_today = new RepeatingTasks "#today .list-repeating-tasks .fa-ul", "today"
+  this.tasks_tomorrow = new RepeatingTasks "#tomorrow .list-repeating-tasks .fa-ul", "tomorrow"
+  this.tasks_all = new RepeatingTasks "#repeating-tasks-all .fa-ul", "all"
+  this.tasks_today.startInterval()
+  this.tasks_tomorrow.startInterval()
+  this.tasks_all.startInterval()
   jq("#confirm-repeating-task .close").on "click", ->
     content_switch.switchContent "#main-content"
 
   jq("#confirm-repeating-task .yes").on "click", ->
     id = jq("#confirm-repeating-task").data("id")
-    jq.post "/homecontroller/repeating_tasks/done/" + id
+    jq.post "/homecontroller/repeating_tasks/done/#{id}"
     content_switch.switchContent "#main-content"
 
   jq("#confirm-repeating-task .snooze").on "click", ->
     id = jq("#confirm-repeating-task").data "id"
-    jq.post "/homecontroller/repeating_tasks/snooze/" + id + "/" + jq(this).data("days")
+    jq.post "/homecontroller/repeating_tasks/snooze/#{id}/" + jq(this).data("days")
     content_switch.switchContent "#main-content"
 
   jq("#confirm-repeating-task .cancel").on "click", ->

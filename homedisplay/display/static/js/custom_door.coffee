@@ -31,10 +31,8 @@ DoorScreensaver = ->
   @activity = activity
   return this
 
-door_screensaver = null;
-
-jq ->
-  door_screensaver = new DoorScreensaver()
+jq =>
+  this.door_screensaver = new DoorScreensaver()
   height = jq(window).height()
   jq(".content-box").css
     "height": height

@@ -12,6 +12,5 @@ InternetConnectivity = ->
   window.addEventListener "offline", status
   return this
 
-internet_connectivity = null
-jq ->
-  internet_connectivity = new InternetConnectivity()
+jq =>
+  this.internet_connectivity = new InternetConnectivity()

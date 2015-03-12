@@ -7,7 +7,7 @@ ShowRealtimePing = (options) ->
 
   noUpdates = (warning_class) ->
     warning_class = warning_class || "error"
-    container.html "<i class='fa fa-times-circle " + warning_class + "-message'></i>"
+    container.html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
 
   autoNoUpdates = ->
     noUpdates "warning"
@@ -46,7 +46,7 @@ RefreshInternet = (options) ->
   setSignal = (level) ->
     output.find(".signal-bars div").removeClass("active").addClass("inactive")
     for a in [1..level]
-      output.find(".signal-bars .signal-" + a).addClass("active").removeClass("inactive")
+      output.find(".signal-bars .signal-#{a}").addClass("active").removeClass("inactive")
 
   clearAutoNoUpdates = ->
     if update_timeout?
@@ -110,16 +110,15 @@ RefreshInternet = (options) ->
   @stopInterval = stopInterval
   return this
 
-refresh_internet = null
-show_pings = null
+obj = this
 jq ->
-  refresh_internet = new RefreshInternet
+  obj.refresh_internet = new RefreshInternet
     output: ".internet-connection"
-  refresh_internet.startInterval()
+  obj.refresh_internet.startInterval()
 
-  show_pings = new ShowRealtimePing
+  obj.show_pings = new ShowRealtimePing
     output: ".internet-connection .ping"
-  show_pings.startInterval()
+  obj.show_pings.startInterval()
 
   jq(".internet-connection").on "click", ->
     charts = [["idler", "Internet/idler_last_10800.png"],

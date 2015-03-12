@@ -50,11 +50,9 @@ Namedays = ->
   @stopInterval = stopInterval
   return this
 
-name_days = null
-
-jq ->
-  name_days = new Namedays()
-  name_days.startInterval()
+jq =>
+  this.name_days = new Namedays()
+  this.name_days.startInterval()
 
   jq(".list-namedays").on "click", ->
     content_switch.switchContent "#namedays-modal"

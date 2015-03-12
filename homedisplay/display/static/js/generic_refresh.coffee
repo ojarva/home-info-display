@@ -1,7 +1,6 @@
 # TODO: implement multiRegister/multiDeRegister
 GenericRefresh = (options) ->
   callbacks = {}
-  refresh_callback = null
 
   setRefreshCallback = (callback) ->
     refresh_callback = callback
@@ -32,6 +31,5 @@ GenericRefresh = (options) ->
   this.setRefreshCallback = setRefreshCallback
   return this
 
-obj = this
-jq ->
-  obj.ge_refresh = new GenericRefresh()
+jq =>
+  this.ge_refresh = new GenericRefresh()

@@ -127,7 +127,6 @@ LightControlTimed = (options) ->
     start_time = getNextStartDatetime()
     end_time = getNextEndDatetime()
     now = clock.getMoment()
-    verb = null
     show_progress_indicator = null
     content = main.find ".time-left"
 
@@ -241,9 +240,9 @@ LightControlTimed = (options) ->
     main.find(".current-brightness").html "#{data}%"
 
   ws_generic.multiRegister "lightcontrol_timed_override", "lightcontrol_timed_override_#{action}", onReceiveOverride
-  ws_generic.register "lightcontrol_timed_" + action, onReceiveItemUpdate
-  ws_generic.register "lightcontrol-timed-brightness-" + action, onReceiveBrightness
-  ge_refresh.register "lightcontrol_timed_" + action, update
+  ws_generic.register "lightcontrol_timed_#{action}", onReceiveItemUpdate
+  ws_generic.register "lightcontrol-timed-brightness-#{action}", onReceiveBrightness
+  ge_refresh.register "lightcontrol_timed_#{action}", update
 
   startInterval()
 

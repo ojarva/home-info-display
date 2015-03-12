@@ -28,7 +28,7 @@ Transportation = () ->
 
       seconds = ("00" + Math.floor(diff - (60 * minutes_raw))).substr(-2, 2)
       jq(this).find(".minutes").html minutes_raw
-      jq(this).find(".seconds").html ":" + seconds
+      jq(this).find(".seconds").html ":#{seconds}"
 
     jq(".transportation .departures .seconds").hide()
     jq(".transportation .departures").each ->
@@ -40,11 +40,11 @@ Transportation = () ->
     clearEntries()
     jq.each data, ->
       # Loop over stops
-      jq(".transportation ul").append("<li><i class='fa fa-li fa-2x fa-" + @icon + " type-" + @type + "'></i> <span class='line-number'>" + @line + ":</span> <span class='departures' data-minimum-time=" + @minimum_time + "></span></li>")
+      jq(".transportation ul").append("<li><i class='fa fa-li fa-2x fa-#{@icon} type-#{@type}'></i> <span class='line-number'>#{@line}:</span> <span class='departures' data-minimum-time='#{@minimum_time}'></span></li>")
       this_departures = jq(".transportation ul li .departures").last()
       departures_for_stop = 0
       jq.each @departures, ->
-        this_departures.append("<span class='auto-update-timestamp' data-timestamp='" + this + "'><span class='minutes'></span><span class='seconds'></span></span> ")
+        this_departures.append("<span class='auto-update-timestamp' data-timestamp='#{this}'><span class='minutes'></span><span class='seconds'></span></span> ")
         departures_for_stop += 1
         if departures_for_stop > 7
           return false
@@ -83,8 +83,6 @@ Transportation = () ->
   @update = update
   return this
 
-transportation = null
-
-jq ->
-  transportation = new Transportation()
-  transportation.startInterval()
+jq =>
+  this.transportation = new Transportation()
+  this.transportation.startInterval()

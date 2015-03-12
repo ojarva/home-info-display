@@ -25,7 +25,6 @@ FrameHandler = () ->
     first_update_received = true
     watchdog_last_update = e.data
   , false
-frame_handler = null;
 
-jq ->
-  frame_handler = new FrameHandler()
+jq =>
+  this.frame_handler = new FrameHandler()

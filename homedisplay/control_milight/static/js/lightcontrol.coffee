@@ -60,7 +60,7 @@ LightControl = ->
         main_elem.children().not(".active-mode").removeClass().addClass("fa fa-spinner fa-spin")
         animate_completed = (icon) ->
           main_elem.data "running", false
-          main_elem.children().not(".active-mode").removeClass().addClass("fa fa-" + icon)
+          main_elem.children().not(".active-mode").removeClass().addClass("fa fa-#{icon}")
           restore_classes = ->
             main_elem.children().not(".active-mode").each ->
               elem = jq this
@@ -74,10 +74,11 @@ LightControl = ->
 
 
         url = "/homecontroller/lightcontrol/control/"
-        if source
-          url += "source/" + source + "/" + command
+        if source?
+          # Per source commands do not contain group ID
+          url += "source/#{source}/#{command}"
         else
-          url += command + "/" + group
+          url += "#{command}/#{group}"
         jq.ajax
           url: url
           type: "POST"
@@ -100,7 +101,7 @@ LightControl = ->
         jq(".brightness-slider-group-#{group_id}").slider "value", this.fields.current_brightness
         jq(".brightness-slider-group-#{group_id}").css "background-color", color
 
-        color_elem = jq(".light-group-#{group_id}-color")
+        color_elem = jq ".light-group-#{group_id}-color"
         if color_map[color]?
           color_elem.html color_map[color]
 
@@ -112,9 +113,9 @@ LightControl = ->
         max_brightness = Math.max max_brightness, this.fields.morning_light_level
 
         if this.fields.morning_light_level < 10
-          jq(".lights-morning-auto-" + group_id).addClass("lights-morning-dim").removeClass("lights-morning-bright")
+          jq(".lights-morning-auto-#{group_id}").addClass("lights-morning-dim").removeClass("lights-morning-bright")
         else
-          jq(".lights-morning-auto-" + group_id).addClass("lights-morning-bright").removeClass("lights-morning-dim")
+          jq(".lights-morning-auto-#{group_id}").addClass("lights-morning-bright").removeClass("lights-morning-dim")
 
       if max_brightness < 10
         jq(".lights-morning-auto").addClass("lights-morning-dim").removeClass("lights-morning-bright")
@@ -124,9 +125,9 @@ LightControl = ->
     if data? and data.main_buttons?
       jq.each data.main_buttons, (key, value) ->
         if value
-          jq(".lights-" + key).find(".active-mode").show()
+          jq(".lights-#{key}").find(".active-mode").show()
         else
-          jq(".lights-" + key).find(".active-mode").hide()
+          jq(".lights-#{key}").find(".active-mode").hide()
 
   processData = (data) ->
     # Usually there is multiple updates for this. Delay processing a bit.
@@ -152,8 +153,8 @@ LightControl = ->
 obj = this
 jq ->
   obj.light_control = new LightControl()
-  light_control.initialize ".lightcontrol-btn"
-  light_control.update()
+  obj.light_control.initialize ".lightcontrol-btn"
+  obj.light_control.update()
 
   jq(".main-button-box .lights").on "click", ->
     content_switch.switchContent "#lightcontrol-modal"

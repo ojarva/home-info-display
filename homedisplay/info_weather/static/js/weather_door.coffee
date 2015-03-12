@@ -7,7 +7,7 @@ RefreshWeather = (options) ->
   update_interval = null
 
   setWeatherInfo = (icon, temperature) ->
-    elem.html("<img src='/homecontroller/static/images/" + icon + ".png'><br> " + temperature + "&deg;C")
+    elem.html("<img src='/homecontroller/static/images/#{icon}.png'><br> #{temperature}&deg;C")
 
   resetWeatherInfo = ->
     elem.html("<i class='fa fa-question-circle'></i>")
@@ -33,9 +33,6 @@ RefreshWeather = (options) ->
   @stopInterval = stopInterval
   this
 
-
-refresh_weather = null
-
-jq ->
-  refresh_weather = new RefreshWeather({"elem": "#weather-general"})
-  refresh_weather.startInterval()
+jq =>
+  this.refresh_weather = new RefreshWeather({"elem": "#weather-general"})
+  this.refresh_weather.startInterval()

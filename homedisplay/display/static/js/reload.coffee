@@ -14,6 +14,5 @@ Reloader = ->
   this.startItem = startItem
   return this
 
-reloader_instance = null
-jq ->
-  reloader_instance = new Reloader()
+jq =>
+  this.reloader_instance = new Reloader()
