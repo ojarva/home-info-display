@@ -76,8 +76,9 @@ class LineShow(models.Model):
         now = datetime.datetime.now()
         current_day = now.weekday()
         if self.show_days[current_day] != "1":
+            # Not active on this weekday
             return False
-        if self.show_end and self.show_start:
+        if self.show_end is not None and self.show_start is not None:
             if self.show_end < self.show_start:
                 # Over midnight
                 if now.time() > self.show_start:
@@ -85,19 +86,17 @@ class LineShow(models.Model):
                 if now.time() < self.show_end:
                     return True
                 return False
-        valid_start = valid_end = None
-        if self.show_start:
+        if self.show_start is not None:
+            # Start time is set.
             if now.time() < self.show_start:
-                valid_start = True
-            else:
+                # Start time is not yet reached. No need for further checks.
                 return False
-        if self.show_end:
+        if self.show_end is not None:
             if now.time() > self.show_end:
-                return True
-            else:
+                # Past end time.
                 return False
-        if valid_start:
-            return True
+        # No schedule set / schedule matches.
+        return True
 
 class Line(models.Model):
     ICONS = (
@@ -130,6 +129,7 @@ class Line(models.Model):
             if schedule.is_valid():
                 return True
         if self.show_times.all().count() == 0:
+            # No schedules available - show at all times
             return True
         return False
 
