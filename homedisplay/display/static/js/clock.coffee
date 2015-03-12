@@ -44,9 +44,9 @@ ClockCalendar = (options) ->
     currentHours = currentTime.getHours()
     currentMinutes = currentTime.getMinutes()
     currentSeconds = currentTime.getSeconds()
-    currentHoursPadded = ( currentHours < 10 ? "0" : "" ) + currentHours
-    currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes
-    currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds
+    currentHoursPadded = ("0" + currentHours).substr(-2, 2)
+    currentMinutes = ("0" + currentMinutes).substr(-2, 2)
+    currentSeconds = ("0" + currentSeconds).substr(-2, 2)
     jq(".clock").html(currentHours+":"+currentMinutes+":"+currentSeconds)
     jq(".clock-hours").html(currentHours)
     jq(".clock-minutes").html(currentMinutes)
