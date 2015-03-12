@@ -1,5 +1,4 @@
 InternetConnectivity = ->
-  console.log content_switch, content_switch.switchContent
   status = (event) ->
     # This is not executed on load. This might be important if this will ever show any status information
     if navigator.onLine

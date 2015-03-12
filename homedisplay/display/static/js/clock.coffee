@@ -60,7 +60,6 @@ ClockCalendar = (options) ->
       sync_interval = clearInterval sync_interval
 
 
-
   startInterval = ->
     stopInterval()
     update()
@@ -72,13 +71,13 @@ ClockCalendar = (options) ->
   ge_refresh.register "clock-sync", updateOffset
   ws_generic.multiRegister "clock-sync", "clock-sync-main", processOffset
 
-  this.updateOffset = updateOffset
-  this.getOffset = getOffset
-  this.update = update
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
-  this.getMoment = getMoment
-  this.getDate = getDate
+  @updateOffset = updateOffset
+  @getOffset = getOffset
+  @update = update
+  @startInterval = startInterval
+  @stopInterval = stopInterval
+  @getMoment = getMoment
+  @getDate = getDate
   return this
 
 
@@ -88,7 +87,7 @@ TimedRefresh = ->
   intervals = {}
 
   register = (key, interval, callback) ->
-    if !(interval in intervals)
+    if not intervals[interval]?
         intervals[interval] = {}
 
     intervals[interval][key] = callback
@@ -96,11 +95,11 @@ TimedRefresh = ->
 
 
   deRegister = (key, interval) ->
-    if interval in intervals
+    if intervals[interval]?
       delete intervals[interval][key]
 
   executeCallbacks = (interval) ->
-    if !(interval in intervals)
+    if not intervals[interval]?
       debug.warn "Interval #{interval} does not exist"
       return
 
@@ -122,9 +121,9 @@ TimedRefresh = ->
   # Missing intervals by 5 seconds is not optimal, but good enough.
   setInterval runIntervals, 5000
 
-  this.register = register
-  this.deRegister = deRegister
-  this.executeCallbacks = executeCallbacks
+  @register = register
+  @deRegister = deRegister
+  @executeCallbacks = executeCallbacks
   return this
 
 obj = this

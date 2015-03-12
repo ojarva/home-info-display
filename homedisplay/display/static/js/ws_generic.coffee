@@ -5,12 +5,12 @@ WsGeneric = (options) ->
   disconnected_since = null
 
   register = (key, callback) ->
-    if key in callbacks
+    if callbacks[key]?
       deRegister key
     callbacks[key] = callback
 
   multiRegister = (key, unique_key, callback) ->
-    if !(key in multiregister_callbacks)
+    if not multiregister_callbacks[key]?
       multiregister_callbacks[key] = {}
 
     multiregister_callbacks[key][unique_key] = callback
@@ -20,15 +20,15 @@ WsGeneric = (options) ->
     delete callbacks[key]
 
   multiDeRegister = (key, unique_key) ->
-    if key in multiregister_callbacks
+    if multiregister_callbacks[key]?
       delete multiregister_callbacks[key][unique_key]
 
   onReceiveItemWS = (message) ->
     data = JSON.parse message
-    if data.key in callbacks
+    if callbacks[data.key]?
       callbacks[data.key](data.content)
 
-    if data.key in multiregister_callbacks
+    if multiregister_callbacks[data.key]?
       for unique_key in multiregister_callbacks[data.key]
         multiregister_callbacks[data.key][unique_key](data.content)
 
