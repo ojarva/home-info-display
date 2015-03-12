@@ -29,8 +29,8 @@ WsGeneric = (options) ->
       callbacks[data.key](data.content)
 
     if multiregister_callbacks[data.key]?
-      for unique_key in multiregister_callbacks[data.key]
-        multiregister_callbacks[data.key][unique_key](data.content)
+      for unique_key, func of multiregister_callbacks[data.key]
+        func(data.content)
 
   ws4redis = new WS4Redis
       uri: websocket_root + "generic?subscribe-broadcast&publish-broadcast&echo"

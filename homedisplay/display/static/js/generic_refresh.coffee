@@ -18,7 +18,7 @@ GenericRefresh = (options) ->
 
 
   requestUpdate = ->
-    for k in callbacks
+    for k of callbacks
       callbacks[k]()
 
     if refresh_callback?

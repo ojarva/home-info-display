@@ -103,7 +103,7 @@ TimedRefresh = ->
       debug.warn "Interval #{interval} does not exist"
       return
 
-    for key in intervals[interval]
+    for key of intervals[interval]
       intervals[interval][key]()
 
   runIntervals = ->
