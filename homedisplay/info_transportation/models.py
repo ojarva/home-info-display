@@ -31,8 +31,10 @@ def get_departures():
                 continue
             if show_line or schedules is False:
                 lines[num]["visible"] = True
-
-            lines[num]["departures"].append(item.time.isoformat())
+            formatted = item.time.isoformat()
+            if formatted not in lines[num]["departures"]:
+                # Deduplicate departures - this removes duplicate timestamps for busy combined lines
+                lines[num]["departures"].append(formatted)
     items = []
     for line in lines:
         if lines[line]["visible"]:
