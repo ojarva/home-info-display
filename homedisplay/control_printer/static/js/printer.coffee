@@ -21,13 +21,13 @@ Printer = ->
     clearLabels()
     main_elem = jq ".printer-labels"
     jq.each data, ->
-      main_elem.append("<div class='center-content stripe-box animate-click action-button print-label-" + @pk + "' data-id='" + @pk + "'>" + @fields.name + " <i class='fa fa-fw'></i></div>")
+      main_elem.append("<div class='center-content stripe-box animate-click action-button print-label-#{@pk}' data-id='#{@pk}'>#{@fields.name} <i class='fa fa-fw'></i></div>")
 
     #TODO: Bind click events
     main_elem.find("div").on "click", ->
       content_switch.userActivity()
-      jq(this).find("i").addClass("fa-spin fa-spinner")
-      printLabel(jq(this).data("id"))
+      jq(this).find("i").addClass "fa-spin fa-spinner"
+      printLabel jq(this).data("id")
 
   updateLabels = ->
     jq.get "/homecontroller/printer/get_labels", (data) ->
@@ -42,7 +42,8 @@ Printer = ->
       jq("#print-modal .printer-jobs .spinner").slideUp()
       main.slideDown()
       jq.each data, (key, value) ->
-        main.find("ul").append("<li data-id='" + key + "'><i class='fa-li fa fa-times-circle'></i>Luotu " + moment(value["time-at-creation"]).fromNowSynced() + "</i>")
+        creationTime = moment(value["time-at-creation"]).fromNowSynced()
+        main.find("ul").append "<li data-id='#{key}'><i class='fa-li fa fa-times-circle'></i>Luotu #{creationTime}</i>"
 
       main.find("li").on "click", ->
         content_switch.userActivity()
@@ -63,7 +64,7 @@ Printer = ->
           3: "odottaa"
           4: "tulostaa"
           5: "pysäytetty"
-        status_main.find(".printer-status-content").append("<h2>" + key + " (" + states[state] + ")</h2><p>Status: " + value["printer-state-message"] + "</p>")
+        status_main.find(".printer-status-content").append "<h2>#{key} (" + states[state] + ")</h2><p>Status: " + value["printer-state-message"] + "</p>"
 
    startInterval = ->
     stopInterval()

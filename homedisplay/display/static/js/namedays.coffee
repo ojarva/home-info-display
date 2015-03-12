@@ -21,7 +21,7 @@ Namedays = ->
       if data[month].length == day
         # 29th of Feb
       else
-        current_elem.append("<li>"+data[month][day]+" "+now.format("DD.MM (dd)")+"</li>")
+        current_elem.append "<li>"+data[month][day]+" "+now.format("DD.MM (dd)")+"</li>"
         items_in_current += 1
 
       now.add 1, "day"
@@ -33,7 +33,7 @@ Namedays = ->
     d = clock.getDate()
     nameday = data[d.getMonth()][d.getDate() - 1]
     jq("#today .list-namedays ul li").remove()
-    jq("#today .list-namedays ul").append("<li><i class='fa-li fa fa-calendar'></i> " + nameday + "</li>")
+    jq("#today .list-namedays ul").append "<li><i class='fa-li fa fa-calendar'></i> #{nameday}</li>"
 
 
   startInterval = ->

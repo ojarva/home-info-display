@@ -20,7 +20,8 @@ ShowRealtimePing = (options) ->
     if invalid_timeout?
       invalid_timeout = clearTimeout invalid_timeout
 
-    container.html "<i class='fa fa-check-circle success-message'></i> " + (Math.round(parseFloat(message) * 10) / 10) + "ms"
+    ping = Math.round(parseFloat(message) * 10) / 10
+    container.html "<i class='fa fa-check-circle success-message'></i> #{ping}ms"
     invalid_timeout = setTimeout autoNoUpdates, options.invalid_timeout
 
 
@@ -133,7 +134,9 @@ jq ->
     content = ""
     timestamp = new Date() - 0
     jq.each charts, ->
-      content += "<div class='smokeping-chart'><h4>" + this[0] + "</h4><img src='/smokeping/images/" + this[1] + "?" + timestamp + "'></div>"
+      description = @[0]
+      link = @[1]
+      content += "<div class='smokeping-chart'><h4>#{description}</h4><img src='/smokeping/images/#{link}?#{timestamp}'></div>"
 
     jq("#internet-connection-modal .smokeping-charts").html content
     content_switch.switchContent "#internet-connection-modal"
