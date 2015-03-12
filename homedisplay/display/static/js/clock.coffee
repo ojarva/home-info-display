@@ -26,7 +26,7 @@ ClockCalendar = (options) ->
 
   getMoment = ->
     # Get moment with current offset
-    return moment().add getOffset()
+    return moment().subtract getOffset()
 
 
   getDate = ->
@@ -126,9 +126,7 @@ TimedRefresh = ->
   @executeCallbacks = executeCallbacks
   return this
 
-obj = this
-
-jq ->
-    obj.clock = new ClockCalendar()
-    obj.clock.startInterval()
-    obj.ge_intervals = new TimedRefresh()
+jq =>
+    this.clock = new ClockCalendar()
+    this.clock.startInterval()
+    this.ge_intervals = new TimedRefresh()

@@ -51,7 +51,7 @@ Transportation = () ->
         # Loop over departures
         this_departures.append "<span class='auto-update-timestamp' data-timestamp='#{this}'><span class='minutes'></span><span class='seconds'></span></span> "
         departures_for_stop += 1
-        if departures_for_stop > 1
+        if departures_for_stop > 3
           return false
       if items > total_entries / 2
         current_elem = jq(".transportation ul").slice(1, 2)
@@ -59,7 +59,7 @@ Transportation = () ->
     updateTimestamps()
 
   update = ->
-    jq.get "/homecontroller/transportation/get_json", (data) ->
+    jq.get "/homecontroller/transportation/get_json?" + (+ new Date()), (data) ->
       processData data
 
   update()
@@ -74,4 +74,6 @@ Transportation = () ->
   return this
 
 jq =>
-  this.transportation = new Transportation()
+  setTimeout ->
+    this.transportation = new Transportation()
+  , 3000
