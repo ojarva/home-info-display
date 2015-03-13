@@ -1,36 +1,66 @@
-ShowRealtimePing = (options) ->
+ShowRealtimeStats = (options) ->
 
-  options = options || {}
-  options.invalid_timeout = options.invalid_timeout || 10000
-  container = jq options.output
-  invalid_timeout = null
+  options = options or {}
+  options.invalid_ping_timeout = options.invalid_ping_timeout or 10000
+  options.invalid_speed_timeout = options.invalid_speed_timeout or 30000
+  ping_container = jq options.ping_output
+  speed_container = jq options.speed_output
+  invalid_ping_timeout = null
+  invalid_speed_timeout = null
 
-  noUpdates = (warning_class) ->
+  noPingUpdates = (warning_class) ->
     warning_class = warning_class || "error"
-    container.html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
+    ping_container.html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
 
-  autoNoUpdates = ->
-    noUpdates "warning"
+  autoNoPingUpdates = ->
+    noPingUpdates "warning"
+
+  noSpeedUpdates = (warning_class) ->
+    warning_class = warning_class || "error"
+    speed_container.html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
+
+  autoNoSpeedUpdates = ->
+    noSpeedUpdates "warning"
 
   update = (message) ->
     if message == "no_pings"
-      noUpdates()
+      noPingUpdates()
       return
 
-    if invalid_timeout?
-      invalid_timeout = clearTimeout invalid_timeout
+    if invalid_ping_timeout?
+      invalid_ping_timeout = clearTimeout invalid_ping_timeout
 
     ping = Math.round(parseFloat(message) * 10) / 10
-    container.html "<i class='fa fa-check-circle success-message'></i> #{ping}ms"
-    invalid_timeout = setTimeout autoNoUpdates, options.invalid_timeout
+    ping_container.html "<i class='fa fa-check-circle success-message'></i> #{ping}ms"
+    invalid_ping_timeout = setTimeout autoNoPingUpdates, options.invalid_ping_timeout
 
+  updateSpeed = (data) ->
+    if data.internet?
+      if invalid_speed_timeout?
+        invalid_speed_timeout = clearTimeout invalid_speed_timeout
+      speed_in = data.internet.speed_in
+      speed_out = data.internet.speed_out
+      unit = "b"
+      if speed_in > 1024
+        speed_in /= 1024
+        speed_out /= 1024
+        unit = "kb"
+      if speed_in > 1024
+        speed_in /= 1024
+        speed_out /= 1024
+        unit = "Mb"
+      speed_in = Math.round(speed_in)
+      speed_out = Math.round(speed_out)
+      speed_container.html "#{speed_in}/#{speed_out}#{unit}/s"
+      invalid_speed_timeout = setTimeout autoNoSpeedUpdates, options.invalid_speed_timeout
 
   startInterval = ->
     ws_generic.register "ping", update
-
+    ws_generic.register "internet-speed", updateSpeed
 
   stopInterval = ->
     ws_generic.deRegister "ping"
+    ws_generic.deRegister "internet-speed"
 
 
   @startInterval = startInterval
@@ -116,9 +146,10 @@ jq ->
     output: ".internet-connection"
   obj.refresh_internet.startInterval()
 
-  obj.show_pings = new ShowRealtimePing
-    output: ".internet-connection .ping"
-  obj.show_pings.startInterval()
+  obj.show_internet_info = new ShowRealtimeStats
+    ping_output: ".internet-connection .ping"
+    speed_output: ".internet-connection .speed"
+  obj.show_internet_info.startInterval()
 
   jq(".internet-connection").on "click", ->
     charts = [["idler", "Internet/idler_last_10800.png"],
@@ -139,7 +170,6 @@ jq ->
 
     jq("#internet-connection-modal .smokeping-charts").html content
     content_switch.switchContent "#internet-connection-modal"
-
 
   jq("#internet-connection-modal .close").on "click", ->
     content_switch.switchContent "#main-content"
