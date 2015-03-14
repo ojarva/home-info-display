@@ -41,17 +41,30 @@ ShowRealtimeStats = (options) ->
       speed_in = data.internet.speed_in
       speed_out = data.internet.speed_out
       unit = "b"
-      if speed_in > 1024
+      round_by = 1
+      if 100 > speed_in < 1024 or 100 > speed_out < 1024
         speed_in /= 1024
         speed_out /= 1024
         unit = "kb"
-      if speed_in > 1024
-        speed_in /= 1024
-        speed_out /= 1024
-        unit = "Mb"
-      speed_in = Math.round(speed_in)
-      speed_out = Math.round(speed_out)
-      speed_container.html "#{speed_in}/#{speed_out}#{unit}/s"
+      else
+        if speed_in > 1024 or speed_out > 1024
+          speed_in /= 1024
+          speed_out /= 1024
+          unit = "kb"
+          round_by = 0
+        if speed_in > 100 or speed_out > 100
+          round_by = 1
+          unit = "Mb"
+          speed_in /= 1024
+          speed_out /= 1024
+          if speed_in > 2 or speed_out > 2
+            round_by = 0
+
+
+      mult = Math.pow(10, round_by)
+      speed_in = Math.round(speed_in * mult) / mult
+      speed_out = Math.round(speed_out * mult) / mult
+      speed_container.html "<span>#{speed_in}</span>/<span>#{speed_out}</span>#{unit}/s"
       invalid_speed_timeout = setTimeout autoNoSpeedUpdates, options.invalid_speed_timeout
 
   startInterval = ->
