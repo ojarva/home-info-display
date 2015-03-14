@@ -40,7 +40,7 @@ WifiInfo = ->
 jq =>
   this.wifi_info = new WifiInfo()
 
-  jq(".main-button-box .open-wifi-settings").on "click", ->
+  jq(".open-wifi-settings").on "click", ->
     content_switch.switchContent "#wifi-settings"
 
   jq("#wifi-settings .close").on "click", ->
