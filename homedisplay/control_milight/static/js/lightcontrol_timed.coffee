@@ -174,7 +174,7 @@ LightControlTimed = (options) ->
         parsed_time.add 15, "minutes"
 
     else
-      if (parsed_time.hours() == 0 and parsed_time.minutes() > 15) or parsed_time.hours() > 0
+      if (parsed_time.hours() == 0 and parsed_time.minutes() >= 15) or parsed_time.hours() > 0
         parsed_time.subtract 15, "minutes"
 
     formatted_time = parsed_time.format("H:mm")

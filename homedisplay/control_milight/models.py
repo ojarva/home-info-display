@@ -200,8 +200,9 @@ class LightAutomation(models.Model):
 
     def get_end_datetime(self):
         """ Returns datetime.datetime for next ending time. """
-        timestamp = (timezone.now() - datetime.timedelta(seconds=self.duration)).time()
-        return self.get_start_datetime(timestamp) + datetime.timedelta(seconds=self.duration)
+        duration = max(self.duration, 300)
+        timestamp = (timezone.now() - datetime.timedelta(seconds=duration)).time()
+        return self.get_start_datetime(timestamp) + datetime.timedelta(seconds=duration)
 
     def get_start_datetime(self, current_time=None):
         """ Returns datetime.datetime for next starting time. """
@@ -232,6 +233,8 @@ class LightAutomation(models.Model):
         return False
 
     def percent_done(self, timestamp):
+        if self.duration == 0:
+            return 1.0
         if not self.is_running(timestamp):
             return
         return float((timestamp - self.get_start_datetime()).total_seconds()) / self.duration

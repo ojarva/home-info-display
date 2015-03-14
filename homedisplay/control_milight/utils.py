@@ -27,7 +27,7 @@ def run_timed_actions():
         if not item.is_running(now):
             continue
         percent_done = item.percent_done(now)
-        logger.debug("Running %s, done %s%%", item.action, percent_done)
+        logger.debug("Running %s, done %s%%", item.action, percent_done * 100)
 
         if item.turn_display_on:
             run_display_command("on")
@@ -52,29 +52,29 @@ def run_timed_actions():
                 led.white(group)
                 logger.debug("Set %s to white", group)
                 update_lightstate(group, None, "white", important=False)
-        if brightness:
-            if brightness > 95:
-                brightness = 100
-            elif brightness < 5:
-                brightness = 0
-            logger.debug("Setting brightness to %s%%", brightness)
-            publish_ws("lightcontrol-timed-brightness-%s" % item.action, brightness)
-            for group in allowed_groups:
-                group_brightness = brightness
-                group_item, _ = LightGroup.objects.get_or_create(group_id=group)
-                if item.no_brighten:
-                    logger.debug("Current brightness: %s%%", group_item.current_brightness)
-                    if group_item.current_brightness is not None:
-                        group_brightness = min(group_item.current_brightness, group_brightness)
-                if item.no_dimming:
-                    logger.debug("Current brightness: %s%%", group_item.current_brightness)
-                    if group_item.current_brightness is not None:
-                        group_brightness = max(group_item.current_brightness, group_brightness)
-                if group_item.current_brightness:
-                    if led.get_brightness_level(group_brightness) == led.get_brightness_level(group_item.current_brightness):
-                        logger.debug("Not sending brightness update to %s: no difference in brightness level", group)
-                        continue
-                logger.debug("Setting %s to %s", group, group_brightness)
-                led.set_brightness(group_brightness, group)
-                update_lightstate(group, group_brightness, important=False)
-            set_destination_brightness()
+
+        if brightness > 95:
+            brightness = 100
+        elif brightness < 5:
+            brightness = 0
+        logger.debug("Setting brightness to %s%%", brightness)
+        publish_ws("lightcontrol-timed-brightness-%s" % item.action, brightness)
+        for group in allowed_groups:
+            group_brightness = brightness
+            group_item, _ = LightGroup.objects.get_or_create(group_id=group)
+            if item.no_brighten:
+                logger.debug("Current brightness: %s%%", group_item.current_brightness)
+                if group_item.current_brightness is not None:
+                    group_brightness = min(group_item.current_brightness, group_brightness)
+            if item.no_dimming:
+                logger.debug("Current brightness: %s%%", group_item.current_brightness)
+                if group_item.current_brightness is not None:
+                    group_brightness = max(group_item.current_brightness, group_brightness)
+            if group_item.current_brightness:
+                if led.get_brightness_level(group_brightness) == led.get_brightness_level(group_item.current_brightness):
+                    logger.debug("Not sending brightness update to %s: no difference in brightness level", group)
+                    continue
+            logger.debug("Setting %s to %s", group, group_brightness)
+            led.set_brightness(group_brightness, group)
+            update_lightstate(group, group_brightness, important=False)
+        set_destination_brightness()

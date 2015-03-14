@@ -7,7 +7,6 @@ import redis
 import subprocess
 
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
-print "Logger", "%s.%s" % ("homecontroller", __name__)
 logger.info("Initializing...")
 redis_instance = redis.StrictRedis()
 
