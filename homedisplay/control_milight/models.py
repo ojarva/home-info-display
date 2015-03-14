@@ -124,7 +124,7 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
             logger.debug("Next timed task ends at %s (%s seconds)", timed_ends_at, time_until_ends)
             logger.info("Setting timed lightcontrol override for %s until %s", group, time_until_ends)
             redis_instance.setex("lightcontrol-no-automatic-%s" % group, int(time_until_ends), True)
-            publish_ws("lightcontrol_timed_override", {"action": "pause"})
+            publish_ws("lightcontrol-timed-override", {"action": "pause"})
 
     (state, _) = LightGroup.objects.get_or_create(group_id=group)
     if color is not None:
@@ -241,7 +241,7 @@ class LightAutomation(models.Model):
 
 @receiver(post_save, sender=LightAutomation, dispatch_uid="lightautomation_post_save")
 def publish_lightautomation_saved(sender, instance, *args, **kwargs):
-    publish_ws("lightcontrol_timed_%s" % instance.action, get_serialized_timed_action(instance))
+    publish_ws("lightcontrol-timed-%s" % instance.action, get_serialized_timed_action(instance))
 
 @receiver(post_save, sender=LightGroup, dispatch_uid="lightgroup_post_save")
 def publish_lightgroup_saved(sender, instance, *args, **kwargs):

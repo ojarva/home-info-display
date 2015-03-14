@@ -239,10 +239,10 @@ LightControlTimed = (options) ->
     # TODO: there is cases where this is not cleaned up properly
     main.find(".current-brightness").html "#{data}%"
 
-  ws_generic.multiRegister "lightcontrol_timed_override", "lightcontrol_timed_override_#{action}", onReceiveOverride
-  ws_generic.register "lightcontrol_timed_#{action}", onReceiveItemUpdate
+  ws_generic.multiRegister "lightcontrol-timed-override", "lightcontrol-timed-override-#{action}", onReceiveOverride
+  ws_generic.register "lightcontrol-timed-#{action}", onReceiveItemUpdate
   ws_generic.register "lightcontrol-timed-brightness-#{action}", onReceiveBrightness
-  ge_refresh.register "lightcontrol_timed_#{action}", update
+  ge_refresh.register "lightcontrol-timed-#{action}", update
 
   startInterval()
 
