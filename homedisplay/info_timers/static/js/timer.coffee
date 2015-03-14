@@ -45,11 +45,12 @@ Timer = (parent_elem, options) ->
       if diff > options.auto_remove
         deleteItem() # Delete item automatically if auto remove overrun is exceeded.
 
-    if start_time > clock.getDate()
-      # Not yet started
+    time_diff = start_time - clock.getDate()
+    if time_diff > 1000
+      # not yet started
       this_elem.hide()
     else
-      this_elem.show()
+      this_elem.slideDown()
 
     hours = Math.floor(diff / 3600)
     diff = diff - hours * 3600
@@ -60,7 +61,10 @@ Timer = (parent_elem, options) ->
     if timer_type == "timer"
       this_elem.find(".timer-timeleft").html(timer)
     else
-      this_elem.find(".stopclock-content").html(timer)
+      if hours < 0
+        this_elem.find(".stopclock-content").html("00:00:00")
+      else
+        this_elem.find(".stopclock-content").html(timer)
 
   update = ->
     if !running
@@ -106,8 +110,13 @@ Timer = (parent_elem, options) ->
     if timer_type == "timer"
       this_elem.data("end-timestamp", (start_time.getTime() / 1000) + options.duration)
 
+    this_elem.find(".stopclock-stop i")
+    .addClass("fa-stop")
+    .removeClass("fa-trash")
+
     timers.sortTimers()
     if source != "backend" and id?
+      # If this was triggered by user, update backend
       jq.get "/homecontroller/timer/start/#{id}"
 
 
@@ -116,23 +125,27 @@ Timer = (parent_elem, options) ->
     if source != "backend" and this_elem.find(".stopclock-stop i").hasClass("fa-trash")
       # Delete stopwatch only if event was initiated by user *and* stopwatch was already stopped.
       deleteItem "ui"
-    else
-      this_elem.stop(true)
-      .css("background-color", this_elem.data("original-bg-color"))
-      .effect("highlight", {color: "#cc0000"}, 500)
-      running = false
-      clearItemIntervals()
-      this_elem.find(".stopclock-stop i")
-      .removeClass("fa-stop")
-      .addClass("fa-trash")
-      if source != "backend"
-        jq.get "/homecontroller/timer/stop/#{id}", (data) ->
-          diff = ((new Date(data[0].fields.stopped_at)) - (new Date(data[0].fields.start_time))) / 1000
-          updateTimerContent(diff, "")
+      return
 
-      else if options.stopped_at
-        diff = (new Date(options.stopped_at) - start_time) / 1000
+    this_elem.stop(true)
+    .css("background-color", this_elem.data("original-bg-color"))
+    .effect("highlight", {color: "#cc0000"}, 500)
+    running = false
+    clearItemIntervals()
+    # If this is stopwatch, change icon
+    this_elem.find(".stopclock-stop i")
+    .removeClass("fa-stop")
+    .addClass("fa-trash")
+
+    if source != "backend"
+      # Initiated by user - update backend
+      jq.get "/homecontroller/timer/stop/#{id}", (data) ->
+        diff = ((new Date(data[0].fields.stopped_at)) - (new Date(data[0].fields.start_time))) / 1000
         updateTimerContent(diff, "")
+
+    else if options.stopped_at
+      diff = (new Date(options.stopped_at) - start_time) / 1000
+      updateTimerContent(diff, "")
 
   refreshFromBackend = ->
     if id? # Don't refresh if no data is available.
@@ -151,7 +164,9 @@ Timer = (parent_elem, options) ->
             deleteItem("backend")
 
   onReceiveItemWS = (message) ->
+    console.debug "Received ", message
     source = "backend"
+
     if message == "delete"
       deleteItem source
       return
@@ -159,17 +174,24 @@ Timer = (parent_elem, options) ->
     data = message[0]
     start_time = new Date(data.fields.start_time)
     if data.fields.running
+      # Timer should be running.
       startItem source
-    else
-      this_elem.stop(true).css("background-color", this_elem.data("original-bg-color")).effect("highlight", {color: "#cc0000"}, 500)
-      running = false
-      clearItemIntervals()
-      this_elem.find(".stopclock-stop i")
-      .removeClass("fa-stop")
-      .addClass("fa-trash")
-      if data.fields.stopped_at
-        diff = (new Date(data.fields.stopped_at) - start_time) / 1000
-        updateTimerContent(diff, "")
+      return
+
+    # Timer is stopped
+    this_elem.stop(true).css("background-color", this_elem.data("original-bg-color"))
+    .effect "highlight",
+      color: "#cc0000"
+    , 500
+
+    running = false
+    clearItemIntervals()
+    this_elem.find(".stopclock-stop i")
+    .removeClass("fa-stop")
+    .addClass("fa-trash")
+    if data.fields.stopped_at
+      diff = (new Date(data.fields.stopped_at) - start_time) / 1000
+      updateTimerContent(diff, "")
 
   setId = (new_id) ->
     # Set backend id to local object.
@@ -178,35 +200,21 @@ Timer = (parent_elem, options) ->
     ws_generic.register "timer-#{id}", onReceiveItemWS
     ge_refresh.register "timer-#{id}", refreshFromBackend
 
-  if options.id
-    setId options.id
-    created_by_backend = true
-
-
-  if options.start_time
-    start_time = options.start_time
-
-  if options.duration
-    timer_type = "timer"
-  else
-    timer_type = "stopclock"
-
   getId = ->
     return id
 
-  restartItem = (source) ->
-    if running
-      this_elem.stop(true)
-      .css("background-color", this_elem.data("original-bg-color"))
-      .effect("highlight", {color: "#006600"}, 500)
-
-    if source != "backend"
-      start_time = clock.getDate()
-
-    startItem source
-    if source != "backend" and id
+  restartItem = ->
+    this_elem.stop(true).css("background-color", this_elem.data("original-bg-color"))
+    .effect "highlight",
+      color: "#00cc00"
+    , 500
+    startItem "backend" # Prevent duplicate updates to backend
+    if id?
       jq.get "/homecontroller/timer/restart/#{id}", (data) ->
         start_time = new Date(data[0].fields.start_time)
+    else
+      start_time = clock.getDate()
+    return
 
   create = ->
     # Creates HTML elements and starts timer.
@@ -235,7 +243,7 @@ Timer = (parent_elem, options) ->
         this_elem.find(".timer-restart").hide()
       else
         this_elem.find(".timer-restart").click ->
-          restartItem "ui"
+          restartItem()
 
     else
       jq(parent_elem).append """<div class='row timer-item' style='display:none' id='timer-#{id_uniq}'>
@@ -255,7 +263,7 @@ Timer = (parent_elem, options) ->
         stopItem "ui"
 
       this_elem.find(".stopclock-restart").click ->
-        restartItem "ui"
+        restartItem()
 
     this_elem.data "original-bg-color", this_elem.css("background-color")
 
@@ -269,7 +277,7 @@ Timer = (parent_elem, options) ->
         stopItem "backend"
 
     else
-      restartItem "ui"
+      restartItem()
       jq.post "/homecontroller/timer/create",
         name: options.name
         duration: options.duration
@@ -277,6 +285,20 @@ Timer = (parent_elem, options) ->
         setId data[0].pk
         this_elem.addClass("timer-backend-id-" + data[0].pk)
         start_time = new Date(data[0].fields.start_time)
+
+
+  if options.id
+    setId options.id
+    created_by_backend = true
+
+
+  if options.start_time
+    start_time = options.start_time
+
+  if options.duration
+    timer_type = "timer"
+  else
+    timer_type = "stopclock"
 
   create()
 

@@ -56,6 +56,7 @@ class Restart(View):
     def get(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.start_time = timezone.now()
+        item.running = True
         item.save()
         if item.duration:
             alarm_ending_task.apply_async((item.pk,), eta=item.end_time+datetime.timedelta(seconds=1), expires=item.end_time+datetime.timedelta(seconds=300))
