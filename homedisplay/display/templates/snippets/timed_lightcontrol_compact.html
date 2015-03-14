@@ -1,14 +1,14 @@
-<!-- {{ time }} -->
-<div style="display:none" class="timed-lightcontrol timed-lightcontrol-compact timed-lightcontrol-{{ time }} item-box dark-box" data-action="{{ time }}">
+<!-- {{ action }} -->
+<div style="display:none" class="timed-lightcontrol timed-lightcontrol-compact timed-lightcontrol-{{ action }} item-box dark-box" data-action="{{ action }}">
   <div class="row">
     <div class="col-md-12">
-      <div class="animation-direction open-light-dialog">
+      <div class="animation-direction open-light-dialog" data-action-name="{{ action }}">
         {{ type }}
       </div>
-      <div style="float:right" class="center-content open-light-dialog">
+      <div style="float:right" class="center-content open-light-dialog" data-action-name="{{ action }}">
         <span class="duration-content">+-:--</span>
       </div>
-      <div style="float:right" class="center-content open-light-dialog">
+      <div style="float:right" class="center-content open-light-dialog" data-action-name="{{ action }}">
         <span class="start-time-content">--:--</span>
       </div>
       <div class="play-control play-control">
@@ -22,7 +22,7 @@
       </div>
     </div>
   </div>
-  <div class="row open-light-dialog">
+  <div class="row open-light-dialog" data-action-name="{{ action }}">
     <div class="col-md-12">
       <span class="time-left"></span> <span class="current-brightness"></span>
     </div>

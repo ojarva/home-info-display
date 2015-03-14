@@ -161,3 +161,4 @@ jq ->
 
   jq("#lightcontrol-modal .close").on "click", ->
     content_switch.switchContent "#main-content"
+    jq("#lightcontrol-modal .timed-lightcontrol").removeClass("highlight")

@@ -133,6 +133,11 @@
 
 }
 
+#lightcontrol-modal {
+  .highlight {
+    background-color: #3f3f3f !important;
+  }
+}
 
 .timed-lightcontrol-normal {
   .animation-direction {
@@ -145,9 +150,6 @@
     font-size: 2em;
   }
 }
-
-
-
 
 
 .lightcontrol-btn {

@@ -233,6 +233,10 @@ LightControlTimed = (options) ->
     resumeOverride "ui"
 
   main.find(".open-light-dialog").on "click", ->
+    jq("#lightcontrol-modal .timed-lightcontrol").removeClass("highlight")
+    this_item_action = jq(this).data("action-name")
+    if this_item_action?
+      jq("#lightcontrol-modal .timed-lightcontrol-#{this_item_action}").addClass("highlight")
     content_switch.switchContent "#lightcontrol-modal"
 
   onReceiveBrightness = (data) ->
