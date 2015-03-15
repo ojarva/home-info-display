@@ -22,7 +22,7 @@ this.WS4Redis = (options, $) ->
   connect = (uri) ->
     try
       deferred = jq.Deferred()
-      ws = new WebSocket(uri)
+      ws = new WebSocket uri
       ws.onopen = on_open
       ws.onmessage = on_message
       ws.onerror = on_error
@@ -35,12 +35,11 @@ this.WS4Redis = (options, $) ->
     try
       missed_heartbeats++
       if missed_heartbeats > 3
-        throw new Error("Too many missed heartbeats.")
+        throw new Error "Too many missed heartbeats."
 
       ws.send opts.heartbeat_msg
     catch e
-      clearInterval heartbeat_interval
-      heartbeat_interval = null
+      heartbeat_interval = clearInterval heartbeat_interval
       console.warn "Closing connection. Reason: #{e.message}"
       ws.close()
 
@@ -48,6 +47,8 @@ this.WS4Redis = (options, $) ->
     console.log "Connected to #{ws.url}"
     if debug and debug.log
       debug.log "Connected to websocket"
+
+    jq("#disconnected").hide()
 
     timer_interval = 500
     deferred.resolve()
@@ -60,6 +61,9 @@ this.WS4Redis = (options, $) ->
       return
 
     console.log "Connection to #{ws.url} closed!"
+
+    jq("#disconnected").slideDown()
+
     if !timer
       # try to reconnect
       timer = setTimeout ->
@@ -86,7 +90,7 @@ this.WS4Redis = (options, $) ->
   close = ->
     closed = true
     if heartbeat_interval?
-      clearInterval heartbeat_interval
+      heartbeat_interval = clearInterval heartbeat_interval
     ws.close()
 
   connect opts.uri
