@@ -20,4 +20,5 @@ urlpatterns = patterns('',
     url(r'^torrents/', include("info_torrents.urls")),
     url(r'^transportation/', include("info_transportation.urls")),
     url(r'^music/', include("control_music.urls")),
+    url(r'^ext_pages/', include("info_ext_pages.urls")),
 )

@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'indoor_quality',
     'info_birthdays',
     'info_electricity',
+    'info_ext_pages',
     'info_internet_connection',
     'info_timers',
     'info_torrents',

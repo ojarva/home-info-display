@@ -1,5 +1,10 @@
 {% extends "snippets/modal_base.html" %}
 
+
+{% block after-timeinfo %}
+<i class="animate-click navigation fa fa-backward before"></i> <i class="animate-click navigation fa fa-forward after"></i> <i class="animate-click navigation fa fa-fast-forward latest"></i>
+{% endblock %}
+
 {% block modal-content %}
 
 <iframe style="width:100%" src=""></iframe>
