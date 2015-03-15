@@ -30,7 +30,7 @@ ShowRealtimeStats = (options) ->
     if invalid_ping_timeout?
       invalid_ping_timeout = clearTimeout invalid_ping_timeout
 
-    ping = Math.round(parseFloat(message) * 10) / 10
+    ping = Math.round(parseFloat(message))
     ping_container.html "<i class='fa fa-check-circle success-message'></i> #{ping}ms"
     invalid_ping_timeout = setTimeout autoNoPingUpdates, options.invalid_ping_timeout
 
