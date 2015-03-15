@@ -15,14 +15,14 @@ ContentSwitch = ->
       switch_visible_content_timeout = clearTimeout switch_visible_content_timeout
     switch_visible_content_timeout = setTimeout mainContent, 60 * 1000
 
-  switchContent = (elem) ->
+  switchContent = (elem, set_timeout = true) ->
     if switch_visible_content_timeout?
       switch_visible_content_timeout = clearTimeout switch_visible_content_timeout
 
     jq(".content-box").hide() # Hide all content boxes
     jq("html, body").animate({ scrollTop: 0 }, "fast") # Always scroll to top.
     jq("#navbar").collapse("hide") # Hide menu, if visible
-    if elem != "#main-content"
+    if elem != "#main-content" and set_timeout
       switch_visible_content_currently_active = elem
       switch_visible_content_timeout = setTimeout mainContent, 60 * 1000
       jq(elem).show()

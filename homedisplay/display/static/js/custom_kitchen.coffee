@@ -2,6 +2,7 @@ ExtContent = ->
   receivedPage = (page) ->
     jq("#ext-content-frame iframe").attr "src", page
     jq("#main-open-ext-content-frame").slideDown()
+    jq("#main-open-ext-content-frame").trigger "click"
 
   ws_generic.register "open-ext-page", receivedPage
 
@@ -18,4 +19,4 @@ jq ->
     content_switch.switchContent "#main-content"
 
   jq(".open-ext-content-frame").on "click", ->
-    content_switch.switchContent "#ext-content-frame"
+    content_switch.switchContent "#ext-content-frame", false
