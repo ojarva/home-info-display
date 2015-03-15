@@ -164,7 +164,6 @@ Timer = (parent_elem, options) ->
             deleteItem("backend")
 
   onReceiveItemWS = (message) ->
-    console.debug "Received ", message
     source = "backend"
 
     if message == "delete"
