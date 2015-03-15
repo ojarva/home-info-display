@@ -6,6 +6,10 @@
   margin-bottom: 20px;
 }
 
+.last-column {
+  padding-left: 25px !important;
+}
+
 .weather {
   .temperature-now {
     font-size: 5em;
