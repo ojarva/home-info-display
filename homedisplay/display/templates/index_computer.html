@@ -163,10 +163,11 @@
     {% include "snippets/modal_dialogs.html" %}
   </div> <!-- container -->
 
-  {% compress js %}
   {% include "includes/js_constants.html" %}
   {% include "includes/base_js.html" %}
   {% include "includes/computer_display_common_js.html" %}
+
+  {% compress js %}
   <script src="{% static "js/custom_computer.coffee" %}" type="text/coffeescript"></script>
   {% endcompress %}
 

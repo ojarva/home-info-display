@@ -78,9 +78,10 @@
   <div id="ext-content-frame" class="content-box" style="display:none">
     {% include "snippets/modals/ext_content.html" %}
   </div>
-  {% compress js %}
   {% include "includes/js_constants.html" %}
   {% include "includes/base_js.html" %}
+
+  {% compress js %}
   <script src="{% static "js/timer.coffee" %}" type="text/coffeescript"></script>
   <script src="{% static "js/custom_timers.coffee" %}" type="text/coffeescript"></script>
   <script src="{% static "js/custom_kitchen.coffee" %}" type="text/coffeescript"></script>
