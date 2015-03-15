@@ -48,85 +48,117 @@
     <a name="top"></a>
     <div id="main-content">
       <div class="row">
-        <div class="col-md-12">
-          <div id="lightcontrol" class="lightbox center-content">
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="computer" data-command="off"><i class="fa fa-power-off"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-on" data-source="computer" data-command="on"><i class="fa fa-sun-o"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="computer" data-command="morning-sleeping"><i class="fa fa-bed"></i> <i class="fa fa-user"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="computer" data-command="morning-wakeup"><i class="fa fa-bed"></i><i class="fa fa-arrow-up"></i></div>
-            <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-night" data-source="computer" data-command="night"><i class="fa fa-bed"></i></div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div id="timers">
-            {% include "snippets/add_timers.html" %}
-
-            <div id="stopclock-holder">
-            </div>
-
-            <div id="timer-holder">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">
-          <div class="item-box internet-connection">
-            {% include "snippets/internet_connection.html" %}
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="item-box indoor-quality">
-            {% include "snippets/indoor_quality.html" %}
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="item-box">
-            {% include "snippets/server_power.html" %}
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
         <div class="col-md-6">
-          <div class="item-box" id="today">
-            <div class="row">
-              <div class="col-md-12">
-                <h2>Tänään</h2>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div id="lightcontrol" class="lightbox center-content">
+                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-off" data-source="computer" data-command="off"><i class="fa fa-power-off"></i></div>
+                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-on" data-source="computer" data-command="on"><i class="fa fa-sun-o"></i></div>
+                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="computer" data-command="morning-sleeping"><i class="fa fa-bed"></i> <i class="fa fa-user"></i></div>
+                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-morning" data-source="computer" data-command="morning-wakeup"><i class="fa fa-bed"></i><i class="fa fa-arrow-up"></i></div>
+                <div class="action-button lightcontrol-btn-large lightcontrol-btn lights-night" data-source="computer" data-command="night"><i class="fa fa-bed"></i></div>
               </div>
-            </div>
-
-            <div class="list-repeating-tasks">
-              <ul class="fa-ul">
-              </ul>
-            </div>
-
-            <div class="list-birthdays">
-              <ul class="fa-ul">
-              </ul>
             </div>
           </div>
-          <div class="item-box" id="tomorrow">
-            <div class="row">
-              <div class="col-md-12">
-                <h2>Huomenna</h2>
+
+          <div class="row">
+            <div class="col-md-12 center-content">
+            {% include "snippets/server_power.html" %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <form id="open-ext-page">
+                <div class="form-group">
+                  <label for="open-ext-page-url">Sivun osoite</label>
+                  <input type="text" class="form-control" id="open-ext-page-url" placeholder="Url">
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="item-box" id="today">
+                <div class="row">
+                  <div class="col-md-12">
+                    <h2>Tänään</h2>
+                  </div>
+                </div>
+
+                <div class="list-repeating-tasks">
+                  <ul class="fa-ul">
+                  </ul>
+                </div>
+
+                <div class="list-birthdays">
+                  <ul class="fa-ul">
+                  </ul>
+                </div>
               </div>
             </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="item-box" id="tomorrow">
+                <div class="row">
+                  <div class="col-md-12">
+                    <h2>Huomenna</h2>
+                  </div>
+                </div>
 
-            <div class="list-repeating-tasks">
-              <ul class="fa-ul">
-              </ul>
+                <div class="list-repeating-tasks">
+                  <ul class="fa-ul">
+                  </ul>
+                </div>
+
+                <div class="list-birthdays">
+                  <ul class="fa-ul">
+                  </ul>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div class="list-birthdays">
-              <ul class="fa-ul">
-              </ul>
+      </div>
+
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-12">
+            <div id="timers">
+              {% include "snippets/add_timers.html" %}
+
+              <div id="stopclock-holder">
+              </div>
+
+              <div id="timer-holder">
+              </div>
+            </div>
+          </div>
+        </div> <!-- row for timers -->
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="item-box internet-connection">
+              {% include "snippets/internet_connection.html" %}
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="item-box indoor-quality">
+              {% include "snippets/indoor_quality.html" %}
+            </div>
+          </div>
+        </div>
+
       </div>
+    </div>
+  </div> <!-- main-content -->
+
+
     </div> <!-- main-content -->
     {% include "snippets/modal_dialogs.html" %}
   </div> <!-- container -->

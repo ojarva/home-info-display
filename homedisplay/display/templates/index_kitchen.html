@@ -66,10 +66,18 @@
       </div>
 
     </div> <!-- row -->
+
+    <div class="open-ext-content-frame" id="main-open-ext-content-frame" style="display:none">
+      <i class="fa fa-share-square"></i>
+    </div>
   </div> <!-- main-content -->
   <div id="add-custom-timer" class="content-box" style="display:none">
     {% include "snippets/modals/add_custom_timer.html" %}
   </div> <!-- add-custom-timer -->
+
+  <div id="ext-content-frame" class="content-box" style="display:none">
+    {% include "snippets/modals/ext_content.html" %}
+  </div>
   {% compress js %}
   {% include "includes/js_constants.html" %}
   {% include "includes/base_js.html" %}

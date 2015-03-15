@@ -10,4 +10,6 @@ urlpatterns = patterns('',
     (r'^content/computer$', TemplateView.as_view(template_name='index_computer.html')),
 
     url(r'^content/wrapped/(?P<view>([a-zA-Z0-9-_]+))$', views.Wrapped.as_view()),
+
+    url(r'^push/ext_content$', views.PushExt.as_view()),
 )
