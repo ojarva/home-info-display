@@ -107,16 +107,6 @@ var IndoorAirQuality = function (options) {
       output.removeClass("warning-message").addClass("error-message");
     }
     output.find(".status").html(co2_out);
-    var previous_reading = output.find(".co2").data("value");
-    if (previous_reading) {
-      if (previous_reading < co2) {
-        // Gone up
-        output.find(".co2").effect("highlight", {color: "red"}, 150);
-      } else if (previous_reading > co2) {
-        // Gone down
-        output.find(".co2").effect("highlight", {color: "green"}, 150);
-      }
-    }
     output.find(".co2").data("value", co2).html(Math.round(co2) + "ppm");
     clearAutoNoUpdates();
     update_timeout = setTimeout(autoNoUpdates, options.update_timeout); // 2,5 minutes
