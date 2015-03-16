@@ -4,7 +4,7 @@ moment.locale("fi")
 # number (which means it might not be entirely unique, though it should be
 # good enough for many uses). See http://stackoverflow.com/questions/105034
 # Copied from https://gist.github.com/bmc/1893440
-uuid = ->
+@uuid = ->
   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) ->
     r = Math.random() * 16 | 0
     v = if c is 'x' then r else (r & 0x3|0x8)
