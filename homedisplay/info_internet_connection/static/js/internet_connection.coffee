@@ -7,6 +7,10 @@ ShowRealtimeStats = (options) ->
   speed_container = jq options.speed_output
   invalid_ping_timeout = null
   invalid_speed_timeout = null
+  filesize_options =
+    bits: true
+    round: 0
+    output: "object"
 
   noPingUpdates = (warning_class) ->
     warning_class = warning_class or "error"
@@ -17,7 +21,7 @@ ShowRealtimeStats = (options) ->
 
   noSpeedUpdates = (warning_class) ->
     warning_class = warning_class or "error"
-    speed_container.html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
+    speed_container.find(".value").html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
 
   autoNoSpeedUpdates = ->
     noSpeedUpdates "warning"
@@ -38,33 +42,17 @@ ShowRealtimeStats = (options) ->
     if data.internet?
       if invalid_speed_timeout?
         invalid_speed_timeout = clearTimeout invalid_speed_timeout
-      speed_in = data.internet.speed_in
-      speed_out = data.internet.speed_out
-      unit = "b"
-      round_by = 1
-      if 100 > speed_in < 1024 or 100 > speed_out < 1024
-        speed_in /= 1024
-        speed_out /= 1024
-        unit = "kb"
-      else
-        if speed_in > 1024 or speed_out > 1024
-          speed_in /= 1024
-          speed_out /= 1024
-          unit = "kb"
-          round_by = 0
-        if speed_in > 100 or speed_out > 100
-          round_by = 1
-          unit = "Mb"
-          speed_in /= 1024
-          speed_out /= 1024
-          if speed_in > 2 or speed_out > 2
-            round_by = 0
+      speed_in = data.internet.speed_in / 8
+      speed_out = data.internet.speed_out / 8
 
+      speed_in = filesize speed_in, filesize_options
+      speed_out = filesize speed_out, filesize_options
 
-      mult = Math.pow(10, round_by)
-      speed_in = Math.round(speed_in * mult) / mult
-      speed_out = Math.round(speed_out * mult) / mult
-      speed_container.html "<span>#{speed_in}</span>/<span>#{speed_out}</span>#{unit}/s"
+      speed_container.find(".upload .value").html speed_out.value
+      speed_container.find(".upload .unit").html "#{speed_out.suffix}/s"
+      speed_container.find(".download .value").html speed_in.value
+      speed_container.find(".download .unit").html "#{speed_in.suffix}/s"
+
       invalid_speed_timeout = setTimeout autoNoSpeedUpdates, options.invalid_speed_timeout
 
   startInterval = ->
@@ -105,7 +93,7 @@ RefreshInternet = (options) ->
     clearAutoNoUpdates()
     output.find(".signal-bars").slideUp()
     output.find(".signal-bars").data "is-hidden", true
-    output.find(".connected").html "<i class='fa fa-times warning-message'></i> Ei tietoja"
+    output.find(".connected").html "<i class='fa fa-times warning-message'></i> "
 
 
   processData = (data) ->

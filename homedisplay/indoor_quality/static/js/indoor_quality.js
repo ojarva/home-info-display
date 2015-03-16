@@ -17,7 +17,7 @@ var IndoorAirQuality = function (options) {
   }
 
   function autoNoUpdates() {
-    output.find(".status").html("<i class='fa fa-times warning-message'></i> Ei tietoja");
+    output.find(".status").html("<i class='fa fa-times warning-message'></i> ");
   }
 
   function drawGraph(data, goptions) {

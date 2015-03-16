@@ -51,10 +51,19 @@
     display: inline-block;
   }
 
-  .speed span {
-    display: inline-block;
-    min-width: 33px;
-    text-align: center;
+  .speed {
+
+    i {
+      font-size: 75%;
+    }
+
+    .value {
+
+    }
+
+    .unit {
+      font-size: 75%;
+    }
   }
 
   .signal-bars {
