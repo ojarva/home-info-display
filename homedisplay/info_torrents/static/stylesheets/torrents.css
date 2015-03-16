@@ -3,6 +3,7 @@
     font-size: 400%;
     margin-right: 40px;
   }
+
   .calendar {
     font-size: 200%;
   }
@@ -10,5 +11,4 @@
   .modal-timeinfo {
     margin-bottom: 30px;
   }
-
 }

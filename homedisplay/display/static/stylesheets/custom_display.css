@@ -1,9 +1,10 @@
 .transportation ul div {
   display: inline;
 }
+
 .weather-main {
-  margin-left: 20px;
   margin-bottom: 20px;
+  margin-left: 20px;
 }
 
 .last-column {
@@ -14,9 +15,11 @@
   .temperature-now {
     font-size: 5em;
   }
+
   .temperature-now-unit {
     font-size: 2.5em;
   }
+
   .wind-direction-now {
     font-size: 3em;
   }
@@ -25,16 +28,19 @@
     font-size: 2.5em;
     margin-left: 1em;
   }
+
   .wind-now {
-    font-size: 3.0em;
+    font-size: 3em;
   }
 
   .timestamp {
     font-size: 1.5em;
   }
+
   .temperature {
     font-size: 1.25em;
   }
+
   .weather-box {
     min-height: 83px;
   }
@@ -46,8 +52,8 @@
 
 #main-content {
   .center-column {
-    height: 1080px; /* TODO */
     background-color: #070707;
+    height: 1080px; // TODO
   }
 
   .timeinfo {
@@ -64,14 +70,15 @@
 
 .indoor-quality {
   font-size: 200%;
+
   .status {
     font-size: 200%;
   }
-
 }
 
 .internet-connection {
   font-size: 200%;
+
   .connected {
     font-size: 200%;
   }

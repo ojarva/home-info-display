@@ -33,15 +33,15 @@ WsGeneric = (options) ->
         func(data.content)
 
   ws4redis = new WS4Redis
-      uri: websocket_root + "generic?subscribe-broadcast&publish-broadcast&echo"
-      receive_message: onReceiveItemWS
-      heartbeat_msg: "--heartbeat--"
+    uri: "#{websocket_root}generic?subscribe-broadcast&publish-broadcast&echo"
+    receive_message: onReceiveItemWS
+    heartbeat_msg: "--heartbeat--"
 
-  this.register = register
-  this.deRegister = deRegister
-  this.multiRegister = multiRegister
-  this.multiDeRegister = multiDeRegister
-  return this
+  @register = register
+  @deRegister = deRegister
+  @multiRegister = multiRegister
+  @multiDeRegister = multiDeRegister
+  return @
 
 jq =>
-  this.ws_generic = new WsGeneric()
+  @ws_generic = new WsGeneric()

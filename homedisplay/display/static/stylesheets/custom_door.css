@@ -1,17 +1,17 @@
 body {
+  background-color: black;
+  color: #bbb;
   overflow-x: hidden;
   overflow-y: hidden;
-
-  color: #bbb;
-  background-color: black;
 }
 
 #disconnected {
-  opacity: 0.5;
+  opacity: .5;
+  z-index: 10;
+
   i {
     font-size: 600px;
   }
-  z-index: 10;
 }
 
 .error-message {
@@ -19,29 +19,27 @@ body {
 }
 
 #screensaver {
-  position: fixed;
-  top: 0px;
-  left: 0px;
-
-  display: block;
-
-  width: 100%;
-  height: 100%;
-
   background-color: black;
+  display: block;
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
 
-  .clock-minutes, .clock-hours {
-    font-size: 300px;
+  .clock-minutes,
+  .clock-hours {
     color: #313131;
+    font-size: 300px;
   }
 }
 
 .transportation {
   div {
     height: 200px;
-    padding-top: 20px;
-    padding-left: 25px;
     overflow-y: hidden;
+    padding-left: 25px;
+    padding-top: 20px;
   }
 
   ul div {
@@ -55,7 +53,6 @@ body {
   .line-number {
     font-size: 150%;
   }
-
 }
 
 .light-controls {
@@ -68,9 +65,8 @@ body {
 }
 
 .center-content {
-  margin-right:auto;
-  margin-left:auto;
-
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
 }
 
@@ -81,29 +77,27 @@ body {
   }
 
   .calendar {
-    padding-top: 0.25em;
-    padding-bottom: 0.25em;
-
     font-size: 450%;
+    padding-bottom: .25em;
+    padding-top: .25em;
   }
-
 }
 
 #weather-general {
   float: left;
-  text-align: center;
   font-size: 550%;
+  text-align: center;
+
   img {
-    width: 80px;
     height: 80px;
+    width: 80px;
   }
 }
 
 #time-info {
+  background-color: #131313;
   height: 250px;
   padding-top: 25px;
-
-  background-color: #131313;
 }
 
 #lights-off {
@@ -111,8 +105,8 @@ body {
 }
 
 #lights-full {
-  color: #E6FFD7;
   background-color: #006600;
+  color: #E6FFD7;
 }
 
 #lights-morning {
@@ -120,17 +114,16 @@ body {
 }
 
 #lights-night {
-  color: #ffeded;
   background-color: #cc0000;
+  color: #ffeded;
 }
 
 .action-button {
   display: inline-block;
-
-  margin-top: 15px;
-  margin-right: 15px;
   margin-bottom: 5px;
   margin-left: 15px;
+  margin-right: 15px;
+  margin-top: 15px;
   padding: 15px;
 }
 
@@ -144,54 +137,46 @@ body {
 
 .cancel {
   background-color: #cc0000;
-
 }
 
 .item-box {
-  margin-top: 10px;
   margin-bottom: 10px;
+  margin-top: 10px;
   padding: 20px;
 }
 
 .col-md-6 {
-  position: relative;
-
   float: left;
-
-  width: 50% !important;
   min-height: 1px;
-  padding-right: 40px;
   padding-left: 40px;
+  padding-right: 40px;
+  position: relative;
+  width: 50% !important;
 }
 
 .door-shutdown-options {
+  background-color: black;
+  display: none;
+  font-size: 200%;
+  height: 660px;
+  left: 0;
+  opacity: .95;
   position: fixed;
   top: 300px;
-  left: 0px;
-
-  display: none;
-
   width: 100%;
-  height: 660px;
-
-  opacity: 0.95;
-  background-color: black;
-
-  font-size: 200%;
 }
 
 .content-box {
-  position: absolute;
-  display: block;
-  top: 0px;
-  left: 0px;
-  width: 100%;
+  background-color: black;
+  display: none;
+  left: 0;
   min-height: 2000px;
+  opacity: .92;
   padding-left: 40px;
   padding-right: 40px;
-  background-color: black;
-  opacity: 0.92;
-  display: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
 
   .close {
     z-index: 10;

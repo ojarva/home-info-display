@@ -13,7 +13,7 @@ ClockCalendar = (options) ->
   processOffset = (timestamp) ->
     server_timestamp = parseInt timestamp
     if server_timestamp < 1425731077393
-      console.error("Invalid timestamp from server")
+      console.error "Invalid timestamp from server"
       return
 
     clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date()) # In milliseconds
@@ -31,7 +31,7 @@ ClockCalendar = (options) ->
 
   getDate = ->
     # Get javascript date with current offset
-    return (new Date(new Date() - getOffset()))
+    return new Date(new Date() - getOffset())
 
 
   update = ->
@@ -40,16 +40,16 @@ ClockCalendar = (options) ->
     currentDay = days[currentTime.getDay()]
     currentDate = currentTime.getDate()
     currentMonth = currentTime.getMonth()+1
-    jq(".calendar").html(currentDay+" "+currentDate+"."+currentMonth+".")
+    jq(".calendar").html "#{currentDay} #{currentDate}.#{currentMonth}."
     currentHours = currentTime.getHours()
     currentMinutes = currentTime.getMinutes()
     currentSeconds = currentTime.getSeconds()
-    currentHoursPadded = ("0" + currentHours).substr(-2, 2)
-    currentMinutes = ("0" + currentMinutes).substr(-2, 2)
-    currentSeconds = ("0" + currentSeconds).substr(-2, 2)
-    jq(".clock").html(currentHours+":"+currentMinutes+":"+currentSeconds)
-    jq(".clock-hours").html(currentHours)
-    jq(".clock-minutes").html(currentMinutes)
+    currentHoursPadded = ("0#{currentHours}").substr(-2, 2)
+    currentMinutes = ("0#{currentMinutes}").substr(-2, 2)
+    currentSeconds = ("0#{currentSeconds}").substr(-2, 2)
+    jq(".clock").html "#{currentHours}:#{currentMinutes}:#{currentSeconds}"
+    jq(".clock-hours").html currentHours
+    jq(".clock-minutes").html currentMinutes
 
 
   stopInterval = ->
@@ -78,7 +78,7 @@ ClockCalendar = (options) ->
   @stopInterval = stopInterval
   @getMoment = getMoment
   @getDate = getDate
-  return this
+  return @
 
 
 TimedRefresh = ->
@@ -88,7 +88,7 @@ TimedRefresh = ->
 
   register = (key, interval, callback) ->
     if not intervals[interval]?
-        intervals[interval] = {}
+      intervals[interval] = {}
 
     intervals[interval][key] = callback
     debug.log "Registered interval #{interval} for key #{key}"
@@ -124,9 +124,9 @@ TimedRefresh = ->
   @register = register
   @deRegister = deRegister
   @executeCallbacks = executeCallbacks
-  return this
+  return @
 
 jq =>
-    this.clock = new ClockCalendar()
-    this.clock.startInterval()
-    this.ge_intervals = new TimedRefresh()
+  @clock = new ClockCalendar()
+  @clock.startInterval()
+  @ge_intervals = new TimedRefresh()

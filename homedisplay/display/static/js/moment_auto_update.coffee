@@ -8,8 +8,8 @@ MomentAutoUpdate = (options) ->
   update = ->
     elem = jq options.selector
     jq.each elem, ->
-      ts = jq(this).data "timestamp"
-      jq(this).html moment(ts).fromNowSynced()
+      ts = jq(@).data "timestamp"
+      jq(@).html moment(ts).fromNowSynced()
 
   startInterval = ->
     stopInterval()
@@ -25,7 +25,7 @@ MomentAutoUpdate = (options) ->
   @startInterval = startInterval
   @stopInterval = stopInterval
   @update = update
-  return this
+  return @
 
 jq =>
   @moment_auto_update = new MomentAutoUpdate()

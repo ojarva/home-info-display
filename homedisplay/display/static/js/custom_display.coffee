@@ -1,6 +1,5 @@
 # These are wall display specific hacks to prevent issues with not-too-well functioning touchscreen.
-# This file should not be included in any other UI.
-
+# Do not include in any other UI.
 
 jq ->
   # Disabling right click menu is evil. However, Ubuntu&Chrome&touchscreen means problems when context menu is triggered.

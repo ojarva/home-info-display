@@ -1,6 +1,6 @@
 ServerPower = (options) ->
-  options = options || {}
-  options.update_interval = options.update_interval || FAST_UPDATE
+  options = options or {}
+  options.update_interval = options.update_interval or FAST_UPDATE
   main_elem = jq options.main_elem
   interval = null
   spinner_until_status_from = null
@@ -10,14 +10,14 @@ ServerPower = (options) ->
   removeSpinners = ->
     spinner_until_status_from = null
     main_elem.find(".action-button i").each ->
-      jq(this).removeClass().addClass(jq(this).data("original-classes"))
+      jq(@).removeClass().addClass jq(@).data("original-classes")
 
     if button_in_progress_timeout?
       button_in_progress_timeout = clearTimeout button_in_progress_timeout
 
 
   setSpinners = ->
-    main_elem.find(".action-button i").removeClass().addClass("fa fa-spinner fa-spin")
+    main_elem.find(".action-button i").removeClass().addClass "fa fa-spinner fa-spin"
     # If status does not change, remove spinner.
     button_in_progress_timeout = setTimeout removeSpinners, 60 * 1000
 
@@ -72,8 +72,8 @@ ServerPower = (options) ->
 
 
   main_elem.find(".action-button i").each ->
-    jq(this).data
-      "original-classes": jq(this).attr("class")
+    jq(@).data
+      "original-classes": jq(@).attr("class")
 
   main_elem.find(".startup").on "click", ->
     spinner_until_status_from = "down"
@@ -88,9 +88,9 @@ ServerPower = (options) ->
 
   @startInterval = startInterval
   @stopInterval = stopInterval
-  return this
+  return @
 
 jq =>
-  this.server_power = new ServerPower
+  @server_power = new ServerPower
     main_elem: ".server-power"
-  this.server_power.startInterval()
+  @server_power.startInterval()

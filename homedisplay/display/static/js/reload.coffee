@@ -10,9 +10,9 @@ Reloader = ->
 
   startItem()
 
-  this.stopItem = stopItem
-  this.startItem = startItem
-  return this
+  @stopItem = stopItem
+  @startItem = startItem
+  return @
 
 jq =>
-  this.reloader_instance = new Reloader()
+  @reloader_instance = new Reloader()

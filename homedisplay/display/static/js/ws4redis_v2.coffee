@@ -1,4 +1,4 @@
-this.WS4Redis = (options, $) ->
+@WS4Redis = (options, $) ->
   opts = null
   ws = null
   deferred = null
@@ -29,7 +29,7 @@ this.WS4Redis = (options, $) ->
       ws.onclose = on_close
       timer = null
     catch err
-      deferred.reject (new Error(err))
+      deferred.reject new Error(err)
 
   send_heartbeat = ->
     try
@@ -75,7 +75,7 @@ this.WS4Redis = (options, $) ->
     console.error "Websocket connection is broken!"
     if debug and debug.error
       debug.error "Websocket disconnected"
-    deferred.reject(new Error(evt))
+    deferred.reject new Error(evt)
 
   on_message = (evt) ->
     if opts.heartbeat_msg and evt.data == opts.heartbeat_msg
@@ -95,6 +95,6 @@ this.WS4Redis = (options, $) ->
 
   connect opts.uri
 
-  this.close = close
-  this.send_message = send_message
-  return this
+  @close = close
+  @send_message = send_message
+  return @

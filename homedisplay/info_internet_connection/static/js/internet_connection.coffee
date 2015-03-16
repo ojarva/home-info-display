@@ -9,14 +9,14 @@ ShowRealtimeStats = (options) ->
   invalid_speed_timeout = null
 
   noPingUpdates = (warning_class) ->
-    warning_class = warning_class || "error"
+    warning_class = warning_class or "error"
     ping_container.html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
 
   autoNoPingUpdates = ->
     noPingUpdates "warning"
 
   noSpeedUpdates = (warning_class) ->
-    warning_class = warning_class || "error"
+    warning_class = warning_class or "error"
     speed_container.html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
 
   autoNoSpeedUpdates = ->
@@ -78,18 +78,22 @@ ShowRealtimeStats = (options) ->
 
   @startInterval = startInterval
   @stopInterval = stopInterval
-  return this
+  return @
 
 RefreshInternet = (options) ->
-  options = options || {}
-  options.invalid_timeout = options.invalid_timeout || 2 * 60 * 1000
+  options = options or {}
+  options.invalid_timeout = options.invalid_timeout or 2 * 60 * 1000
   update_timeout = null
-  output = jq(".internet-connection")
+  output = jq ".internet-connection"
 
   setSignal = (level) ->
-    output.find(".signal-bars div").removeClass("active").addClass("inactive")
+    output.find ".signal-bars div"
+    .removeClass "active"
+    .addClass "inactive"
     for a in [1..level]
-      output.find(".signal-bars .signal-#{a}").addClass("active").removeClass("inactive")
+      output.find ".signal-bars .signal-#{a}"
+      .addClass "active"
+      .removeClass "inactive"
 
   clearAutoNoUpdates = ->
     if update_timeout?
@@ -151,18 +155,17 @@ RefreshInternet = (options) ->
 
   @startInterval = startInterval
   @stopInterval = stopInterval
-  return this
+  return @
 
-obj = this
-jq ->
-  obj.refresh_internet = new RefreshInternet
+jq =>
+  @refresh_internet = new RefreshInternet
     output: ".internet-connection"
-  obj.refresh_internet.startInterval()
+  @refresh_internet.startInterval()
 
-  obj.show_internet_info = new ShowRealtimeStats
+  @show_internet_info = new ShowRealtimeStats
     ping_output: ".internet-connection .ping"
     speed_output: ".internet-connection .speed"
-  obj.show_internet_info.startInterval()
+  @show_internet_info.startInterval()
 
   jq(".internet-connection").on "click", ->
     charts = [["idler", "Internet/idler_last_10800.png"],

@@ -8,14 +8,14 @@
   }
 
   .graph .data-error {
+    display: none;
     font-size: 100px;
     height: 200px;
-    display: none;
   }
 
   .graph .spinner {
+    display: none;
     font-size: 180px;
     height: 200px;
-    display: none;
   }
 }

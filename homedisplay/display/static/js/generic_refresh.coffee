@@ -25,11 +25,11 @@ GenericRefresh = (options) ->
 
   ws_generic.register "generic_refresh", requestUpdate
 
-  this.deRegister = deRegister
-  this.register = register
-  this.requestUpdate = requestUpdate
-  this.setRefreshCallback = setRefreshCallback
-  return this
+  @deRegister = deRegister
+  @register = register
+  @requestUpdate = requestUpdate
+  @setRefreshCallback = setRefreshCallback
+  return @
 
 jq =>
-  this.ge_refresh = new GenericRefresh()
+  @ge_refresh = new GenericRefresh()

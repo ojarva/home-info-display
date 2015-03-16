@@ -1,28 +1,29 @@
 .brightness-slider-container {
-  .brightness-slider {
-    margin-top: 40px;
-    margin-bottom: 25px;
-    max-width: 520px;
-    margin-left: 15px;
-    height: 30px;
-  }
 
   .ui-widget-content {
-    background: white 50% top repeat-x
+    background: white 50% top repeat-x;
   }
 
   .brightness-slider {
-   .ui-slider-handle {
+    height: 30px;
+    margin-bottom: 25px;
+    margin-left: 15px;
+    margin-top: 40px;
+    max-width: 520px;
+
+    .ui-slider-handle {
       height: 40px;
+      z-index: 0;
     }
 
-   .ui-widget-header {
+    .ui-widget-header {
       background: gray;
     }
 
-   .ui-state-hover, .ui-state-focus {
-      border: 1px solid #cccccc;
+    .ui-state-hover,
+    .ui-state-focus {
       background: #f6f6f6;
+      border: 1px solid #cccccc;
     }
 
     .ui-slider {
@@ -32,34 +33,27 @@
     .ui-slider-range {
       z-index: 0;
     }
-
-    .ui-slider-handle {
-      z-index: 0;
-    }
-
-    .ui-widget-header {
-      background: gray;
-    }
-
   }
 
   .ui-corner-all {
-    border-radius: 0px !important;
+    border-radius: 0 !important;
   }
-
-
-}
-
-.lightcontrol-btn-large .active-mode {
-  position: absolute;
-  font-size: 0.5em;
-  top: 0px;
-  left: 5px;
-  display: none;
 }
 
 .lightcontrol-btn-large {
+  font-size: 400%;
+  height: 130px;
+  min-width: 130px;
+  padding-top: 22px;
   position: relative;
+
+  .active-mode {
+    display: none;
+    font-size: .5em;
+    left: 5px;
+    position: absolute;
+    top: 0;
+  }
 }
 
 .lights-morning-bright {
@@ -68,43 +62,41 @@
 
 .timed-lightcontrol {
   font-size: 200%;
-}
 
-.timed-lightcontrol {
   .animation-direction {
     display: inline-block;
     float: left;
   }
+
   .play-control {
     display: inline-block;
     float: right;
     margin-right: 20px;
-  }
 
-  .play-control .span {
-    display: inline-block;
+    .span {
+      display: inline-block;
+    }
   }
-
 
   .play-pause-control {
     display: inline-block;
     float: right;
     margin-right: 20px;
-  }
 
-  .play-pause-control .span {
-    display: inline-block;
+    .span {
+      display: inline-block;
+    }
   }
 
   .action-button {
-    margin-top: 5px;
-    padding-top: 5px;
     margin-bottom: 5px;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 5px;
     padding-bottom: 5px;
-    padding-right: 10px;
     padding-left: 10px;
-    margin-left: 0px;
-    margin-right: 0px;
+    padding-right: 10px;
+    padding-top: 5px;
   }
 
   .time-left {
@@ -120,11 +112,14 @@
     font-size: 50%;
   }
 
-  .time-control .plus {
-    background-color: #006600;
-  }
-  .time-control .minus {
-    background-color: #cc0000;
+  .time-control {
+    .plus {
+      background-color: #006600;
+    }
+
+    .minus {
+      background-color: #cc0000;
+    }
   }
 
   .fading-progress {
@@ -143,9 +138,11 @@
   .animation-direction {
     font-size: 2em;
   }
+
   .play-control {
     font-size: 2em;
   }
+
   .play-pause-control {
     font-size: 2em;
   }
@@ -157,27 +154,26 @@
   margin-right: 1px;
   text-align: center;
 }
-.lightcontrol-btn-large {
-  height: 130px;
-  padding-top: 22px;
-  font-size: 400%;
-  min-width: 130px;
-}
+
 .lightcontrol-btn-small {
-  width: 130px;
-  height: 80px;
   font-size: 200%;
+  height: 80px;
+  width: 130px;
 }
+
 .lights-off {
   background-color: #111111;
 }
+
 .lights-on {
   background-color: #006600;
   color: #E6FFD7;
 }
+
 .lights-morning {
   background-color: #222222;
 }
+
 .lights-night {
   background-color: #cc0000;
   color: #ffeded;

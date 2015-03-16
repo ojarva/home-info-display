@@ -27,14 +27,15 @@ ExtContent = ->
       if data.id
         receivedPage data, false
 
-  this.gotoBefore = gotoBefore
-  this.gotoAfter = gotoAfter
-  this.gotoLatest = gotoLatest
-  return this
+  @gotoBefore = gotoBefore
+  @gotoAfter = gotoAfter
+  @gotoLatest = gotoLatest
+  return @
 
-jq ->
-  ext_content = new ExtContent()
-  ext_content.gotoLatest()
+jq =>
+  obj = @
+  obj.ext_content = new ExtContent()
+  obj.ext_content.gotoLatest()
 
   jq("#ext-content-frame .close").on "click", ->
     content_switch.switchContent "#main-content"
@@ -43,12 +44,10 @@ jq ->
     content_switch.switchContent "#ext-content-frame", false
 
   jq("#ext-content-frame .after").on "click", ->
-    ext_content.gotoAfter()
+    obj.ext_content.gotoAfter()
 
   jq("#ext-content-frame .before").on "click", ->
-    ext_content.gotoBefore()
+    obj.ext_content.gotoBefore()
 
   jq("#ext-content-frame .latest").on "click", ->
-    ext_content.gotoLatest()
-
-  content_switch.switchContent "#ext-content-frame", false
+    obj.ext_content.gotoLatest()

@@ -5,7 +5,7 @@ Printer = ->
     jq(".printer-labels").children().remove()
 
   removeCheck = ->
-    #TODO: this should not remove all check marks.
+    #TODO: only remove relevant check mark(s).
     jq(".printer-labels i").removeClass("fa-check")
 
 
@@ -13,7 +13,9 @@ Printer = ->
     jq.post "/homecontroller/printer/print_label",
       "id": id
     , (data) ->
-      jq(".printer-labels .print-label-" + id + " i").removeClass("fa-spin fa-spinner").addClass("fa-check")
+      jq ".printer-labels .print-label-#{id} i"
+      .removeClass "fa-spin fa-spinner"
+      .addClass "fa-check"
       setTimeout removeCheck, 2000
 
 
@@ -21,13 +23,13 @@ Printer = ->
     clearLabels()
     main_elem = jq ".printer-labels"
     jq.each data, ->
-      main_elem.append("<div class='center-content stripe-box animate-click action-button print-label-#{@pk}' data-id='#{@pk}'>#{@fields.name} <i class='fa fa-fw'></i></div>")
+      main_elem.append "<div class='center-content stripe-box animate-click action-button print-label-#{@pk}' data-id='#{@pk}'>#{@fields.name} <i class='fa fa-fw'></i></div>"
 
     #TODO: Bind click events
     main_elem.find("div").on "click", ->
       content_switch.userActivity()
-      jq(this).find("i").addClass "fa-spin fa-spinner"
-      printLabel jq(this).data("id")
+      jq(@).find("i").addClass "fa-spin fa-spinner"
+      printLabel jq(@).data "id"
 
   updateLabels = ->
     jq.get "/homecontroller/printer/get_labels", (data) ->
@@ -47,8 +49,8 @@ Printer = ->
 
       main.find("li").on "click", ->
         content_switch.userActivity()
-        id = jq(this).data("id")
-        jq.post "/homecontroller/printer/cancel_job/" + id, ->
+        id = jq(@).data "id"
+        jq.post "/homecontroller/printer/cancel_job/#{id}", ->
           fetchStatus()
 
   fetchPrinters = ->
@@ -64,7 +66,7 @@ Printer = ->
           3: "odottaa"
           4: "tulostaa"
           5: "pysäytetty"
-        status_main.find(".printer-status-content").append "<h2>#{key} (" + states[state] + ")</h2><p>Status: " + value["printer-state-message"] + "</p>"
+        status_main.find(".printer-status-content").append "<h2>#{key} (#{states[state]})</h2><p>Status: #{value["printer-state-message"]}</p>"
 
    startInterval = ->
     stopInterval()
@@ -84,10 +86,10 @@ Printer = ->
   @fetchPrinters = fetchPrinters
   @startInterval = startInterval
   @stopInterval = stopInterval
-  return this
+  return @
 
 jq =>
-  obj = this
+  obj = @
   obj.printer = new Printer()
   obj.printer.startInterval()
 

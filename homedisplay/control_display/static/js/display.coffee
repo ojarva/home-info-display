@@ -1,6 +1,6 @@
 ShutdownProgress = (options) ->
-  options = options || {}
-  options.timeout = options.timeout || 31000
+  options = options or {}
+  options.timeout = options.timeout or 31000
   update_interval = null
   countdown_start = null
 
@@ -40,7 +40,7 @@ ShutdownProgress = (options) ->
 
     percent = 100 * (options.timeout - time_left) / options.timeout
     jq("#shutdown-progress .progress-bar").css
-      "width": percent + "%"
+      "width": "#{percent}%"
 
 
   startInterval = ->
@@ -75,7 +75,7 @@ ShutdownProgress = (options) ->
   @shutdown = shutdown
   @startup = startup
   @restartDisplay = restartDisplay
-  return this
+  return @
 
 jq =>
   obj = @
@@ -95,7 +95,7 @@ jq =>
     obj.shutdown_progress.shutdown()
 
   jq(".display-power .startup-display").on "click", ->
-    obj.shutdown_progress.startup();
+    obj.shutdown_progress.startup()
 
   jq(".display-power .restart-browser").on "click", ->
     obj.shutdown_progress.restartDisplay()

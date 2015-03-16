@@ -15,11 +15,11 @@ CustomTimer = (options) ->
     jq(".timed-custom-timer-labels").children().remove()
 
   submitTimer = (name) ->
-    c = duration_elem.data("content")
+    c = duration_elem.data "content"
     seconds = parseInt(c.substr(0, 3)) * 3600 + parseInt(c.substr(3, 2)) * 60 + parseInt(c.substr(5, 2))
     if seconds == 0
       # If no time is set, try getting duration for fixed-length items
-      seconds = jq(this).data("duration")
+      seconds = jq(@).data "duration"
 
     if seconds?
       jq.post "/homecontroller/timer/create",
@@ -48,7 +48,7 @@ CustomTimer = (options) ->
 
   zeroPad = (num, places) ->
     zero = places - num.toString().length + 1
-    return Array(+(zero > 0 && zero)).join("0") + num
+    return Array(+(zero > 0 and zero)).join("0") + num
 
   getTimeField = (content, field) ->
     d = content.substring(time_spec["#{field}_s"], time_spec["#{field}_s"] + time_spec["#{field}_l"])
@@ -61,26 +61,26 @@ CustomTimer = (options) ->
     return d
 
   processButton = (content) ->
-    current_content = duration_elem.data("content")
-    data = parseInt(content.substring(0, content.length - 1))
+    current_content = duration_elem.data "content"
+    data = parseInt content.substring(0, content.length - 1)
     field = content.substring(content.length - 1)
-    field_data = parseInt(getTimeField(current_content, field))
+    field_data = parseInt getTimeField(current_content, field)
     field_data += data
     if field_data < 0
-      hours_field = parseInt(getTimeField(current_content, "h"))
-      minutes_field = parseInt(getTimeField(current_content, "m"))
+      hours_field = parseInt getTimeField(current_content, "h")
+      minutes_field = parseInt getTimeField(current_content, "m")
       if field == "s"
         if minutes_field == 0 and hours_field > 0
           # Take 1h to minutes field.
           hours_field -= 1
-          current_content = setTimeField(current_content, "h", zeroPad(hours_field, time_spec.h_l))
+          current_content = setTimeField current_content, "h", zeroPad(hours_field, time_spec.h_l)
           minutes_field += 60
 
         if minutes_field > 0
           # Take 1 minute to seconds field.
           minutes_field -= 1
           field_data += 60
-          current_content = setTimeField(current_content, "m", zeroPad(minutes_field, time_spec.m_l))
+          current_content = setTimeField current_content, "m", zeroPad(minutes_field, time_spec.m_l)
         else
           field_data = 0
 
@@ -89,7 +89,7 @@ CustomTimer = (options) ->
           # Take 1 hour to minutes field.
           hours_field -= 1
           field_data += 60
-          current_content = setTimeField(current_content, "h", zeroPad(hours_field, time_spec.h_l))
+          current_content = setTimeField current_content, "h", zeroPad(hours_field, time_spec.h_l)
         else
           field_data = 0
       else
@@ -97,24 +97,24 @@ CustomTimer = (options) ->
 
     if (field == "s" or field == "m") and field_data >= 60
       if field == "s"
-        minutes_field = parseInt(getTimeField(current_content, "m"))
+        minutes_field = parseInt getTimeField(current_content, "m")
         minutes_field += 1
         field_data -= 60
         if minutes_field >= 60
           minutes_field -= 60
-          hours_field = parseInt(getTimeField(current_content, "h"))
+          hours_field = parseInt getTimeField(current_content, "h")
           hours_field += 1
-          current_content = setTimeField(current_content, "h", zeroPad(hours_field, time_spec.h_l))
+          current_content = setTimeField current_content, "h", zeroPad(hours_field, time_spec.h_l)
 
-        current_content = setTimeField(current_content, "m", zeroPad(minutes_field, time_spec.m_l))
+        current_content = setTimeField current_content, "m", zeroPad(minutes_field, time_spec.m_l)
 
       if field == "m"
         field_data -= 60
         hours_field = parseInt getTimeField(current_content, "h")
         hours_field += 1
-        current_content = setTimeField(current_content, "h", zeroPad(hours_field, time_spec.h_l))
+        current_content = setTimeField current_content, "h", zeroPad(hours_field, time_spec.h_l)
 
-    field_data = zeroPad field_data, time_spec[field + "_l"]
+    field_data = zeroPad field_data, time_spec["#{field}_l"]
     current_content = setTimeField current_content, field, field_data
 
     duration_elem.data "content", current_content
@@ -154,9 +154,9 @@ CustomTimer = (options) ->
   @setTimeField = setTimeField
   @getTimeField = getTimeField
 
-  return this
+  return @
 
 jq =>
-  @.custom_timer = new CustomTimer
+  @custom_timer = new CustomTimer
     duration_elem: "#custom-timer-duration"
     modal_elem: "#add-custom-timer"

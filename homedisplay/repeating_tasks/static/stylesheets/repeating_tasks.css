@@ -1,13 +1,14 @@
-#confirm-repeating-task  {
+#confirm-repeating-task {
   .snooze {
     background-color: #303030;
   }
 
   .task-history {
-    margin-top: 2em;
     font-size: 1.5em;
+    margin-top: 2em;
   }
 }
+
 .list-repeating-tasks {
   margin-top: 20px;
 }

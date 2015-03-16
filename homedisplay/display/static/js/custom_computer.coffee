@@ -10,5 +10,5 @@ jq ->
     content_switch.switchContent "#main-content"
 
   jq(".navbar .refresh").on "click", ->
-    jq(this).addClass "fa-spin"
+    jq(@).addClass "fa-spin"
     ge_refresh.requestUpdate()

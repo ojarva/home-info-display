@@ -4,6 +4,7 @@
   .bar {
     fill: gray;
   }
+
   .bar:hover {
     fill: brown;
   }
@@ -15,59 +16,67 @@
   .axis path,
   .axis line {
     fill: none;
-    stroke: #000;
     shape-rendering: crispEdges;
+    stroke: #000;
   }
 
   .x.axis path {
     display: none;
   }
+
   .bargraph {
     margin-left: -21px;
   }
 
   .days-hours-heatmap {
 
-    padding: 20px 0 20px 0;
-    width: 1600px;
     margin: 0 auto;
+    padding: 20px 0;
+    width: 1600px;
+
     .calibration {
       margin-bottom: 15px;
       width: 400px;
+
       .group {
         display: inline-block;
       }
+
       .description {
-        width:168px;
+        width: 168px;
+      }
+
+      .description>label:last-child {
+        float: right;
       }
     }
-    .calibration .description>label:last-child {
-      float:right;
-    }
+
     .calibration>.display-control {
-      float:right;
-    }
-    .calibration>.display-control label {
-      vertical-align: top;
-    }
-    .calibration>.display-control input[type='radio'] {
-      cursor: pointer;
+      float: right;
+
+      label {
+        vertical-align: top;
+      }
+
+      input[type='radio'] {
+        cursor: pointer;
+      }
     }
 
     .heatmap .axis {
       path {
         display: none;
       }
-      line{
+
+      line {
         fill: none;
-        stroke: #000;
         shape-rendering: crispEdges;
+        stroke: #000;
       }
-      text{
+
+      text {
         font-size: 12px;
       }
-
     }
-
   }
 }

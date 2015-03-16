@@ -7,7 +7,7 @@ DoorScreensaver = ->
     jq("#screensaver").slideDown()
 
   activity = ->
-    jq("#screensaver").fadeOut("fast")
+    jq("#screensaver").fadeOut "fast"
     last_activity = new Date()
 
   update = ->
@@ -29,10 +29,10 @@ DoorScreensaver = ->
 
   @startScreensaver = startScreensaver
   @activity = activity
-  return this
+  return @
 
 jq =>
-  this.door_screensaver = new DoorScreensaver()
+  @door_screensaver = new DoorScreensaver()
   height = jq(window).height()
   jq(".content-box").css
     "height": height

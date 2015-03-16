@@ -1,4 +1,4 @@
-obj = this
+obj = @
 
 obj.lightcontrol_timed_evening = null
 obj.lightcontrol_timed_morning = null
@@ -9,9 +9,9 @@ obj.lightcontrol_timed = null
 
 LightControlTimed = (options) ->
   # TODO: this should be refactored to use latest_data.start_datetime and .end_datetime instead of parsing from html.
-  options = options || {}
-  options.update_interval = options.update_interval || 1000
-  options.backend_update_interval = options.backend_update_interval || SLOW_UPDATE
+  options = options or {}
+  options.update_interval = options.update_interval or 1000
+  options.backend_update_interval = options.backend_update_interval or SLOW_UPDATE
   main = jq options.elem
   update_interval = null
   backend_update_interval = null
@@ -19,10 +19,10 @@ LightControlTimed = (options) ->
   running = null
 
   if main.length == 0
-    console.warn "!!! Invalid selector for LightControlTimed: " + options.elem
-    debug.warn "Invalid selector for LightControlTimed: " + options.elem
+    console.warn "!!! Invalid selector for LightControlTimed: #{options.elem}"
+    debug.warn "Invalid selector for LightControlTimed: #{options.elem}"
 
-  action = main.data("action")
+  action = main.data "action"
 
   getNextStartDatetime = ->
     if latest_data? and latest_data.fields?
@@ -42,7 +42,7 @@ LightControlTimed = (options) ->
 
   setStartTime = (start_time) ->
     start_time = start_time.split(":")
-    main.find(".start-time-content").html(start_time[0] + ":" + start_time[1])
+    main.find(".start-time-content").html "#{start_time[0]}:#{start_time[1]}"
 
   setDuration = (duration) ->
     duration = parseInt duration
@@ -80,9 +80,13 @@ LightControlTimed = (options) ->
   setRunning = (status) ->
     running = status
     if running
-      main.find(".play-control i").removeClass("fa-toggle-off error-message").addClass("fa-toggle-on")
+      main.find ".play-control i"
+      .removeClass "fa-toggle-off error-message"
+      .addClass "fa-toggle-on"
     else
-      main.find(".play-control i").removeClass("fa-toggle-on").addClass("fa-toggle-off error-message")
+      main.find ".play-control i"
+      .removeClass "fa-toggle-on"
+      .addClass "fa-toggle-off error-message"
 
   updateFields = (data) ->
     latest_data = data[0]
@@ -92,7 +96,7 @@ LightControlTimed = (options) ->
     if data[0].fields.is_overridden
       pauseOverride()
     else
-      resumeOverride("backend")
+      resumeOverride "backend"
     lightcontrol_timed_sort.sortTimers()
 
   update = ->
@@ -114,7 +118,7 @@ LightControlTimed = (options) ->
       start_time.add 15, "minutes"
     else
       start_time.subtract 15, "minutes"
-    setStartTime start_time.format("HH:mm")
+    setStartTime start_time.format "HH:mm"
     postUpdate()
 
 
@@ -138,7 +142,7 @@ LightControlTimed = (options) ->
       else
         show_progress_indicator = true
 
-      content.html(verb + " " + end_time.fromNowSynced())
+      content.html "#{verb} " + end_time.fromNowSynced()
     else if now < start_time # Not yet started
       verb = "alkaa"
       show_progress_indicator = false
@@ -147,13 +151,13 @@ LightControlTimed = (options) ->
       content.html "#{verb} " + start_time.fromNowSynced()
     else
       # Done for today.
-      start_time.add(1, "days")
+      start_time.add 1, "days"
       verb = "alkaa"
       show_progress_indicator = false
       if !running
         verb = "alkaisi"
 
-      content.html(verb + " " + start_time.fromNowSynced())
+      content.html "#{verb} " + start_time.fromNowSynced()
 
     if show_progress_indicator == true
       main.find(".play-control i").addClass("success-message")
@@ -167,8 +171,8 @@ LightControlTimed = (options) ->
   adjustDuration = (dir) ->
     time = getDuration().replace("+", "").split(":")
     parsed_time = moment()
-    parsed_time.hours(time[0])
-    parsed_time.minutes(time[1])
+    parsed_time.hours time[0]
+    parsed_time.minutes time[1]
     if dir == "plus"
       if parsed_time.hours() < 2
         parsed_time.add 15, "minutes"
@@ -177,7 +181,7 @@ LightControlTimed = (options) ->
       if (parsed_time.hours() == 0 and parsed_time.minutes() >= 15) or parsed_time.hours() > 0
         parsed_time.subtract 15, "minutes"
 
-    formatted_time = parsed_time.format("H:mm")
+    formatted_time = parsed_time.format "H:mm"
     main.find(".duration-content").html "+#{formatted_time}"
     postUpdate()
 
@@ -234,9 +238,9 @@ LightControlTimed = (options) ->
 
   main.find(".open-light-dialog").on "click", ->
     jq("#lightcontrol-modal .timed-lightcontrol").removeClass("highlight")
-    this_item_action = jq(this).data("action-name")
-    if this_item_action?
-      jq("#lightcontrol-modal .timed-lightcontrol-#{this_item_action}").addClass("highlight")
+    item_action = jq(@).data "action-name"
+    if item_action?
+      jq("#lightcontrol-modal .timed-lightcontrol-#{item_action}").addClass("highlight")
     content_switch.switchContent "#lightcontrol-modal"
 
   onReceiveBrightness = (data) ->
@@ -250,13 +254,13 @@ LightControlTimed = (options) ->
 
   startInterval()
 
-  this.startInterval = startInterval
-  this.stopInterval = stopInterval
-  this.hideItem = hideItem
-  this.showItem = showItem
-  this.getNextStartDatetime = getNextStartDatetime
-  this.getNextEndDatetime = getNextEndDatetime
-  return this
+  @startInterval = startInterval
+  @stopInterval = stopInterval
+  @hideItem = hideItem
+  @showItem = showItem
+  @getNextStartDatetime = getNextStartDatetime
+  @getNextEndDatetime = getNextEndDatetime
+  return @
 
 ShowTimers = ->
   sortTimers = ->
@@ -269,14 +273,18 @@ ShowTimers = ->
     lightcontrol_timed[0].showItem()
     lightcontrol_timed[1].showItem()
 
-  this.sortTimers = sortTimers
-  return this
+  @sortTimers = sortTimers
+  return @
 
 
 jq =>
-  @.lightcontrol_timed_sort = new ShowTimers()
-  @.lightcontrol_timed_morning = new LightControlTimed({"elem": ".timed-lightcontrol-morning"})
-  @.lightcontrol_timed_evening = new LightControlTimed({"elem": ".timed-lightcontrol-evening"})
-  @.lightcontrol_timed_weekend_morning = new LightControlTimed({"elem": ".timed-lightcontrol-morning-weekend"})
-  @.lightcontrol_timed_weekend_evening = new LightControlTimed({"elem": ".timed-lightcontrol-evening-weekend"})
-  @.lightcontrol_timed = [@.lightcontrol_timed_evening, @.lightcontrol_timed_morning, @.lightcontrol_timed_weekend_evening, @.lightcontrol_timed_weekend_morning]
+  @lightcontrol_timed_sort = new ShowTimers()
+  @lightcontrol_timed_morning = new LightControlTimed
+    "elem": ".timed-lightcontrol-morning"
+  @lightcontrol_timed_evening = new LightControlTimed
+    "elem": ".timed-lightcontrol-evening"
+  @lightcontrol_timed_weekend_morning = new LightControlTimed
+    "elem": ".timed-lightcontrol-morning-weekend"
+  @lightcontrol_timed_weekend_evening = new LightControlTimed
+    "elem": ".timed-lightcontrol-evening-weekend"
+  @lightcontrol_timed = [@lightcontrol_timed_evening, @lightcontrol_timed_morning, @lightcontrol_timed_weekend_evening, @lightcontrol_timed_weekend_morning]

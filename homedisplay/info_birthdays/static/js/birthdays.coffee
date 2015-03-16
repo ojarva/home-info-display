@@ -1,8 +1,7 @@
 Birthdays = (elem, use_date, options) ->
-  options = options || {}
-  options.showdate = options.showdate || false
-  options.maxitems = options.maxitems || 100000
-  this_date = use_date
+  options = options or {}
+  options.showdate = options.showdate or false
+  options.maxitems = options.maxitems or 100000
   update_interval = null
   current_item = 0
   items_in_current = 0
@@ -16,7 +15,7 @@ Birthdays = (elem, use_date, options) ->
     jq(elem).find("li").remove()
     items_in_current = 0
     current_item = 0
-    parent_elem = jq(elem).slice(current_item, 1)
+    parent_elem = jq(elem).slice current_item, 1
 
 
   compareBirthdays = (a, b) ->
@@ -42,7 +41,7 @@ Birthdays = (elem, use_date, options) ->
 
 
   processData = (data) ->
-    debug.log("Processing #{data.length} birthdays for #{this_date}")
+    debug.log "Processing #{data.length} birthdays for #{use_date}"
     clearDates()
     data_sortable = []
     now = clock.getMoment().subtract 1, "days"
@@ -60,7 +59,7 @@ Birthdays = (elem, use_date, options) ->
         @next_year = true
 
       @birthday_sort = prefix + sort_string
-      data_sortable.push this
+      data_sortable.push @
 
     # Sort
     data_sortable.sort compareBirthdays
@@ -80,7 +79,7 @@ Birthdays = (elem, use_date, options) ->
         if @next_year
           b = b.add 1, "year"
 
-        age = (" (" + @birthday_moment.from(b) + ")").replace(" sitten", "")
+        age = (" (" + @birthday_moment.from(b) + ")").replace " sitten", ""
 
       if options.showdate
         date = " - " + @birthday_moment.date() + "." + (@birthday_moment.month() + 1) + "."
@@ -92,47 +91,47 @@ Birthdays = (elem, use_date, options) ->
         if current_item > 3
           return false
 
-        parent_elem = jq(elem).slice(current_item, current_item + 1)
+        parent_elem = jq(elem).slice current_item, current_item + 1
         items_in_current = 0
 
       items_in_current += 1
-      if this_date == "tomorrow"
+      if use_date == "tomorrow"
         extra = " (huomenna)"
 
       parent_elem.append "<li><i class='fa-li fa fa-birthday-cake'></i> #{name}#{date}#{age}#{extra}</li>"
 
   update = ->
-    jq.get "/homecontroller/birthdays/get_json/#{this_date}", (data) ->
+    jq.get "/homecontroller/birthdays/get_json/#{use_date}", (data) ->
       processData data
 
 
   startInterval = ->
     update()
-    ws_generic.register "birthdays_#{this_date}", onReceiveItemWS
-    ge_refresh.register "birthdays_#{this_date}", update
-    ge_intervals.register "birthdays_#{this_date}", "daily", update
+    ws_generic.register "birthdays_#{use_date}", onReceiveItemWS
+    ge_refresh.register "birthdays_#{use_date}", update
+    ge_intervals.register "birthdays_#{use_date}", "daily", update
 
   stopInterval = ->
-    ws_generic.deRegister "birthdays_#{this_date}"
-    ge_refresh.deRegister "birthdays_#{this_date}"
-    ge_intervals.deRegister "birthdays_#{this_date}", "daily"
+    ws_generic.deRegister "birthdays_#{use_date}"
+    ge_refresh.deRegister "birthdays_#{use_date}"
+    ge_intervals.deRegister "birthdays_#{use_date}", "daily"
 
 
   @startInterval = startInterval
   @stopInterval = stopInterval
-  return this
+  return @
 
 jq =>
-  this.birthdays_today = new Birthdays "#today .list-birthdays .fa-ul", "today"
-  this.birthdays_tomorrow = new Birthdays "#tomorrow .list-birthdays .fa-ul", "tomorrow"
-  this.birthdays_all = new Birthdays "#birthdays-list-all .fa-ul", "all",
+  @birthdays_today = new Birthdays "#today .list-birthdays .fa-ul", "today"
+  @birthdays_tomorrow = new Birthdays "#tomorrow .list-birthdays .fa-ul", "tomorrow"
+  @birthdays_all = new Birthdays "#birthdays-list-all .fa-ul", "all",
     interval: 60 * 60 * 1000
     showdate: true
     maxitems: 45
 
-  this.birthdays_today.startInterval()
-  this.birthdays_tomorrow.startInterval()
-  this.birthdays_all.startInterval()
+  @birthdays_today.startInterval()
+  @birthdays_tomorrow.startInterval()
+  @birthdays_all.startInterval()
 
   jq(".main-button-box .birthdays").on "click", ->
     content_switch.switchContent "#birthdays-list-all"

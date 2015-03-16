@@ -16,8 +16,8 @@ FrameHandler = () ->
           return
       console.warn "Watchdog timer expired"
       elem = jq("#content-frame")
-      src = elem.attr("src").split("?")[0] + "?" + timestamp
-      elem.attr("src", src)
+      src = elem.attr("src").split("?")[0] + "?#{timestamp}"
+      elem.attr "src", src
       last_reload_time = timestamp
   , 2500
 
@@ -26,5 +26,7 @@ FrameHandler = () ->
     watchdog_last_update = e.data
   , false
 
+  return @
+
 jq =>
-  this.frame_handler = new FrameHandler()
+  @frame_handler = new FrameHandler()

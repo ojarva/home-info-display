@@ -1,8 +1,10 @@
 #wifi-settings {
   .wifi-info {
     margin-bottom: 5em;
-    .ssid, .passphrase {
-      font-family: Courier New;
+
+    .ssid,
+    .passphrase {
+      font-family: "Courier New";
       font-size: 2.5em;
     }
   }
@@ -15,15 +17,17 @@
     }
 
     .mac {
-      font-family: Courier New;
+      display: inline-block;
+      font-family: "Courier New";
       margin-left: 10px;
       min-width: 14em;
-      display: inline-block
     }
+
     .last-seen {
       display: inline-block;
       min-width: 3.5em;
     }
+
     .rssi-container {
       display: inline-block;
       min-width: 10.5em;
@@ -31,9 +35,9 @@
   }
 
   .center-container {
-    width: 620px;
     margin-left: auto;
     margin-right: auto;
+    width: 620px;
   }
 }
 
@@ -48,32 +52,33 @@
   }
 
   .speed span {
-    min-width: 33px;
     display: inline-block;
+    min-width: 33px;
     text-align: center;
   }
 
   .signal-bars {
     background-color: black;
+    display: inline-block;
     margin: 0px;
     padding: 0px;
-    display: inline-block;
 
     div {
       background-color: gray;
-      display:inline-block;
+      display: inline-block;
       font-size: 70%;
-      width: 7px;
       margin-bottom: 0px;
-      margin-top: 5px;
       margin-left: 0px;
       margin-right: 1px;
+      margin-top: 5px;
       padding: 0px;
+      width: 7px;
     }
 
     .active {
       background-color: #07CF00;
     }
+
     .inactive {
       background-color: gray;
     }
@@ -81,15 +86,19 @@
     .signal-1 {
       height: 5px;
     }
+
     .signal-2 {
       height: 12px;
     }
+
     .signal-3 {
       height: 19px;
     }
+
     .signal-4 {
       height: 27px;
     }
+
     .signal-5 {
       height: 35px;
     }

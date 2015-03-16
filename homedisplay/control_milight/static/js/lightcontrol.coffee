@@ -1,17 +1,17 @@
 LightSlider = (elem) ->
-  this_elem = jq elem
-  group_id = this_elem.data("id")
+  slider_elem = jq elem
+  group_id = slider_elem.data "id"
   value = 0
   update_timeout = null
 
   updateBackend = ->
     if value > 95
       value = 100
-      this_elem.slider "value", value
+      slider_elem.slider "value", value
 
     jq.post "/homecontroller/lightcontrol/control/brightness/#{group_id}/#{value}"
 
-  slider = this_elem.slider
+  slider = slider_elem.slider
     value: 0
     min: 0
     max: 100
@@ -23,7 +23,7 @@ LightSlider = (elem) ->
       update_timeout = setTimeout updateBackend, 100
       value = ui.value
 
-  return this
+  return @
 
 LightControl = ->
 
@@ -36,17 +36,17 @@ LightControl = ->
 
   initialize = (selector) ->
     jq.each jq(".brightness-slider"), ->
-      LightSlider(this)
+      LightSlider @
 
     jq.each jq(selector), ->
-      jq(this).data "original-color", jq(this).css("background-color")
-      jq(this).children().not(".active-mode").each ->
-        jq(this).data "original-classes", jq(this).attr("class")
+      jq(@).data "original-color", jq(@).css("background-color")
+      jq(@).children().not(".active-mode").each ->
+        jq(@).data "original-classes", jq(@).attr("class")
 
 
-      jq(this).on "click", ->
+      jq(@).on "click", ->
         content_switch.userActivity()
-        main_elem = jq this
+        main_elem = jq @
         if main_elem.data "running"
           return
 
@@ -63,7 +63,7 @@ LightControl = ->
           main_elem.children().not(".active-mode").removeClass().addClass("fa fa-#{icon}")
           restore_classes = ->
             main_elem.children().not(".active-mode").each ->
-              elem = jq this
+              elem = jq @
               elem.removeClass().addClass elem.data("original-classes")
 
             main_elem.stop().animate
@@ -93,34 +93,44 @@ LightControl = ->
     data = latest_data
     if data? and data.groups?
       jq.each data.groups, ->
-        group_id = this.fields.group_id
-        color = this.fields.color
-        jq(".light-group-#{group_id}-name").html this.fields.description
-        jq(".light-group-#{group_id}-brightness").html("#{this.fields.current_brightness}%").data("brightness", this.fields.current_brightness)
+        group_id = @fields.group_id
+        color = @fields.color
+        jq(".light-group-#{group_id}-name").html @fields.description
+        jq ".light-group-#{group_id}-brightness"
+        .html "#{@fields.current_brightness}%"
+        .data "brightness", @fields.current_brightness
 
-        jq(".brightness-slider-group-#{group_id}").slider "value", this.fields.current_brightness
+        jq(".brightness-slider-group-#{group_id}").slider "value", @fields.current_brightness
         jq(".brightness-slider-group-#{group_id}").css "background-color", color
 
         color_elem = jq ".light-group-#{group_id}-color"
         if color_map[color]?
           color_elem.html color_map[color]
 
-        if this.fields.on
-          jq(".light-group-#{group_id}-color").html "<i class='fa fa-toggle-on'></i>"
+        if @fields.on
+          jq(".light-group-#{group_id}-on").html "<i class='fa fa-toggle-on'></i>"
         else
-          jq(".light-group-#{group_id}-color").html "<i class='fa fa-toggle-off'></i>"
+          jq(".light-group-#{group_id}-on").html "<i class='fa fa-toggle-off'></i>"
 
-        max_brightness = Math.max max_brightness, this.fields.morning_light_level
+        max_brightness = Math.max max_brightness, @fields.morning_light_level
 
-        if this.fields.morning_light_level < 10
-          jq(".lights-morning-auto-#{group_id}").addClass("lights-morning-dim").removeClass("lights-morning-bright")
+        if @fields.morning_light_level < 10
+          jq ".lights-morning-auto-#{group_id}"
+          .addClass "lights-morning-dim"
+          .removeClass "lights-morning-bright"
         else
-          jq(".lights-morning-auto-#{group_id}").addClass("lights-morning-bright").removeClass("lights-morning-dim")
+          jq ".lights-morning-auto-#{group_id}"
+          .addClass "lights-morning-bright"
+          .removeClass "lights-morning-dim"
 
       if max_brightness < 10
-        jq(".lights-morning-auto").addClass("lights-morning-dim").removeClass("lights-morning-bright")
+        jq ".lights-morning-auto"
+        .addClass "lights-morning-dim"
+        .removeClass "lights-morning-bright"
       else
-        jq(".lights-morning-auto").addClass("lights-morning-bright").removeClass("lights-morning-dim")
+        jq ".lights-morning-auto"
+        .addClass "lights-morning-bright"
+        .removeClass "lights-morning-dim"
 
     if data? and data.main_buttons?
       jq.each data.main_buttons, (key, value) ->
@@ -146,19 +156,18 @@ LightControl = ->
   ws_generic.register "lightcontrol", processData
   ge_refresh.register "lightcontrol", update
 
-  this.initialize = initialize
-  this.update = update
-  return this
+  @initialize = initialize
+  @update = update
+  return @
 
-obj = this
-jq ->
-  obj.light_control = new LightControl()
-  obj.light_control.initialize ".lightcontrol-btn"
-  obj.light_control.update()
+jq =>
+  @light_control = new LightControl()
+  @light_control.initialize ".lightcontrol-btn"
+  @light_control.update()
 
   jq(".main-button-box .lights").on "click", ->
     content_switch.switchContent "#lightcontrol-modal"
 
   jq("#lightcontrol-modal .close").on "click", ->
     content_switch.switchContent "#main-content"
-    jq("#lightcontrol-modal .timed-lightcontrol").removeClass("highlight")
+    jq("#lightcontrol-modal .timed-lightcontrol").removeClass "highlight"

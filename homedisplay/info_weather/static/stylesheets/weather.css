@@ -1,62 +1,62 @@
 
 .fa-rotate-22_5 {
- transform: rotate(22.5deg);
+  transform: rotate(22.5deg);
 }
 
 .fa-rotate-45 {
- transform: rotate(45.0deg);
+  transform: rotate(45deg);
 }
 
 .fa-rotate-67_5 {
- transform: rotate(67.5deg);
+  transform: rotate(67.5deg);
 }
 
 .fa-rotate-90 {
- transform: rotate(90.0deg);
+  transform: rotate(90deg);
 }
 
 .fa-rotate-112_5 {
- transform: rotate(112.5deg);
+  transform: rotate(112.5deg);
 }
 
 .fa-rotate-135 {
- transform: rotate(135.0deg);
+  transform: rotate(135deg);
 }
 
 .fa-rotate-157_5 {
- transform: rotate(157.5deg);
+  transform: rotate(157.5deg);
 }
 
 .fa-rotate-180 {
- transform: rotate(180.0deg);
+  transform: rotate(180deg);
 }
 
 .fa-rotate-202_5 {
- transform: rotate(202.5deg);
+  transform: rotate(202.5deg);
 }
 
 .fa-rotate-225 {
- transform: rotate(225.0deg);
+  transform: rotate(225deg);
 }
 
 .fa-rotate-247_5 {
- transform: rotate(247.5deg);
+  transform: rotate(247.5deg);
 }
 
 .fa-rotate-270 {
- transform: rotate(270.0deg);
+  transform: rotate(270deg);
 }
 
 .fa-rotate-292_5 {
- transform: rotate(292.5deg);
+  transform: rotate(292.5deg);
 }
 
 .fa-rotate-315 {
- transform: rotate(315.0deg);
+  transform: rotate(315deg);
 }
 
 .fa-rotate-337_5 {
- transform: rotate(337.5deg);
+  transform: rotate(337.5deg);
 }
 
 .weather-temperature {
@@ -68,12 +68,11 @@
 
   .col-md-4 {
     font-size: 130%;
-    text-align: center;
-    padding-top: 5px;
-    padding-bottom: 5px;
     min-height: 108px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    text-align: center;
   }
-
 }
 
 
@@ -82,6 +81,7 @@
     font-size: 400%;
     margin-right: 40px;
   }
+
   .calendar {
     font-size: 200%;
   }
@@ -89,26 +89,29 @@
   .timeinfo {
     margin-bottom: 30px;
   }
+
   .weather-all .col-md-1 {
     font-size: 130%;
-    text-align: center;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    min-height: 108px;
     margin-bottom: 40px;
+    min-height: 108px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    text-align: center;
   }
+
   .weather-all .new-day {
     border-left: gray;
     border-left-style: dotted;
     border-left-width: 5px;
   }
+
   .weather-all .weather-today {
-    border-top: gray;
-    border-top-style: dotted;
-    border-top-width: 2px;
-    border-bottom: gray;
     border-bottom-style: dotted;
     border-bottom-width: 2px;
+    border-bottom: gray;
+    border-top-style: dotted;
+    border-top-width: 2px;
+    border-top: gray;
   }
 }
 

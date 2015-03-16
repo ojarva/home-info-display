@@ -7,27 +7,30 @@ body {
 }
 
 .lightcontrol-btn-large {
-  height: 90px !important;
   font-size: 200% !important;
+  height: 90px !important;
 }
+
 .lightcontrol-btn-small {
-  height: 70px !important;
   font-size: 2em !important;
+  height: 70px !important;
 }
 
 .internet-connection {
-  margin-top: 20px;
   font-size: 180%;
+  margin-top: 20px;
 }
 
 .indoor-quality {
-  margin-top: 20px;
   font-size: 180%;
-}
-.server-power {
   margin-top: 20px;
-  font-size: 150%;
 }
+
+.server-power {
+  font-size: 150%;
+  margin-top: 20px;
+}
+
 .genelec-power {
   font-size: 150%;
 }
@@ -45,6 +48,7 @@ body {
     font-size: 300%;
     padding-right: 10px;
   }
+
   .calendar {
     font-size: 200%;
   }

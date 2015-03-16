@@ -1,1 +1,1 @@
-this.jq = jQuery.noConflict();
+@jq = jQuery.noConflict()
