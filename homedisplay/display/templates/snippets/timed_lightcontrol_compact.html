@@ -1,16 +1,17 @@
 <!-- {{ action }} -->
-<div style="display:none" class="timed-lightcontrol timed-lightcontrol-compact timed-lightcontrol-{{ action }} item-box dark-box" data-action="{{ action }}">
+<div style="display:none" class="timed-lightcontrol timed-lightcontrol-compact timed-lightcontrol-{{ action }} item-box dark-box center-content" data-action="{{ action }}">
   <div class="row">
     <div class="col-md-12">
-      <div class="animation-direction open-light-dialog" data-action-name="{{ action }}">
-        {{ type }}
-      </div>
-      <div style="float:right" class="center-content open-light-dialog" data-action-name="{{ action }}">
-        <span class="duration-content">+-:--</span>
-      </div>
-      <div style="float:right" class="center-content open-light-dialog" data-action-name="{{ action }}">
+      <div class="inline center-content open-light-dialog" data-action-name="{{ action }}">
         <span class="start-time-content">--:--</span>
       </div>
+      <div class="inline center-content open-light-dialog" data-action-name="{{ action }}">
+        <span class="duration-content">+-:--</span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
       <div class="play-control play-control">
         <span class="animate-click">
           <i class="fa-fw fa fa-toggle-on"></i>

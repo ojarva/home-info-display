@@ -60,6 +60,16 @@
   background-color: #5C5C5C !important;
 }
 
+.timed-lightcontrol-normal {
+  .play-control {
+    float: right;
+  }
+
+  .play-pause-control {
+    float: right;
+  }
+}
+
 .timed-lightcontrol {
   font-size: 200%;
 
@@ -70,7 +80,6 @@
 
   .play-control {
     display: inline-block;
-    float: right;
     margin-right: 20px;
 
     .span {
@@ -80,7 +89,6 @@
 
   .play-pause-control {
     display: inline-block;
-    float: right;
     margin-right: 20px;
 
     .span {
@@ -148,6 +156,24 @@
   }
 }
 
+.timed-lightcontrol-compact {
+  div {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .inline {
+    display: inline-block;
+  }
+
+  .time-left {
+    margin-top: 10px;
+  }
+
+  .current-brightness {
+    margin-top: 10px;
+  }
+}
 
 .lightcontrol-btn {
   margin-left: 1px;
