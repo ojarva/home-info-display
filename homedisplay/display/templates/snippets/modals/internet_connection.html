@@ -9,7 +9,23 @@
 {% block modal-content %}
 
 <div class="internet-connection">
-  {% include "snippets/internet_connection.html" %}
+  <span class="connected"><i class="fa fa-question-circle"></i></span>
+  <span class="signal-bars"><div class="signal-1"></div><div class="signal-2"></div><div class="signal-3"></div><div class="signal-4"></div><div class="signal-5"></div></span>
+  <span class="mode"></span>
+  <span class="ping"></span>
+  <span class="speed">
+    <span class="upload">
+      <i class="fa fa-upload"></i>
+      <span class="value"></span>
+      <span class="unit"></span>
+    </span>
+
+    <span class="download">
+      <i class="fa fa-download"></i>
+      <span class="value"></span>
+      <span class="unit"></span>
+    </span>
+  </span>
 </div>
 
 <div class="smokeping-charts">

@@ -5,8 +5,18 @@ ShowRealtimeStats = (options) ->
   options.invalid_speed_timeout = options.invalid_speed_timeout or 30000
   ping_container = jq options.ping_output
   speed_container = jq options.speed_output
+  ping_status_container = jq options.ping_status_output
+  traffic_status_container = jq options.traffic_status_output
+
+  speed_red = 40 * 1024 * 1024 # In bytes
+  speed_yellow = 10 * 1024 * 1024
+
+  ping_yellow = 30 # in ms
+  ping_red = 100
+
   invalid_ping_timeout = null
   invalid_speed_timeout = null
+
   filesize_options =
     bits: true
     round: 0
@@ -15,6 +25,7 @@ ShowRealtimeStats = (options) ->
   noPingUpdates = (warning_class) ->
     warning_class = warning_class or "error"
     ping_container.html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
+    ping_status_container.html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
 
   autoNoPingUpdates = ->
     noPingUpdates "warning"
@@ -22,11 +33,15 @@ ShowRealtimeStats = (options) ->
   noSpeedUpdates = (warning_class) ->
     warning_class = warning_class or "error"
     speed_container.find(".value").html "<i class='fa fa-times-circle #{warning_class}-message'></i>"
+    setMessageClass traffic_status_container.find("i"), "error-message"
 
   autoNoSpeedUpdates = ->
     noSpeedUpdates "warning"
 
-  update = (message) ->
+  setMessageClass = (elem, message_class) ->
+    elem.removeClass("error-message warning-message success-message").addClass(message_class)
+
+  updatePing = (message) ->
     if message == "no_pings"
       noPingUpdates()
       return
@@ -36,12 +51,41 @@ ShowRealtimeStats = (options) ->
 
     ping = Math.round(parseFloat(message))
     ping_container.html "<i class='fa fa-check-circle success-message'></i> #{ping}ms"
+
+    ping_status_container.html "<i class='fa fa-check-circle'></i>"
+    if ping > ping_red
+      message_class = "error-message"
+    else if ping > ping_yellow
+      message_class = "warning-message"
+    else
+      message_class = "success-message"
+    setMessageClass ping_status_container.find("i"), message_class
+
     invalid_ping_timeout = setTimeout autoNoPingUpdates, options.invalid_ping_timeout
 
   updateSpeed = (data) ->
     if data.internet?
       if invalid_speed_timeout?
         invalid_speed_timeout = clearTimeout invalid_speed_timeout
+
+      if data.internet.speed_in > speed_red
+        message_class = "error-message"
+      else if data.internet.speed_in > speed_yellow
+        message_class = "warning-message"
+      else
+        message_class = "success-message"
+
+      setMessageClass traffic_status_container.find(".download i"), message_class
+
+      if data.internet.speed_out > speed_red
+        message_class = "error-message"
+      else if data.internet.speed_out > speed_yellow
+        message_class = "warning-message"
+      else
+        message_class = "success-message"
+
+      setMessageClass traffic_status_container.find(".upload i"), message_class
+
       speed_in = data.internet.speed_in / 8
       speed_out = data.internet.speed_out / 8
 
@@ -56,7 +100,7 @@ ShowRealtimeStats = (options) ->
       invalid_speed_timeout = setTimeout autoNoSpeedUpdates, options.invalid_speed_timeout
 
   startInterval = ->
-    ws_generic.register "ping", update
+    ws_generic.register "ping", updatePing
     ws_generic.register "internet-speed", updateSpeed
 
   stopInterval = ->
@@ -153,6 +197,9 @@ jq =>
   @show_internet_info = new ShowRealtimeStats
     ping_output: ".internet-connection .ping"
     speed_output: ".internet-connection .speed"
+    traffic_status_output: ".internet-connection .traffic-status"
+    ping_status_output: ".internet-connection .ping-status"
+
   @show_internet_info.startInterval()
 
   jq(".internet-connection").on "click", ->
