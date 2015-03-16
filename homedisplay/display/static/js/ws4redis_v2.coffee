@@ -48,7 +48,8 @@
     if debug and debug.log
       debug.log "Connected to websocket"
 
-    jq("#disconnected").hide()
+    if internet_disconnected?
+      internet_disconnected.connected "websocket"
 
     timer_interval = 500
     deferred.resolve()
@@ -62,7 +63,8 @@
 
     console.log "Connection to #{ws.url} closed!"
 
-    jq("#disconnected").slideDown()
+    if internet_disconnected?
+      internet_disconnected.disconnected "websocket"
 
     if !timer
       # try to reconnect

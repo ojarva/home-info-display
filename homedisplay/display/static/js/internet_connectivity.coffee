@@ -9,6 +9,7 @@ InternetDisconnected = ->
 
   @disconnected = (requested_by) ->
     disconnectedBy[requested_by] = true
+    content_switch.switchContent "#disconnected"
 
   return @
 
@@ -19,7 +20,6 @@ InternetConnectivity = ->
       internet_disconnected.connected "online"
       console.log "Internet connection detected"
     else
-      content_switch.switchContent "#disconnected"
       internet_disconnected.disconnected "online"
       console.error "Internet disconnected"
 
