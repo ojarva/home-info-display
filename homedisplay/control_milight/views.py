@@ -12,6 +12,7 @@ from homedisplay.utils import publish_ws
 from ledcontroller import LedController
 import datetime
 import json
+from server_power.views import sp
 import redis
 import time
 
@@ -110,6 +111,13 @@ class ControlPerSource(View):
                 led.white()
                 led.set_brightness(100)
                 update_lightstate(0, 100, "white")
+            elif command == "off-all":
+                led.set_brightness(0)
+                led.off()
+                initiate_delayed_shutdown()
+                update_lightstate(0, 0, None, False)
+                sp.shutdown() # Shutdown server
+                # TODO: shut down speakers
 
         elif source == "door":
             if command == "night":
