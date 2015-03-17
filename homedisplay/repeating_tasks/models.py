@@ -132,6 +132,7 @@ class Task(models.Model):
         n = now()
         self.last_completed_at = n
         self.snooze = None
+        self.show_immediately = False
         a = TaskHistory(task=self, completed_at=n)
         a.save()
         self.save()
