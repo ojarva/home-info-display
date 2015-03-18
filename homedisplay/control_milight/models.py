@@ -116,7 +116,7 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
         return
 
     logger.debug("Updating lightstate: group=%s, brightness=%s, color=%s, on=%s, kwargs=%s", group, brightness, color, on, kwargs)
-    if kwargs.get("important", True) != False:
+    if kwargs.get("important", True) != False and kwargs.get("automatic", False) != True:
         timed_ends_at = is_any_timed_running()
         logger.debug("Lightstate: important is True")
         if timed_ends_at != False:
@@ -127,6 +127,22 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
             publish_ws("lightcontrol-timed-override", {"action": "pause"})
 
     (state, _) = LightGroup.objects.get_or_create(group_id=group)
+
+    # Default state for on_automatically
+    state.on_automatically = False
+    if kwargs.get("automatic"):
+        # This is update is triggered automatically (by PIR/magnetic switch/...)
+        if not state.on:
+            # Lightgroup is off.
+            if on:
+                # Lightgroup was switched on.
+                state.on_automatically = True
+
+                on_until = kwargs.get("on_until")
+                if on_until:
+                    # Set ending time for automatic lights.
+                    state.on_until = on_until
+
     if color is not None:
         logger.debug("Setting color for group %s, from %s to %s", group, state.color, color)
         state.color = color
@@ -157,6 +173,9 @@ class LightGroup(models.Model):
     white_brightness = models.PositiveSmallIntegerField(null=True, verbose_name="Valkoisen kirkkaus")
     color = models.TextField(null=True, blank=True, verbose_name="Väri")
     on = models.NullBooleanField(null=True, verbose_name="Päällä")
+
+    on_automatically = models.BooleanField(blank=True, default=False, verbose_name="Päällä automaattisesti", help_text="Onko ryhmä päällä automaattisesti vai manuaalisesti")
+    on_until = models.DateTimeField(blank=True, null=True, verbose_name="Automaattinen sammutusaika", help_text="Aika, johon asti valo pidetään päällä")
 
     def __unicode__(self):
         return "%s (%s), color: %s, on: %s, rgbw: %s, white: %s" % (self.description, self.group_id, self.color, self.on, self.rgbw_brightness, self.white_brightness)
