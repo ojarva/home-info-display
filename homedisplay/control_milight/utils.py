@@ -78,15 +78,19 @@ def process_automatic_trigger(trigger):
     KITCHEN = 3
     DOOR = 4
 
+    triggers = set()
     if trigger == "front-door":
-        set_automatic_trigger_light(DOOR)
+        triggers.add(DOOR)
         #TODO: bathroom
     if trigger == "kitchen":
-        set_automatic_trigger_light(KITCHEN)
-        set_automatic_trigger_light(TABLE)
+        triggers.update([KITCHEN, TABLE])
     if trigger == "hall":
-        set_automatic_trigger_light(DOOR)
-        set_automatic_trigger_light(KITCHEN)
+        triggers.update([DOOR, KITCHEN])
+    if trigger == "table":
+        triggers.add(TABLE)
+
+    for group in triggers:
+        set_automatic_trigger_light(group)
 
 def run_timed_actions():
     """ Runs light programs """

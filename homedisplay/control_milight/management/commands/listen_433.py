@@ -12,6 +12,7 @@ class Command(BaseCommand):
         "7697747": "hall",
         "1328959": "front-door",
         "247615": "unused-magnetic-switch",
+        "8981913": "table",
     }
 
     def handle(self, *args, **options):
