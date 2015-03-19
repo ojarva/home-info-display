@@ -1,5 +1,6 @@
-from django.core.management.base import BaseCommand, CommandError
 from control_milight.utils import process_automatic_trigger
+from django.conf import settings
+from django.core.management.base import BaseCommand, CommandError
 import serial
 import time
 
@@ -16,7 +17,7 @@ class Command(BaseCommand):
     }
 
     def handle(self, *args, **options):
-        s = serial.Serial("/dev/tty.usbserial-A9007LzM", 9600)
+        s = serial.Serial(settings.ARDUINO_433, 9600)
         sent_event_map = {}
         while True:
             line = s.readline()
