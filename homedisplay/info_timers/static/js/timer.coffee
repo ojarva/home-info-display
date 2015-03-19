@@ -41,7 +41,7 @@ Timer = (parent_elem, options) ->
     return Array(+(zero > 0 and zero)).join("0") + num
 
   updateTimerContent = (diff, prefix) ->
-    if options.auto_remove and prefix == "-"
+    if options.auto_remove? and prefix == "-"
       if diff > options.auto_remove
         deleteItem() # Delete item automatically if auto remove overrun is exceeded.
 
