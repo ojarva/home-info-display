@@ -1,4 +1,5 @@
 -e git://github.com/ojarva/py-utorrent.git#egg=utorrent
+Django>=1.7.5
 astral>=0.8.1
 celery>=3.1.17
 django-celery>=3.1.16
@@ -6,7 +7,6 @@ django-compressor>=1.4
 django-extensions>=1.4.9
 django-statsd>=2.0.1
 django-websocket-redis
-Django>=1.7.5
 helen-electricity-usage>=0.0.3
 hiredis>=0.1.4
 huawei-b593-status>=0.0.1
@@ -16,6 +16,7 @@ nettraffic>=0.0.2
 numpy>=1.9.2
 paramiko>=1.15.2
 pycups>=1.9.72
+pyserial>=2.7
 python-statsd>=1.7.2
 raven>=5.2.0
 reportlab>=3.1.44
