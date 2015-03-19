@@ -20,7 +20,7 @@ class GetLabels(View):
         return HttpResponse(get_serialized_labels(), content_type="application/json")
 
 class CancelJob(View):
-    def post(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         cups.setServer(CUPS_IP)
         cups_instance = cups.Connection()
         cups_instance.cancelJob(int(kwargs.get("job_id"))) # This does not return any useful information

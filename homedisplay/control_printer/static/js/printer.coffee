@@ -50,7 +50,7 @@ Printer = ->
       main.find("li").on "click", ->
         content_switch.userActivity()
         id = jq(@).data "id"
-        jq.post "/homecontroller/printer/cancel_job/#{id}", ->
+        jq.delete "/homecontroller/printer/cancel_job/#{id}", ->
           fetchStatus()
 
   fetchPrinters = ->
