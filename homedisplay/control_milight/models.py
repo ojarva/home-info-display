@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from django.utils import timezone
 from homedisplay.utils import publish_ws
 from ledcontroller import LedController
+import info_timers.utils as timer_utils
 import datetime
 import json
 import logging
@@ -142,6 +143,9 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
                 if on_until:
                     # Set ending time for automatic lights.
                     state.on_until = on_until
+                    timer_utils.update_group_automatic_timer(group)
+    else:
+        timer_utils.delete_group_automatic_timer(group, True)
 
     if color is not None:
         logger.debug("Setting color for group %s, from %s to %s", group, state.color, color)
