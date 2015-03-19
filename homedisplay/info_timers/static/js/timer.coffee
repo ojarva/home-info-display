@@ -30,7 +30,7 @@ Timer = (parent_elem, options) ->
       backend_interval = clearInterval backend_interval
 
     if item_source != "backend" and id?
-      jq.get "/homecontroller/timer/delete/#{id}"
+      jq.post "/homecontroller/timer/delete/#{id}"
 
     ws_generic.deRegister "timer-#{id}"
     ge_refresh.deRegister "timer-#{id}"
@@ -118,7 +118,7 @@ Timer = (parent_elem, options) ->
     timers.sortTimers()
     if source != "backend" and id?
       # If action was triggered by user, update backend
-      jq.get "/homecontroller/timer/start/#{id}"
+      jq.post "/homecontroller/timer/start/#{id}"
 
 
   stopItem = (source) ->
@@ -142,7 +142,7 @@ Timer = (parent_elem, options) ->
 
     if source != "backend"
       # Initiated by user - update backend
-      jq.get "/homecontroller/timer/stop/#{id}", (data) ->
+      jq.post "/homecontroller/timer/stop/#{id}", (data) ->
         diff = ((new Date(data[0].fields.stopped_at)) - (new Date(data[0].fields.start_time))) / 1000
         updateTimerContent diff, ""
 
@@ -212,7 +212,7 @@ Timer = (parent_elem, options) ->
     , 500
     startItem "backend" # Prevent duplicate updates to backend
     if id?
-      jq.get "/homecontroller/timer/restart/#{id}", (data) ->
+      jq.post "/homecontroller/timer/restart/#{id}", (data) ->
         start_time = new Date(data[0].fields.start_time)
     else
       start_time = clock.getDate()

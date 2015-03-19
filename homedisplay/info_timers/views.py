@@ -37,7 +37,7 @@ class Get(View):
 
 
 class Stop(View):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.running = False
         item.stopped_at = timezone.now()
@@ -46,14 +46,14 @@ class Stop(View):
 
 
 class Delete(View):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.delete()
         return HttpResponse(json.dumps({"deleted": True, "id": kwargs["id"]}), content_type="application/json")
 
 
 class Restart(View):
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.start_time = timezone.now()
         item.running = True
@@ -66,7 +66,7 @@ class Restart(View):
 
 class Start(View):
     #TODO: this does not handle pausing properly.
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.running = True
         item.save()
