@@ -93,12 +93,12 @@ jq =>
 
   jq("#confirm-repeating-task .yes").on "click", ->
     id = jq("#confirm-repeating-task").data "id"
-    jq.post "/homecontroller/repeating_tasks/done/#{id}"
+    jq.patch "/homecontroller/repeating_tasks/done/#{id}"
     content_switch.switchContent "#main-content"
 
   jq("#confirm-repeating-task .snooze").on "click", ->
     id = jq("#confirm-repeating-task").data "id"
-    jq.post "/homecontroller/repeating_tasks/snooze/#{id}/" + jq(@).data("days")
+    jq.patch "/homecontroller/repeating_tasks/snooze/#{id}/" + jq(@).data("days")
     content_switch.switchContent "#main-content"
 
   jq("#confirm-repeating-task .cancel").on "click", ->
