@@ -10,7 +10,6 @@ import json
 class PushExt(View):
     def post(self, request, *args, **kwargs):
         url = request.POST.get("page")
-        print url
         if url is None or len(url) < 3:
             raise HttpResponseBadRequest
 

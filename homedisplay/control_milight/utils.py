@@ -17,15 +17,16 @@ logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 redis_instance = redis.StrictRedis()
 
 def set_automatic_trigger_light(group):
-    led = LedController(settings.MILIGHT_IP)
-    now = timezone.now()
-    nowd = datetime.datetime.now()
-
     state, _ = light_models.LightGroup.objects.get_or_create(group_id=group)
     # If already on, don't do anything
     if state.on and not state.on_automatically:
         logger.debug("Group %s is already on. Skip automatic triggering", group)
         return
+
+    led = LedController(settings.MILIGHT_IP)
+    now = timezone.now()
+    nowd = datetime.datetime.now()
+
 
     # Determine proper brightness:
     # - If other lights are on, use that.
@@ -67,7 +68,7 @@ def set_automatic_trigger_light(group):
     led.on(group)
     led.set_color(color, group)
     led.set_brightness(brightness, group)
-    light_models.update_lightstate(group, brightness, True, automatic=True, on_until=on_until)
+    light_models.update_lightstate(group, brightness, color, True, automatic=True, on_until=on_until)
     timer_utils.update_group_automatic_timer(group)
 
 

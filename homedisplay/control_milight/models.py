@@ -127,16 +127,25 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
             redis_instance.setex("lightcontrol-no-automatic-%s" % group, int(time_until_ends), True)
             publish_ws("lightcontrol-timed-override", {"action": "pause"})
 
-    (state, _) = LightGroup.objects.get_or_create(group_id=group)
+    state, _ = LightGroup.objects.get_or_create(group_id=group)
 
-    # Default state for on_automatically
-    state.on_automatically = False
+    state_set = False
     if kwargs.get("automatic"):
         # This is update is triggered automatically (by PIR/magnetic switch/...)
+        logger.debug("Requested automatic triggering. on_automatically=%s", state.on_automatically)
+        if state.on_automatically:
+            # Keep on_automatically true
+            logger.debug("Keep on_automatically=True")
+            state_set = True
+            state.on_automatically = True
+
         if not state.on:
             # Lightgroup is off.
+            logger.debug("Lightgroup is off")
             if on:
+                logger.debug("Lightgroup was switched on")
                 # Lightgroup was switched on.
+                state_set = True
                 state.on_automatically = True
 
                 on_until = kwargs.get("on_until")
@@ -144,8 +153,16 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
                     # Set ending time for automatic lights.
                     state.on_until = on_until
                     timer_utils.update_group_automatic_timer(group)
+
     else:
         timer_utils.delete_group_automatic_timer(group, True)
+
+    if not state_set:
+        # Default state for on_automatically
+        state.on_automatically = False
+
+
+    logger.debug("on_automatically=%s, on_until=%s", state.on_automatically, state.on_until)
 
     if color is not None:
         logger.debug("Setting color for group %s, from %s to %s", group, state.color, color)
@@ -180,6 +197,10 @@ class LightGroup(models.Model):
 
     on_automatically = models.BooleanField(blank=True, default=False, verbose_name="Päällä automaattisesti", help_text="Onko ryhmä päällä automaattisesti vai manuaalisesti")
     on_until = models.DateTimeField(blank=True, null=True, verbose_name="Automaattinen sammutusaika", help_text="Aika, johon asti valo pidetään päällä")
+
+    def delete(self, *args, **kwargs):
+        logger.info("Deleted lightgroup")
+        super(LightGroup, self).delete(*args, **kwargs)
 
     def __unicode__(self):
         return "%s (%s), color: %s, on: %s, rgbw: %s, white: %s" % (self.description, self.group_id, self.color, self.on, self.rgbw_brightness, self.white_brightness)

@@ -49,6 +49,7 @@ class Timer(models.Model):
 
     def delete(self, *args, **kwargs):
         # TODO: handle actions here
+        print "Called delete with %s, %s" % (args, kwargs)
         if self.action and self.action.startswith("auto-lightgroup-") and kwargs.get("no_actions", False) != True:
             # Automatically triggered lightgroup
             group = int(self.action.replace("auto-lightgroup-", ""))
