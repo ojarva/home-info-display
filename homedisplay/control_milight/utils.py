@@ -134,7 +134,7 @@ def run_timed_actions():
             for group in allowed_groups:
                 led.white(group)
                 logger.debug("Set %s to white", group)
-                light_models.update_lightstate(group, None, "white", important=False)
+                light_models.update_lightstate(group, None, "white", important=False, timed=True)
 
         if brightness > 95:
             brightness = 100
@@ -159,5 +159,5 @@ def run_timed_actions():
                     continue
             logger.debug("Setting %s to %s", group, group_brightness)
             led.set_brightness(group_brightness, group)
-            light_models.update_lightstate(group, group_brightness, important=False)
+            light_models.update_lightstate(group, group_brightness, important=False, timed=True)
         set_destination_brightness()

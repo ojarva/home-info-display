@@ -152,14 +152,11 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
                 if on_until:
                     # Set ending time for automatic lights.
                     state.on_until = on_until
-                    timer_utils.update_group_automatic_timer(group)
 
-    else:
-        timer_utils.delete_group_automatic_timer(group, True)
-
-    if not state_set:
+    if state_set is False and kwargs.get("timed", False) is False:
         # Default state for on_automatically
         state.on_automatically = False
+        timer_utils.delete_group_automatic_timer(group, True)
 
 
     logger.debug("on_automatically=%s, on_until=%s", state.on_automatically, state.on_until)
