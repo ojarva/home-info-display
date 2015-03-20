@@ -187,6 +187,15 @@ def is_any_timed_running():
             return timed.get_end_datetime()
     return False
 
+def is_group_on(group):
+    groups = LightGroup.objects.all()
+    if group != 0 and group is not None:
+        groups = groups.filter(group_id=group)
+    for g in groups:
+        if g.on == True
+            return True
+    return False
+
 class LightGroup(models.Model):
     group_id = models.PositiveSmallIntegerField(unique=True, verbose_name="Numero")
     description = models.CharField(max_length=20, null=True, blank=True, verbose_name="Kuvaus")

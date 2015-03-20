@@ -27,7 +27,6 @@ def set_automatic_trigger_light(group):
     now = timezone.now()
     nowd = datetime.datetime.now()
 
-
     # Determine proper brightness:
     # - If other lights are on, use that.
     # - If not, based on time
@@ -63,13 +62,16 @@ def set_automatic_trigger_light(group):
             color = "white"
             brightness = 100
 
-    on_until = now + datetime.timedelta(minutes=10)
+    if hour > 22 or hour < 6:
+        on_until = now + datetime.timedelta(minutes=2)
+    else:
+        on_until = now + datetime.timedelta(minutes=10)
 
     led.on(group)
     led.set_color(color, group)
     led.set_brightness(brightness, group)
     light_models.update_lightstate(group, brightness, color, True, automatic=True, on_until=on_until)
-    timer_utils.update_group_automatic_timer(group)
+    timer_utils.update_group_automatic_timer(group, on_until)
 
 
 def process_automatic_trigger(trigger):

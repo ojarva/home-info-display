@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.utils import timezone
+import datetime
 
 GROUP_TIMER_NAME_MAP = {
     1: "Tatamin valot",
@@ -9,12 +10,14 @@ GROUP_TIMER_NAME_MAP = {
     4: "Eteisen valot",
 }
 
-def update_group_automatic_timer(group):
+def update_group_automatic_timer(group, on_until):
     import models as timer_models
 
-    timer, created = timer_models.Timer.objects.get_or_create(action="auto-lightgroup-%s" % group, defaults={"name": GROUP_TIMER_NAME_MAP[group], "start_time": timezone.now(), "duration": 10 * 60, "auto_remove": 0})
+    duration = (on_until - timezone.now()).total_seconds()
+
+    timer, created = timer_models.Timer.objects.get_or_create(action="auto-lightgroup-%s" % group, defaults={"name": GROUP_TIMER_NAME_MAP[group], "start_time": timezone.now() - datetime.timedelta(seconds=5), "duration": duration + 5, "auto_remove": 0})
     if not created:
-        timer.start_time = timezone.now()
+        timer.start_time = timezone.now() - datetime.timedelta(seconds=5)
     timer.save()
 
 def delete_group_automatic_timer(group, no_actions=False):
