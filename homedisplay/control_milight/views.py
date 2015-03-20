@@ -153,7 +153,7 @@ class ControlPerSource(View):
                 initiate_delayed_shutdown()
         elif source == "display":
             if command == "night":
-                if group_is_on(0):
+                if is_group_on(0):
                     led.set_brightness(0)
                     update_lightstate(0, 0)
                 led.set_color("red")
@@ -175,7 +175,7 @@ class ControlPerSource(View):
                 set_morning_light(0)
             elif command == "off":
                 brightness = None
-                if group_is_on(0):
+                if is_group_on(0):
                     led.set_brightness(0)
                     brightness = 0
                 led.off()
@@ -205,7 +205,7 @@ class Control(View):
                 run_display_command("on")
         elif command == "off":
             brightness = None
-            if group_is_on(group):
+            if is_group_on(group):
                 brightness = 0
                 led.set_brightness(0, group)
             led.off(group)
