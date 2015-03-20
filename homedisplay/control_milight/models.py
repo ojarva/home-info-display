@@ -111,13 +111,20 @@ def get_serialized_timed_action(item):
     return ret
 
 def update_lightstate(group, brightness, color=None, on=True, **kwargs):
+    """
+    kwargs:
+     - no_override: don't execute overrides for lightprograms
+     - automatic: this update was triggered by PIR/...
+     - important: this was triggered by user action.
+    """
+
     if group == 0:
         for group_num in range(1, 5):
             update_lightstate(group_num, brightness, color, on, **kwargs)
         return
 
     logger.debug("Updating lightstate: group=%s, brightness=%s, color=%s, on=%s, kwargs=%s", group, brightness, color, on, kwargs)
-    if kwargs.get("important", True) != False and kwargs.get("automatic", False) != True:
+    if kwargs.get("important", True) is True and kwargs.get("automatic", False) is False and kwargs.get("no_override", False) is False:
         timed_ends_at = is_any_timed_running()
         logger.debug("Lightstate: important is True")
         if timed_ends_at != False:

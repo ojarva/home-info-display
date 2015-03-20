@@ -57,7 +57,7 @@ class Timer(models.Model):
                 # Group is on automatically (vs. overridden by manual updates)
                 # TODO: this should be method from control_milight.utils instead of hardcoded logic.
                 led.off(group)
-                light_models.update_lightstate(group, None, None, False)
+                light_models.update_lightstate(group, None, None, False, no_override=True)
 
         try:
             del kwargs["no_actions"]
