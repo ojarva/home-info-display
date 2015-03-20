@@ -10,10 +10,13 @@ GROUP_TIMER_NAME_MAP = {
     4: "Eteisen valot",
 }
 
-def update_group_automatic_timer(group, on_until):
+def update_group_automatic_timer(group, on_until=None):
     import models as timer_models
 
-    duration = (on_until - timezone.now()).total_seconds()
+    if on_until is not None:
+        duration = (on_until - timezone.now()).total_seconds()
+    else:
+        duration = 10 * 60 # TODO: default
 
     timer, created = timer_models.Timer.objects.get_or_create(action="auto-lightgroup-%s" % group, defaults={"name": GROUP_TIMER_NAME_MAP[group], "start_time": timezone.now() - datetime.timedelta(seconds=5), "duration": duration + 5, "auto_remove": 0})
     if not created:
