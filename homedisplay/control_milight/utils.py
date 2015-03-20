@@ -50,10 +50,12 @@ def set_automatic_trigger_light(group):
 
                 brightness = max(brightness, group_brightness)
 
+
+    hour = nowd.hour
+
     if not brightness_set:
         # No lights are on. Decide color and brightness by time of day.
         # TODO: use LightAutomation programs here
-        hour = nowd.hour
         if hour > 22 or hour < 6:
             # 23:00-05:59
             color = "red"
