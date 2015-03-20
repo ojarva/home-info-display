@@ -192,7 +192,7 @@ def is_group_on(group):
     if group != 0 and group is not None:
         groups = groups.filter(group_id=group)
     for g in groups:
-        if g.on == True
+        if g.on == True:
             return True
     return False
 
