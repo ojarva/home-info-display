@@ -128,7 +128,7 @@ Timer = (parent_elem, options) ->
       deleteItem "ui"
       return
 
-    timer_elem.stop(true)
+    timer_elem.stop true
     .css "background-color", timer_elem.data("original-bg-color")
     .effect "highlight",
       color: "#cc0000"
@@ -150,19 +150,26 @@ Timer = (parent_elem, options) ->
       diff = (new Date(options.stopped_at) - start_time) / 1000
       updateTimerContent diff, ""
 
+  receivedData = (message) ->
+    data = message[0]
+    start_time = new Date data.fields.start_time
+    options.duration = data.fields.duration
+    # TODO: update start_time and end_time data fields
+
+    if data.fields.running
+      if !running
+        startItem "backend"
+    else
+      if running
+        stopItem "backend"
+
   refreshFromBackend = ->
     if id? # Don't refresh if no data is available.
       jq.ajax
         url: "/homecontroller/timer/get/#{id}"
         success: (data) ->
-          start_time = new Date data[0].fields.start_time
-          options.duration = data[0].fields.duration
-          if data[0].fields.running
-            if !running
-              startItem "backend"
-          else
-            if running
-              stopItem "backend"
+          receivedData(data)
+
         statusCode:
           404: ->
             deleteItem "backend"
@@ -174,28 +181,7 @@ Timer = (parent_elem, options) ->
       deleteItem source
       return
 
-    data = message[0]
-    start_time = new Date data.fields.start_time
-    options.duration = data[0].fields.duration
-    if data.fields.running
-      # Timer should be running.
-      startItem source
-      return
-
-    # Timer is stopped
-    timer_elem.stop(true).css "background-color", timer_elem.data("original-bg-color")
-    .effect "highlight",
-      color: "#cc0000"
-    , 500
-
-    running = false
-    clearItemIntervals()
-    timer_elem.find ".stopclock-stop i"
-    .removeClass "fa-stop"
-    .addClass "fa-trash"
-    if data.fields.stopped_at
-      diff = (new Date(data.fields.stopped_at) - start_time) / 1000
-      updateTimerContent diff, ""
+    receivedData message
 
   setId = (new_id) ->
     # Set backend id to local object.
