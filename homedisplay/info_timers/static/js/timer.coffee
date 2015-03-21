@@ -156,6 +156,7 @@ Timer = (parent_elem, options) ->
         url: "/homecontroller/timer/get/#{id}"
         success: (data) ->
           start_time = new Date data[0].fields.start_time
+          options.duration = data[0].fields.duration
           if data[0].fields.running
             if !running
               startItem "backend"
@@ -175,6 +176,7 @@ Timer = (parent_elem, options) ->
 
     data = message[0]
     start_time = new Date data.fields.start_time
+    options.duration = data[0].fields.duration
     if data.fields.running
       # Timer should be running.
       startItem source
