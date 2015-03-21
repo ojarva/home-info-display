@@ -1,23 +1,28 @@
 from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action, get_serialized_lightgroup, get_serialized_lightgroups, set_morning_light, get_main_buttons, is_group_on
-from .utils import run_timed_actions
+from .utils import run_timed_actions, convert_group_to_automatic
 from control_display.display_utils import run_display_command
 from control_display.utils import initiate_delayed_shutdown, set_destination_brightness
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.utils.timezone import now
+from django.utils import timezone
 from django.views.generic import View
 from homedisplay.utils import publish_ws
 from ledcontroller import LedController
+from server_power.views import sp
 import datetime
 import json
-from server_power.views import sp
 import redis
 import time
 
 redis_instance = redis.StrictRedis()
 led = LedController(settings.MILIGHT_IP)
+
+
+def set_light_group_delayed_off(group):
+    on_until = timezone.now() + datetime.timedelta(seconds=15)
+    convert_group_to_automatic(group, on_until)
 
 
 class TimedProgram(View):
@@ -102,24 +107,16 @@ class ControlPerSource(View):
                 update_lightstate(0, 100, "white")
 
             elif command == "off":
-                if is_group_on(0):
-                    led.set_brightness(0)
-                led.off()
+                set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()
-                update_lightstate(0, 0, None, False)
             elif command == "on":
                 run_display_command("on")
                 led.white()
                 led.set_brightness(100)
                 update_lightstate(0, 100, "white")
             elif command == "off-all":
-                brightness = None
-                if is_group_on(0):
-                    led.set_brightness(0)
-                    brightness = 0
-                led.off()
+                set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()
-                update_lightstate(0, brightness, None, False)
                 sp.shutdown() # Shutdown server
                 # TODO: shut down speakers
 
@@ -144,12 +141,7 @@ class ControlPerSource(View):
                 led.set_brightness(100)
                 update_lightstate(0, 100, "white")
             elif command == "off":
-                brightness = None
-                if is_group_on(0):
-                    led.set_brightness(0)
-                    brightness = 0
-                led.off()
-                update_lightstate(0, brightness, None, False)
+                set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()
         elif source == "display":
             if command == "night":
@@ -174,12 +166,7 @@ class ControlPerSource(View):
             elif command == "morning-all":
                 set_morning_light(0)
             elif command == "off":
-                brightness = None
-                if is_group_on(0):
-                    led.set_brightness(0)
-                    brightness = 0
-                led.off()
-                update_lightstate(0, brightness, None, False)
+                set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()
             elif command == "on":
                 run_display_command("on")
@@ -204,12 +191,7 @@ class Control(View):
             if group == 0:
                 run_display_command("on")
         elif command == "off":
-            brightness = None
-            if is_group_on(group):
-                brightness = 0
-                led.set_brightness(0, group)
-            led.off(group)
-            update_lightstate(group, brightness, None, False)
+            set_light_group_delayed_off(0)
             if group == 0:
                 initiate_delayed_shutdown()
         elif command == "morning":

@@ -16,6 +16,25 @@ logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
 redis_instance = redis.StrictRedis()
 
+def convert_group_to_automatic(group, on_until):
+
+    if group == 0:
+        for group in range(1, 5):
+            convert_group_to_automatic(group, on_until)
+        return
+
+    state, _ = light_models.LightGroup.objects.get_or_create(group_id=group)
+    if not state.on:
+        # Group is off - pass.
+        logger.info("Tried to convert %s to automatically triggered, but group is not on", group)
+        return
+
+    state.on_automatically = True
+    state.on_until = on_until
+    state.save()
+
+    timer_utils.update_group_automatic_timer(group, on_until)
+
 def set_automatic_trigger_light(group):
     state, _ = light_models.LightGroup.objects.get_or_create(group_id=group)
     # If already on, don't do anything
