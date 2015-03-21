@@ -19,8 +19,8 @@ class Command(BaseCommand):
             line = s.readline()
             if line.startswith("Received "):
                 id = line.split(" ")[1]
-                if id in self.ITEM_MAP:
-                    item_name = self.ITEM_MAP[id]
+                if id in ITEM_MAP:
+                    item_name = ITEM_MAP[id]
                     if item_name in sent_event_map:
                         if sent_event_map[item_name] > time.time() - 5:
                             continue
