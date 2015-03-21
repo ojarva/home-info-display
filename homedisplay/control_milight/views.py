@@ -191,8 +191,9 @@ class Control(View):
             if group == 0:
                 run_display_command("on")
         elif command == "off":
-            set_light_group_delayed_off(0)
+            set_light_group_delayed_off(group)
             if group == 0:
+                # Shut down display if all lights were turned off.
                 initiate_delayed_shutdown()
         elif command == "morning":
             set_morning_light(group)

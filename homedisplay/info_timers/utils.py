@@ -21,6 +21,7 @@ def update_group_automatic_timer(group, on_until=None):
     timer, created = timer_models.Timer.objects.get_or_create(action="auto-lightgroup-%s" % group, defaults={"name": GROUP_TIMER_NAME_MAP[group], "start_time": timezone.now() - datetime.timedelta(seconds=5), "duration": duration + 5, "auto_remove": 0})
     if not created:
         timer.start_time = timezone.now() - datetime.timedelta(seconds=5)
+        timer.duration = duration
     timer.save()
 
 def delete_group_automatic_timer(group, no_actions=False):
