@@ -85,13 +85,13 @@ Timer = (parent_elem, options) ->
         .css "width", "#{percent}%"
         .removeClass "progress-bar-danger"
         .addClass "progress-bar-success"
-        timer_elem.removeClass "timer-overtime"
+        .removeClass "timer-overtime"
       else
         timer_elem.find ".progress-bar"
         .removeClass "progress-bar-success"
         .addClass "progress-bar-danger"
         .css "width", "100%"
-        timer_elem.addClass "timer-overtime"
+        .addClass "timer-overtime"
         # TODO: play alarm
 
     else if timer_type == "stopclock"
@@ -168,7 +168,8 @@ Timer = (parent_elem, options) ->
       jq.ajax
         url: "/homecontroller/timer/get/#{id}"
         success: (data) ->
-          receivedData(data)
+          if data? and data[0]?
+            receivedData(data)
 
         statusCode:
           404: ->
