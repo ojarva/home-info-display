@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indoor_quality', '0001_initial'),
+        ('info_air_quality', '0001_initial'),
     ]
 
     operations = [

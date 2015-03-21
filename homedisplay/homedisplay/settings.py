@@ -31,7 +31,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_statsd',
     'djcelery',
-    'indoor_quality',
+    'info_air_quality',
     'info_birthdays',
     'info_electricity',
     'info_ext_pages',

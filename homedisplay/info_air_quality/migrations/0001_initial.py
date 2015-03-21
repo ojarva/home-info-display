@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='airdatapoint',
             name='timepoint',
-            field=models.ForeignKey(to='indoor_quality.AirTimePoint'),
+            field=models.ForeignKey(to='info_air_quality.AirTimePoint'),
             preserve_default=True,
         ),
     ]
