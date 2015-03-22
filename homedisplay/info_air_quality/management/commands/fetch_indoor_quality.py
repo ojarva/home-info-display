@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.timezone import now
 from homedisplay.utils import publish_ws
 import json
 

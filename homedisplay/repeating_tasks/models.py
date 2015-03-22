@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.utils.timezone import now
+from django.utils import timezone
 from homedisplay.utils import publish_ws
 import datetime
 import json
@@ -21,11 +21,11 @@ def get_repeating_data(date, serialized=False):
     tasks = sorted(tasks, key=lambda t: t.overdue_by())
     tasks.reverse()
     if date == "today":
-        day_starts = now().replace(hour=0, minute=0, second=0)
-        day_ends = now().replace(hour=23, minute=59, second=59)
+        day_starts = timezone.now().replace(hour=0, minute=0, second=0)
+        day_ends = timezone.now().replace(hour=23, minute=59, second=59)
     elif date == "tomorrow":
-        day_starts = now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days=1)
-        day_ends = now().replace(hour=23, minute=59, second=59) + datetime.timedelta(days=1)
+        day_starts = timezone.now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days=1)
+        day_ends = timezone.now().replace(hour=23, minute=59, second=59) + datetime.timedelta(days=1)
     else:
         day_starts = day_ends = None
     for task in tasks:
@@ -35,8 +35,8 @@ def get_repeating_data(date, serialized=False):
 
         snooze_to_show = None
         expires_at = task.expires_at()
-        if expires_at > now():
-            snooze_to_show = (now() - expires_at).days - 1
+        if expires_at > timezone.now():
+            snooze_to_show = (timezone.now() - expires_at).days - 1
         task_serialized["fields"]["snooze_to_show"] = snooze_to_show
 
         if day_starts and day_ends:
@@ -84,20 +84,20 @@ class Task(models.Model):
         """
         if self.last_completed_at is None:
             return None
-        return now() - self.last_completed_at
+        return timezone.now() - self.last_completed_at
 
     def expires_at(self):
         """ Returns datetime when this task expires """
         if self.show_immediately:
-            return now()
+            return timezone.now()
         if self.snooze:
             return self.snooze
         if self.last_completed_at is None:
-            return now()
+            return timezone.now()
         # TODO: this does not work properly with other triggering options
         exact_expiration = self.last_completed_at + datetime.timedelta(seconds=self.repeat_every_n_seconds)
-        if exact_expiration < now():
-            return now()
+        if exact_expiration < timezone.now():
+            return timezone.now()
         return exact_expiration
 
 
@@ -110,11 +110,11 @@ class Task(models.Model):
         if self.show_immediately:
             return datetime.timedelta(0)
         if self.snooze:
-            if self.snooze < now():
+            if self.snooze < timezone.now():
                 self.snooze = None
                 self.save()
             else:
-                return now() - self.snooze
+                return timezone.now() - self.snooze
         tsc = self.time_since_completion()
         if tsc is None:
             return datetime.timedelta(0)
@@ -124,12 +124,12 @@ class Task(models.Model):
     def snooze_by(self, days):
         """ Add specified snoozing time to Task. """
         if not self.snooze:
-            self.snooze = now()
+            self.snooze = timezone.now()
         self.snooze += datetime.timedelta(days=days)
         self.save()
 
     def completed(self):
-        n = now()
+        n = timezone.now()
         self.last_completed_at = n
         self.snooze = None
         self.show_immediately = False

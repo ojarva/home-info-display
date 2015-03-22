@@ -4,7 +4,6 @@ from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.utils.timezone import now
 from django.views.generic import View
 import json
 import numpy

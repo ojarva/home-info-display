@@ -1,8 +1,6 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.utils.timezone import now
-
-from info_birthdays.models import Birthday
 from datetime import date
+from django.core.management.base import BaseCommand, CommandError
+from info_birthdays.models import Birthday
 
 class Command(BaseCommand):
     args = ''

@@ -1,15 +1,10 @@
 from django.conf import settings
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import get_object_or_404, render, render_to_response
-from django.template import RequestContext, Template
-from django.utils.timezone import now
+from django.http import HttpResponse
 from django.views.generic import View
 from homedisplay.utils import publish_ws
-import datetime
 import json
 import manage_server_power
 import redis
-import time
 
 redis_instance = redis.StrictRedis()
 

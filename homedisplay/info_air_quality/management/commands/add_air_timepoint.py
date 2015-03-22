@@ -5,7 +5,6 @@ average all per-sensor information from redis.
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.timezone import now
 from info_air_quality.models import AirDataPoint, AirTimePoint
 import redis
 import json

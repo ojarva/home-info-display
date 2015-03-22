@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from django.utils.timezone import now
+from django.utils import timezone
 from homedisplay.utils import publish_ws
 from info_internet_connection.models import Internet, get_latest_serialized
 import datetime
@@ -21,7 +21,7 @@ class Command(BaseCommand):
 
         try:
             latest_data = Internet.objects.latest()
-            if now() - latest_data.timestamp > age_threshold:
+            if timezone.now() - latest_data.timestamp > age_threshold:
                 latest_data = Internet()
         except Internet.DoesNotExist:
             latest_data = Internet()
@@ -31,6 +31,6 @@ class Command(BaseCommand):
         latest_data.mode = data["Mode"]
         latest_data.sim = data["SIM"]
         latest_data.connect_status = data["Connect"]
-        latest_data.update_timestamp = now()
+        latest_data.update_timestamp = timezone.now()
         latest_data.save()
         publish_ws("internet", get_latest_serialized())
