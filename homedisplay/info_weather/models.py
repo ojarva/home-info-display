@@ -21,7 +21,7 @@ class Weather(models.Model):
 
     description = models.TextField()
 
-    wind_direction = models.TextField()
+    wind_direction = models.CharField(max_length=4)
     wind_gust = models.TextField()
     wind_speed = models.IntegerField()
 
@@ -49,3 +49,25 @@ class Weather(models.Model):
                 continue
             direction += (cur - direction) / 2
         return direction
+
+class MarineWeather(models.Model):
+    timestamp = models.DateTimeField()
+    location = models.CharField(max_length=30)
+    temperature = models.DecimalField(max_digits=4, decimal_places=1)
+    dewpoint = models.DecimalField(max_digits=4, decimal_places=1)
+    humidity = models.DecimalField(max_digits=4, decimal_places=1)
+    cloudiness = models.PositiveSmallIntegerField()
+    visibility = models.IntegerField()
+    pressure = models.DecimalField(max_digits=5, decimal_places=1)
+
+    wind_direction = models.CharField(max_length=4)
+    wind_speed = models.IntegerField()
+    wind_gust = models.IntegerField()
+
+    class Meta:
+        unique_together = ("timestamp", "location")
+        ordering = ("-timestamp",)
+        get_latest_by = "-timestamp"
+
+    def __unicode__(self):
+        return u"%s @ %s" % (self.location, self.timestamp)
