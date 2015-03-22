@@ -54,4 +54,4 @@ class ConnectedClient(models.Model):
 
 
     def __unicode__(self):
-        return u""
+        return self.mac

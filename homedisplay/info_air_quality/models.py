@@ -52,7 +52,7 @@ class AirDataPoint(models.Model):
         super(AirDataPoint, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return "%s - %s=%s" % (self.timepoint.timestamp, self.name, self.value)
+        return u"%s - %s=%s" % (self.timepoint.timestamp, self.name, self.value)
 
 class AirTimePoint(models.Model):
     """ This represents syncronized time point for each sensor's data.
