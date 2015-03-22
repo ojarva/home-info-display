@@ -1,33 +1,31 @@
 <!-- {{ action }} -->
-<div class="col-md-6">
-  <div style="display:none" class="timed-lightcontrol timed-lightcontrol-compact timed-lightcontrol-{{ action }} item-box dark-box center-content" data-action="{{ action }}">
-    <div class="row">
-      <div class="col-md-12">
-        <div class="inline center-content open-light-dialog" data-action-name="{{ action }}">
-          <span class="start-time-content">--:--</span>
-        </div>
-        <div class="inline center-content open-light-dialog" data-action-name="{{ action }}">
-          <span class="duration-content">+-:--</span>
-        </div>
+<div style="display:none" class="col-md-6 timed-lightcontrol timed-lightcontrol-compact timed-lightcontrol-{{ action }} item-box dark-box center-content" data-action="{{ action }}">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="inline center-content open-light-dialog" data-action-name="{{ action }}">
+        <span class="start-time-content">--:--</span>
+      </div>
+      <div class="inline center-content open-light-dialog" data-action-name="{{ action }}">
+        <span class="duration-content">+-:--</span>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-        <div class="play-control play-control">
-          <span class="animate-click">
-            <i class="fa-fw fa fa-toggle-on"></i>
-          </span>
-        </div>
-        <div class="play-pause-control warning-message" style="display:none">
-          <span class="animate-click">
-            <i class="fa-fw fa fa-pause"></i>
-        </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="play-control play-control">
+        <span class="animate-click">
+          <i class="fa-fw fa fa-toggle-on"></i>
+        </span>
+      </div>
+      <div class="play-pause-control warning-message" style="display:none">
+        <span class="animate-click">
+          <i class="fa-fw fa fa-pause"></i>
       </div>
     </div>
-    <div class="row open-light-dialog" data-action-name="{{ action }}">
-      <div class="col-md-12">
-        <span class="time-left"></span> <span class="current-brightness"></span>
-      </div>
+  </div>
+  <div class="row open-light-dialog" data-action-name="{{ action }}">
+    <div class="col-md-12">
+      <span class="time-left"></span> <span class="current-brightness"></span>
     </div>
   </div>
 </div>
