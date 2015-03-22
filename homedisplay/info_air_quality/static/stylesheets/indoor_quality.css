@@ -2,20 +2,38 @@
   font-size: 50%;
 }
 
+.outdoor-air-quality-content {
+  .air-quality-item {
+    padding-right: 20px;
+  }
+  .value {
+    font-size: 200%;
+  }
+  .unit {
+    font-size: 125%;
+  }
+  .type {
+    font-size: 150%;
+  }
+  .status {
+    font-size: 150%;
+  }
+}
+
 .air-quality-graph-content {
   .graph svg {
-    height: 200px;
+    height: 180px;
   }
 
   .graph .data-error {
     display: none;
     font-size: 100px;
-    height: 200px;
+    height: 180px;
   }
 
   .graph .spinner {
     display: none;
     font-size: 180px;
-    height: 200px;
+    height: 180px;
   }
 }
