@@ -104,6 +104,9 @@ class Line(models.Model):
     ICONS = (
         ("bus", "bus"),
         ("train", "train"),
+        ("subway", "subway"),
+        ("ship", "ship"),
+        ("plane", "plane"),
     )
 
     TYPES = (
@@ -111,6 +114,8 @@ class Line(models.Model):
         ("tram", "tram"),
         ("train", "train"),
         ("metro", "metro"),
+        ("ship", "ship"),
+        ("plane", "plane"),
     )
     stop = models.ForeignKey("Stop")
     line_number = models.CharField(max_length=20, verbose_name="Numero") # Line number in human readable format.
