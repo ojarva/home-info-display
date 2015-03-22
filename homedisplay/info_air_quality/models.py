@@ -1,6 +1,10 @@
 from django.db import models
-import redis
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from homedisplay.utils import publish_ws
 import json
+import redis
+
 
 redis_instance = redis.StrictRedis()
 
@@ -64,3 +68,16 @@ class AirTimePoint(models.Model):
         return self.timestamp
 
     timestamp = models.DateTimeField(auto_now_add=True)
+
+class OutsideAirQuality(models.Model):
+    timestamp = models.DateTimeField()
+    type = models.CharField(max_length=40)
+    value = models.DecimalField(max_digits=7, decimal_places=2)
+
+    class Meta:
+        ordering = ["-timestamp"]
+        get_latest_by = "-timestamp"
+        unique_together = ("timestamp", "type")
+
+    def __unicode__(self):
+        return u"%s @ %s : %s" % (self.type, self.timestamp, self.value)
