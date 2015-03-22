@@ -12,27 +12,42 @@
 }
 
 .weather {
-  .temperature-now {
-    font-size: 5em;
+
+  .now {
+    .multi-field > span {
+      padding-right: 30px;
+    }
+
+    .type {
+      font-size: 120%;
+    }
+    .value {
+      font-size: 150%;
+    }
   }
 
-  .temperature-now-unit {
-    font-size: 2.5em;
-  }
+  .weather-main {
+    .temperature-now {
+      font-size: 5em;
+    }
 
-  .wind-direction-now {
-    font-size: 3em;
-  }
+    .temperature-now-unit {
+      font-size: 2.5em;
+    }
 
-  .wind-now-description {
-    font-size: 2.5em;
-    margin-left: 1em;
-  }
+    .wind-direction-now {
+      font-size: 3em;
+    }
 
-  .wind-now {
-    font-size: 3em;
-  }
+    .wind-now-description {
+      font-size: 2.5em;
+      margin-left: 1em;
+    }
 
+    .wind-now {
+      font-size: 3em;
+    }
+  }
   .timestamp {
     font-size: 1.5em;
   }

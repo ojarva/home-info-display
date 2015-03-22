@@ -25,6 +25,8 @@ class Weather(models.Model):
     wind_gust = models.TextField()
     wind_speed = models.IntegerField()
 
+    uv = models.IntegerField(null=True, blank=True)
+
     def get_wind_direction_degrees(self):
         direction = None
         weight = 0

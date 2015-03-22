@@ -75,6 +75,16 @@
   }
 }
 
+.uv-warning {
+  .value {
+    font-size: 300%;
+  }
+  .type {
+    font-size: 200%;
+  }
+  margin-bottom: 30px;
+}
+
 
 #weather-modal {
   .clock {

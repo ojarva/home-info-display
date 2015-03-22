@@ -6,6 +6,8 @@ RefreshWeather = (options) ->
     weather.find(".weather-box span").html "<i class='fa fa-question-circle'></i>"
     weather.find(".data-field").html "<i class='fa fa-question-circle'></i>"
     weather.find(".weather-box").removeClass "new-day" # Remove "day changed" separator line
+    weather.find(".uv-warning").children().remove()
+    weather.find(".now").find("span").children().remove()
     jq(".weather-all").children().remove()
 
   processData = (data) ->
@@ -14,21 +16,49 @@ RefreshWeather = (options) ->
     if data.sun?
       sunrise = moment data.sun.sunrise
       sunset = moment data.sun.sunset
-      jq(".sun-info").html """<i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-up'></i> #{sunrise.format("HH:mm")}
-       (<span class='auto-fromnow-update' data-timestamp='#{sunrise}'>#{sunrise.fromNowSynced()}</span>)
-       <i class='fa fa-sun-o'></i><i class='fa fa-long-arrow-down'></i>
+      jq(".sun-info").html """<i class="fa fa-sun-o"></i><i class="fa fa-long-arrow-up"></i> #{sunrise.format("HH:mm")}        (<span class="auto-fromnow-update" data-timestamp="#{sunrise}">#{sunrise.fromNowSynced()}</span>)<br>
+       <i class="fa fa-sun-o"></i><i class="fa fa-long-arrow-down"></i>
        #{sunset.format("HH:mm")}
-       (<span class='auto-fromnow-update' data-timestamp='#{sunset}'>#{sunset.fromNowSynced()}</span>)"""
+       (<span class="auto-fromnow-update" data-timestamp="#{sunset}">#{sunset.fromNowSynced()}</span>)"""
 
     items = jq ".weather"
     current_index = 1
     first_date = false
     new_day = false
+
     if data? and data.current? and data.current.feels_like?
       weather.find(".temperature-now").html data.current.feels_like
       weather.find(".wind-now").html data.current.wind_speed_readable
       direction = ("#{data.current.wind_direction_degrees}").replace(".", "_")
       weather.find(".wind-direction-now").html "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{direction}'></i>"
+
+      if data.current.uv?
+        uv = data.current.uv
+        if uv > 2
+          jq(".uv-warning").html """<div class="row">
+            <div class="col-md-12">
+              <span class="type">UV: </span>
+              <span class="value">#{uv}</span>
+            </div>
+          </div>"""
+        weather.find(".uv-now").html """<span class="type">UV: </span><span class="value">#{uv}</span>"""
+
+      now_weather = jq ".weather .now"
+
+      now_weather.find(".temperature").html data.current.feels_like
+      now_weather.find(".symbol").html """<img src="/homecontroller/static/images/#{data.current.icon}.png">"""
+      now_weather.find(".temperature-unit").html "&deg;C"
+      now_weather.find(".wind-speed").html Math.round(data.current.wind_speed / 3.6)
+      if data.current.wind_direction_degrees?
+        direction = ("#{data.current.wind_direction_degrees}").replace(".", "_")
+        now_weather.find(".wind-direction").html "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{direction}'></i>"
+
+
+      weather.find(".humidity-now").html """<span class="type">Ilmankosteus: </span><span class="value">#{data.current.humidity}%</span>"""
+      weather.find(".ppcp-now").html """<span class="type"><i class="fa fa-tint"></i> </span><span class="value">#{data.current.ppcp}%</span>"""
+      weather.find(".real-temperature-now").html """<span class="type">Lämpötila: </span><span class="value">#{data.current.temperature}&deg;C</span>"""
+      weather.find(".feelslike-now").html """<span class="type">Tuntuu kuin: </span><span class="value">#{data.current.feels_like}&deg;C</span>"""
+      weather.find(".dewpoint-now").html """<span class="type">Kastepiste: </span><span class="value">#{data.current.dewpoint}&deg;C</span>"""
 
     jq.each data.next, ->
       next_weather_elem = weather.find ".weather-#{current_index}"
@@ -51,29 +81,36 @@ RefreshWeather = (options) ->
     current_row = null
     highlight_set = false
     last_header = null
-    new_item = """<div class='col-md-1'>
-      <span class='timestamp'><i class='fa fa-question-circle'></i></span><br>
-      <span class='temperature'><i class='fa fa-question-circle'></i></span><span class='temperature-unit'>&deg;C</span><span class='symbol'><i class='fa fa-question-circle'></i></span><br>
-      <span class='wind-direction'></span><span> </span>
-      <span class='wind-speed'><i class='fa fa-question-circle'></i></span><span class='wind-speed-unit'>m/s</span>
+    new_item = """<div class="col-md-1">
+      <span class="timestamp"><i class="fa fa-question-circle"></i></span><br>
+      <span class="temperature"><i class="fa fa-question-circle"></i></span><span class="temperature-unit">&deg;C</span><span class="symbol"><i class="fa fa-question-circle"></i></span><br>
+      <span class="wind-direction"></span><span> </span>
+      <span class="wind-speed"><i class="fa fa-question-circle"></i></span><span class="wind-speed-unit">m/s</span>
     </div>"""
+    current_day = null
     jq.each data.hours, ->
       if @hour % 2 != 0
-        return true # continue
+        return true # Only add even hours
 
-      if current_index > 11
+      if current_index > 11 or (current_day? and current_day != @date)
         current_index = 0
-        jq(".weather-all").append "<div class='row'><div class='col-md-12'><h2></h2></div></div><div class='row'></div>"
+        jq(".weather-all").append """<div class="row">
+          <div class="col-md-12">
+            <h2></h2>
+          </div>
+        </div>
+        <div class="row"></div>"""
         current_row = jq(".weather-all .row").last()
         last_header = jq(".weather-all h2").last()
         last_header.html "#{@weekday_fi} #{@date}"
+        current_day = @date
 
       current_row.append new_item
       current_item = current_row.find(".col-md-1").last()
 
       current_item.find(".timestamp").html "#{@hour}:00"
       current_item.find(".temperature").html @feels_like
-      current_item.find(".symbol").html "<img src='/homecontroller/static/images/#{@icon}.png'>"
+      current_item.find(".symbol").html """<img src="/homecontroller/static/images/#{@icon}.png">"""
       current_item.find(".temperature-unit").html "&deg;C"
       current_item.find(".wind-speed").html Math.round(@wind_speed / 3.6)
       if @wind_direction_degrees?
