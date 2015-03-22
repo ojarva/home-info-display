@@ -44,14 +44,14 @@ IndoorAirQuality = (options) ->
       .transitionDuration 350
       .showYAxis true
       .showXAxis true
-      .x , (d, i) ->
+      .x (d, i) ->
         return (new Date(d[0]).getTime())
-      .y , (d, i) ->
+      .y (d, i) ->
         return d[1]
 
       chart.xAxis
       .axisLabel goptions.xlabel
-      .tickFormat , (d) ->
+      .tickFormat (d) ->
         return d3.time.format("%H:%M")(new Date(d))
 
       chart.yAxis
@@ -63,11 +63,12 @@ IndoorAirQuality = (options) ->
         processed_data.push [@timestamp, @value]
 
       processed_data.reverse()
-      myData = [{"key": goptions.key,
-                     "bar": true,
-                     "color": "#ccf",
-                     "values": processed_data
-               }]
+      myData = [
+        "key": goptions.key
+        "bar": true
+        "color": "#ccf"
+        "values": processed_data
+      ]
 
       d3.select goptions.selector
       .datum myData
