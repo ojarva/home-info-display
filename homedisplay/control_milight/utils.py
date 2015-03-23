@@ -51,7 +51,9 @@ def get_current_brightness(group_id):
         percent_done = program.percent_done(now)
         if percent_done is not None:
             #Program is running.
-            return get_program_brightness(program.action, percent_done)
+            brightness = get_program_brightness(program.action, percent_done)
+            logger.info("Brightness for group %s set by program %s, %s%%", group_id, program.action, percent_done)
+            return brightness
         if program.is_running_on_day(weekday):
             if program.action.startswith("morning"):
                 today_morning_program = program
@@ -75,6 +77,7 @@ def get_current_brightness(group_id):
             return 0
 
     # Default
+    logger.info("Default brightness for group %s", group_id)
     return 100
 
 def convert_group_to_automatic(group, on_until):
