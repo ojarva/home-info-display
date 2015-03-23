@@ -96,6 +96,9 @@ def convert_group_to_automatic(group, on_until):
     if not state.on:
         # Group is off - pass.
         logger.info("Tried to convert %s to automatically triggered, but group is not on", group)
+        # Ensure group is really off
+        led = LedController(settings.MILIGHT_IP)
+        led.off(group)
         return
 
     state.on_automatically = True
