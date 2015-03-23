@@ -7,7 +7,7 @@ RefreshWeather = (options) ->
   update_interval = null
 
   setWeatherInfo = (icon, temperature) ->
-    elem.html "<img src='/homecontroller/static/images/#{icon}.png'><br> #{temperature}&deg;C"
+    elem.html "<img src='/homecontroller/static/byo-images/#{icon}.png'><br> #{temperature}&deg;C"
 
   resetWeatherInfo = ->
     elem.html "<i class='fa fa-question-circle'></i>"
@@ -15,8 +15,10 @@ RefreshWeather = (options) ->
   update = ->
     jq.get "/homecontroller/weather/get_json?" + (new Date()).getTime(), (data) ->
       resetWeatherInfo()
-      if data? and data.current?
-        setWeatherInfo data.current.icon, data.current.feels_like
+      if data? and data.main_forecasts? and data.main_forecasts.forecasts? and data.main_forecasts.forecasts[0].forecast?
+        value = data.main_forecasts.forecasts[0].forecast[0]
+        console.log value
+        setWeatherInfo value.WeatherSymbol3, value.FeelsLike
 
   startInterval = ->
     update()
