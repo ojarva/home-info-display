@@ -1,8 +1,8 @@
 OutdoorQuality = ->
   type_data =
-    "particulateslt10um": {"limit": 50, "name": "10um"}
+    "particulateslt10um": {"limit": 50, "name": "PM<sub>10</sub>"}
     "ozone": {"limit": 120, "name": "Otsoni"}
-    "particulateslt2.5um": {"limit": 25, "name": "2.5um"}
+    "particulateslt2.5um": {"limit": 25, "name": "PM<sub>2.5</sub>"}
     "sulphurdioxide": {"limit": 350, "name": "Rikkidioksidi"}
     "nitrogendioxide": {"limit": 200, "name": "Typpidioksidi"}
 

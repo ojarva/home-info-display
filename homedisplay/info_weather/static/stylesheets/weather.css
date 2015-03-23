@@ -1,3 +1,32 @@
+.fa-rotate-NE {
+  transform: rotate(45deg);
+}
+
+.fa-rotate-E {
+  transform: rotate(90deg);
+}
+
+.fa-rotate-SE {
+  transform: rotate(135deg);
+}
+
+.fa-rotate-S {
+  transform: rotate(180deg);
+}
+
+.fa-rotate-SW {
+  transform: rotate(225deg);
+}
+
+.fa-rotate-W {
+  transform: rotate(270deg);
+}
+
+.fa-rotate-NW {
+  transform: rotate(315deg);
+}
+
+
 
 .fa-rotate-22_5 {
   transform: rotate(22.5deg);
@@ -59,32 +88,6 @@
   transform: rotate(337.5deg);
 }
 
-.weather-temperature {
-  font-size: 175%;
-}
-
-.weather-info {
-  font-size: 100%;
-
-  .col-md-4 {
-    font-size: 130%;
-    min-height: 108px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    text-align: center;
-  }
-}
-
-.uv-warning {
-  .value {
-    font-size: 300%;
-  }
-  .type {
-    font-size: 200%;
-  }
-  margin-bottom: 30px;
-}
-
 
 #weather-modal {
   .clock {
@@ -100,28 +103,37 @@
     margin-bottom: 30px;
   }
 
-  .weather-all .col-md-1 {
-    font-size: 130%;
-    margin-bottom: 40px;
-    min-height: 108px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    text-align: center;
-  }
+  .weather-all {
 
-  .weather-all .new-day {
-    border-left: gray;
-    border-left-style: dotted;
-    border-left-width: 5px;
-  }
+    .col-md-1 {
+      font-size: 130%;
+      margin-bottom: 40px;
+      min-height: 108px;
+      padding-bottom: 5px;
+      padding-top: 5px;
+      text-align: center;
+    }
 
-  .weather-all .weather-today {
-    border-bottom-style: dotted;
-    border-bottom-width: 2px;
-    border-bottom: gray;
-    border-top-style: dotted;
-    border-top-width: 2px;
-    border-top: gray;
+    .new-day {
+      border-left: gray;
+      border-left-style: dotted;
+      border-left-width: 5px;
+    }
+
+    .weather-today {
+      border-bottom-style: dotted;
+      border-bottom-width: 2px;
+      border-bottom: gray;
+      border-top-style: dotted;
+      border-top-width: 2px;
+      border-top: gray;
+    }
+    .symbol {
+      img {
+        width: 84px;
+        height: 72px;
+      }
+    }
   }
 }
 
@@ -129,8 +141,10 @@
   margin-top: 10px;
 }
 
-.weather .new-day {
-  border-left: gray;
-  border-left-style: dotted;
-  border-left-width: 2px;
+.weather {
+  .new-day {
+    border-left: gray;
+    border-left-style: dotted;
+    border-left-width: 2px;
+  }
 }

@@ -9,6 +9,9 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import View
 import datetime
 import json
+import redis
+
+redis_instance = redis.StrictRedis()
 
 WEEKDAYS_FI = ["ma", "ti", "ke", "to", "pe", "la", "su"]
 
@@ -26,13 +29,7 @@ def json_default(obj):
     if isinstance(obj, datetime.time):
         return obj.isoformat()
 
-def calculate_apparent_temperature(temperature, wind, humidity):
-    wind /= 3.6
-    windchill = (13.12 + 0.6215 * temperature - 11.37 * (wind ** 0.16) + 0.3965 * temperature * (wind ** 0.16))
-    return round(windchill)
-
 def get_wind_readable(wind):
-    wind /= 3.6
     if wind < 0.2:
         return "tyyni"
     elif wind < 3.3:
@@ -96,4 +93,4 @@ def get_weather_data():
 
 class get_json(View):
     def get(self, request, *args, **kwargs):
-        return HttpResponse(json.dumps(get_weather_data()), content_type="application/json")
+        return HttpResponse(redis_instance.get("weather-all"), content_type="application/json")

@@ -7,7 +7,6 @@ import json
 import requests
 import xmltodict
 
-
 class Command(BaseCommand):
     args = ''
     help = 'Fetches weather information'
@@ -25,6 +24,13 @@ class Command(BaseCommand):
             current_hour = int(hour["@h"])
             delta_to_processing_time = datetime.timedelta(hours=current_hour)
             timestamp = current_time + delta_to_processing_time
+            wind_speed = int(hour["wind"]["s"])
+            wind_speed *= 0.44704 # Convert to meters per second
+            wind_gust = hour["wind"]["gust"]
+            if wind_gust == "N/A":
+                wind_gust = None
+            else:
+                wind_gust = int(wind_gust) * 0.44704 # Convert to meters per second
             Weather.objects.filter(date=timestamp, hour=int(timestamp.strftime("%H"))).delete()
             a = Weather(date=timestamp,
                         hour=timestamp.hour,
@@ -36,8 +42,8 @@ class Command(BaseCommand):
                         temperature=int(hour["tmp"]),
                         description=hour["t"],
                         wind_direction=hour["wind"]["t"],
-                        wind_gust=hour["wind"]["gust"],
-                        wind_speed=int(hour["wind"]["s"]),
+                        wind_gust=wind_gust,
+                        wind_speed=wind_speed,
                         uv=uv)
             a.save()
             uv = None # UV is only available for current timestamp

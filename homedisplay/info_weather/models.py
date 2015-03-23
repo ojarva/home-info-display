@@ -1,5 +1,28 @@
 from django.db import models
 
+def convert_wind_direction_degrees(wind_direction):
+    direction = None
+    weight = 0
+    for c in wind_direction:
+        if c == "N": # Special case
+            if "E" in wind_direction:
+                cur = 0.0
+            else:
+                cur = 360.0
+        elif c == "E":
+            cur = 90.0
+        elif c == "S":
+            cur = 180.0
+        elif c == "W":
+            cur = 270.0
+        weight += 1
+        if direction is None:
+            # First direction
+            direction = cur
+            continue
+        direction += (cur - direction) / 2
+    return direction
+
 class Weather(models.Model):
     class Meta:
         unique_together = (("date", "hour"))
@@ -28,27 +51,7 @@ class Weather(models.Model):
     uv = models.IntegerField(null=True, blank=True)
 
     def get_wind_direction_degrees(self):
-        direction = None
-        weight = 0
-        for c in self.wind_direction:
-            if c == "N": # Special case
-                if "E" in self.wind_direction:
-                    cur = 0.0
-                else:
-                    cur = 360.0
-            elif c == "E":
-                cur = 90.0
-            elif c == "S":
-                cur = 180.0
-            elif c == "W":
-                cur = 270.0
-            weight += 1
-            if direction is None:
-                # First direction
-                direction = cur
-                continue
-            direction += (cur - direction) / 2
-        return direction
+        return convert_wind_direction_degrees(self.wind_direction)
 
 class MarineWeather(models.Model):
     timestamp = models.DateTimeField()
@@ -71,3 +74,6 @@ class MarineWeather(models.Model):
 
     def __unicode__(self):
         return u"%s @ %s" % (self.location, self.timestamp)
+
+    def get_wind_direction_degrees(self):
+        return convert_wind_direction_degrees(self.wind_direction)

@@ -18,6 +18,8 @@
       padding-right: 30px;
     }
 
+    font-size: 150%;
+
     .type {
       font-size: 120%;
     }
@@ -29,6 +31,10 @@
   .weather-main {
     .temperature-now {
       font-size: 5em;
+    }
+
+    .description-now {
+      font-size: 2.5em;
     }
 
     .temperature-now-unit {
