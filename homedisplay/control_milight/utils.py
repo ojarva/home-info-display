@@ -16,7 +16,7 @@ logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
 redis_instance = redis.StrictRedis()
 
-def get_current_brightness(group_id):
+def get_current_settings_for_light(group_id):
     """ Returns current brightness for group, based on
         1) Brightness of manually set lights that are on
         2) Light programs (if running)
@@ -28,6 +28,9 @@ def get_current_brightness(group_id):
 
     today_morning_program = None
     today_evening_program = None
+
+    color = "red"
+    color_set = False
 
     # 1) Brightness of manually set lights that are on
 
@@ -41,10 +44,13 @@ def get_current_brightness(group_id):
                 logger.debug("Brightness for group %s is %s", lightgroup.group_id, group_brightness)
                 brightness_set = True
                 brightness = max(brightness, group_brightness)
+                if lightgroup.color == "white":
+                    color = "white"
+                    color_set = True
 
     if brightness_set:
         logger.info("Brightness for group %s: set by another group", group_id)
-        return brightness
+        return (brightness, color)
 
     # 2) Light programs (if running)
     for program in light_models.LightAutomation.objects.all():
@@ -68,17 +74,17 @@ def get_current_brightness(group_id):
         # Morning program is defined.
         if nowd.time() < today_morning_program.start_time:
             # Time is before the beginning of morning program.
-            return 0
+            return (0, "red")
 
     if today_evening_program:
         logger.debug("Evening program is defined for this day with end_time: %s", today_evening_program.end_time)
         if nowd.time() > today_evening_program.end_time:
             # Time is after the end of evening program.
-            return 0
+            return (0, "red")
 
     # Default
     logger.info("Default brightness for group %s", group_id)
-    return 100
+    return (100, "white")
 
 def convert_group_to_automatic(group, on_until):
     if group == 0:
@@ -108,15 +114,7 @@ def set_automatic_trigger_light(group):
     now = timezone.now()
     nowd = datetime.datetime.now()
 
-    # Determine proper brightness:
-    # - If other lights are on, use that.
-    # - If not, based on time
-    brightness = 0
-    color = "white"
-    brightness_set = False
-    color_set = False
-
-    brightness = get_current_brightness(group)
+    brightness, color = get_current_settings_for_light(group)
 
     hour = nowd.hour
 
