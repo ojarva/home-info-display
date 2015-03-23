@@ -130,6 +130,19 @@ RefreshWeather = (options) ->
       <span class="wind-speed"><i class="fa fa-question-circle"></i></span><span class="wind-speed-unit">m/s</span>
     </div>"""
     current_day = null
+    days = 0
+
+    if data.main_warnings?
+      w = data.main_warnings.warnings
+      warnings = weather.find ".weather-warnings"
+
+      sea = w.sea.replace new RegExp("<br/>", "g"), ""
+      console.log sea
+      warnings.html """<span class="weather-warning"><i class="fa fa-female"></i> #{w.pedestrian}</span>
+                       <span class="weather-warning"><i class="fa fa-ship"></i> #{sea}</span>
+                       <span class="weather-warning"><i class="fa fa-car"></i> #{w.road}</span>
+                       <span class="weather-warning"><i class="fa fa-pagelines"></i> #{w.land}</span>
+                       """
 
     jq.each data.main_forecasts.forecasts[0].forecast, ->
       timestamp = moment @localtime, "YYYYMMDDTHHmmss"
@@ -140,6 +153,8 @@ RefreshWeather = (options) ->
       date = timestamp.format "D.M."
 
       if current_index > 11 or (current_day? and current_day != date)
+        if days >= 2
+          return false # Show only current and next days
         current_index = 0
         jq(".weather-all").append """<div class="row">
           <div class="col-md-12">
@@ -151,6 +166,7 @@ RefreshWeather = (options) ->
         last_header = jq(".weather-all h2").last()
         last_header.html "#{weekday} #{date}"
         current_day = date
+        days += 1
 
       current_row.append new_item
       current_item = current_row.find(".col-md-1").last()
