@@ -49,7 +49,7 @@ def get_current_brightness(group_id):
     # 2) Light programs (if running)
     for program in light_models.LightAutomation.objects.all():
         percent_done = program.percent_done(now)
-        if percent_done is not None:
+        if percent_done is not None and program.is_running(now):
             #Program is running.
             brightness = get_program_brightness(program.action, percent_done)
             logger.info("Brightness for group %s set by program %s, %s%%", group_id, program.action, percent_done)

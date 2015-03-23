@@ -100,6 +100,17 @@
           <div class="timed-lightcontrols-main">
             {% include "snippets/all_timed_lightcontrols.html" %}
           </div>
+
+          <div class="per-group center-content">
+            {% include "snippets/per_group_auto_brightness.html" with group="1" group_name="Tatami" mode="off" command="off" icon="power-off" %}
+
+            {% include "snippets/per_group_auto_brightness.html" with group="2" group_name="Pöytä" mode="off" command="off" icon="power-off" %}
+            <br>
+            {% include "snippets/per_group_auto_brightness.html" with group="3" group_name="Keittiö" mode="off" command="off" icon="power-off" %}
+
+            {% include "snippets/per_group_auto_brightness.html" with group="4" group_name="Eteinen" mode="off" command="off" icon="power-off" %}
+
+          </div>
         </div>
 
 
