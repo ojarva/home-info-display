@@ -43,6 +43,7 @@ def get_current_brightness(group_id):
                 brightness = max(brightness, group_brightness)
 
     if brightness_set:
+        logger.info("Brightness for group %s: set by another group", group_id)
         return brightness
 
     # 2) Light programs (if running)
@@ -61,12 +62,14 @@ def get_current_brightness(group_id):
 
     # 3) Time of day (bright between programs during day)
     if today_morning_program:
+        logger.debug("Morning program is defined for this day with start_time: %s", today_morning_program.start_time)
         # Morning program is defined.
         if nowd.time() < today_morning_program.start_time:
             # Time is before the beginning of morning program.
             return 0
 
     if today_evening_program:
+        logger.debug("Evening program is defined for this day with end_time: %s", today_evening_program.end_time)
         if nowd.time() > today_evening_program.end_time:
             # Time is after the end of evening program.
             return 0
