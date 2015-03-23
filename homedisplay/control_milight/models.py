@@ -216,7 +216,7 @@ class LightGroup(models.Model):
         super(LightGroup, self).delete(*args, **kwargs)
 
     def __unicode__(self):
-        return "%s (%s), color: %s, on: %s, rgbw: %s, white: %s" % (self.description, self.group_id, self.color, self.on, self.rgbw_brightness, self.white_brightness)
+        return u"%s (%s), color: %s, on: %s, rgbw: %s, white: %s" % (self.description, self.group_id, self.color, self.on, self.rgbw_brightness, self.white_brightness)
 
     @property
     def current_brightness(self):
@@ -243,7 +243,7 @@ class LightAutomation(models.Model):
     no_dimming = models.BooleanField(default=False, blank=True, verbose_name="Älä vähennä valojen kirkkautta", help_text="Jos raksitettu, valojen kirkkautta ei koskaan vähennetä")
 
     def __unicode__(self):
-        return "%s (%s) %s -- %s" % (self.action, self.running, self.start_time, self.duration)
+        return u"%s (%s) %s -- %s" % (self.action, self.running, self.start_time, self.duration)
 
     class Meta:
         verbose_name = "Valo-ohjelma"
@@ -260,6 +260,10 @@ class LightAutomation(models.Model):
         duration = max(self.duration, 300)
         timestamp = (timezone.now() - datetime.timedelta(seconds=duration)).time()
         return self.get_start_datetime(timestamp) + datetime.timedelta(seconds=duration)
+
+    @property
+    def end_time(self):
+        return (datetime.datetime.combine(datetime.date.today(), self.start_time) + datetime.timedelta(seconds=max(self.duration, 300))).time()
 
     def get_start_datetime(self, current_time=None):
         """ Returns datetime.datetime for next starting time. """
