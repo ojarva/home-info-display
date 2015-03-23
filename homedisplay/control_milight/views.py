@@ -1,5 +1,5 @@
 from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action, get_serialized_lightgroup, get_serialized_lightgroups, set_morning_light, get_main_buttons, is_group_on
-from .utils import run_timed_actions, convert_group_to_automatic
+from .utils import run_timed_actions, convert_group_to_automatic, get_current_settings_for_light
 from control_display.display_utils import run_display_command
 from control_display.utils import initiate_delayed_shutdown, set_destination_brightness
 from django.conf import settings
@@ -197,6 +197,18 @@ class Control(View):
                 initiate_delayed_shutdown()
         elif command == "morning":
             set_morning_light(group)
+        elif command == "auto-brightness":
+            def execute(group_id):
+                brightness, color = get_current_settings_for_light(group_id)
+                led.set_color(color, group)
+                led.set_brightness(brightness, group)
+                update_lightstate(group, brightness, color)
+
+            if group == 0:
+                for group in range(1, 5):
+                    execute(group)
+            else:
+                execute(group)
         elif command == "disco":
             led.disco(group)
             update_lightstate(group, None, "disco")
