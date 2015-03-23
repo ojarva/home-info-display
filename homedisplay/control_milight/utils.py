@@ -34,7 +34,7 @@ def get_current_brightness(group_id):
     brightness_set = False
     brightness = None
     for lightgroup in light_models.LightGroup.objects.all():
-        if lightgroup.on is True and light.on_automatically is False:
+        if lightgroup.on is True and lightgroup.on_automatically is False:
             # Lights are on, and set manually.
             group_brightness = lightgroup.current_brightness
             if group_brightness is not None:
