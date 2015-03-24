@@ -76,21 +76,41 @@ RefreshWeather = (options) ->
     else
       return ""
 
+  processWarnings = (data) ->
+    warnings = weather.find ".weather-warnings"
+
+    sea = data.sea.replace new RegExp("<br/>", "g"), ""
+    warnings_html = ""
+    warnings_data =
+      "female": data.pedestrian
+      "ship": sea
+      "car": data.road
+      "pagelines": data.land
+    for own icon, warning of warnings_data
+        if warning == "Ei varoituksia."
+          continue
+        if warning == "Jalankulkukeli on tavanomainen koko maassa."
+          continue
+        warnings_html += """<span class="weather-warning"><i class="fa fa-#{icon}"></i> #{warning}"""
+    warnings.html warnings_html
+
+  processSunInfo = (data) ->
+    for own key, value of data
+      sunrise = moment value.sunrise, "YYYYMMDDTHHmmss"
+      sunset = moment value.sunset, "YYYYMMDDTHHmmss"
+
+      weather.find(".sunrise").html """<span class="fa-stack fa-lg"><i class="fa fa-sun-o fa-stack-1x"></i><i class="fa fa-angle-up fa-stack-1x"></i></span> #{sunrise.format("HH:mm")}        (<span class="auto-fromnow-update" data-timestamp="#{sunrise}">#{sunrise.fromNowSynced()}</span>)"""
+      weather.find(".sunset").html """<span class="fa-stack fa-lg"><i class="fa fa-sun-o fa-stack-1x"></i><i class="fa fa-angle-down fa-stack-1x"></i></span> #{sunset.format("HH:mm")} (<span class="auto-fromnow-update" data-timestamp="#{sunset}">#{sunset.fromNowSynced()}</span>)"""
+
+
   processData = (data) ->
     resetWeatherInfo()
 
     if data.main_forecasts.suninfo?
       suninfo = data.main_forecasts.suninfo
-      for own key, value of suninfo
-        sunrise = moment value.sunrise, "YYYYMMDDTHHmmss"
-        sunset = moment value.sunset, "YYYYMMDDTHHmmss"
 
-        weather.find(".sunrise").html """<span class="fa-stack fa-lg"><i class="fa fa-sun-o fa-stack-1x"></i><i class="fa fa-angle-up fa-stack-1x"></i></span> #{sunrise.format("HH:mm")}        (<span class="auto-fromnow-update" data-timestamp="#{sunrise}">#{sunrise.fromNowSynced()}</span>)"""
-        weather.find(".sunset").html """<span class="fa-stack fa-lg"><i class="fa fa-sun-o fa-stack-1x"></i><i class="fa fa-angle-down fa-stack-1x"></i></span> #{sunset.format("HH:mm")} (<span class="auto-fromnow-update" data-timestamp="#{sunset}">#{sunset.fromNowSynced()}</span>)"""
-
-    current_index = 1
-    first_date = false
-    new_day = false
+    if data.main_warnings?
+      processWarnings data.main_warnings.warnings
 
     if data.main_forecasts? and data.main_forecasts.observations?
       for own key, value of data.main_forecasts.observations
@@ -132,17 +152,6 @@ RefreshWeather = (options) ->
     current_day = null
     days = 0
 
-    if data.main_warnings?
-      w = data.main_warnings.warnings
-      warnings = weather.find ".weather-warnings"
-
-      sea = w.sea.replace new RegExp("<br/>", "g"), ""
-      console.log sea
-      warnings.html """<span class="weather-warning"><i class="fa fa-female"></i> #{w.pedestrian}</span>
-                       <span class="weather-warning"><i class="fa fa-ship"></i> #{sea}</span>
-                       <span class="weather-warning"><i class="fa fa-car"></i> #{w.road}</span>
-                       <span class="weather-warning"><i class="fa fa-pagelines"></i> #{w.land}</span>
-                       """
 
     jq.each data.main_forecasts.forecasts[0].forecast, ->
       timestamp = moment @localtime, "YYYYMMDDTHHmmss"
