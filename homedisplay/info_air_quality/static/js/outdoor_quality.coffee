@@ -18,6 +18,10 @@ OutdoorQuality = ->
 
     data_timeout = setTimeout clearData, 90 * 60 * 1000
 
+  fetchData = ->
+    jq.get "/homecontroller/indoor_quality/get/outdoor/latest", (data) ->
+      receivedData(data)
+
   receivedData = (message) ->
     clearData()
     max_percent = 0
@@ -55,9 +59,11 @@ OutdoorQuality = ->
     return
 
   ws_generic.register "outside_air_quality", receivedData
-  # TODO: ge_refresh
+  ge_refresh.register "outside_air_quality", fetchData
+  fetchData()
 
   @receivedData = receivedData
+  @fetchData = fetchData
   return @
 
 jq =>

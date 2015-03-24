@@ -1,10 +1,12 @@
-from .models import AirDataPoint, AirTimePoint
+from .models import AirDataPoint, AirTimePoint, OutsideAirQuality
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.utils import timezone
 from django.views.generic import View
+import datetime
 import json
 import numpy
 import redis
@@ -56,3 +58,16 @@ class get_json_trend(View):
         timestamps = numpy.array(timestamps)
         z = numpy.polyfit(timestamps, items, 1)
         return HttpResponse(json.dumps({"delta": z[0], "base": z[1]}), content_type="application/json")
+
+class GetLatestOutdoor(View):
+    def get(self, request, *args, **kwargs):
+        data = {}
+        now = timezone.now()
+        maximum_age = datetime.timedelta(hours=6)
+        types = OutsideAirQuality.objects.values_list("type", flat=True).order_by("type").distinct()
+        for type in types:
+            obj = OutsideAirQuality.objects.filter(type=type).latest()
+            if obj:
+                if now - obj.timestamp < maximum_age:
+                    data[type] = {"value": float(obj.value), "timestamp": obj.timestamp.isoformat()}
+        return HttpResponse(json.dumps(data), content_type="application/json")

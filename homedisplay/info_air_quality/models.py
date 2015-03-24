@@ -24,7 +24,7 @@ class AirDataPoint(models.Model):
 
     class Meta:
         ordering = ["-timepoint__timestamp"]
-        get_latest_by = "-timepoint__timestamp"
+        get_latest_by = "timepoint__timestamp"
 
     def save(self, *args, **kwargs):
         redis_latest_key = "air-latest-%s" % self.name
@@ -62,7 +62,7 @@ class AirTimePoint(models.Model):
 
     class Meta:
         ordering = ["-timestamp"]
-        get_latest_by = "-timestamp"
+        get_latest_by = "timestamp"
 
     def __unicode__(self):
         return self.timestamp
@@ -76,7 +76,7 @@ class OutsideAirQuality(models.Model):
 
     class Meta:
         ordering = ["-timestamp"]
-        get_latest_by = "-timestamp"
+        get_latest_by = "timestamp"
         unique_together = ("timestamp", "type")
 
     def __unicode__(self):
