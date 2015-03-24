@@ -14,7 +14,7 @@ RepeatingTasks = (elem, use_date) ->
       overdue_by = ""
       if @fields.last_completed_at
         diff = moment(@fields.last_completed_at).add @fields.repeat_every_n_seconds, "seconds"
-        overdue_by = " (<span class='auto-fromnow-update' data-timestamp='#{diff}'>" + diff.fromNowSynced() + "</span>)"
+        overdue_by = " (<span class='auto-fromnow-update' data-timestamp='#{diff}'>#{diff.fromNowSynced()}</span>)"
 
       if @fields.optional
         icon = "fa-question-circle"
@@ -46,7 +46,7 @@ RepeatingTasks = (elem, use_date) ->
 
       task_history = jq "#confirm-repeating-task .task-history ul"
       task_history.children().remove()
-      tasks = JSON.parse repeating_task.data("history")
+      tasks = JSON.parse repeating_task.data "history"
       jq.each tasks, ->
         parsed = moment @fields.completed_at
         task_history.append "<li>" + parsed.format("YYYY-MM-DD") + " (" + parsed.fromNowSynced() + ")</li>"
