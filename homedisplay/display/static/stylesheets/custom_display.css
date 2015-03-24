@@ -11,18 +11,10 @@
   padding-left: 25px !important;
 }
 
-.weather {
+.weather, .marine-weather {
 
-  .now {
-    .multi-field > span {
-      padding-right: 30px;
-    }
-
+  td, th {
     font-size: 150%;
-
-    .type {
-      font-size: 120%;
-    }
     .value {
       font-size: 150%;
     }

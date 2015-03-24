@@ -98,44 +98,45 @@ RefreshWeather = (options) ->
     for own key, value of data
       sunrise = moment value.sunrise, "YYYYMMDDTHHmmss"
       sunset = moment value.sunset, "YYYYMMDDTHHmmss"
+      weather.find(".suninfo").html """<span class="value">#{sunrise.format("HH:mm")}-#{sunset.format("HH:mm")}</span>"""
 
-      weather.find(".sunrise").html """<span class="fa-stack fa-lg"><i class="fa fa-sun-o fa-stack-1x"></i><i class="fa fa-angle-up fa-stack-1x"></i></span> #{sunrise.format("HH:mm")}        (<span class="auto-fromnow-update" data-timestamp="#{sunrise}">#{sunrise.fromNowSynced()}</span>)"""
-      weather.find(".sunset").html """<span class="fa-stack fa-lg"><i class="fa fa-sun-o fa-stack-1x"></i><i class="fa fa-angle-down fa-stack-1x"></i></span> #{sunset.format("HH:mm")} (<span class="auto-fromnow-update" data-timestamp="#{sunset}">#{sunset.fromNowSynced()}</span>)"""
+  setObservations = (elem, observations) ->
+    for own key, value of observations
+      d = value[0]
+      elem.find(".temperature-now").html """<span class="value">#{d.Temperature}&deg;C</span>"""
+      elem.find(".wind-now").html """<span class="value">#{Math.round(d.WindSpeedMS)}-#{Math.round(d.WindGust)}m/s</span>"""
+      direction = d.WindCompass8
+      elem.find(".wind-direction-now").html "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{direction}'></i>"
+      elem.find(".humidity-now").html """<span class="value">#{Math.round(d.Humidity)}%</span>"""
+      elem.find(".real-temperature-now").html """<span class="value">#{d.Temperature}&deg;C</span>"""
+      elem.find(".dewpoint-now").html """<span class="value">#{d.DewPoint}&deg;C</span>"""
+      elem.find(".rainfall-now").html """<span class="value">#{d.RI_10MIN}mm</span>"""
+      elem.find(".visibility-now").html """<span class="value">#{Math.round(d.Visibility/1000)}km</span>"""
+      elem.find(".cloudiness-now").html """<span class="value">#{d.TotalCouldCover}/8</span>"""
 
+      a = d.WW_AWS
+      stat = getAWS parseInt(a)
+      elem.find(".description-now").html """<span class="value">#{stat}</span>"""
+
+  processMarine = (data) ->
+    console.log data
+    marine = jq ".marine-weather"
+    setObservations marine, data.observations
 
   processData = (data) ->
     resetWeatherInfo()
 
     if data.main_forecasts.suninfo?
-      suninfo = data.main_forecasts.suninfo
+      processSunInfo data.main_forecasts.suninfo
 
     if data.main_warnings?
       processWarnings data.main_warnings.warnings
 
     if data.main_forecasts? and data.main_forecasts.observations?
-      for own key, value of data.main_forecasts.observations
-        d = value[0]
-        weather.find(".temperature-now").html """<span class="value">#{d.Temperature}&deg;C</span>"""
-        weather.find(".wind-now").html """<span class="value">#{d.WindSpeedMS} - #{d.WindGust}m/s</span>"""
-        direction = d.WindCompass8
-        weather.find(".wind-direction-now").html "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{direction}'></i>"
+      setObservations weather, data.main_forecasts.observations
 
-        weather.find(".humidity-now").html """<span class="type">Ilmankosteus: </span><span class="value">#{d.Humidity}%</span>"""
-        weather.find(".real-temperature-now").html """<span class="type">Lämpötila: </span><span class="value">#{d.Temperature}&deg;C</span>"""
-        weather.find(".dewpoint-now").html """<span class="type">Kastepiste: </span><span class="value">#{d.DewPoint}&deg;C</span>"""
-        weather.find(".rainfall-now").html """<span class="type">Sade: </span><span class="value">#{d.RI_10MIN}mm</span>"""
-        weather.find(".visibility-now").html """<span class="type">Näkyvyys: </span><span class="value">#{Math.round(d.Visibility/1000)}km</span>"""
-        weather.find(".cloudiness-now").html """<span class="type">Pilvisyys: </span><span class="value">#{d.TotalCouldCover}/8</span>"""
-
-        a = d.WW_AWS
-        stat = getAWS parseInt(a)
-        weather.find(".description-now").html """<span class="value">#{stat}</span>"""
-
-
-    if data? and data.marine_observations?
-      d = data.marine_observations
-      marine = weather.find ".marine-now"
-      marine.find(".marine-wind-now").html """<span class="type">Tuuli: </span><span class="value">#{d.wind_speed.value} - #{d.wind_gust.value}m/s</span>"""
+    if data? and data.marine_forecasts?
+      processMarine data.marine_forecasts
 
     current_index = 13
     now = clock.getMoment()

@@ -4,38 +4,53 @@
 
 <h2>Nyt</h2>
 
-
-<div class="weather">
-  <div class="now">
-    <div class="row">
-      <div class="col-md-2 center-content">
-        <span class="description-now"></span><br>
-        <span class="temperature-now"></span><br>
-        <span class="wind-now"></span>
-        <span class="wind-direction-now"></span>
-      </div>
-
-      <div class="col-md-6 multi-field">
-        <span class="rainfall-now"></span>
-        <span class="humidity-now"></span>
-        <span class="dewpoint-now"></span>
-        <span class="real-temperature-now"></span>
-        <span class="visibility-now"></span>
-        <span class="sunrise"></span>
-        <span class="sunset"></span>
-      </div>
-      <div class="col-md-4 multi-field marine-now">
-        <i class="fa fa-ship"></i>
-        <span class="marine-wind-now"></span>
-        <span class="marine-wind-direction-now"></span>
-      </div>
-    </div>
+<div class="row">
+  <div class="col-md-12">
+    <table class="table">
+      <thead class="weather">
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Lämpötila</th>
+          <th>Tuuli</th>
+          <th>Ilmankosteus</th>
+          <th>Kastepiste</th>
+          <th>Näkyvyys</th>
+          <th>Sade</th>
+          <th><i class="fa fa-sun-o"></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="weather">
+          <td><i class="fa fa-building-o"></i></td>
+          <td><span class="description-now"></span></td>
+          <td><span class="temperature-now"></span></td>
+          <td><span class="wind-now"></span><span class="wind-direction-now"></span></td>
+          <td><span class="humidity-now"></span></td>
+          <td><span class="dewpoint-now"></span></td>
+          <td><span class="visibility-now"></span></td>
+          <td><span class="rainfall-now"></span></td>
+          <td><span class="suninfo"></span></td>
+        </tr>
+        <tr class="marine-weather">
+          <td><i class="fa fa-ship"></i></td>
+          <td><span class="description-now"></span></td>
+          <td><span class="temperature-now"></span></td>
+          <td><span class="wind-now"></span><span class="wind-direction-now"></span></td>
+          <td><span class="humidity-now"></span></td>
+          <td><span class="dewpoint-now"></span></td>
+          <td><span class="visibility-now"></span></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <div class="row">
-    <div class="col-md-12 weather-warnings">
-      
-    </div>
+<div class="row weather">
+  <div class="col-md-12 weather-warnings">
+
   </div>
 </div>
 

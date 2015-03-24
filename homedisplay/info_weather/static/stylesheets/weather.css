@@ -104,7 +104,6 @@
   }
 
   .weather-all {
-
     .col-md-1 {
       font-size: 130%;
       margin-bottom: 40px;
@@ -114,37 +113,11 @@
       text-align: center;
     }
 
-    .new-day {
-      border-left: gray;
-      border-left-style: dotted;
-      border-left-width: 5px;
-    }
-
-    .weather-today {
-      border-bottom-style: dotted;
-      border-bottom-width: 2px;
-      border-bottom: gray;
-      border-top-style: dotted;
-      border-top-width: 2px;
-      border-top: gray;
-    }
     .symbol {
       img {
         width: 84px;
         height: 72px;
       }
     }
-  }
-}
-
-.sun-info {
-  margin-top: 10px;
-}
-
-.weather {
-  .new-day {
-    border-left: gray;
-    border-left-style: dotted;
-    border-left-width: 2px;
   }
 }
