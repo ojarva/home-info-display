@@ -60,16 +60,54 @@ And nginx (or any other web server that supports websockets):
   }
 
 
-Crontab entries
+Light operation
 ---------------
+
+There is three ways to control lights:
+
+- Using buttons and sliders on the UI. These either use per-source controls (when off button is pressed on the computer UI, there can be different action compared to door UI)
+- With scheduled programs
+- With automatic triggers (magnet switches and PIRs)
+
+For manual controls, brightness is decided with following logic:
+
+- Morning/evening white lights: 0% if no other group is on with brightness >0%. Otherwise min(brightest group, 10)
+- Automatic brightness buttons: same logic as with automatic triggers
+- Other buttons: manually configured
+
+Scheduled programs:
+
+- Either morning (brightness up) or evening (brightness down) programs. Brightness down programs do not turn lights on, or adjust brightness up.
+- Any manual operation will pause scheduled programs for that group
+
+Automatic triggers brightness, color and timing:
+
+- Timer is 10 minutes during days and two minutes during nights.
+- Color is white during days and red during nights (except if any group is on with white).
+- Brightness: if any other group is on, use brightness from brightest group. If not, use brightness from scheduled programs. If none is running, 0% for nights and 100% for days.
+
+Background workers
+------------------
+
+Crontab:
 
 ::
 
   # Fetch weather information from weather.com
-  04 *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_weather
+  04 *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_weather > /dev/null
+  # Fetch more accurate weather information from fmi.fi
+  04 *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_fmi_weather > /dev/null
   # Fetch internet connection information from Huawei modem
-  *  *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_internet_information
+  *  *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_internet_information > /dev/null
   # Periodically average and store all air quality information from redis
-  *  *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py add_air_timepoint
+  *  *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py add_air_timepoint > /dev/null
   # Run morning and evening transitions
-  *  *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py run_timed
+  *  *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py run_timed > /dev/null
+  # Fetch electricity information
+  15 2    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_electricity > /dev/null
+  # Update public transportation schedules
+  */5 *   *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_transportation
+  # Get outdoor air quality measurements from HSY website
+  30 *    *   *  *     cd home-info-display/homedisplay; ~/homedisplay-env/bin/python manage.py fetch_outside_air_quality
+
+Supervisord example configuration files can be found from supervisor-conf.d folder.
