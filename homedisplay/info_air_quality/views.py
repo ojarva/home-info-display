@@ -14,16 +14,16 @@ import time
 
 redis_instance = redis.StrictRedis()
 
-class get_keys(View):
+class GetSensorKeys(View):
     def get(self, request, *args, **kwargs):
         return HttpResponse(json.dumps(settings.SENSOR_MAP.keys()), content_type="application/json")
 
-class get_modal(View):
+class GetModalContent(View):
     def get(self, request, *args, **kwargs):
         ret = {"graphs": settings.SENSOR_MAP}
         return render_to_response("air_quality_graphs.html", ret, context_instance=RequestContext(request))
 
-class get_latest(View):
+class GetLatestSensorReadings(View):
     def get(self, request, *args, **kwargs):
         item = redis_instance.get("air-latest-%s" % kwargs["sensor_id"])
         try:
@@ -31,14 +31,14 @@ class get_latest(View):
         except (ValueError, TypeError):
             raise Http404
 
-class get_json(View):
+class GetHistoryForSensor(View):
     def get(self, request, *args, **kwargs):
         items = redis_instance.lrange("air-storage-%s" % kwargs["sensor_id"], 0, -1)
         items.reverse()
         ret = ",".join(items)
         return HttpResponse("[%s]" % ret, content_type="application/json")
 
-class get_json_trend(View):
+class GetTrendForSensor(View):
     #TODO: implement this on top of redis
     def get(self, request, *args, **kwargs):
         data = AirDataPoint.objects.filter(name=kwargs["sensor_id"]).select_related("timepoint")[0:30]

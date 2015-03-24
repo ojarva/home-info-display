@@ -116,14 +116,14 @@ IndoorAirQuality = (options) ->
 
 
   fetch = ->
-    jq.get "/homecontroller/indoor_quality/get_latest/co2", (data) ->
+    jq.get "/homecontroller/indoor_quality/get/sensor/co2/latest", (data) ->
       processCo2 data
 
-    jq.get "/homecontroller/indoor_quality/get_latest/temperature", (data) ->
+    jq.get "/homecontroller/indoor_quality/get/sensor/temperature/latest", (data) ->
       processTemperature data
 
   fetchTrend = ->
-    jq.get "/homecontroller/indoor_quality/get_json/co2/trend", (data) ->
+    jq.get "/homecontroller/indoor_quality/get/sensor/co2/trend", (data) ->
       if data.status == "no_data"
         output.find(".trend").html ""
         return
@@ -160,7 +160,7 @@ IndoorAirQuality = (options) ->
     data_output = jq ".indoor-air-#{key}"
     data_output.find("svg").hide()
     data_output.find(".spinner").show()
-    jq.get "/homecontroller/indoor_quality/get_json/#{key}", (data) ->
+    jq.get "/homecontroller/indoor_quality/get/sensor/#{key}", (data) ->
       if data.length > 12
         data_output.find(".latest").html Math.round(data[data.length-1].value * 10) / 10
         data_output.find(".data-error").hide()
@@ -176,7 +176,7 @@ IndoorAirQuality = (options) ->
         data_output.find(".data-error").slideDown()
 
   refreshAllData = ->
-    jq.get "/homecontroller/indoor_quality/get_keys", (data) ->
+    jq.get "/homecontroller/indoor_quality/get/sensor/keys", (data) ->
       jq.each data, ->
         refreshData @
 
@@ -197,7 +197,7 @@ jq =>
   @indoor_air_quality.startInterval()
 
   jq(".indoor-quality").on "click", ->
-    jq.get "/homecontroller/indoor_quality/get_modal", (data) ->
+    jq.get "/homecontroller/indoor_quality/get/dialog/contents", (data) ->
       jq("#indoor-quality-modal .air-quality-graph-content").html data
       indoor_air_quality.refreshAllData()
       content_switch.switchContent "#indoor-quality-modal"
