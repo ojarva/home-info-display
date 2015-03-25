@@ -19,7 +19,7 @@ OutdoorQuality = ->
     data_timeout = setTimeout clearData, 90 * 60 * 1000
 
   fetchData = ->
-    jq.get "/homecontroller/indoor_quality/get/outdoor/latest", (data) ->
+    jq.get "/homecontroller/air_quality/get/outdoor/latest", (data) ->
       receivedData(data)
 
   receivedData = (message) ->
@@ -30,7 +30,6 @@ OutdoorQuality = ->
       if key of type_data
         limit = type_data[key].limit
         name = type_data[key].name
-        #console.debug "Limit value for #{key} is #{limit}. Latest measured value is #{value} at #{data.timestamp}"
         icon_class = ""
         if value > limit
           icon = "times"

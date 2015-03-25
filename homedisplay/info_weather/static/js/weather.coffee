@@ -79,20 +79,38 @@ RefreshWeather = (options) ->
   processWarnings = (data) ->
     warnings = weather.find ".weather-warnings"
 
-    sea = data.sea.replace new RegExp("<br/>", "g"), ""
+    sea = data.warnings.sea.replace new RegExp("<br/>", "g"), ""
     warnings_html = ""
+    weather_early_html = ""
     warnings_data =
-      "female": data.pedestrian
+      "female": data.warnings.pedestrian
       "ship": sea
-      "car": data.road
-      "pagelines": data.land
+      "car": data.warnings.road
+      "pagelines": data.warnings.land
     for own icon, warning of warnings_data
         if warning == "Ei varoituksia."
           continue
-        if warning == "Jalankulkukeli on tavanomainen koko maassa."
+        else if warning == "Koko maassa vallitsee normaali ajokeli."
           continue
-        warnings_html += """<span class="weather-warning"><i class="fa fa-#{icon}"></i> #{warning}"""
-    warnings.html warnings_html
+        else if warning == "Jalankulkukeli on tavanomainen koko maassa."
+          continue
+        warnings_html += """<span class="weather-warning"><i class="fa fa-#{icon}"></i> #{warning}</span> """
+
+    early_warnings_data =
+      "ship": data.early.sea,
+      "car": data.early.road,
+      "pagelines": data.warnings.land
+
+    for own icon, warning of early_warnings_data
+      if warning == "Ei varoituksia."
+        continue
+      warnings_early_html += """<span class="weather-warning"><i class="fa fa-#{icon}"></i> #{warning}</span> """
+
+    if warnings_early_html.length > 0
+      warnings_early_html = """<span class="weather-warning-type">Ennakkovaroitukset:</span> #{warnings_early_html}"""
+
+    weather.find(".weather-warnings").html warnings_html
+    weather.find(".weather-early-warnings").html warnings_early_html
 
   processSunInfo = (data) ->
     for own key, value of data
@@ -105,8 +123,7 @@ RefreshWeather = (options) ->
       d = value[0]
       elem.find(".temperature-now").html """<span class="value">#{d.Temperature}&deg;C</span>"""
       elem.find(".wind-now").html """<span class="value">#{Math.round(d.WindSpeedMS)}-#{Math.round(d.WindGust)}m/s</span>"""
-      direction = d.WindCompass8
-      elem.find(".wind-direction-now").html "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{direction}'></i>"
+      elem.find(".wind-direction-now").html "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{d.WindCompass8}'></i>"
       elem.find(".humidity-now").html """<span class="value">#{Math.round(d.Humidity)}%</span>"""
       elem.find(".real-temperature-now").html """<span class="value">#{d.Temperature}&deg;C</span>"""
       elem.find(".dewpoint-now").html """<span class="value">#{d.DewPoint}&deg;C</span>"""
@@ -114,30 +131,14 @@ RefreshWeather = (options) ->
       elem.find(".visibility-now").html """<span class="value">#{Math.round(d.Visibility/1000)}km</span>"""
       elem.find(".cloudiness-now").html """<span class="value">#{d.TotalCouldCover}/8</span>"""
 
-      a = d.WW_AWS
-      stat = getAWS parseInt(a)
+      stat = getAWS parseInt(d.WW_AWS)
       elem.find(".description-now").html """<span class="value">#{stat}</span>"""
 
   processMarine = (data) ->
-    console.log data
     marine = jq ".marine-weather"
     setObservations marine, data.observations
 
-  processData = (data) ->
-    resetWeatherInfo()
-
-    if data.main_forecasts.suninfo?
-      processSunInfo data.main_forecasts.suninfo
-
-    if data.main_warnings?
-      processWarnings data.main_warnings.warnings
-
-    if data.main_forecasts? and data.main_forecasts.observations?
-      setObservations weather, data.main_forecasts.observations
-
-    if data? and data.marine_forecasts?
-      processMarine data.marine_forecasts
-
+  processForecasts = (data) ->
     current_index = 13
     now = clock.getMoment()
     current_row = null
@@ -153,8 +154,7 @@ RefreshWeather = (options) ->
     current_day = null
     days = 0
 
-
-    jq.each data.main_forecasts.forecasts[0].forecast, ->
+    jq.each data, ->
       timestamp = moment @localtime, "YYYYMMDDTHHmmss"
       if timestamp.hour() % 2 != 0
         return true # Only add even hours
@@ -186,11 +186,36 @@ RefreshWeather = (options) ->
       current_item.find(".symbol").html """<img src="/homecontroller/static/byo-images/#{@WeatherSymbol3}.png">"""
       current_item.find(".temperature-unit").html "&deg;C"
       current_item.find(".wind-speed").html Math.round(@WindSpeedMS)
-      if @WindDirection?
-        direction = @WindCompass8
-        current_item.find(".wind-direction").html "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{direction}'></i>"
+      if @WindCompass8?
+        # Do not show wind direction if no data is available - fallback is arrow pointing to north, which is
+        # worse than showing nothing.
+        current_item.find(".wind-direction").html "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{@WindCompass8}'></i>"
 
       current_index += 1
+
+  processData = (data) ->
+    resetWeatherInfo()
+
+    if not data?
+      console.warn "Received invalid data ", data
+      return
+
+    if data.main_forecasts.suninfo?
+      processSunInfo data.main_forecasts.suninfo
+
+    if data.main_warnings?
+      processWarnings data.main_warnings
+
+    if data.main_forecasts? and data.main_forecasts.observations?
+      setObservations weather, data.main_forecasts.observations
+
+    if data.marine_forecasts?
+      processMarine data.marine_forecasts
+
+    if data.main_forecasts.forecasts?
+      processForecasts data.main_forecasts.forecasts[0].forecast
+
+
 
   update = ->
     jq.get "/homecontroller/weather/get_json", (data) ->
