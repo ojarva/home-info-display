@@ -3,7 +3,7 @@ from .tasks import run_display_command_task
 from control_milight.models import LightGroup
 from django.utils import timezone
 from homedisplay.utils import publish_ws
-from info_weather.views import get_sun_info
+from info_weather.utils import get_sun_info
 import json
 import logging
 import redis
