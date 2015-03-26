@@ -1,5 +1,6 @@
 -e git://github.com/ojarva/py-utorrent.git#egg=utorrent
 Django>=1.7.5
+aaltopoiju>=0.0.1
 astral>=0.8.1
 beautifulsoup4>=4.3.2
 celery>=3.1.17
