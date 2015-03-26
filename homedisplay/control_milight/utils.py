@@ -108,6 +108,7 @@ def convert_group_to_automatic(group, on_until):
 
 def set_automatic_trigger_light(group, take_action=True, **kwargs):
     """ Returns True if needs to take action, False otherwise """
+    quick = kwargs.get("quick", False)
 
     state, _ = light_models.LightGroup.objects.get_or_create(group_id=group)
     # If already on, don't do anything
@@ -128,21 +129,32 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
     else:
         on_until = now + datetime.timedelta(minutes=10)
 
-    if state.on and state.color == color and state.brightness == brightness and take_action is False:
-        return False
+    if take_action is False:
+        if state.on and state.color == color:
+            if color == "white":
+                if state.white_brightness == brightness:
+                    return False
+            elif state.rgbw_brightness == brightness:
+                return False
 
-    if kwargs.get("quick", False):
+    if quick:
         original_repeat_commands = led.repeat_commands
         led.repeat_commands = 1
     led.on(group)
-    led.set_color(color, group)
+
+    if not (quick and state.color == color):
+        # Only send color commands if no quick mode is specified.
+        led.set_color(color, group)
+
     set_brightness = True
     if color == "white":
         if state.white_brightness == brightness:
             set_brightness = False
     elif state.rgbw_brightness == brightness:
         set_brightness = False
+
     if set_brightness:
+        #Only set brightness if it's changing. This prevents data corruption bugs where brightness changes change bulb color.
         led.set_brightness(brightness, group)
 
     light_models.update_lightstate(group, brightness, color, True, automatic=True, on_until=on_until)
