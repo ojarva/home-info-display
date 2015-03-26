@@ -106,12 +106,14 @@ def convert_group_to_automatic(group, on_until):
     state.save()
     timer_utils.update_group_automatic_timer(group, on_until)
 
-def set_automatic_trigger_light(group):
+def set_automatic_trigger_light(group, take_action=True, **kwargs):
+    """ Returns True if needs to take action, False otherwise """
+
     state, _ = light_models.LightGroup.objects.get_or_create(group_id=group)
     # If already on, don't do anything
     if state.on and not state.on_automatically:
         logger.debug("Group %s is already on. Skip automatic triggering", group)
-        return
+        return False
 
     led = LedController(settings.MILIGHT_IP)
     now = timezone.now()
@@ -126,14 +128,37 @@ def set_automatic_trigger_light(group):
     else:
         on_until = now + datetime.timedelta(minutes=10)
 
+    if state.on and state.color == color and state.brightness == brightness and take_action is False:
+        return False
+
+    if kwargs.get("quick", False):
+        original_repeat_commands = led.repeat_commands
+        led.repeat_commands = 1
     led.on(group)
     led.set_color(color, group)
-    led.set_brightness(brightness, group)
+    set_brightness = True
+    if color == "white":
+        if state.white_brightness == brightness:
+            set_brightness = False
+    elif state.rgbw_brightness == brightness:
+        set_brightness = False
+    if set_brightness:
+        led.set_brightness(brightness, group)
+
     light_models.update_lightstate(group, brightness, color, True, automatic=True, on_until=on_until)
     timer_utils.update_group_automatic_timer(group, on_until)
 
+    if kwargs.get("quick", False):
+        led.repeat_commands = original_repeat_commands
 
-def process_automatic_trigger(trigger):
+    return True
+
+
+def process_automatic_trigger(trigger, take_action=True, **kwargs):
+    """ Returns
+        - True if action was/should be taken
+        - False if no action needs to be taken
+    """
     BED = 1
     TABLE = 2
     KITCHEN = 3
@@ -150,8 +175,11 @@ def process_automatic_trigger(trigger):
     if trigger == "table":
         triggers.add(TABLE)
 
+    ret = False
     for group in triggers:
-        set_automatic_trigger_light(group)
+        if set_automatic_trigger_light(group, take_action, **kwargs):
+            ret = True
+    return ret
 
 def get_program_brightness(action, percent_done):
     brightness = 0
