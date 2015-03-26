@@ -81,7 +81,7 @@ RefreshWeather = (options) ->
 
     sea = data.warnings.sea.replace new RegExp("<br/>", "g"), ""
     warnings_html = ""
-    weather_early_html = ""
+    warnings_early_html = ""
     warnings_data =
       "female": data.warnings.pedestrian
       "ship": sea
@@ -144,13 +144,6 @@ RefreshWeather = (options) ->
     current_row = null
     highlight_set = false
     last_header = null
-    new_item = """<div class="col-md-1">
-      <span class="timestamp"><i class="fa fa-question-circle"></i></span><br>
-      <span class="symbol"><i class="fa fa-question-circle"></i></span><br>
-      <span class="temperature"><i class="fa fa-question-circle"></i></span>
-      <span class="wind-direction"></span><span> </span>
-      <span class="wind-speed"><i class="fa fa-question-circle"></i></span><span class="wind-speed-unit">m/s</span>
-    </div>"""
     current_day = null
     days = 0
 
@@ -178,18 +171,20 @@ RefreshWeather = (options) ->
         current_day = date
         days += 1
 
-      current_row.append new_item
-      current_item = current_row.find(".col-md-1").last()
-
-      current_item.find(".timestamp").html "#{timestamp.hour()}:00"
-      current_item.find(".temperature").html "#{@FeelsLike}&deg;C"
-      current_item.find(".symbol").html """<img src="/homecontroller/static/byo-images/#{@WeatherSymbol3}.png">"""
-      current_item.find(".temperature-unit").html "&deg;C"
-      current_item.find(".wind-speed").html Math.round(@WindSpeedMS)
       if @WindCompass8?
         # Do not show wind direction if no data is available - fallback is arrow pointing to north, which is
         # worse than showing nothing.
-        current_item.find(".wind-direction").html "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{@WindCompass8}'></i>"
+        wind_direction = "<i class='fa fa-fw fa-long-arrow-up fa-rotate-#{@WindCompass8}'></i>"
+      else
+        wind_direction = "<i class='fa fa-question-circle'></i>"
+
+      current_row.append """<div class="col-md-1">
+        <span class="timestamp">#{timestamp.format("HH")}:00</span><br>
+        <span class="symbol"><img src="/homecontroller/static/byo-images/#{@WeatherSymbol3}.png"></span><br>
+        <span class="temperature">#{@FeelsLike}&deg;C</span>
+        <span class="wind-direction">#{wind_direction}</span><span> </span>
+        <span class="wind-speed">#{Math.round(@WindSpeedMS)}</span><span class="wind-speed-unit">m/s</span>
+      </div>"""
 
       current_index += 1
 
@@ -200,20 +195,24 @@ RefreshWeather = (options) ->
       console.warn "Received invalid data ", data
       return
 
-    if data.main_forecasts.suninfo?
-      processSunInfo data.main_forecasts.suninfo
+    if data.main_forecasts?
+      mf = data.main_forecasts
+      if mf.suninfo?
+        processSunInfo mf.suninfo
+
+      if mf.observations?
+        setObservations weather, mf.observations
+
+      if mf.forecasts?
+        processForecasts mf.forecasts[0].forecast
 
     if data.main_warnings?
       processWarnings data.main_warnings
 
-    if data.main_forecasts? and data.main_forecasts.observations?
-      setObservations weather, data.main_forecasts.observations
 
     if data.marine_forecasts?
       processMarine data.marine_forecasts
 
-    if data.main_forecasts.forecasts?
-      processForecasts data.main_forecasts.forecasts[0].forecast
 
 
 
