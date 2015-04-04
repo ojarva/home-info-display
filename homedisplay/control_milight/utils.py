@@ -49,7 +49,7 @@ def get_current_settings_for_light(group_id):
                     color_set = True
 
     if brightness_set:
-        logger.info("Brightness for group %s: set by another group", group_id)
+        logger.info("Brightness for group %s: set by another group. Brightness: %s, color: %s", group_id, brightness, color)
         return (brightness, color)
 
     # 2) Light programs (if running)
@@ -58,8 +58,8 @@ def get_current_settings_for_light(group_id):
         if percent_done is not None and program.is_running(now):
             #Program is running.
             brightness = get_program_brightness(program.action, percent_done)
-            logger.info("Brightness for group %s set by program %s, %s%%", group_id, program.action, percent_done)
-            return brightness
+            logger.info("Brightness for group %s set by program %s, %s%%. Color: %s", group_id, program.action, percent_done, color)
+            return (brightness, color)
         if program.is_running_on_day(weekday):
             if program.action.startswith("morning"):
                 today_morning_program = program
@@ -74,12 +74,14 @@ def get_current_settings_for_light(group_id):
         # Morning program is defined.
         if nowd.time() < today_morning_program.start_time:
             # Time is before the beginning of morning program.
+            logger.info("Brightness for group %s set by morning program. Brightness: %s, color: %s", group_id, 0, "red")
             return (0, "red")
 
     if today_evening_program:
         logger.debug("Evening program is defined for this day with end_time: %s", today_evening_program.end_time)
         if nowd.time() > today_evening_program.end_time:
             # Time is after the end of evening program.
+            logger.info("Brightness for group %s set by evening program. Brightness: %s, color: %s", group_id, 0, "red")
             return (0, "red")
 
     # Default
