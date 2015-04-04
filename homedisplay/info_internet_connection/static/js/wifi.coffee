@@ -2,6 +2,7 @@ WifiInfo = ->
   hostname_database = {}
   update_timeout = null
   elem = jq "#wifi-clients"
+  info_elem = jq ".wifi-info"
   initialized = false
 
   initialize = ->
@@ -9,8 +10,8 @@ WifiInfo = ->
       return
     initialized = true
     jq.get "/homecontroller/internet_connection/wifi/info", (data) ->
-      elem.find(".ssid").html data.ssid
-      elem.find(".passphrase").html data.passphrase
+      info_elem.find(".ssid").html data.ssid
+      info_elem.find(".passphrase").html data.passphrase
       jq("#wifi-qr").qrcode
         "text": "WIFI:S:#{data.ssid};T:WPA;P:#{data.passphrase};;"
         "background": "white"
@@ -44,6 +45,7 @@ WifiInfo = ->
           <span class='bandwidth'>#{@bandwidth_in}/#{@bandwidth_out}</span><span class='label'>Mbit/s</span>
         </div>
       </div>"""
+    return
 
   updateMacs = (data) ->
     jq.each data.devices, ->
