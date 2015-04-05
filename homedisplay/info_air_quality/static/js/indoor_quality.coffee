@@ -160,7 +160,7 @@ IndoorAirQuality = (options) ->
     data_output = jq ".indoor-air-#{key}"
     data_output.find("svg").hide()
     data_output.find(".spinner").show()
-    jq.get "/homecontroller/air_quality/get/sensor/#{key}", (data) ->
+    jq.get "/homecontroller/air_quality/get/sensor/#{key}/history", (data) ->
       if data.length > 12
         data_output.find(".latest").html Math.round(data[data.length-1].value * 10) / 10
         data_output.find(".data-error").hide()
