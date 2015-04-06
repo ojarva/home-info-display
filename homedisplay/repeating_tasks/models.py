@@ -64,7 +64,7 @@ class Task(models.Model):
         ("su", "sunnuntai"),
     )
 
-    title = models.TextField(verbose_name="Otsikko") #TODO: convert to CharField
+    title = models.CharField(max_length=100, verbose_name="Otsikko")
     optional = models.NullBooleanField(default=False, verbose_name="Optionaalinen", help_text="Kyllä, jos tarkoituksena on tarkistaa, eikä tehdä joka kerta.")
     snooze = models.DateTimeField(null=True, blank=True)
     show_immediately = models.BooleanField(default=False, blank=True)
