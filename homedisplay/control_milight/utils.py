@@ -17,10 +17,14 @@ logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 redis_instance = redis.StrictRedis()
 
 def get_current_settings_for_light(group_id):
-    """ Returns current brightness for group, based on
-        1) Brightness of manually set lights that are on
-        2) Light programs (if running)
-        3) Time of day (bright between programs during day)
+    """ Returns current brightness for group, based on the following system:
+        1) Brightness and color of lights that are on (and set on manually)
+        2) Note color of lights that were set on automatically
+        3) Light programs (if running)
+            - If light program is running, use it. No need to care about overrides - overrides are active only if light group is manually set on.
+            - Use color from step 2. If not set in step 2, use white.
+        4) Time of day:
+            - Dim red between programs during nights and bright white during days.
     """
     now = timezone.now()
     nowd = datetime.datetime.now()
@@ -37,16 +41,19 @@ def get_current_settings_for_light(group_id):
     brightness_set = False
     brightness = None
     for lightgroup in light_models.LightGroup.objects.all():
-        if lightgroup.on is True and lightgroup.on_automatically is False:
-            # Lights are on, and set manually.
-            group_brightness = lightgroup.current_brightness
-            if group_brightness is not None:
-                logger.debug("Brightness for group %s is %s", lightgroup.group_id, group_brightness)
-                brightness_set = True
-                brightness = max(brightness, group_brightness)
-                if lightgroup.color == "white":
-                    color = "white"
-                    color_set = True
+        if lightgroup.on is True:
+            # Lightgroup is on.
+            if lightgroup.on_automatically is False:
+                # Set on manually
+                group_brightness = lightgroup.current_brightness
+                if group_brightness is not None:
+                    logger.debug("Brightness for group %s is %s", lightgroup.group_id, group_brightness)
+                    brightness_set = True
+                    brightness = max(brightness, group_brightness)
+            if lightgroup.color == "white":
+                color = "white"
+                color_set = True
+
 
     if brightness_set:
         logger.info("Brightness for group %s: set by another group. Brightness: %s, color: %s", group_id, brightness, color)
