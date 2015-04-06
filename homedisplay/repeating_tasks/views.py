@@ -18,6 +18,7 @@ class Snooze(View):
         days = int(kwargs["days"])
         if days < 0:
             task.show_immediately = True
+            task.snooze = None
             task.save()
         else:
             task.snooze_by(days)

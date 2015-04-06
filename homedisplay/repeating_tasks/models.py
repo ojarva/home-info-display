@@ -29,18 +29,19 @@ def get_repeating_data(date, serialized=False):
     else:
         day_starts = day_ends = None
     for task in tasks:
-        exp_at = task.expires_at()
+        expires_at = task.expires_at()
         task_serialized = json.loads(serializers.serialize("json", [task]))[0]
         task_serialized["fields"]["history"] = json.loads(serializers.serialize("json", TaskHistory.objects.filter(task=task)))
 
         snooze_to_show = None
-        expires_at = task.expires_at()
         if expires_at > timezone.now():
             snooze_to_show = (timezone.now() - expires_at).days - 1
         task_serialized["fields"]["snooze_to_show"] = snooze_to_show
 
+        task_serialized["fields"]["is_active"] = expires_at < timezone.now()
+
         if day_starts and day_ends:
-            if day_starts < exp_at and day_ends > exp_at:
+            if day_starts < expires_at and day_ends > expires_at:
                 todo_tasks.append(task_serialized)
         elif date == "all":
             todo_tasks.append(task_serialized)
@@ -107,14 +108,14 @@ class Task(models.Model):
             > 0 if task is overdue
 
         """
-        if self.show_immediately:
-            return datetime.timedelta(0)
         if self.snooze:
             if self.snooze < timezone.now():
                 self.snooze = None
                 self.save()
             else:
                 return timezone.now() - self.snooze
+        if self.show_immediately:
+            return datetime.timedelta(0)
         tsc = self.time_since_completion()
         if tsc is None:
             return datetime.timedelta(0)

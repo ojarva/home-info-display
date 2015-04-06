@@ -3,10 +3,11 @@ RepeatingTasks = (elem, use_date) ->
   parent_elem = jq elem
   update_interval = null
 
+  tasks = {}
 
   clearTasks = ->
     jq(parent_elem).children().remove()
-
+    tasks = {}
 
   processData = (data) ->
     clearTasks()
@@ -21,12 +22,12 @@ RepeatingTasks = (elem, use_date) ->
       else
         icon = "fa-repeat"
 
-      added_elem = parent_elem.append """<li class='repeating-task-mark-done' data-id='#{@pk}' data-snooze-to-show='#{@fields.snooze_to_show}'>
+      added_elem = parent_elem.append """<li class='repeating-task-mark-done' data-id='#{@pk}'>
         <i class='fa-li fa #{icon}'></i>
         <span class='task-title'>#{@fields.title}</span>#{overdue_by}
       </li>"""
-      added_elem.find("li").data
-        "history": JSON.stringify(@fields.history)
+
+      tasks[@pk] = @
 
     parent_elem.find(".repeating-task-mark-done").on "click", ->
       content_switch.userActivity()
@@ -35,21 +36,21 @@ RepeatingTasks = (elem, use_date) ->
       jq("#confirm-repeating-task").data "id", id
       jq("#confirm-repeating-task .task-title").html repeating_task.find(".task-title").html()
 
-      snooze_to_show = repeating_task.data "snooze-to-show"
+      snooze_to_show = tasks[id]["fields"]["snooze_to_show"]
       snooze_immediately = jq "#confirm-repeating-task .snooze-immediately"
       if snooze_to_show < 0
         snooze_immediately.show()
+        jq("#confirm-repeating-task .standard-snooze").hide()
         snooze_immediately.data "days", snooze_to_show
       else
         snooze_immediately.hide()
-
+        jq("#confirm-repeating-task .standard-snooze").show()
 
       task_history = jq "#confirm-repeating-task .task-history ul"
       task_history.children().remove()
-      tasks = JSON.parse repeating_task.data "history"
-      jq.each tasks, ->
+      jq.each tasks[id]["fields"]["history"], ->
         parsed = moment @fields.completed_at
-        task_history.append "<li>" + parsed.format("YYYY-MM-DD") + " (" + parsed.fromNowSynced() + ")</li>"
+        task_history.append "<li>#{parsed.format("YYYY-MM-DD")} (#{parsed.fromNowSynced()})</li>"
 
       content_switch.switchContent "#confirm-repeating-task"
 
@@ -98,7 +99,7 @@ jq =>
 
   jq("#confirm-repeating-task .snooze").on "click", ->
     id = jq("#confirm-repeating-task").data "id"
-    jq.patch "/homecontroller/repeating_tasks/snooze/#{id}/" + jq(@).data("days")
+    jq.patch "/homecontroller/repeating_tasks/snooze/#{id}/#{jq(@).data("days")}"
     content_switch.switchContent "#main-content"
 
   jq("#confirm-repeating-task .cancel").on "click", ->
