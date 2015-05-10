@@ -186,15 +186,28 @@ def process_automatic_trigger(trigger, take_action=True, **kwargs):
     DOOR = 4
 
     triggers = set()
+    if trigger == "toilet-door":
+        triggers.add(DOOR)
     if trigger == "front-door":
         triggers.add(DOOR)
-        #TODO: bathroom
-    if trigger == "kitchen":
+    if trigger == "kitchen-room":
         triggers.update([KITCHEN, TABLE])
-    if trigger == "hall":
-        triggers.update([DOOR, KITCHEN])
-    if trigger == "table":
+    if trigger == "hall-kitchen":
+        triggers.update([KITCHEN, DOOR])
+    if trigger == "table-above-kitchen":
         triggers.add(TABLE)
+    if trigger == "kitchen-ceiling":
+        triggers.add(KITCHEN)
+    if trigger == "hall-ceiling":
+        triggers.add(DOOR)
+    if trigger == "table-center":
+        triggers.add(TABLE)
+    if trigger == "bed":
+        # TODO: night schedule
+        triggers.add(BED)
+    if trigger == "balcony-door-pir":
+        # TODO: night schedule
+        triggers.add(BED)
 
     ret = False
     for group in triggers:
