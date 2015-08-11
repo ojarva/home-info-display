@@ -16,6 +16,36 @@ logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
 redis_instance = redis.StrictRedis()
 
+def is_day():
+    """ Returns True is current time is between morning and evening programs """
+
+    now = datetime.datetime.now()
+    now_time = now.time()
+    weekday = now.weekday()
+
+    after_morning = before_evening = False
+    for lightautomation in light_models.LightAutomation.objects.all():
+        if not lightautomation.is_running_on_day(weekday):
+            logger.debug("LightAutomation is not running today: %s", lightautomation)
+            continue
+        if lightautomation.action.startswith("morning"):
+            if not lightautomation.running:
+                # Morning is not running
+                logger.debug("Today's morning automation is not running: %s", lightautomation)
+                return False
+            if now_time > lightautomation.start_time:
+                if before_evening:
+                    return True
+                after_morning = True
+        elif lightautomation.action.startswith("evening"):
+            if now_time < lightautomation.start_time:
+                if after_morning:
+                    return True
+                before_evening = True
+    return False
+
+
+
 def get_current_settings_for_light(group_id):
     """ Returns current brightness for group, based on the following system:
         1) Brightness and color of lights that are on (and set on manually)
@@ -203,11 +233,15 @@ def process_automatic_trigger(trigger, take_action=True, **kwargs):
     if trigger == "table-center":
         triggers.add(TABLE)
     if trigger == "bed":
-        # TODO: night schedule
-        triggers.add(BED)
+        if is_day():
+            triggers.add(BED)
+        else:
+            logger.info("Did not fire bed PIR during the night")
     if trigger == "balcony-door-pir":
-        # TODO: night schedule
-        triggers.add(BED)
+        if is_day():
+            triggers.add(BED)
+        else:
+            logger.info("Did not fire balcony-door PIR during the night")
 
     ret = False
     for group in triggers:
