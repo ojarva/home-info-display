@@ -150,10 +150,6 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
     quick = kwargs.get("quick", False)
 
     state, _ = light_models.LightGroup.objects.get_or_create(group_id=group)
-    # If already on, don't do anything
-    if state.on and not state.on_automatically:
-        logger.debug("Group %s is already on. Skip automatic triggering", group)
-        return False
 
     led = LedController(settings.MILIGHT_IP)
     now = timezone.now()
@@ -179,10 +175,20 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
     if quick:
         original_repeat_commands = led.repeat_commands
         led.repeat_commands = 1
-    led.on(group)
 
-    if not (quick and state.color == color):
-        # Only send color commands if no quick mode is specified.
+    # If already on, don't do anything
+    if state.on and not state.on_automatically:
+        logger.debug("Group %s is already on. Skip automatic triggering", group)
+        return False
+
+    # Update timer so that light does not go off too early
+    logger.debug("Group %s is on automatically. Update timer", group)
+    timer_utils.update_group_automatic_timer(group, on_until)
+
+    if not state.on:
+        led.on(group)
+
+    if state.color != color:
         led.set_color(color, group)
 
     set_brightness = True
@@ -199,7 +205,7 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
     light_models.update_lightstate(group, brightness, color, True, automatic=True, on_until=on_until)
     timer_utils.update_group_automatic_timer(group, on_until)
 
-    if kwargs.get("quick", False):
+    if quick:
         led.repeat_commands = original_repeat_commands
 
     return True
@@ -231,6 +237,8 @@ def process_automatic_trigger(trigger, take_action=True, **kwargs):
     if trigger == "hall-ceiling":
         triggers.add(DOOR)
     if trigger == "table-center":
+        triggers.add(TABLE)
+    if trigger == "table-acceleration-sensor":
         triggers.add(TABLE)
     if trigger == "bed":
         if is_day():
