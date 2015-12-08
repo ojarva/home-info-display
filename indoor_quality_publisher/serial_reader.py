@@ -1,0 +1,55 @@
+import redis
+import serial
+import time
+import datetime
+from setproctitle import setproctitle
+from local_settings import *
+from influxdb import InfluxDBClient
+import influxdb.exceptions
+
+class IndoorAirQualitySerial:
+    def __init__(self):
+        self.redis_instance = redis.StrictRedis()
+        self.serial = serial.Serial(SERIAL_DEVICE, 9600)
+        self.influx_client = InfluxDBClient("localhost", 8086, "root", "root", "indoor_air_quality")
+
+        try:
+            self.influx_client.create_database("indoor_air_quality")
+        except influxdb.exceptions.InfluxDBClientError:
+            pass
+
+    def run(self):
+        influx_fields = {}
+        last_updated_at = time.time()
+        current_time = datetime.datetime.utcnow()
+        while True:
+            line = self.serial.readline().strip()
+            print "Received '%s'" % line
+            line = line.strip().split(":")
+            if len(line) != 2:
+                continue
+            try:
+                k = INPUT_MAP[line[0]]
+            except KeyError:
+                print "Invalid key: %s" % line[0]
+                continue
+            self.redis_instance.rpush("air-quality-%s" % k, line[1])
+            influx_fields[k] = float(line[1])
+            if time.time() - last_updated_at > 10000:
+                influx_data = [
+                    {
+                        "measurement": "gas_sensors",
+                        "time": current_time.isoformat() + "Z",
+                        "fields": influx_fields
+                    }
+                ]
+                self.influx_client.write_data(influx_data)
+                influx_fields = {}
+
+def main():
+    setproctitle("indoor_air_quality - serial: run")
+    iqps = IndoorAirQualitySerial()
+    iqps.run()
+
+if __name__ == '__main__':
+    main()
