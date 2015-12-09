@@ -1,0 +1,146 @@
+#notifications {
+
+  .notification-item {
+    font-size: 150%;
+    margin-top: 5px;
+    width: 49%;
+    display: inline-block;
+
+    .notification-container {
+      position: relative;
+      height: 80px;
+      overflow-y: hidden;
+
+      .content {
+        margin-top: 5px;
+        padding-top: 5px;
+        padding-left: 22px;
+        padding-right: 5px;
+        padding-bottom: 10px;
+        display: inline-block;
+      }
+    }
+  }
+  .notification-striping:nth-child(even) {
+    background-color: #111;
+  }
+
+  .notification-striping:nth-child(odd) {
+    background-color: #222;
+  }
+}
+
+
+#notifications2 {
+  font-size: 150%;
+  margin-top: 10px;
+
+  .progress-bar-danger {
+    background-color: red;
+  }
+
+  .timer-overtime {
+    color: red !important;
+  }
+
+  .timer-stop {
+    background-color: #181818;
+  }
+
+  .timer-refresh {
+    background-color: #282828;
+  }
+
+  .progress {
+    background-color: #737373;
+  }
+
+  .progress-bar-black {
+    background-color: black;
+  }
+
+  .timer-item:nth-child(even) {
+    background-color: #222;
+  }
+
+  .timer-item:nth-child(odd) {
+    background-color: #111;
+  }
+
+  .timer-striping:nth-child(even) {
+    background-color: #111;
+  }
+
+  .timer-striping:nth-child(odd) {
+    background-color: #222;
+  }
+
+  .timer-item {
+    margin-left: -15px;
+    margin-right: -15px;
+    margin-top: 15px;
+  }
+
+  .timer-item-odd {
+    background-color: #333;
+  }
+
+  .timer-item-even {
+    background-color: #222;
+  }
+
+  .stopclock {
+    font-size: 300%;
+  }
+
+  .add-timers div {
+    height: 100px;
+    padding-top: 5px;
+
+    p {
+      margin-top: 15px;
+    }
+  }
+
+  .timer-control {
+    font-size: 300%;
+    height: 100%;
+    text-align: center;
+  }
+
+  .timer-info {
+    font-size: 150%;
+  }
+}
+
+
+#add-custom-timer {
+  #custom-timer-duration {
+    font-size: 600%;
+    padding-left: 30px;
+  }
+
+  .timer-description-button {
+    display: inline-block;
+    margin: 15px;
+    padding: 15px;
+  }
+
+  .timer-description-button:nth-child(even) {
+    background-color: #111;
+  }
+
+  .timer-description-button:nth-child(odd) {
+    background-color: #222;
+  }
+
+  .add-timer-button {
+    float: left;
+    font-size: 200%;
+    height: 100px;
+    padding-top: 30px;
+    position: relative;
+    text-align: center;
+    width: 20% !important;
+  }
+}
