@@ -29,14 +29,14 @@ class Microwave(SensorConsumerBase):
             if not self.on_since:
                 self.on_since = datetime.datetime.now()
             self.update_notification("microwave", "Mikro päällä (%s)" % self.get_elapsed_time(self.on_since), False)
+            self.last_used_at = datetime.datetime.now()
+            self.door_opened_after_use = False
             return
 
         # Not running, but door is not open either
-        self.door_opened_after_use = False
         self.on_since = None
-        if not self.last_used_at:
-            self.last_used_at = datetime.datetime.now()
-        self.update_notification("microwave", "Mikrossa kamaa (%s)" % self.get_elapsed_time(self.last_used_at), True)
+        if self.last_used_at and not self.door_opened_after_use:
+            self.update_notification("microwave", "Mikrossa kamaa (%s)" % self.get_elapsed_time(self.last_used_at), True)
 
 def main():
     item = Microwave()

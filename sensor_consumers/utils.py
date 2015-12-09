@@ -22,18 +22,18 @@ class SensorConsumerBase:
 
     def update_notification(self, item_type, description, can_dismiss):
         resp = requests.post(BASE_URL + "notifications/create", data={"item_type": item_type, "description": description, "can_dismiss": can_dismiss})
-        print "Creating %s (%s, %s)" % (item_type, description, can_dismiss)
+        print "Creating %s (%s, %s): %s" % (item_type, description, can_dismiss, resp.status_code)
 
     def delete_notification(self, item_type):
-        print "Deleting %s" % item_type
-        requests.delete(BASE_URL + "notifications/delete/" + item_type)
+        resp = requests.delete(BASE_URL + "notifications/delete/" + item_type)
+        print "Deleting %s: %s" % (item_type, resp.status_code)
 
     def get_elapsed_time(self, timestamp):
         time_diff = datetime.datetime.now() - timestamp
-        return format_elapsed_time(time_diff)
+        return self.format_elapsed_time(time_diff)
 
     def format_elapsed_time(self, delta):
-        total_seconds = time_diff.total_seconds()
+        total_seconds = delta.total_seconds()
         if total_seconds < 60:
             return "<1min"
         if total_seconds > 86400:

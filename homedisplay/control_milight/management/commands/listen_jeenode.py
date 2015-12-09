@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def decode(self, fmt, data_tuple, data_string):
         coded_data = map(int, data_string.split())
-        byte_string = array.array("B", coded_data.tostring())
+        byte_string = array.array("B", coded_data).tostring()
         return data_tuple._make(struct.unpack(fmt, byte_string))
 
     def handle(self, *args, **options):
@@ -88,7 +88,7 @@ class Command(BaseCommand):
                     queue.append((should_execute_something, item_name))
                 elif id in settings.NODE_MAPPING:
                     node_data = settings.NODE_MAPPING[id]
-                    decoded_data = decode(node_data["fmt"], node_data["data"], items[3])
+                    decoded_data = self.decode(node_data["fmt"], node_data["data"], items[2])
                     data = {
                         "timestamp": time.time(),
                         "data": decoded_data._asdict(),
