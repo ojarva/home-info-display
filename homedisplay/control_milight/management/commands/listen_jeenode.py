@@ -16,34 +16,6 @@ class Command(BaseCommand):
     args = ''
     help = 'Listen for jeenode messages'
 
-    NODE_MAPPING = {
-        "4": # Dishwasher
-            {
-                "item": "dishwasher",
-                "data": namedtuple("Dishwasher", "power_consumption"),
-                "fmt": "f",
-                "redis_pubsub": "dishwasher-pubsub",
-            },
-        "5": # Dust node
-            {
-                "item": "dust",
-                "data": namedtuple("AirNode", "room_humidity room_temperature barometer_temperature barometer_reading dust_density"),
-                "fmt": "fffff",
-                "redis_pubsub": "dust-node-pubsub",
-            },
-        "6": # microwave
-            {
-                "item": "microwave",
-                "data": namedtuple("Microwave", "power_consumption door"),
-                "fmt": "fb",
-                "redis_pubsub": "microwave-pubsub",
-            }
-    }
-
-    ITEM_MAP = {
-        "7": "table-acceleration-sensor"
-    }
-
     def decode(self, fmt, data_tuple, data_string):
         coded_data = map(int, data_string.split())
         byte_string = array.array("B", coded_data.tostring())
@@ -100,8 +72,8 @@ class Command(BaseCommand):
             if line.startswith("OK "):
                 items = line.split(" ", 2)
                 id = items[1]
-                if id in ITEM_MAP:
-                    item_name = ITEM_MAP[id]
+                if id in settings.ITEM_MAP:
+                    item_name = settings.ITEM_MAP[id]
                     if item_name in sent_event_map:
                         if sent_event_map[item_name] > time.time() - 5:
                             # Already triggered recently - no action
@@ -114,8 +86,8 @@ class Command(BaseCommand):
                     else:
                         prio = 2
                     queue.append((should_execute_something, item_name))
-                elif id in NODE_MAPPING:
-                    node_data = NODE_MAPPING[id]
+                elif id in settings.NODE_MAPPING:
+                    node_data = settings.NODE_MAPPING[id]
                     decoded_data = decode(node_data["fmt"], node_data["data"], items[3])
                     data = {
                         "timestamp": time.time(),
