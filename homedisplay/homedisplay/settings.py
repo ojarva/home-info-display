@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'info_torrents',
     'info_transportation',
     'info_weather',
+    'info_notifications',
     'repeating_tasks',
     'server_power',
     'ws4redis',

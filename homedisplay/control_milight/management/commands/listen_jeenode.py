@@ -3,6 +3,10 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 import serial
 import time
+import struct
+import array
+import json
+from collections import namedtuple
 import logging
 
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
@@ -10,6 +14,46 @@ logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 class Command(BaseCommand):
     args = ''
     help = 'Listen for jeenode messages'
+
+    def __init__(self):
+        self.redis_instance = redis.StrictRedis()
+
+
+    NODE_MAPPING = {
+        "4": # Dishwasher
+            {
+                "item": "dishwasher",
+                "data": namedtuple("Dishwasher", "power_consumption"),
+                "fmt": "f",
+                "redis_queue": "dishwasher-power-usage-queue",
+                "redis_pubsub": "dishwasher-power-usage-pubsub"
+            },
+        "5": # Dust node
+            {
+                "item": "dust",
+                "data": namedtuple("AirNode", "room_humidity room_temperature barometer_temperature barometer_reading dust_density"),
+                "fmt": "fffff",
+                "redis_queue": "dust-node-queue",
+                "redis_pubsub": "dust-node-pubsub"
+            },
+        "6": # microwave
+            {
+                "item": "microwave",
+                "data": namedtuple("Microwave", "power_consumption door"),
+                "fmt": "fb",
+                "redis_queue": "microwave-queue",
+                "redis_pubsub": "microwave-pubsub"
+            }
+    }
+
+    ITEM_MAP = {
+        "7": "table-acceleration-sensor"
+    }
+
+    def decode(self, fmt, data_tuple, data_string):
+        coded_data = map(int, data_string.split())
+        byte_string = array.array("B", coded_data.tostring())
+        return data_tuple._make(struct.unpack(fmt, byte_string))
 
     def handle(self, *args, **options):
         s = serial.Serial(settings.JEELINK, 57600)
@@ -45,9 +89,6 @@ class Command(BaseCommand):
 
         sent_event_map = {}
         queue_executed_at = time.time()
-        ITEM_MAP = {
-            "7": "table-acceleration-sensor"
-        }
 
         while True:
             if s.inWaiting() == 0:
@@ -57,9 +98,11 @@ class Command(BaseCommand):
 
                 execute_queue()
 
-            line = s.readline()
+            line = s.readline().strip()
+            print "Received '%s'" % line
+            logger.info("Got '%s' from jeelink" % line)
             if line.startswith("OK "):
-                items = line.split(" ")
+                items = line.split(" ", 2)
                 id = items[1]
                 if id in ITEM_MAP:
                     item_name = ITEM_MAP[id]
@@ -75,5 +118,17 @@ class Command(BaseCommand):
                     else:
                         prio = 2
                     queue.append((should_execute_something, item_name))
+                elif id in NODE_MAPPING:
+                    node_data = NODE_MAPPING[id]
+                    decoded_data = decode(node_data["fmt"], node_data["data"], items[3])
+                    data = {
+                        "timestamp": time.time(),
+                        "data": decoded_data._asdict(),
+                    }
+                    coded_data = json.dumps(data)
+                    if node_data.get("redis_queue"):
+                        self.redis_instance.rpush(node_data["redis_queue"], coded_data)
+                    if node_data.get("redis_pubsub"):
+                        self.redis_instance.publish(node_data["redis_pubsub"], coded_data)
                 else:
                     logger.warn("Unknown ID: %s", id)

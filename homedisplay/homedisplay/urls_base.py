@@ -21,4 +21,5 @@ urlpatterns = patterns('',
     url(r'^transportation/', include("info_transportation.urls")),
     url(r'^music/', include("control_music.urls")),
     url(r'^ext_pages/', include("info_ext_pages.urls")),
+    url(r'^notifications/', include("info_notifications.urls")),
 )
