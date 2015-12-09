@@ -1,13 +1,14 @@
+from collections import namedtuple
 from control_milight.utils import process_automatic_trigger
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-import serial
-import time
-import struct
 import array
 import json
-from collections import namedtuple
 import logging
+import redis
+import serial
+import struct
+import time
 
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
@@ -15,34 +16,27 @@ class Command(BaseCommand):
     args = ''
     help = 'Listen for jeenode messages'
 
-    def __init__(self):
-        self.redis_instance = redis.StrictRedis()
-
-
     NODE_MAPPING = {
         "4": # Dishwasher
             {
                 "item": "dishwasher",
                 "data": namedtuple("Dishwasher", "power_consumption"),
                 "fmt": "f",
-                "redis_queue": "dishwasher-power-usage-queue",
-                "redis_pubsub": "dishwasher-power-usage-pubsub"
+                "redis_pubsub": "dishwasher-pubsub",
             },
         "5": # Dust node
             {
                 "item": "dust",
                 "data": namedtuple("AirNode", "room_humidity room_temperature barometer_temperature barometer_reading dust_density"),
                 "fmt": "fffff",
-                "redis_queue": "dust-node-queue",
-                "redis_pubsub": "dust-node-pubsub"
+                "redis_pubsub": "dust-node-pubsub",
             },
         "6": # microwave
             {
                 "item": "microwave",
                 "data": namedtuple("Microwave", "power_consumption door"),
                 "fmt": "fb",
-                "redis_queue": "microwave-queue",
-                "redis_pubsub": "microwave-pubsub"
+                "redis_pubsub": "microwave-pubsub",
             }
     }
 
@@ -56,6 +50,8 @@ class Command(BaseCommand):
         return data_tuple._make(struct.unpack(fmt, byte_string))
 
     def handle(self, *args, **options):
+        redis_instance = redis.StrictRedis()
+
         s = serial.Serial(settings.JEELINK, 57600)
         queue = []
         slow_queue = []
@@ -127,8 +123,8 @@ class Command(BaseCommand):
                     }
                     coded_data = json.dumps(data)
                     if node_data.get("redis_queue"):
-                        self.redis_instance.rpush(node_data["redis_queue"], coded_data)
+                        redis_instance.rpush(node_data["redis_queue"], coded_data)
                     if node_data.get("redis_pubsub"):
-                        self.redis_instance.publish(node_data["redis_pubsub"], coded_data)
+                        redis_instance.publish(node_data["redis_pubsub"], coded_data)
                 else:
                     logger.warn("Unknown ID: %s", id)
