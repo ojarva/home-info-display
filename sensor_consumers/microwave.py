@@ -17,6 +17,8 @@ class Microwave(SensorConsumerBase):
         self.subscribe("microwave-pubsub", self.pubsub_callback)
 
     def pubsub_callback(self, data):
+        if "action" in data:
+            return
         door_open = int(data["data"]["door"]) == 1
         if door_open:
             # Must be off, as the door is open

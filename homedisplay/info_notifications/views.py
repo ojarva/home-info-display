@@ -6,6 +6,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 import json
+import redis
+
+redis_instance = redis.StrictRedis()
 
 class NotificationsInfo(View):
     """ API for display """
@@ -14,7 +17,10 @@ class NotificationsInfo(View):
 
     @method_decorator(csrf_exempt)
     def delete(self, request, *args, **kwargs):
-        Notification.objects.get(id=kwargs.get("notification_id")).delete()
+        obj = Notification.objects.get(id=kwargs.get("notification_id"))
+        item_type = obj.item_type
+        obj.delete()
+        redis_instance.publish("%s-pubsub" % item_type, json.dumps({"action": "user_dismissed"}))
         return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
 
 class NotificationUpdate(View):
