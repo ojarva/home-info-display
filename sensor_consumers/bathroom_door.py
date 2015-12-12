@@ -9,10 +9,6 @@ import sys
 class Bathroom(SensorConsumerBase):
     def __init__(self):
         SensorConsumerBase.__init__(self, "bathroom")
-        self.on_since = None
-        self.running_time = None
-        self.off_since = None
-        self.show_was_running = False
 
     def run(self):
         self.subscribe("bathroom-pubsub", self.pubsub_callback)
@@ -23,7 +19,6 @@ class Bathroom(SensorConsumerBase):
 
             return
 
-        "distance_reading distance_triggered bathroom_temperature bathroom_humidity corridor_temperature corridor_humidity"
         influx_data = {
             "measurement": "bathroom",
             "timestamp": data["utctimestamp"].isoformat() + "Z",

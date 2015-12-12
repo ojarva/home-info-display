@@ -26,8 +26,9 @@ class SensorConsumerBase:
             print "Got '%s'" % message
             data = json.loads(message["data"])
             if "timestamp" in data:
-                data["timestamp"] = datetime.datetime.fromtimestamp(data["timestamp"])
-                data["utctimestamp"] = datetime.datetime.utcfromtimestamp(data["timestamp"])
+                timestamp = data["timestamp"]
+                data["timestamp"] = datetime.datetime.fromtimestamp(timestamp)
+                data["utctimestamp"] = datetime.datetime.utcfromtimestamp(timestamp)
             callback(data)
 
         pubsub.unsubscribe(channel)

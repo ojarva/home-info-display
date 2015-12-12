@@ -96,7 +96,9 @@ class Command(BaseCommand):
                     coded_data = json.dumps(data)
                     if node_data.get("redis_queue"):
                         redis_instance.rpush(node_data["redis_queue"], coded_data)
+                        logger.info("Pushed to %s: %s" % (node_data["redis_queue"], coded_data))
                     if node_data.get("redis_pubsub"):
                         redis_instance.publish(node_data["redis_pubsub"], coded_data)
+                        logger.info("Published to %s: %s" % (node_data["redis_pubsub"], coded_data))
                 else:
                     logger.warn("Unknown ID: %s", id)
