@@ -21,8 +21,8 @@ class IndoorAirQualitySerial:
     def run(self):
         influx_fields = {}
         last_updated_at = time.time()
-        current_time = datetime.datetime.utcnow()
         while True:
+            current_time = datetime.datetime.utcnow()
             line = self.serial.readline().strip()
             print "Received '%s'" % line
             line = line.strip().split(":")
@@ -34,8 +34,8 @@ class IndoorAirQualitySerial:
                 print "Invalid key: %s" % line[0]
                 continue
             self.redis_instance.rpush("air-quality-%s" % k, line[1])
-            influx_fields[k] = float(line[1])
-            if time.time() - last_updated_at > 10000:
+            influx_fields[k] = round(float(line[1]), 1)
+            if time.time() - last_updated_at > 10:
                 influx_data = [
                     {
                         "measurement": "gas_sensors",
@@ -43,8 +43,9 @@ class IndoorAirQualitySerial:
                         "fields": influx_fields
                     }
                 ]
-                self.influx_client.write_data(influx_data)
+                self.influx_client.write_points(influx_data)
                 influx_fields = {}
+                last_updated_at = time.time()
 
 def main():
     setproctitle("indoor_air_quality - serial: run")
