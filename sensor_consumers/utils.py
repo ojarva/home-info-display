@@ -1,12 +1,23 @@
+from influxdb import InfluxDBClient
 from local_settings import *
 import datetime
+import influxdb.exceptions
 import json
 import redis
 import requests
 
 class SensorConsumerBase:
-    def __init__(self):
+    def __init__(self, influx_database = None):
         self.redis_instance = redis.StrictRedis()
+        if influx_database:
+            self.influx_client = InfluxDBClient("localhost", 8086, "root", "root", influx_database)
+            try:
+                self.influx_client.create_database(influx_database)
+            except influxdb.exceptions.InfluxDBClientError:
+                pass
+            self.influx_database = influx_database
+        else:
+            influx_database = None
 
     def subscribe(self, channel, callback):
         pubsub = self.redis_instance.pubsub(ignore_subscribe_messages=True)
@@ -16,9 +27,16 @@ class SensorConsumerBase:
             data = json.loads(message["data"])
             if "timestamp" in data:
                 data["timestamp"] = datetime.datetime.fromtimestamp(data["timestamp"])
+                data["utctimestamp"] = datetime.datetime.utcfromtimestamp(data["timestamp"])
             callback(data)
 
         pubsub.unsubscribe(channel)
+
+    def insert_into_influx(self, data):
+        if not self.influx_database:
+            raise ValueError("Influx is not initialized")
+        self.influx_client.write_points(data)
+
 
     def update_notification(self, item_type, description, can_dismiss):
         resp = requests.post(BASE_URL + "notifications/create", data={"item_type": item_type, "description": description, "can_dismiss": can_dismiss})

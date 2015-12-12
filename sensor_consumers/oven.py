@@ -5,7 +5,6 @@ from utils import SensorConsumerBase
 import redis
 import datetime
 import sys
-import math
 
 class Oven(SensorConsumerBase):
     def __init__(self):
@@ -19,7 +18,7 @@ class Oven(SensorConsumerBase):
             return
         temperature = data["data"]["oven_temperature"]
         if temperature > 50:
-            self.update_notification("oven", "Uuni: %s&deg;C" % math.round(temperature), False)
+            self.update_notification("oven", "Uuni: %s&deg;C" % int(round(temperature)), False)
         else:
             self.delete_notification("oven")
 
