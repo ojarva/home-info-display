@@ -8,7 +8,7 @@ import sys
 
 class Dishwasher(SensorConsumerBase):
     def __init__(self):
-        SensorConsumerBase.__init__(self)
+        SensorConsumerBase.__init__(self, "appliances")
         self.on_since = None
         self.running_time = None
         self.off_since = None
@@ -26,6 +26,13 @@ class Dishwasher(SensorConsumerBase):
                 self.delete_notification("dishwasher")
             return
 
+        self.insert_into_influx([{
+            "measurement": "dishwasher",
+            "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+            "fields": {
+                "power_consumption": round(data["data"]["power_consumption"], 3),
+            }
+        }])
         if data["data"]["power_consumption"] < 0.05:
             if not self.off_since:
                 self.off_since = datetime.datetime.now()

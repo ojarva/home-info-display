@@ -8,7 +8,7 @@ import sys
 
 class Oven(SensorConsumerBase):
     def __init__(self):
-        SensorConsumerBase.__init__(self)
+        SensorConsumerBase.__init__(self, "appliances")
 
     def run(self):
         self.subscribe("oven-pubsub", self.pubsub_callback)
@@ -17,6 +17,13 @@ class Oven(SensorConsumerBase):
         if "action" in data:
             return
         temperature = data["data"]["oven_temperature"]
+        self.insert_into_influx([{
+            "measurement": "oven",
+            "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+            "fields": {
+                "temperature": round(temperature, 1),
+            }
+        }])
         if temperature > 50:
             self.update_notification("oven", "Uuni: %s&deg;C" % int(round(temperature)), False)
         else:
