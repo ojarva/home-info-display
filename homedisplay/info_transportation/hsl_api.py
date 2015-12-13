@@ -46,8 +46,10 @@ class HSLApi(object):
 
     def get_lines(self, stop_number):
         r = requests.get("%s?user=%s&pass=%s&request=stop&code=%s&p=00000010000" % (self.base_url, self.username, self.password, stop_number))
-        data = r.json()
         lines = []
+        if len(r.content) < 5:
+            return lines
+        data = r.json()
         if "lines" not in data[0] or data[0]["lines"] is None:
             return lines
         for line in data[0]["lines"]:
@@ -55,9 +57,12 @@ class HSLApi(object):
         return lines
 
     def get_timetable(self, stop_number):
-        r = requests.get("%s?user=%s&pass=%s&request=stop&code=%s&p=00000000001&dep_limit=20" % (self.base_url, self.username, self.password, stop_number))
-        data = r.json()
+        url = "%s?user=%s&pass=%s&request=stop&code=%s&p=00000000001&dep_limit=20" % (self.base_url, self.username, self.password, stop_number)
+        r = requests.get(url)
         departures = []
+        if len(r.content) < 5:
+            return departures
+        data = r.json()
         if "departures" not in data[0] or data[0]["departures"] is None:
             return departures
         for departure in data[0]["departures"]:
