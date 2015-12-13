@@ -39,9 +39,15 @@ class SensorConsumerBase:
         self.influx_client.write_points(data)
 
 
-    def update_notification(self, item_type, description, can_dismiss):
-        resp = requests.post(BASE_URL + "notifications/create", data={"item_type": item_type, "description": description, "can_dismiss": can_dismiss})
-        print "Creating %s (%s, %s): %s" % (item_type, description, can_dismiss, resp.status_code)
+    def update_notification(self, item_type, description, can_dismiss, **kwargs):
+        elapsed_since = kwargs.get("elapsed_since")
+        from_now_timestamp = kwargs.get("from_now_timestamp")
+        if elapsed_since:
+            elapsed_since = elapsed_since.isoformat()
+        if from_now_timestamp:
+            from_now_timestamp = from_now_timestamp.isoformat()
+        resp = requests.post(BASE_URL + "notifications/create", data={"item_type": item_type, "description": description, "can_dismiss": can_dismiss, "elapsed_since": elapsed_since, "from_now_timestamp": from_now_timestamp})
+        print "Creating %s (%s, %s): %s - %s" % (item_type, description, can_dismiss, resp.status_code, resp.content)
 
     def delete_notification(self, item_type):
         resp = requests.delete(BASE_URL + "notifications/delete/" + item_type)

@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
+import dateutil.parser
 import json
 import redis
 
@@ -34,6 +35,14 @@ class NotificationUpdate(View):
             item.item_type = request.POST.get("item_type")
         item.description = request.POST.get("description")
         item.can_dismiss = request.POST.get("can_dismiss") in ["1", "True", "true"]
+        if "from_now_timestamp" in request.POST:
+            item.from_now_timestamp = dateutil.parser.parse(request.POST.get("from_now_timestamp"))
+        else:
+            item.elapsed_since = None
+        if "elapsed_since" in request.POST:
+            item.elapsed_since = dateutil.parser.parse(request.POST.get("elapsed_since"))
+        else:
+            item.elapsed_since = None
 
         item.save()
         return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")

@@ -15,6 +15,9 @@ class Notification(models.Model):
     description = models.TextField()
     can_dismiss = models.NullBooleanField(null=True, blank=True)
 
+    elapsed_since = models.DateTimeField(null=True)
+    from_now_timestamp = models.DateTimeField(null=True)
+
     def __unicode__(self):
         return u'%s @ %s: %s (%s)' % (self.item_type, self.timestamp, self.description, self.can_dismiss)
 
