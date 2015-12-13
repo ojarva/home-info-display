@@ -274,9 +274,9 @@ def run_timed_actions():
 
     for item in light_models.LightAUtomation.objects.filter(running=True).filter(action__startswith="morning"):
         if not redis_instance.get("lightcontrol-program-executed-%s" % item.action):
-            redis_instance.set("lightcontrol-program-executed-%s" % item.action, item.duration + 800, True)
             if not item.is_running(now):
                 continue
+            redis_instance.set("lightcontrol-program-executed-%s" % item.action, item.duration + 800, True)
             on_until = item.get_end_datetime()
             brightness = 100
             led.white()
