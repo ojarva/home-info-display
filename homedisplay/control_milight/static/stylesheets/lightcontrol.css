@@ -200,6 +200,10 @@
   background-color: #222222;
 }
 
+.lights-sync {
+  background-color: #757575;
+}
+
 .lights-night {
   background-color: #cc0000;
   color: #ffeded;

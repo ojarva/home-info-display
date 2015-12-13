@@ -1,5 +1,5 @@
 from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action, get_serialized_lightgroup, get_serialized_lightgroups, set_morning_light, get_main_buttons, is_group_on
-from .utils import run_timed_actions, convert_group_to_automatic, get_current_settings_for_light
+from .utils import run_timed_actions, convert_group_to_automatic, get_current_settings_for_light, sync_lightstate
 from control_display.display_utils import run_display_command
 from control_display.utils import initiate_delayed_shutdown, set_destination_brightness
 from django.conf import settings
@@ -79,33 +79,14 @@ class ControlPerSource(View):
     def post(self, request, *args, **kwargs):
         source = kwargs.get("source")
         command = kwargs.get("command")
-        if source == "computer":
+        if command == "sync":
+            sync_lightstate()
+        elif source == "computer":
             if command == "night":
                 led.set_brightness(0)
                 led.set_color("red")
                 led.set_brightness(0)
                 update_lightstate(0, 0, "red")
-            elif command == "morning-sleeping":
-                led.off()
-                update_lightstate(self.BED, None, None, False)
-                led.white(self.KITCHEN)
-                led.set_brightness(10, self.KITCHEN)
-                update_lightstate(self.KITCHEN, 10, "white")
-                led.white(self.DOOR)
-                led.set_brightness(10, self.DOOR)
-                update_lightsate(self.DOOR, 10, "white")
-                led.set_color("red", self.TABLE)
-                led.set_brightness(0, self.TABLE)
-                update_lightstate(self.TABLE, 0, "red")
-            elif command == "morning-wakeup":
-                #TODO: fade up slowly
-                led.white()
-                run_display_command("on")
-                for a in range(0, 100, 5):
-                    led.set_brightness(a)
-                    time.sleep(0.5)
-                update_lightstate(0, 100, "white")
-
             elif command == "off":
                 set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()
@@ -129,12 +110,6 @@ class ControlPerSource(View):
                     led.set_color("red", group)
                     led.set_brightness(10, group)
                     update_lightstate(group, 10, "red")
-
-            elif command == "morning":
-                led.off(self.BED)
-                update_lightstate(self.BED, None, None, False)
-                for group in (self.TABLE, self.KITCHEN, self.DOOR):
-                    set_morning_light(group)
             elif command == "on":
                 run_display_command("on")
                 led.white()
@@ -151,20 +126,6 @@ class ControlPerSource(View):
                 led.set_color("red")
                 led.set_brightness(0)
                 update_lightstate(0, 0, "red")
-            elif command == "morning-sleeping":
-                led.off()
-                update_lightstate(self.BED, None, None, False)
-                led.white(self.KITCHEN)
-                led.set_brightness(10, self.KITCHEN)
-                update_lightstate(self.KITCHEN, 10, "white")
-                led.white(self.DOOR)
-                led.set_brightness(10, self.DOOR)
-                update_lightstate(self.DOOR, 10, "white")
-                led.set_color("red", self.TABLE)
-                led.set_brightness(0, self.TABLE)
-                update_lightstate(self.TABLE, 10, "red")
-            elif command == "morning-all":
-                set_morning_light(0)
             elif command == "off":
                 set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()
@@ -195,8 +156,6 @@ class Control(View):
             if group == 0:
                 # Shut down display if all lights were turned off.
                 initiate_delayed_shutdown()
-        elif command == "morning":
-            set_morning_light(group)
         elif command == "auto-brightness":
             def execute(group_id):
                 brightness, color = get_current_settings_for_light(group_id)
@@ -232,6 +191,8 @@ class Control(View):
             brightness = int(kwargs.get("parameter"))
             led.set_brightness(brightness, group)
             update_lightstate(group, brightness)
+        elif command == "sync":
+            sync_lightstate()
         else:
             raise NotImplementedError("Invalid command: %s" % command)
         set_destination_brightness()

@@ -16,6 +16,20 @@ logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
 redis_instance = redis.StrictRedis()
 
+def sync_lightstate():
+    led = LedController(settings.MILIGHT_IP)
+    for lightstate in light_models.LightGroup.objects.all():
+        if lightstate.on:
+            led.on(lightstate.group_id)
+            if lightstate.color == "white":
+                led.white(lightstate.group_id)
+                led.set_brightness(lightstate.white_brightness, lightstate.group_id)
+            else:
+                led.set_color(lightstate.color, lightstate.group_id)
+                led.set_brightness(lightstate.rgbw_brightness, lightstate.group_id)
+        else:
+            led.off(lightstate.group_id)
+
 def is_day():
     """ Returns True is current time is between morning and evening programs """
 
@@ -48,8 +62,7 @@ def is_day():
 
 def get_current_settings_for_light(group_id):
     """ Returns current brightness for group, based on the following system:
-        1) Brightness and color of lights that are on (and set on manually)
-        2) Note color of lights that were set on automatically
+        2) Color of lights that were set on automatically
         3) Light programs (if running)
             - If light program is running, use it. No need to care about overrides - overrides are active only if light group is manually set on.
             - Use color from step 2. If not set in step 2, use white.
@@ -65,29 +78,6 @@ def get_current_settings_for_light(group_id):
 
     color = "red"
     color_set = False
-
-    # 1) Brightness of manually set lights that are on
-
-    brightness_set = False
-    brightness = None
-    for lightgroup in light_models.LightGroup.objects.all():
-        if lightgroup.on is True:
-            # Lightgroup is on.
-            if lightgroup.on_automatically is False:
-                # Set on manually
-                group_brightness = lightgroup.current_brightness
-                if group_brightness is not None:
-                    logger.debug("Brightness for group %s is %s", lightgroup.group_id, group_brightness)
-                    brightness_set = True
-                    brightness = max(brightness, group_brightness)
-            if lightgroup.color == "white":
-                color = "white"
-                color_set = True
-
-
-    if brightness_set:
-        logger.info("Brightness for group %s: set by another group. Brightness: %s, color: %s", group_id, brightness, color)
-        return (brightness, color)
 
     # 2) Light programs (if running)
     for program in light_models.LightAutomation.objects.all():
@@ -107,7 +97,7 @@ def get_current_settings_for_light(group_id):
 
     # 3) Time of day (bright between programs during day)
     if today_morning_program:
-        logger.debug("Morning program is defined for this day with start_time: %s", today_morning_program.start_time)
+        logger.debug("Morning program is defined for this day with start_time %s", today_morning_program.start_time)
         # Morning program is defined.
         if nowd.time() < today_morning_program.start_time:
             # Time is before the beginning of morning program.
@@ -146,7 +136,7 @@ def convert_group_to_automatic(group, on_until):
     timer_utils.update_group_automatic_timer(group, on_until)
 
 def set_automatic_trigger_light(group, take_action=True, **kwargs):
-    """ Returns True if needs to take action, False otherwise """
+    """ Returns True if action was taken (or if there is a need to take an action), False otherwise """
     quick = kwargs.get("quick", False)
 
     state, _ = light_models.LightGroup.objects.get_or_create(group_id=group)
@@ -159,10 +149,10 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
 
     hour = nowd.hour
 
-    if hour > 22 or hour < 8:
-        on_until = now + datetime.timedelta(minutes=2)
+    if is_day():
+        on_until = now + datetime.timedelta(minutes=15)
     else:
-        on_until = now + datetime.timedelta(minutes=10)
+        on_until = now + datetime.timedelta(minutes=2)
 
     if take_action is False:
         if state.on and state.color == color:
@@ -282,7 +272,22 @@ def run_timed_actions():
         if redis_instance.get("lightcontrol-no-automatic-%s" % group) is None:
             allowed_groups.add(group)
 
-    for item in light_models.LightAutomation.objects.filter(running=True):
+    for item in light_models.LightAUtomation.objects.filter(running=True).filter(action__startswith="morning"):
+        if not redis_instance.get("lightcontrol-program-executed-%s" % item.action):
+            redis_instance.set("lightcontrol-program-executed-%s" % item.action, item.duration + 800, True)
+            if not item.is_running(now):
+                continue
+            on_until = item.get_end_datetime()
+            brightness = 100
+            led.white()
+            led.brightness(brightness)
+            light_models.update_lightstate(group, brightness, "white", important=False, timed=True)
+            publish_ws("lightcontrol-timed-brightness-%s" % item.action, brightness)
+            set_destination_brightness()
+            for group in range(1, 5):
+                timer_utils.update_group_automatic_timer(group, on_until)
+
+    for item in light_models.LightAutomation.objects.filter(running=True).filter(action__startswith="evening"):
         if not item.is_running(now):
             continue
         percent_done = item.percent_done(now)
@@ -292,7 +297,6 @@ def run_timed_actions():
             run_display_command("on")
 
         brightness = get_program_brightness(item.action, percent_done)
-
 
         if not item.action_if_off:
             # Don't turn on lights
