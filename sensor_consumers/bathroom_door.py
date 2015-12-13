@@ -8,7 +8,7 @@ import sys
 
 class Bathroom(SensorConsumerBase):
     def __init__(self):
-        SensorConsumerBase.__init__(self, "bathroom")
+        SensorConsumerBase.__init__(self, "indoor_air_quality")
 
     def run(self):
         self.subscribe("bathroom-pubsub", self.pubsub_callback)
