@@ -18,6 +18,9 @@ class Microwave(SensorConsumerBase):
 
     def pubsub_callback(self, data):
         if "action" in data:
+            if data["action"] == "user_dismissed":
+                self.door_opened_after_use = True
+                self.delete_notification("microwave")
             return
         door_open = int(data["data"]["door"]) == 1
         self.insert_into_influx([{

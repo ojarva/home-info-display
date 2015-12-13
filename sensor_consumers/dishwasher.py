@@ -45,7 +45,7 @@ class Dishwasher(SensorConsumerBase):
                     elif self.running_time > datetime.timedelta(minutes=120):
                         print "Ran too long time: %s" % self.running_time
                 if self.running_time:
-                    message = "Pesukone valmis ({from_now_timestamp}, päällä %s)", self.format_elapsed_time(self.running_time))
+                    message = "Pesukone valmis ({from_now_timestamp}, päällä %s)" % self.format_elapsed_time(self.running_time)
                 else:
                     message = "Pesukone valmis ({from_now_timestamp})"
                 self.update_notification("dishwasher", message, True, from_now_timestamp=self.off_since)
