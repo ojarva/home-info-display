@@ -272,7 +272,7 @@ def run_timed_actions():
         if redis_instance.get("lightcontrol-no-automatic-%s" % group) is None:
             allowed_groups.add(group)
 
-    for item in light_models.LightAUtomation.objects.filter(running=True).filter(action__startswith="morning"):
+    for item in light_models.LightAutomation.objects.filter(running=True).filter(action__startswith="morning"):
         if not redis_instance.get("lightcontrol-program-executed-%s" % item.action):
             if not item.is_running(now):
                 continue
