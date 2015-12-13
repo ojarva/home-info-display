@@ -13,7 +13,7 @@ class Command(BaseCommand):
     help = 'Fetches electricity usage information'
 
     def handle(self, *args, **options):
-        helen = helen_electricity_usage.Helen(settings.HELEN_USERNAME, settings.HELEN_PASSWORD, settings.HELEN_ID)
+        helen = helen_electricity_usage.Helen(settings.HELEN_USERNAME, settings.HELEN_PASSWORD, settings.HELEN_ID, settings.HELEN_CUSTOMER_ID)
         logged_in = False
 
         start_date = datetime.datetime.now() - datetime.timedelta(days=93)
@@ -28,6 +28,7 @@ class Command(BaseCommand):
                 # fetch current data.
                 if not logged_in:
                     helen.login()
+                    logged_in = True
                 day_info = helen.get_date(current_date.strftime("%Y%m%d"))
                 for entry in day_info:
                     print entry
