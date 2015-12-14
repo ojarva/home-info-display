@@ -76,7 +76,7 @@ class Command(BaseCommand):
                             "tags": {
                                 "measurement": quality_item,
                                 "loc": "Kallio",
-                            }
+                            },
                             "time": timestamp.isoformat(),
                             "fields": {
                                 "value": value,
