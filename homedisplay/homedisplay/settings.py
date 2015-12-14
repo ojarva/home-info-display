@@ -152,6 +152,12 @@ LOGGING = {
             'filename': 'logs/homecontroller.log',
             'formatter': 'verbose'
         },
+        'jeenode_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/jeenode.log',
+            'formatter': 'verbose'
+        },
         'statsd_file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
@@ -160,6 +166,11 @@ LOGGING = {
         },
     },
     'loggers': {
+        'homecontroller.control_milight.management.commands.listen_jeenode': {
+            'handlers': ['jeenode_file'],
+            'propagate': False,
+            'level': 'DEBUG',
+        },
         'django': {
             'handlers': ['django_file'],
             'propagate': False,
