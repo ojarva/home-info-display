@@ -23,6 +23,7 @@ class Oven(SensorConsumerBase):
             "fields": {
                 "temperature": round(temperature, 1),
                 "room_temperature": round(data["data"]["room_temperature"], 1),
+                "outside_box_room_temperature": round(data["data"]["outside_box_temperature"], 1),
             }
         }])
         if temperature > 50:
