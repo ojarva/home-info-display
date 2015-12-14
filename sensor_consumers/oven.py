@@ -22,6 +22,7 @@ class Oven(SensorConsumerBase):
             "time": datetime.datetime.utcnow().isoformat() + "Z",
             "fields": {
                 "temperature": round(temperature, 1),
+                "room_temperature": round(data["data"]["room_temperature"], 1),
             }
         }])
         if temperature > 50:
