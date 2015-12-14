@@ -29,6 +29,10 @@ class Command(BaseCommand):
         latest_values = {}
 
         influx_datapoints = []
+        headers = {
+            "Accept-Encoding": None,
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.89 Safari/537.36",
+        }
 
 
         for quality_item in items:
@@ -36,10 +40,10 @@ class Command(BaseCommand):
             url = "http://www.ilmanlaatu.fi/ilmanyt/nyt/ilmanyt.php?as=Suomi&rs=86&ss=425&p={sensor}&pv={date}&j=23&et=table&tj=3600&ls=suomi".format(sensor=quality_item, date=date)
             session.get(url)
 
-            url_table = "http://www.ilmanlaatu.fi/php/table/observationsInTable.php?step=3600&today=1&timesequence=23&time=2015032223&station=425"
+            url_table = "http://www.ilmanlaatu.fi/php/table/observationsInTable.php?step=3600&today=1&timesequence=23&time=%s&station=425" % datetime.datetime.now().strftime("%Y%m%d%H")
 
-            response = session.get(url_table)
-
+            headers["referer"] = url
+            response = session.get(url_table, headers=headers)
             soup = BeautifulSoup(response.text, "lxml")
             value = None
             timestamp = None
@@ -86,6 +90,7 @@ class Command(BaseCommand):
             if value is not None and timestamp is not None:
                 latest_values[quality_item] = {"timestamp": str(timestamp), "value": value}
         if len(influx_datapoints) > 0:
+            print influx_datapoints
             influx_client = InfluxDBClient("localhost", 8086, "root", "root", "indoor_air_quality")
 
             try:
