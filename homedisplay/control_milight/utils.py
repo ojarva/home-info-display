@@ -281,7 +281,7 @@ def run_timed_actions():
             on_until = item.get_end_datetime()
             brightness = 100
             led.white()
-            led.brightness(brightness)
+            led.set_brightness(brightness)
             light_models.update_lightstate(group, brightness, "white", important=False, timed=True)
             publish_ws("lightcontrol-timed-brightness-%s" % item.action, brightness)
             set_destination_brightness()

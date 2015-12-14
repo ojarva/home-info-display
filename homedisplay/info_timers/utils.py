@@ -27,7 +27,7 @@ def update_group_automatic_timer(group, on_until):
             timer.start_time = start_time
             timer.duration = duration
         else:
-            logger.info("Did not update timer for group %s: on_until (%s) is smaller than current end time (%s)", group, on_until, timer.end_time)
+            logger.info("Did not update timer for group %s: on_until (%s) is earlier than current end time (%s)", group, on_until, timer.end_time)
     logger.info("Updated timer for group %s: start_time=%s, duration=%s", group, start_time, duration)
     timer.save()
 

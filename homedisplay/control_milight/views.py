@@ -1,4 +1,4 @@
-from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action, get_serialized_lightgroup, get_serialized_lightgroups, set_morning_light, get_main_buttons, is_group_on
+from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action, get_serialized_lightgroup, get_serialized_lightgroups, get_main_buttons, is_group_on
 from .utils import run_timed_actions, convert_group_to_automatic, get_current_settings_for_light, sync_lightstate
 from control_display.display_utils import run_display_command
 from control_display.utils import initiate_delayed_shutdown, set_destination_brightness
@@ -90,6 +90,10 @@ class ControlPerSource(View):
             elif command == "off":
                 set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()
+            elif command == "morning":
+                led.set_color("white")
+                led.set_brightness(10)
+                update_lightstate(0, 10, "white")
             elif command == "on":
                 run_display_command("on")
                 led.white()
@@ -115,6 +119,10 @@ class ControlPerSource(View):
                 led.white()
                 led.set_brightness(100)
                 update_lightstate(0, 100, "white")
+            elif command == "morning":
+                led.set_color("white")
+                led.set_brightness(10)
+                update_lightstate(0, 10, "white")
             elif command == "off":
                 set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()
@@ -126,6 +134,10 @@ class ControlPerSource(View):
                 led.set_color("red")
                 led.set_brightness(0)
                 update_lightstate(0, 0, "red")
+            elif command == "morning":
+                led.set_color("white")
+                led.set_brightness(10)
+                update_lightstate(0, 10, "white")
             elif command == "off":
                 set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()

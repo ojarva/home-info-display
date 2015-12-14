@@ -112,26 +112,6 @@ LightControl = ->
         else
           jq(".light-group-#{group_id}-on").html "<i class='fa fa-toggle-off'></i>"
 
-        max_brightness = Math.max max_brightness, @fields.morning_light_level
-
-        if @fields.morning_light_level < 10
-          jq ".lights-morning-auto-#{group_id}"
-          .addClass "lights-morning-dim"
-          .removeClass "lights-morning-bright"
-        else
-          jq ".lights-morning-auto-#{group_id}"
-          .addClass "lights-morning-bright"
-          .removeClass "lights-morning-dim"
-
-      if max_brightness < 10
-        jq ".lights-morning-auto"
-        .addClass "lights-morning-dim"
-        .removeClass "lights-morning-bright"
-      else
-        jq ".lights-morning-auto"
-        .addClass "lights-morning-bright"
-        .removeClass "lights-morning-dim"
-
     if data? and data.main_buttons?
       jq.each data.main_buttons, (key, value) ->
         if value

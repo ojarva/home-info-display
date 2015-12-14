@@ -14,57 +14,11 @@ import json
 import logging
 import redis
 
-__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running", "get_serialized_timed_action", "get_serialized_lightgroup", "get_morning_light_level", "set_morning_light"]
+__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running", "get_serialized_timed_action", "get_serialized_lightgroup"]
 
 led = LedController(settings.MILIGHT_IP)
 redis_instance = redis.StrictRedis()
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
-
-
-def get_morning_light_level(group_id=None):
-    # TODO: this is called relatively often, and this fetches all LightGroup objects on every iteration.
-    max_brightness = 0
-    items = LightGroup.objects.filter(on=True)
-    if group_id is None or group_id == 0:
-        # Process all groups
-        c = items.filter(color='white').count()
-        if c > 0:
-            # If any light is on and white, brightness should be 10
-            max_brightness = 10
-
-    else:
-        # Process only a single group
-        for g in items:
-            if g.group_id == group_id:
-                # Current group
-                if g.color != "white":
-                    # Color is not white -> change to white & 0
-                    logger.debug("Group %s is not white. Morning light brightness should be 0", g.group_id)
-                    return 0
-                # Color is white
-                brightness = g.current_brightness
-                if brightness is None:
-                    logger.debug("Group %s brightness is not available. Morning light brightness should be 0", g.group_id)
-                    return 0
-                # Current group is on and white. Brightness is always 10.
-                logger.debug("Group %s is on and white. Morning light brightness should be 10.", g.group_id)
-                return 10
-            # Take maximum brightness
-            max_brightness = max(g.current_brightness or 0, max_brightness)
-    # Maximum brightness is 10, do not go over it.
-    current_brightness = min(10, max_brightness)
-    logger.debug("Group %s morning light brightness should be %s.", group_id, current_brightness)
-    return current_brightness
-
-
-def set_morning_light(group):
-    brightness = get_morning_light_level(group)
-    logger.debug("set_morning_light: morning light level for group %s is %s", group, brightness)
-    led.white(group)
-    led.set_brightness(brightness, group)
-    update_lightstate(group, brightness, "white")
-    logger.info("Set morning light for group %s. Brightness is %s", group, brightness)
-
 
 def get_main_buttons():
     all_off = True
@@ -97,7 +51,6 @@ def get_serialized_lightgroups():
 def get_serialized_lightgroup(item):
     ret = json.loads(serializers.serialize("json", [item]))[0]
     ret["fields"]["current_brightness"] = item.current_brightness
-    ret["fields"]["morning_light_level"] = get_morning_light_level(item.group_id)
     return ret
 
 def get_serialized_timed_action(item):
