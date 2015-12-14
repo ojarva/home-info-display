@@ -84,6 +84,9 @@ def get_current_settings_for_light(group_id):
         percent_done = program.percent_done(now)
         if percent_done is not None and program.is_running(now):
             #Program is running.
+            color = "white"
+            if program.action.startswith("morning"):
+                brightness = 100
             brightness = get_program_brightness(program.action, percent_done)
             logger.info("Brightness for group %s set by program %s, %s%%. Color: %s", group_id, program.action, percent_done, color)
             return (brightness, color)
