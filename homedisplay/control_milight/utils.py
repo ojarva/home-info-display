@@ -276,7 +276,8 @@ def run_timed_actions():
         if not redis_instance.get("lightcontrol-program-executed-%s" % item.action):
             if not item.is_running(now):
                 continue
-            redis_instance.set("lightcontrol-program-executed-%s" % item.action, item.duration + 800, True)
+            logger.debug("Setting lightcontrol-program-executed-%s to expire at %s", item.action, item.duration + 800)
+            redis_instance.setex("lightcontrol-program-executed-%s" % item.action, item.duration + 800, True)
             on_until = item.get_end_datetime()
             brightness = 100
             led.white()
