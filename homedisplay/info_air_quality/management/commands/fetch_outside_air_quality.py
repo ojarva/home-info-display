@@ -72,10 +72,14 @@ class Command(BaseCommand):
 
 
                         influx_datapoints.append({
-                            "measurement": "outside_air_quality-%s" % quality_item,
+                            "measurement": "outside_air_quality",
+                            "tags": {
+                                "measurement": quality_item,
+                                "loc": "Kallio",
+                            }
                             "time": timestamp.isoformat(),
                             "fields": {
-                                quality_item: value,
+                                "value": value,
                             },
                         })
                         item.save()
