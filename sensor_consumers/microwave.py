@@ -8,7 +8,7 @@ import sys
 
 class Microwave(SensorConsumerBase):
     def __init__(self):
-        SensorConsumerBase.__init__(self, "appliances")
+        SensorConsumerBase.__init__(self, "indoor_air_quality")
         self.on_since = None
         self.door_opened_after_use = True
         self.last_used_at = None
@@ -25,9 +25,10 @@ class Microwave(SensorConsumerBase):
         door_open = int(data["data"]["door"]) == 1
         self.insert_into_influx([{
             "measurement": "microwave",
-            "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+            "time": datetime.datetime.utcnow().isoformat() + "Z",
             "fields": {
                 "power_consumption": round(data["data"]["power_consumption"], 3),
+                "door": door_open,
             }
             }])
         if door_open:

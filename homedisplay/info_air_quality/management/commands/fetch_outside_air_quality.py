@@ -7,13 +7,14 @@ from info_air_quality.models import OutsideAirQuality
 import datetime
 import json
 import requests
+from influxdb import InfluxDBClient
+import influxdb.exceptions
 
 class Command(BaseCommand):
     args = ''
     help = 'Fetches outdoor air quality information'
 
     def handle(self, *args, **options):
-
         items = [
             "particulateslt10um",
             "ozone",
@@ -26,6 +27,10 @@ class Command(BaseCommand):
 
         session = requests.Session()
         latest_values = {}
+
+        influx_datapoints = []
+
+
         for quality_item in items:
 
             url = "http://www.ilmanlaatu.fi/ilmanyt/nyt/ilmanyt.php?as=Suomi&rs=86&ss=425&p={sensor}&pv={date}&j=23&et=table&tj=3600&ls=suomi".format(sensor=quality_item, date=date)
@@ -35,7 +40,7 @@ class Command(BaseCommand):
 
             response = session.get(url_table)
 
-            soup = BeautifulSoup(response.text)
+            soup = BeautifulSoup(response.text, "lxml")
             value = None
             timestamp = None
             for row in soup.table.find_all("tr"):
@@ -64,7 +69,24 @@ class Command(BaseCommand):
 
                         item, _ = OutsideAirQuality.objects.get_or_create(type=quality_item, timestamp=timestamp, defaults={"value": value})
                         item.value = value
+
+
+                        influx_datapoints.append({
+                            "measurement": "outside_air_quality-%s" % quality_item,
+                            "time": timestamp.isoformat(),
+                            "fields": {
+                                quality_item: value,
+                            },
+                        })
                         item.save()
             if value is not None and timestamp is not None:
                 latest_values[quality_item] = {"timestamp": str(timestamp), "value": value}
+        if len(influx_datapoints) > 0:
+            influx_client = InfluxDBClient("localhost", 8086, "root", "root", "indoor_air_quality")
+
+            try:
+                influx_client.create_database("indoor_air_quality")
+            except influxdb.exceptions.InfluxDBClientError:
+                pass
+            influx_client.write_points(influx_datapoints)
         publish_ws("outside_air_quality", latest_values)

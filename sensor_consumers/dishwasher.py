@@ -8,7 +8,7 @@ import sys
 
 class Dishwasher(SensorConsumerBase):
     def __init__(self):
-        SensorConsumerBase.__init__(self, "appliances")
+        SensorConsumerBase.__init__(self, "indoor_air_quality")
         self.on_since = None
         self.running_time = None
         self.off_since = None
@@ -28,7 +28,7 @@ class Dishwasher(SensorConsumerBase):
 
         self.insert_into_influx([{
             "measurement": "dishwasher",
-            "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+            "time": datetime.datetime.utcnow().isoformat() + "Z",
             "fields": {
                 "power_consumption": round(data["data"]["power_consumption"], 3),
             }

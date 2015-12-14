@@ -8,7 +8,7 @@ import sys
 
 class Oven(SensorConsumerBase):
     def __init__(self):
-        SensorConsumerBase.__init__(self, "appliances")
+        SensorConsumerBase.__init__(self, "indoor_air_quality")
 
     def run(self):
         self.subscribe("oven-pubsub", self.pubsub_callback)
@@ -19,7 +19,7 @@ class Oven(SensorConsumerBase):
         temperature = data["data"]["oven_temperature"]
         self.insert_into_influx([{
             "measurement": "oven",
-            "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+            "time": datetime.datetime.utcnow().isoformat() + "Z",
             "fields": {
                 "temperature": round(temperature, 1),
             }
