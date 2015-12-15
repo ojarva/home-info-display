@@ -25,7 +25,8 @@ class DustNode(SensorConsumerBase):
                 "room_temperature": round(data["data"]["room_temperature"], 1),
                 "barometer_temperature": round(data["data"]["barometer_temperature"], 1),
                 "barometer_pressure": round(data["data"]["barometer_reading"], 1),
-                "dust_density": round(data["data"]["dust_density"], 5)
+                "dust_density": round(data["data"]["dust_density"], 5),
+                "sound_level": data["data"]["sound_level"],
             }
         }
         self.insert_into_influx([influx_data])
