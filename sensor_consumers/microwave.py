@@ -12,13 +12,30 @@ import sys
 - >120W -> running
 """
 
+class MicrowaveState:
+
+    def __init__(self):
+        self.stuff_inside = False
+        self.last_used_at = None
+        self.on_since = None
+
+    def off(self):
+        self.on_since = None
+
+    def on(self):
+        if not self.on_since:
+            self.on_since = datetime.datetime.now()
+        self.last_used_at = datetime.datetime.now()
+        self.stuff_inside = True
+
+    def door_opened(self):
+        self.stuff_inside = False
+
 class Microwave(SensorConsumerBase):
     def __init__(self):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
-        self.on_since = None
-        self.door_opened_after_use = True
-        self.light_on_set = False
-        self.last_used_at = None
+        self.state = MicrowaveState()
+        self.delete_notification("microwave")
 
     def run(self):
         self.subscribe("microwave-pubsub", self.pubsub_callback)
@@ -26,9 +43,10 @@ class Microwave(SensorConsumerBase):
     def pubsub_callback(self, data):
         if "action" in data:
             if data["action"] == "user_dismissed":
-                self.door_opened_after_use = True
+                self.state.stuff_inside = False
                 self.delete_notification("microwave")
             return
+
         door_open = int(data["data"]["door"]) == 1
         self.insert_into_influx([{
             "measurement": "microwave",
@@ -43,31 +61,26 @@ class Microwave(SensorConsumerBase):
             print "Door is open"
 
             # Must be off, since the door is open
-            self.on_since = None
+            self.state.off()
+            self.state.door_opened()
 
-            if data["data"]["power_consumption"] > 0.08 and not self.light_on_set:
+            if data["data"]["power_consumption"] > 0.08:
                 # Door is open, microwave is not running but still consumes energy -> timer is not set to zero.
-                self.update_notification("microwave", "Mikron valo päällä", True)
-                self.light_on_set = True
+                self.update_notification("microwave", "Mikron valo päällä", False)
             else:
                 self.delete_notification("microwave")
-            self.door_opened_after_use = True
             return
-        if data["data"]["power_consumption"] > 0.2:
-            if not self.on_since:
-                self.on_since = datetime.datetime.now()
-            self.update_notification("microwave", "Mikro päällä ({elapsed_since})", False, elapsed_since=self.on_since)
-            self.last_used_at = datetime.datetime.now()
-            self.door_opened_after_use = False
-            self.light_on_set = False
+        elif data["data"]["power_consumption"] > 0.2:
+            self.state.on()
+            self.update_notification("microwave", "Mikro päällä ({elapsed_since})", False, elapsed_since=self.state.on_since)
             return
+        else:
+            # Not running and door is not open either
+            self.state.off()
 
-        # Not running, but door is not open either
-        self.on_since = None
-
-        # If microwave has been used, but door has not been opened, there should be something inside.
-        if self.last_used_at and not self.door_opened_after_use:
-            self.update_notification("microwave", "Mikrossa kamaa ({from_now_timestamp})", True, from_now_timestamp=self.last_used_at)
+            # If microwave has been used, but door has not been opened, there should be something inside.
+            if self.state.stuff_inside:
+                self.update_notification("microwave", "Mikrossa kamaa ({from_now_timestamp})", True, from_now_timestamp=self.state.last_used_at)
 
 def main():
     item = Microwave()
