@@ -10,6 +10,7 @@ class Freezer(SensorConsumerBase):
     def __init__(self):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
         self.door_open_since = None
+        self.delete_notification("freezer")
 
     def run(self):
         self.subscribe("freezer-pubsub", self.pubsub_callback)
@@ -18,7 +19,7 @@ class Freezer(SensorConsumerBase):
         if "action" in data:
             return
 
-        door_open = int(data["data"]["door"]) == 1
+        door_open = int(data["data"]["door"]) == 0
 
         self.insert_into_influx([{
             "measurement": "freezer",
