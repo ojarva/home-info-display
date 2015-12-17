@@ -123,7 +123,7 @@ class Line(models.Model):
     raw = models.CharField(max_length=50, verbose_name="Sisäinen numero") # This is internal identification for line. Contains whatever returned by HSL API.
     destination = models.CharField(max_length=50) # Destination for the line
 
-    show_times = models.ManyToManyField("LineShow", null=True, blank=True)
+    show_times = models.ManyToManyField("LineShow", blank=True)
 
     show_line = models.BooleanField(blank=True, default=False, verbose_name="Näytä lähdöt")
     icon = models.CharField(max_length=10, choices=ICONS, verbose_name="Ikoni", default="bus")
