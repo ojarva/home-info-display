@@ -22,13 +22,13 @@ class Fridge(View):
         fridge = kwargs.get("fridge")
         freezer = kwargs.get("freezer")
         if fridge is not None:
-            fridge = fridge != "1"
+            fridge = fridge == "1"
         if freezer is not None:
-            freezer = freezer != "1"
+            freezer = freezer == "1"
 
         data = {
-            "fridge": fridge,
-            "freezer": freezer,
+            "fridge_door_open": fridge,
+            "freezer_door_open": freezer,
             "fridge_temperature1": kwargs.get("t1"),
             "fridge_temperature2": kwargs.get("t2"),
             "fridge_temperature3": kwargs.get("t3"),
@@ -36,6 +36,6 @@ class Fridge(View):
             "humidity_data": kwargs.get("hd")
         }
 
-        redis_instance.publish("fridge", json.dumps(data))
+        redis_instance.publish("fridge-inside-pubsub", json.dumps(data))
 
         return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
