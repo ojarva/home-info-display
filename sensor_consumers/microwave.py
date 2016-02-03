@@ -10,6 +10,11 @@ import sys
 - ~34W -> light on
 - ~1W -> off
 - >120W -> running
+
+- Mikro päällä (00:05)
+- Mikrossa kamaa (oli päällä 00:30)
+- Valo päällä (oli päällä 00:30)
+
 """
 
 class MicrowaveState:
@@ -18,18 +23,64 @@ class MicrowaveState:
         self.stuff_inside = False
         self.last_used_at = None
         self.on_since = None
+        self.total_time_running = datetime.timedelta(0)
 
-    def off(self):
-        self.on_since = None
+        self.door_open = False
+        self.running = False
+        self.light_on = False
 
-    def on(self):
-        if not self.on_since:
-            self.on_since = datetime.datetime.now()
-        self.last_used_at = datetime.datetime.now()
-        self.stuff_inside = True
+    def print_state(self):
+        print "door_open=%s, running=%s, light_on=%s, stuff_inside=%s, last_used_at=%s, on_since=%s, total_time_running=%s" % (self.door_open, self.running, self.light_on, self.stuff_inside, self.last_used_at, self.on_since, self.total_time_running)
 
-    def door_opened(self):
+    def set_door_open(self):
+        self.set_stopped()
+        self.door_open = True
         self.stuff_inside = False
+
+    def set_door_closed(self):
+        self.door_open = False
+
+    def set_running(self):
+        if not self.running:
+            self.stuff_inside = True
+            self.on_since = datetime.datetime.now()
+        self.set_light_on()
+        self.running = True
+
+    def set_stopped(self):
+        if self.running:
+            self.last_used_at = datetime.datetime.now()
+            if self.on_since:
+                self.total_time_running += (datetime.datetime.now() - self.on_since)
+            self.on_since = None
+        self.running = False
+
+    def set_light_on(self):
+        if not self.light_on:
+            self.total_time_running = datetime.timedelta(0)
+        self.light_on = True
+
+    def set_light_off(self):
+        self.light_on = False
+
+    def get_total_time_running(self):
+        if self.on_since:
+            return self.total_time_running + (datetime.datetime.now() - self.on_since)
+        return self.total_time_running
+
+    def get_total_time_running_formatted(self):
+        """ Get MM:SS formatted total time """
+        total_running_time = self.get_total_time_running()
+        seconds = total_running_time.total_seconds()
+        minutes = int(seconds / 60)
+        seconds = int(seconds - (minutes * 60))
+        return str(minutes).zfill(2) + ":" + str(seconds).zfill(2)
+
+    def get_calculated_on_since(self):
+        """ Returns timestamp where (now - timestamp) matches to total running time """
+        total_running_time = self.get_total_time_running()
+        return datetime.datetime.now() - total_running_time
+
 
 class Microwave(SensorConsumerBase):
     def __init__(self):
@@ -41,6 +92,8 @@ class Microwave(SensorConsumerBase):
         self.subscribe("microwave-pubsub", self.pubsub_callback)
 
     def pubsub_callback(self, data):
+        self.state.print_state()
+
         if "action" in data:
             if data["action"] == "user_dismissed":
                 self.state.stuff_inside = False
@@ -58,29 +111,36 @@ class Microwave(SensorConsumerBase):
         }])
 
         if door_open:
-            print "Door is open"
-
-            # Must be off, since the door is open
-            self.state.off()
-            self.state.door_opened()
+            self.state.set_door_open()
 
             if data["data"]["power_consumption"] > 0.08:
+                self.state.set_light_on()
                 # Door is open, microwave is not running but still consumes energy -> timer is not set to zero.
-                self.update_notification("microwave", "Mikron valo päällä", False)
+                if self.state.get_total_time_running() > datetime.timedelta(seconds=2):
+                    message = "Mikron valo päällä (%s)" % self.state.get_total_time_running_formatted()
+                else:
+                    message = "Mikron valo päällä"
             else:
-                self.delete_notification("microwave")
-            return
-        elif data["data"]["power_consumption"] > 0.2:
-            self.state.on()
-            self.update_notification("microwave", "Mikro päällä ({elapsed_since})", False, elapsed_since=self.state.on_since)
+                self.state.set_light_off()
+                if self.state.get_total_time_running() > datetime.timedelta(seconds=2):
+                    message = "Mikron ovi auki (%s)" % self.state.get_total_time_running_formatted()
+                else:
+                    message = "Mikron ovi auki"
+
+            self.update_notification("microwave", message, False)
             return
         else:
-            # Not running and door is not open either
-            self.state.off()
-
-            # If microwave has been used, but door has not been opened, there should be something inside.
-            if self.state.stuff_inside:
-                self.update_notification("microwave", "Mikrossa kamaa ({from_now_timestamp})", True, from_now_timestamp=self.state.last_used_at)
+            self.state.set_door_closed()
+            if data["data"]["power_consumption"] > 0.2:
+                self.state.set_running()
+                self.update_notification("microwave", "Mikro päällä ({elapsed_since})", False, elapsed_since=self.state.get_calculated_on_since())
+                return
+            else:
+                self.state.set_stopped()
+                if self.state.stuff_inside:
+                    self.update_notification("microwave", "Mikrossa kamaa (%s, {from_now_timestamp})" % self.state.get_total_time_running_formatted(), True, from_now_timestamp=self.state.last_used_at)
+                else:
+                    self.delete_notification("microwave")
 
 def main():
     item = Microwave()
