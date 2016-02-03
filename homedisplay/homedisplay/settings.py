@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'repeating_tasks',
     'server_power',
     'ws4redis',
+    'node_data_receiver',
 )
 
 COMPRESS_PRECOMPILERS = (
