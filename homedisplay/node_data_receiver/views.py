@@ -1,7 +1,4 @@
-from .models import Task, get_repeating_data
-from django.core import serializers
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
 from django.views.generic import View
 import datetime
 import json
