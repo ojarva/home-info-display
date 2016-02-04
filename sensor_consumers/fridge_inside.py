@@ -15,13 +15,13 @@ class FridgeInside(SensorConsumerBase):
         self.delete_notification("small-freezer-temperature")
 
         self.fridge_door_open_since = None
-        self.freezer_door_open_since = none
+        self.freezer_door_open_since = None
 
     def run(self):
         self.subscribe("fridge-inside-pubsub", self.pubsub_callback)
 
     def pubsub_callback(self, data):
-
+        print "Received %s" % data
         if "action" in data:
             if data["action"] == "user_dismissed":
                 self.delete_notification("microwave")

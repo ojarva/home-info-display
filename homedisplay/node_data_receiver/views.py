@@ -11,6 +11,7 @@ class Fridge(View):
     def get(self, request, *args, **kwargs):
         fridge_humidity = None
         fridge_temperature4 = None
+        humidity_data = kwargs.get("hd")
         if humidity_data and len(humidity_data) > 0:
             if humidity_data[0] == "B":
                 humidity_data = humidity_data.split("T")
