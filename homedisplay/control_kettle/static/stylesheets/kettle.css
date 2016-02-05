@@ -3,6 +3,7 @@
 
   .action-button {
     text-align: center;
+    position: relative;
   }
 
   .disabled-mode {
