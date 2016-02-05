@@ -16,6 +16,7 @@ class Fridge(View):
                 value = float(number)
                 if value == -127:
                     return None
+                return value
         fridge_humidity = None
         fridge_temperature4 = None
         humidity_data = request.GET.get("hd")
