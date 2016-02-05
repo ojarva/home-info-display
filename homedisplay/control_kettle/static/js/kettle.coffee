@@ -10,8 +10,8 @@ Kettle = (elem) ->
       jq(elem).find(".action-on").addClass("disabled")
 
     if data.present
-      jq(elem).find("online-status").show()
-      jq(elem).find("offline-status").hide()
+      jq(elem).find(".online-status").show()
+      jq(elem).find(".offline-status").hide()
       if data.water_level == "empty" or data.water_level == "too_low"
         water_level = "0"
       else if data.water_level == "half"
@@ -21,8 +21,8 @@ Kettle = (elem) ->
       jq(elem).find(".waterlevel-content").removeClass().addClass("waterlevel-content battery-#{water_level}")
       jq(elem).find(".temperature-content").html(data.temperature)
     else
-      jq(elem).find("online-status").hide()
-      jq(elem).find("offline-status").show()
+      jq(elem).find(".online-status").hide()
+      jq(elem).find(".offline-status").show()
 
 
   update = ->
