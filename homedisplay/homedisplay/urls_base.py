@@ -23,4 +23,5 @@ urlpatterns = patterns('',
     url(r'^ext_pages/', include("info_ext_pages.urls")),
     url(r'^notifications/', include("info_notifications.urls")),
     url(r'^nodes/', include("node_data_receiver.urls")),
+    url(r'^kettle/', include("control_kettle.urls")),
 )
