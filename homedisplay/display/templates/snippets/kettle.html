@@ -1,5 +1,11 @@
 <div id="kettle">
-  <div class="action-button animate-click stripe-box" data-temperature="80">80&deg;C</div>
-  <div class="action-button animate-click stripe-box" data-temperature="100">100&deg;C</div>
-  <div class="action-button stripe-box">Kiehuu</div>
+  <div class="action-on action-button animate-click stripe-box" data-temperature="80">80</div>
+  <div class="action-on action-button animate-click stripe-box" data-temperature="100">100</div>
+  <div class="action-off action-button animate-click stripe-box"><i class="fa fa-stop-circle-o"></i></div>
+  <div class="action-button stripe-box online-status" style="display:none;">
+    <i class="battery-content fa fa-battery-0"></i> <span class="temperature-content">?</span>C
+  </div>
+  <div class="action-button stripe-box offline-status">
+    <i class="fa fa-plug"></i>
+  </div>
 </div>

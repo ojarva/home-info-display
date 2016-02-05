@@ -3,11 +3,27 @@ Kettle = (elem) ->
   onReceiveItemWS = (message) ->
     processData message
 
-
-
   processData = (data) ->
-    jq(elem).find("#temperature-content").html(data.temperature)
-    jq(elem).find("#waterlevel-content").html(data.waterlevel)
+    if data.status == "ready" and data.present
+      jq(elem).find(".action-on").removeClass("disabled")
+    else
+      jq(elem).find(".action-on").addClass("disabled")
+
+    if data.present
+      jq(elem).find("online-status").show()
+      jq(elem).find("offline-status").hide()
+      if data.water_level == "empty" or data.water_level == "too_low"
+        water_level = "0"
+      else if data.water_level == "half"
+        water_level = "2"
+      else
+        water_level = "4"
+      jq(elem).find(".waterlevel-content").removeClass().addClass("waterlevel-content battery-#{water_level}")
+      jq(elem).find(".temperature-content").html(data.temperature)
+    else
+      jq(elem).find("online-status").hide()
+      jq(elem).find("offline-status").show()
+
 
   update = ->
     jq.get "/homecontroller/kettle/status", (data) ->
@@ -22,12 +38,15 @@ Kettle = (elem) ->
     ws_generic.deRegister "kettle-info"
     ge_refresh.deRegister "kettle-info"
 
-  jq(elem).find(".action-button").each ->
+  jq(elem).find(".action-on").each ->
     jq(@).click ->
-      console.log "Clicked ", @
       temperature = jq(@).data "temperature"
-      if temperature?
-        console.log "enabling ", temperature
+      jq.post "/homecontroller/kettle/control/on/#{temperature}"
+
+  jq(elem).find(".action-off").each ->
+    jq(@).click ->
+      jq.post "/homecontroller/kettle/control/off"
+
 
   @startInterval = startInterval
   @stopInterval = stopInterval
