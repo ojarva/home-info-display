@@ -10,11 +10,12 @@ Notifications = (elem) ->
       fmt = fmt.replace(new RegExp("\\{from_now_timestamp\\}", "gm"), "<span class='auto-fromnow-update' data-timestamp='#{from_now_timestamp}'></span>")
     return fmt
 
-  updateItems = (item_type, desc_string, can_dismiss, elapsed_since, from_now_timestamp) ->
+  updateItems = (item_type, desc_string, can_dismiss, elapsed_since, from_now_timestamp, level) ->
     updated = false
     jq.each jq_elem.children(), ->
       if jq(@).data("item-type") == item_type
         # Matching element -> update
+        jq(@).removeClass("notification-level-high notification-level-normal notification-level-urgent notification-level-low").addClass("notification-level-#{level}")
         jq(@).find(".content").html(formatString(desc_string, elapsed_since, from_now_timestamp))
         jq(@).data "can-dismiss", can_dismiss
         jq(@).data "updated", "true"
@@ -32,6 +33,7 @@ Notifications = (elem) ->
         can_dismiss = @fields.can_dismiss
         from_now_timestamp = @fields.from_now_timestamp
         elapsed_since = @fields.elapsed_since
+        level = @fields.level
         item_id = @pk
 
         if can_dismiss
@@ -42,13 +44,13 @@ Notifications = (elem) ->
                 #{description}""", elapsed_since, from_now_timestamp)
 
 
-        updated = updateItems(item_type, desc_string, can_dismiss, elapsed_since, from_now_timestamp)
+        updated = updateItems(item_type, desc_string, can_dismiss, elapsed_since, from_now_timestamp, level)
 
         if !updated
           # No matching element found -> create a new one
-          jq_elem.append """<div class="notification-item notification-striping notification-item-#{item_type}" data-updated="true" data-item-type="#{item_type}" data-can-dismiss="#{can_dismiss}" data-item-id="#{item_id}">
+          jq_elem.append """<div class="notification-item notification-striping notification-item-#{item_type} notification-level-#{level}" data-updated="true" data-item-type="#{item_type}" data-can-dismiss="#{can_dismiss}" data-item-id="#{item_id}">
             <div class="notification-container">
-              <div class="content">
+              <div class="content notification-level-indicator">
                 #{desc_string}
               </div>
             </div>

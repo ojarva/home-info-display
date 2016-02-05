@@ -1,5 +1,27 @@
 #notifications {
 
+  .notification-level-normal {
+
+  }
+
+  .notification-level-high {
+    .notification-level-indicator {
+      color: #FF9E9E;
+    }
+  }
+
+  .notification-level-urgent {
+    .notification-level-indicator {
+      color: #CC0000;
+    }
+  }
+
+  .notification-level-low {
+    .notification-level-indicator {
+      color: #BABABA;
+    }
+  }
+
   .notification-item {
     font-size: 150%;
     margin-top: 5px;

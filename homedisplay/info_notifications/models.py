@@ -14,6 +14,7 @@ class Notification(models.Model):
     item_type = models.CharField(max_length=20)
     description = models.TextField()
     can_dismiss = models.NullBooleanField(null=True, blank=True)
+    level = models.CharField(max_length=20, default="normal")
 
     elapsed_since = models.DateTimeField(null=True)
     from_now_timestamp = models.DateTimeField(null=True)

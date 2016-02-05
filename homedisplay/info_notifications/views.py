@@ -35,6 +35,7 @@ class NotificationUpdate(View):
             item.item_type = request.POST.get("item_type")
         item.description = request.POST.get("description")
         item.can_dismiss = request.POST.get("can_dismiss") in ["1", "True", "true"]
+        item.level = request.POST.get("level", "normal")
         if "from_now_timestamp" in request.POST:
             item.from_now_timestamp = dateutil.parser.parse(request.POST.get("from_now_timestamp"))
         else:
