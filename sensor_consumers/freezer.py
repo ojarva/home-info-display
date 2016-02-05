@@ -53,7 +53,7 @@ class Freezer(SensorConsumerBase):
             level = "normal"
             if datetime.datetime.now() - self.door_open_since > datetime.timedelta(seconds=15):
                 level = "high"
-            self.update_notification("freezer-door", "Ison pakastimen ovi auki ({elapsed_since})", False, elapsed_since=self.door_open_since, level="level")
+            self.update_notification("freezer-door", "Ison pakastimen ovi auki ({elapsed_since})", False, elapsed_since=self.door_open_since, level=level)
         else:
             if self.door_open_since:
                 self.door_open_since = None

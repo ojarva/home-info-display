@@ -76,7 +76,7 @@ class FridgeInside(SensorConsumerBase):
             level = "normal"
             if datetime.datetime.now() - self.freezer_door_open_since > datetime.timedelta(seconds=15):
                 level = "high"
-            self.update_notification("small-freezer-door-open", "Pikkupakastimen ovi auki ({from_now_timestamp})", False, from_now_timestamp=self.freezer_door_open_since, level="level")
+            self.update_notification("small-freezer-door-open", "Pikkupakastimen ovi auki ({from_now_timestamp})", False, from_now_timestamp=self.freezer_door_open_since, level=level)
         else:
             self.delete_notification("small-freezer-door-open")
             self.freezer_door_open_since = None
