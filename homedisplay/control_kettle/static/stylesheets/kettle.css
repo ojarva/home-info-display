@@ -1,0 +1,15 @@
+
+#kettle {
+
+  .action-button {
+    text-align: center;
+  }
+
+  .disabled-mode {
+    display: none;
+    font-size: .5em;
+    left: 5px;
+    position: absolute;
+    top: 0;
+  }
+}
