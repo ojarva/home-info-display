@@ -28,6 +28,8 @@ class Kettle:
         self.last_update_at = 0
 
     def add_temperature(self, temperature):
+        if temperature > 101:
+            return
         self.temperatures.append(temperature)
         if len(self.temperatures) > 5:
             self.temperatures = self.temperatures[-5:]
