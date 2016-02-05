@@ -4,10 +4,12 @@ Kettle = (elem) ->
     processData message
 
   processData = (data) ->
-    if data.status == "ready" and data.present
+    if data.status == "ready" and data.present and data.water_level != "empty" and data.water_level != "too_low"
       jq(elem).find(".action-on").removeClass("disabled")
+      jq(elem).find(".disabled-mode").hide()
     else
       jq(elem).find(".action-on").addClass("disabled")
+      jq(elem).find(".disabled-mode").show()
 
     if data.present
       jq(elem).find(".online-status").show()
@@ -18,7 +20,7 @@ Kettle = (elem) ->
         water_level = "2"
       else
         water_level = "4"
-      jq(elem).find(".waterlevel-content").removeClass().addClass("waterlevel-content battery-#{water_level}")
+      jq(elem).find(".waterlevel-content").removeClass().addClass("waterlevel-content fa fa-battery-#{water_level}")
       jq(elem).find(".temperature-content").html(data.temperature)
     else
       jq(elem).find(".online-status").hide()
