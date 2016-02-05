@@ -11,7 +11,7 @@ class Notification(models.Model):
         ordering = ("-timestamp",)
 
     timestamp = models.DateTimeField(auto_now_add=True)
-    item_type = models.CharField(max_length=20)
+    item_type = models.CharField(max_length=50)
     description = models.TextField()
     can_dismiss = models.NullBooleanField(null=True, blank=True)
     level = models.CharField(max_length=20, default="normal")
