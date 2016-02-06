@@ -16,67 +16,6 @@ IndoorAirQuality = (options) ->
   autoNoUpdates = ->
     output.find(".status").html "<i class='fa fa-times warning-message'></i> "
 
-  drawGraph = (data, goptions) ->
-    goptions = goptions or {}
-    goptions.xlabel = goptions.xlabel or "Aika"
-    goptions.ylabel = goptions.ylabel or "Arvo"
-
-    elem = jq goptions.selector
-
-    if not data?
-      debug.warn "No data available for indoor air quality graphs"
-      console.warn "!!! No data available for indoor air quality graphs!"
-      elem.children().remove()
-      elem.slideUp()
-      elem.parent().find(".data-error").slideDown()
-      return
-
-    elem.slideDown()
-    elem.parent().find(".data-error").slideUp()
-
-    x = []
-    y = []
-    nv.addGraph ->
-      chart = nv.models.lineChart()
-      .useInteractiveGuideline true
-      .showLegend false
-      .interpolate "bundle"
-      .transitionDuration 350
-      .showYAxis true
-      .showXAxis true
-      .x (d, i) ->
-        return (new Date(d[0]).getTime())
-      .y (d, i) ->
-        return d[1]
-
-      chart.xAxis
-      .axisLabel goptions.xlabel
-      .tickFormat (d) ->
-        return d3.time.format("%H:%M")(new Date(d))
-
-      chart.yAxis
-      .axisLabel goptions.ylabel
-      .tickFormat d3.format(".02f")
-
-      processed_data = []
-      jq.each data, ->
-        processed_data.push [@timestamp, @value]
-
-      processed_data.reverse()
-      myData = [
-        "key": goptions.key
-        "bar": true
-        "color": "#ccf"
-        "values": processed_data
-      ]
-
-      d3.select goptions.selector
-      .datum myData
-      .call chart
-
-      nv.utils.windowResize chart.update
-      return chart
-
   processCo2 = (data) ->
     if not data?
       console.warn "!!! No indoor air quality information available."
@@ -156,35 +95,8 @@ IndoorAirQuality = (options) ->
     ws_generic.deRegister "indoor_temperature"
     ge_refresh.deRegister "indoor_quality"
 
-  refreshData = (key) ->
-    data_output = jq ".indoor-air-#{key}"
-    data_output.find("svg").hide()
-    data_output.find(".spinner").show()
-    jq.get "/homecontroller/air_quality/get/sensor/#{key}/history", (data) ->
-      if data.length > 12
-        data_output.find(".latest").html Math.round(data[data.length-1].value * 10) / 10
-        data_output.find(".data-error").hide()
-        data_output.find(".spinner").hide()
-        data_output.find("svg").show()
-        drawGraph data,
-         key: key
-         selector: ".indoor-air-#{key} svg"
-      else
-        data_output.find(".latest").html "-"
-        data_output.find("svg").slideUp()
-        data_output.find(".spinner").slideUp()
-        data_output.find(".data-error").slideDown()
-
-  refreshAllData = ->
-    jq.get "/homecontroller/air_quality/get/sensor/keys", (data) ->
-      jq.each data, ->
-        refreshData @
-
   @fetch = fetch
   @fetchTrend = fetchTrend
-  @refreshData = refreshData
-  @refreshAllData = refreshAllData
-  @drawGraph = drawGraph
   @startInterval = startInterval
   @stopInterval = stopInterval
   return @
@@ -199,7 +111,6 @@ jq =>
   jq(".indoor-quality").on "click", ->
     jq.get "/homecontroller/air_quality/get/dialog/contents", (data) ->
       jq("#indoor-quality-modal .air-quality-graph-content").html data
-      indoor_air_quality.refreshAllData()
       content_switch.switchContent "#indoor-quality-modal"
 
   jq("#indoor-quality-modal .close").on "click", ->
