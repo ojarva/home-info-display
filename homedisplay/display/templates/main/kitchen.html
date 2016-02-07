@@ -11,6 +11,7 @@
   <link rel="stylesheet" type="text/x-scss" href="{% static "vendor/jquery-ui/jquery-ui.css" %}">
   <link rel="stylesheet" type="text/x-scss" href="{% static "stylesheets/vendor/font-awesome.css" %}">
   <link rel="stylesheet" type="text/x-scss" href="{% static "stylesheets/shared.scss" %}">
+  <link rel="stylesheet" type="text/x-scss" href="{% static "stylesheets/kettle.css" %}">
   <link rel="stylesheet" type="text/x-scss" href="{% static "stylesheets/custom_kitchen.css" %}">
   <link rel="stylesheet" type="text/x-scss" href="{% static "stylesheets/timer.css" %}">
   {% endcompress %}
@@ -50,8 +51,10 @@
           <div class="brightness-slider-container">
             <div class="brightness-slider brightness-slider-group-3" data-id="3"></div>
           </div>
-
+          <div style="clear: both"></div>
         </div>
+
+        {% include "snippets/kettle.html" %}
       </div>
       <div class="col-md-6">
         <div id="timers">
@@ -88,6 +91,7 @@
   <script src="{% static "js/timer.coffee" %}" type="text/coffeescript"></script>
   <script src="{% static "js/custom_timers.coffee" %}" type="text/coffeescript"></script>
   <script src="{% static "js/custom_kitchen.coffee" %}" type="text/coffeescript"></script>
+  <script src="{% static "js/kettle.coffee" %}" type="text/coffeescript"></script>
   <script src="{% static "js/ext_pages_consumer.coffee" %}" type="text/coffeescript"></script>
   {% endcompress %}
 

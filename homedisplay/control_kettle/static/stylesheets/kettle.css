@@ -1,9 +1,22 @@
 
 #kettle {
+  font-size: 150%;
+  margin-top: 25px;
 
-  .action-button {
+  .control-kettle-button {
+    height: 100px;
+
+    p {
+      margin-top: 5px;
+    }
+  }
+
+  .control-kettle div {
+    height: 100px;
+    padding-top: 5px;
     text-align: center;
     position: relative;
+
   }
 
   .disabled-mode {
