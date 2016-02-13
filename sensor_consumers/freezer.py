@@ -11,6 +11,9 @@ class Freezer(SensorConsumerBase):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
         self.door_open_since = None
         self.temperature_too_high_since = None
+        self.door_open_alarmed_at = None
+        self.temperature_too_high_alarmed = False
+        self.temperature_urgent = None
         self.delete_notification("freezer-door")
         self.delete_notification("freezer-temperature")
 
@@ -36,27 +39,43 @@ class Freezer(SensorConsumerBase):
         }])
 
         temperature = round(data["data"]["temperature1"], 1)
-        if temperature > - 10:
+        if temperature > - 8:
             if self.temperature_too_high_since is None:
                 self.temperature_too_high_since = datetime.datetime.now()
             level = "normal"
             if datetime.datetime.now() - self.temperature_too_high_since > datetime.timedelta(minutes=30):
                 level = "high"
+                if not self.temperature_too_high_alarmed:
+                    self.play_sound("finished")
+                    self.temperature_too_high_alarmed = True
+            if temperature > -2:
+                if not self.temperature_urgent:
+                    self.temperature_urgent = datetime.datetime.now()
+                if datetime.datetime.now() - self.temperature_urgent > datetime.timedelta(minutes=2):
+                    self.play_sound("finished")
+                level = "high"
             self.update_notification("freezer-temperature", "Iso pakastin liian lämmin: %s ({elapsed_since})" % temperature, False, elapsed_since=self.temperature_too_high_since, level=level)
         else:
             self.temperature_too_high_since = None
+            self.temperature_too_high_alarmed = False
+            self.temperature_urgent = None
             self.delete_notification("freezer-temperature")
 
         if door_open:
             if self.door_open_since is None:
                 self.door_open_since = datetime.datetime.now()
+                self.door_open_alarmed_at = datetime.datetime.now()
             level = "normal"
-            if datetime.datetime.now() - self.door_open_since > datetime.timedelta(seconds=15):
+            if datetime.datetime.now() - self.door_open_since > datetime.timedelta(seconds=30):
                 level = "high"
+                if datetime.datetime.now() - self.door_open_alarmed_at > datetime.timedelta(seconds=30):
+                    self.door_open_alarmed_at = datetime.datetime.now()
+                    self.play_sound("finished")
             self.update_notification("freezer-door", "Ison pakastimen ovi auki ({elapsed_since})", False, elapsed_since=self.door_open_since, level=level)
         else:
             if self.door_open_since:
                 self.door_open_since = None
+                self.door_open_alarmed_at = None
                 self.delete_notification("freezer-door")
 
 
