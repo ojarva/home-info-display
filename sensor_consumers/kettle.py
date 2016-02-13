@@ -28,6 +28,7 @@ class Kettle(SensorConsumerBase):
         self.delete_notification("kettle")
         self.boil_to = None
         self.boiled_at = None
+        self.eta = []
 
     def add_temperature(self, timestamp, temperature):
         if temperature > 101:
@@ -47,21 +48,31 @@ class Kettle(SensorConsumerBase):
             return None
         if self.boil_to is None:
             return
+        delta_per_second = None
         latest_timestamp, latest_temperature = self.temperatures[-1]
         for timestamp, temperature in reversed(self.temperatures[-5:-1]):
             if latest_timestamp - timestamp > datetime.timedelta(seconds=5):
                 delta_per_second = float(latest_temperature - temperature) / (latest_timestamp - timestamp).total_seconds()
                 break
+        print delta_per_second
+        if delta_per_second is None:
+            return None
         if delta_per_second < 0.1:
+            return None
+        if delta_per_second > 2:
             return None
 
         diff = self.boil_to - latest_temperature
         if diff < 0:
+            print "diff is %s" % diff
             return None
         eta = diff * delta_per_second
         if eta > 300:
+            print "eta is %s" % eta
             return None
-        return eta
+        self.eta.append(eta)
+        self.eta = self.eta[-5:]
+        return int(round(sum(self.eta) / len(self.eta)))
 
     def run(self):
         commands_queue = Queue()
@@ -85,12 +96,13 @@ class Kettle(SensorConsumerBase):
                 self.r.publish("home:broadcast:generic", json.dumps({"key": "kettle-info", "content": self.latest_status}))
 
                 if self.latest_status["status"] == "boiling" and self.boil_to:
-                    eta = self.get_eta(self.latest_status["temperature"], self.boil_to)
+                    eta = self.get_eta()
                     if eta is None:
                         eta = "?"
                     self.update_notification("kettle", "Vesi {} - {}, ETA {}s".format(self.latest_status["temperature"], self.boil_to, eta), False)
                     self.boiled_at = datetime.datetime.now()
                 else:
+                    self.eta = []
                     if self.latest_status["present"] and self.boiled_at and datetime.datetime.now() - self.boiled_at < datetime.timedelta(seconds=30):
                         self.update_notification("kettle", "Vesi valmis ({} - {})".format(self.latest_status["temperature"], self.boil_to), False)
                     else:
@@ -100,7 +112,7 @@ class Kettle(SensorConsumerBase):
                 if time.time() - self.last_update_at > 10:
                     water_level = self.latest_status["water_level"]
                     if water_level:
-                        water_level = water_level * 100
+                        water_level = int(water_level * 100)
                     self.last_update_at = time.time()
                     self.insert_into_influx([{
                         "measurement": "kettle",

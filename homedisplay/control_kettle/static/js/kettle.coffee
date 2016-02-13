@@ -19,7 +19,7 @@ Kettle = (elem) ->
       else if data.water_level < 0.1
         water_level = "0dl"
       else
-        water_level = Math.floor(18 * data.water_level) + "dl"
+        water_level = Math.floor((18 * data.water_level) + 0.5) + "dl"
       jq(elem).find(".waterlevel-content").html(water_level)
       jq(elem).find(".temperature-content").html(data.temperature)
     else
