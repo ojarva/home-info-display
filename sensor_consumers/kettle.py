@@ -29,25 +29,39 @@ class Kettle(SensorConsumerBase):
         self.boil_to = None
         self.boiled_at = None
 
-    def add_temperature(self, temperature):
+    def add_temperature(self, timestamp, temperature):
         if temperature > 101:
             return
-        self.temperatures.append(temperature)
-        if len(self.temperatures) > 5:
-            self.temperatures = self.temperatures[-5:]
+        self.temperatures.append((timestamp, temperature))
+        self.temperatures = self.temperatures[-10:]
         return self.get_temperature_average()
 
     def get_temperature_average(self):
         if len(self.temperatures) > 0:
-            return sum(self.temperatures) / len(self.temperatures)
+            temperatures = [a[1] for a in self.temperatures[-3:]]
+            return sum(temperatures) / len(temperatures)
         return None
 
-    @classmethod
-    def get_eta(cls, current_temperature, destination_temperature):
-        diff = destination_temperature - current_temperature
+    def get_eta(self):
+        if len(self.temperatures) < 3:
+            return None
+        if self.boil_to is None:
+            return
+        latest_timestamp, latest_temperature = self.temperatures[-1]
+        for timestamp, temperature in reversed(self.temperatures[-5:-1]):
+            if latest_timestamp - timestamp > datetime.timedelta(seconds=5):
+                delta_per_second = float(latest_temperature - temperature) / (latest_timestamp - timestamp).total_seconds()
+                break
+        if delta_per_second < 0.1:
+            return None
+
+        diff = self.boil_to - latest_temperature
         if diff < 0:
             return None
-        return diff * 2 # about one degree per two seconds
+        eta = diff * delta_per_second
+        if eta > 300:
+            return None
+        return eta
 
     def run(self):
         commands_queue = Queue()
@@ -74,12 +88,10 @@ class Kettle(SensorConsumerBase):
                     eta = self.get_eta(self.latest_status["temperature"], self.boil_to)
                     if eta is None:
                         eta = "?"
-                    else:
-                        eta = "%ss" % eta
-                    self.update_notification("kettle", "Vesi {} - {}, ETA {}".format(self.latest_status["temperature"], self.boil_to, eta), False)
+                    self.update_notification("kettle", "Vesi {} - {}, ETA {}s".format(self.latest_status["temperature"], self.boil_to, eta), False)
                     self.boiled_at = datetime.datetime.now()
                 else:
-                    if self.boiled_at and datetime.datetime.now() - self.boiled_at < datetime.timedelta(seconds=30):
+                    if self.latest_status["present"] and self.boiled_at and datetime.datetime.now() - self.boiled_at < datetime.timedelta(seconds=30):
                         self.update_notification("kettle", "Vesi valmis ({} - {})".format(self.latest_status["temperature"], self.boil_to), False)
                     else:
                         self.delete_notification("kettle")
@@ -93,6 +105,7 @@ class Kettle(SensorConsumerBase):
                         "fields": {
                             "temperature": self.latest_status["temperature"],
                             "water_level": self.latest_status["water_level_raw"],
+                            "water_level_percent": self.latest_status["water_level"],
                             "present": self.latest_status["present"],
                             "status": self.latest_status["status"],
                         }
@@ -109,7 +122,7 @@ class Kettle(SensorConsumerBase):
                 if not self.latest_status["present"]:
                     print "Can't turn on - kettle is not on the base"
                     continue
-                if self.latest_status["water_level"] in ("empty", "too_low"):
+                if self.latest_status["water_level"] < 0.1:
                     print "Can't turn on - not enough water"
                     continue
                 destination_temperature = command.get("on", 100)

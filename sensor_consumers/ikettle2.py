@@ -21,6 +21,13 @@ commands = {
     "deviceCoffee": 2,
 }
 
+"""
+2075 +-5 = empty
+2153 +-5 = 6dl
+2210 +-5 = 12dl
+2260 +-5 = 18dl
+"""
+
 import socket
 import pickle
 import sys
@@ -105,18 +112,11 @@ class Kettle2:
                     water_level2 = buf[4]
                     water_level = (water_level1 << 8) + water_level2
                     parsed["water_level_raw"] = water_level
-                    water_level = water_level - 2095
-                    if water_level < 0:
-                        water_level_parsed = "empty"
-                    elif water_level < 30: # < 1/3
-                        water_level_parsed = "too_low"
-                    elif water_level < 95: # < 2/3
-                        water_level_parsed = "half"
-                    elif water_level < 150:
-                        water_level_parsed = "full"
-                    else:
-                        water_level_parsed = "overfill"
-                    parsed["water_level"] = water_level_parsed
+                    water_level = water_level - 2075
+                    water_level_percentage = min(1, max(0, float(water_level) / 185))
+                    if not parsed["present"]:
+                        water_level_percentage = None
+                    parsed["water_level"] = water_level_percentage
 
                     output.append({"type": "status", "data": parsed})
                 if buf[0] == 3:
