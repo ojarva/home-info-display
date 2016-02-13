@@ -50,6 +50,9 @@ class SensorConsumerBase:
         resp = requests.post(BASE_URL + "notifications/create", data={"item_type": item_type, "description": description, "can_dismiss": can_dismiss, "elapsed_since": elapsed_since, "from_now_timestamp": from_now_timestamp, "level": level})
         print "Creating %s (%s, %s): %s - %s" % (item_type, description, can_dismiss, resp.status_code, resp.content)
 
+    def play_sound(self, sound):
+        self.redis_instance.publish("sound-notification", json.dumps({"type": sound}))
+
     def delete_notification(self, item_type):
         resp = requests.delete(BASE_URL + "notifications/delete/" + item_type)
         print "Deleting %s: %s" % (item_type, resp.status_code)

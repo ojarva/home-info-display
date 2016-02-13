@@ -2,28 +2,48 @@
 
 from local_settings import *
 from utils import SensorConsumerBase
-import redis
+from dishwasher_parser import DishwasherParser
 import datetime
 import sys
 
 class Dishwasher(SensorConsumerBase):
+
+    PHASE_MAPPING = {
+        "starting": "alkaa",
+        "prewash": "esipesu",
+        "washing-1": "1. pesu",
+        "mid-washing": "välihuuhtelu",
+        "washing-2": "huuhtelu",
+        "finishing": "lopettaa",
+        "cooling": "jäähdytys"
+    }
+
     def __init__(self):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
-        self.on_since = None
-        self.running_time = None
-        self.off_since = None
         self.show_was_running = False
+        self.dishwasher_parser = DishwasherParser()
 
     def run(self):
         self.subscribe("dishwasher-pubsub", self.pubsub_callback)
 
+    @classmethod
+    def _determine_program(cls, program_data):
+        if program_data is None:
+            return
+        if len(program_data) == 2 and "50C" in program_data and "65C" in program_data:
+            return "50/65C"
+        if len(program_data) == 1:
+            if "quick" in program_data:
+                return "pika"
+            if "prewash" in program_data:
+                return "esipesu"
+        return "?"
+
     def pubsub_callback(self, data):
         if "action" in data:
             if data["action"] == "user_dismissed":
-                # User dismissed the dialog - reset the state
-                self.off_since = None
-                self.show_was_running = False
-                self.delete_notification("dishwasher")
+                # User dismissed the dialog
+                pass
             return
 
         self.insert_into_influx([{
@@ -33,33 +53,32 @@ class Dishwasher(SensorConsumerBase):
                 "power_consumption": round(data["data"]["power_consumption"], 3),
             }
         }])
-        if data["data"]["power_consumption"] < 0.05:
-            if not self.off_since:
-                self.off_since = datetime.datetime.now()
 
-            if (datetime.datetime.now() - self.off_since) > datetime.timedelta(minutes=3) and self.show_was_running:
-                if self.on_since:
-                    self.running_time = datetime.datetime.now() - self.on_since
-                    if self.running_time < datetime.timedelta(minutes=30):
-                        print "Dishwasher didn't run long enough: %s" % self.running_time
-                    elif self.running_time > datetime.timedelta(minutes=120):
-                        print "Ran too long time: %s" % self.running_time
-                if self.running_time:
-                    message = "Pesukone valmis ({from_now_timestamp}, päällä %s)" % self.format_elapsed_time(self.running_time)
-                else:
-                    message = "Pesukone valmis ({from_now_timestamp})"
-                self.update_notification("dishwasher", message, True, from_now_timestamp=self.off_since)
+        parser_data = self.dishwasher_parser.add_value(datetime.datetime.now(), data["data"]["power_consumption"] * 230)
 
-                self.on_since = None
-
-        if data["data"]["power_consumption"] > 0.4:
-            if not self.on_since:
-                self.on_since = datetime.datetime.now()
-            self.off_since = None
-
-        if self.on_since:
-            self.show_was_running = True
-            self.update_notification("dishwasher", "Pesukone päällä ({elapsed_since})", False, elapsed_since=self.on_since)
+        if parser_data:
+            if parser_data["current_phase"] is None:
+                pass
+            elif parser_data["current_phase"] == "finished":
+                program = self._determine_program(parser_data["current_program"])
+                message = "Pesukone valmis ({from_now_timestamp}, päällä %s, %s)" % (parser_data["duration"], program)
+                self.update_notification("dishwasher", message, True, from_now_timestamp=datetime.datetime.now())
+                self.play_sound("finished")
+            else:
+                program = self._determine_program(parser_data["current_program"])
+                message = "Astiat: "
+                components = []
+                if "eta" in parser_data and parser_data["eta"] is not None:
+                    components.append("ETA %s" % datetime.timedelta(seconds=int(round(parser_data["eta"].total_seconds()))))
+                if program:
+                    components.append(program)
+                if parser_data["current_phase"]:
+                    phase_translated = self.PHASE_MAPPING[parser_data["current_phase"]]
+                    components.append(phase_translated)
+                if len(components) == 0:
+                    components.append("{elapsed_since}")
+                message = message + ", ".join(components)
+                self.update_notification("dishwasher", message, False, elapsed_since=parser_data["running_since"])
 
 
 def main():

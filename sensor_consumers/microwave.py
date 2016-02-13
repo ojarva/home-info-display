@@ -21,6 +21,8 @@ class MicrowaveState:
 
     def __init__(self):
         self.stuff_inside = False
+        self.stuff_inside_since = None
+        self.stuff_inside_alarmed = False
         self.last_used_at = None
         self.on_since = None
         self.total_time_running = datetime.timedelta(0)
@@ -36,6 +38,7 @@ class MicrowaveState:
         self.set_stopped()
         self.door_open = True
         self.stuff_inside = False
+        self.stuff_inside_since = None
 
     def set_door_closed(self):
         self.door_open = False
@@ -43,6 +46,8 @@ class MicrowaveState:
     def set_running(self):
         if not self.running:
             self.stuff_inside = True
+            self.stuff_inside_since = datetime.datetime.now()
+            self.stuff_inside_alarmed = False
             self.on_since = datetime.datetime.now()
         self.set_light_on()
         self.running = True
@@ -139,6 +144,9 @@ class Microwave(SensorConsumerBase):
                 self.state.set_stopped()
                 if self.state.stuff_inside:
                     self.update_notification("microwave", "Mikrossa kamaa (%s, {from_now_timestamp})" % self.state.get_total_time_running_formatted(), True, from_now_timestamp=self.state.last_used_at)
+                    if not self.state.stuff_inside_alarmed and self.state.stuff_inside_since and datetime.datetime.now() - self.state.stuff_inside_since > datetime.timedelta(seconds=60):
+                        self.play_sound("normal")
+                        self.state.stuff_inside_alarmed = True
                 else:
                     self.delete_notification("microwave")
 
