@@ -99,13 +99,14 @@ class Kettle(SensorConsumerBase):
                     eta = self.get_eta()
                     if eta is None:
                         eta = "?"
-                    self.update_notification("kettle", "Vesi {} - {}, ETA {}s".format(self.latest_status["temperature"], self.boil_to, eta), False)
+                    self.update_notification("kettle", "Vesi {}&deg;C -&gt; {}&deg;C, ETA {}s".format(self.latest_status["temperature"], self.boil_to, eta), False)
                     self.boiled_at = datetime.datetime.now()
                 else:
                     self.eta = []
                     if self.latest_status["present"] and self.boiled_at and datetime.datetime.now() - self.boiled_at < datetime.timedelta(seconds=30):
-                        self.update_notification("kettle", "Vesi valmis ({} - {})".format(self.latest_status["temperature"], self.boil_to), False)
+                        self.update_notification("kettle", "Vesi valmis ({}&deg;C -&gt; {}&deg;C)".format(self.latest_status["temperature"], self.boil_to), False)
                     else:
+                        self.boiled_at = None
                         self.delete_notification("kettle")
                         self.boil_to = None
 
