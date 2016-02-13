@@ -395,6 +395,11 @@ Timers = (options) ->
     jq.post "/homecontroller/timer/create",
       "name": jq(@).data("name")
       "duration": jq(@).data("duration")
+      "alarm_0s": jq(@).data("alarm-0s")
+      "alarm_30s": jq(@).data("alarm-30s")
+      "alarm_60s": jq(@).data("alarm-60s")
+      "alarm_300s": jq(@).data("alarm-300s")
+      "alarm_600s": jq(@).data("alarm-600s")
 
   jq(".add-stopclock").click ->
     jq.post "/homecontroller/timer/create",

@@ -27,7 +27,10 @@ def get_labels():
 def get_serialized_timer(item):
     return json.loads(serializers.serialize("json", [item]))
 
+TIMER_ALARMS = (0, 30, 60, 300,600)
 class Timer(models.Model):
+
+
     name = models.CharField(max_length=30)
     start_time = models.DateTimeField()
     duration = models.IntegerField(null=True)
@@ -40,6 +43,12 @@ class Timer(models.Model):
 
     # Disable refresh/restart button from the UI
     no_refresh = models.BooleanField(default=False, blank=True)
+
+    alarm_0s = models.BooleanField(default=False, blank=True)
+    alarm_30s = models.BooleanField(default=False, blank=True)
+    alarm_60s = models.BooleanField(default=False, blank=True)
+    alarm_300s = models.BooleanField(default=False, blank=True)
+    alarm_600s = models.BooleanField(default=False, blank=True)
 
     @property
     def end_time(self):

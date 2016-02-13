@@ -1,5 +1,5 @@
-from .models import get_labels, Timer
-from .tasks import alarm_ending_task
+from .models import get_labels, Timer, TIMER_ALARMS
+from .tasks import alarm_ending_task, alarm_notification_task
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -52,15 +52,23 @@ class Delete(View):
         return HttpResponse(json.dumps({"deleted": True, "id": kwargs["id"]}), content_type="application/json")
 
 
+def set_timer_notifications(timer):
+    if timer.duration:
+        alarm_ending_task.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1), expires=timer.end_time+datetime.timedelta(seconds=300))
+    for alarm in TIMER_ALARMS:
+        alarm_name = "alarm_%ss" % alarm
+        if getattr(timer, alarm_name):
+            alarm_notification_task.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1+alarm), expires=timer.end_time+datetime.timedelta(seconds=300)+datetime.timedelta(seconds=alarm))
+
+
+
 class Restart(View):
     def patch(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.start_time = timezone.now()
         item.running = True
         item.save()
-        if item.duration:
-            alarm_ending_task.apply_async((item.pk,), eta=item.end_time+datetime.timedelta(seconds=1), expires=item.end_time+datetime.timedelta(seconds=300))
-
+        set_timer_notifications(item)
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 
@@ -70,8 +78,7 @@ class Start(View):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.running = True
         item.save()
-        if item.duration:
-            alarm_ending_task.apply_async((item.pk,), eta=item.end_time+datetime.timedelta(seconds=1), expires=item.end_time+datetime.timedelta(seconds=300))
+        set_timer_notifications(item)
 
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
@@ -83,9 +90,20 @@ class Create(View):
         duration = p.get("duration")
         if duration:
             duration = int(duration)
-        item = Timer(name=p.get("name"), start_time=timezone.now(), duration=duration)
+
+        timer_data = {
+            "name": p.get("name"),
+            "start_time": timezone.now(),
+            "duration": duration,
+        }
+        for alarm in TIMER_ALARMS:
+            alarm_name="alarm_%ss" % alarm
+            if alarm_name in p:
+                if p[alarm_name] in ("true", "True", "1", "on"):
+                    timer_data[alarm_name] = True
+
+        item = Timer(**timer_data)
         item.save()
         serialized = json.loads(serializers.serialize("json", [item]))
-        if item.duration:
-            alarm_ending_task.apply_async((item.pk,), eta=item.end_time+datetime.timedelta(seconds=1), expires=item.end_time+datetime.timedelta(seconds=300))
+        set_timer_notifications(item)
         return HttpResponse(serialized, content_type="application/json")
