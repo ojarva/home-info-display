@@ -98,6 +98,9 @@ class Kettle(SensorConsumerBase):
                         self.boil_to = None
 
                 if time.time() - self.last_update_at > 10:
+                    water_level = self.latest_status["water_level"]
+                    if water_level:
+                        water_level = water_level * 100
                     self.last_update_at = time.time()
                     self.insert_into_influx([{
                         "measurement": "kettle",
@@ -105,7 +108,7 @@ class Kettle(SensorConsumerBase):
                         "fields": {
                             "temperature": self.latest_status["temperature"],
                             "water_level": self.latest_status["water_level_raw"],
-                            "water_level_percent": self.latest_status["water_level"],
+                            "water_level_percent": water_level,
                             "present": self.latest_status["present"],
                             "status": self.latest_status["status"],
                         }
