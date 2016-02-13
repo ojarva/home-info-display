@@ -20,6 +20,9 @@ class FridgeInside(SensorConsumerBase):
         self.fridge_door_open_since = None
         self.freezer_door_open_since = None
 
+        self.fridge_door_open_alarmed = False
+        self.freezer_door_open_alarmed = False
+
     def run(self):
         self.subscribe("fridge-inside-pubsub", self.pubsub_callback)
 
@@ -63,23 +66,31 @@ class FridgeInside(SensorConsumerBase):
             if not self.fridge_door_open_since:
                 self.fridge_door_open_since = datetime.datetime.now()
             level = "normal"
-            if datetime.datetime.now() - self.fridge_door_open_since > datetime.timedelta(seconds=15):
+            if datetime.datetime.now() - self.fridge_door_open_since > datetime.timedelta(seconds=30):
                 level = "high"
+                if not self.fridge_door_open_alarmed:
+                    self.fridge_door_open_alarmed = True
+                    self.play_sound("finished")
             self.update_notification("fridge-door-open", "Jääkaapin ovi auki ({from_now_timestamp})", False, from_now_timestamp=self.fridge_door_open_since, level=level)
         else:
             self.delete_notification("fridge-door-open")
             self.fridge_door_open_since = None
+            self.fridge_door_open_alarmed = False
 
         if data["data"]["freezer_door_open"]:
             if not self.freezer_door_open_since:
                 self.freezer_door_open_since = datetime.datetime.now()
             level = "normal"
-            if datetime.datetime.now() - self.freezer_door_open_since > datetime.timedelta(seconds=15):
+            if datetime.datetime.now() - self.freezer_door_open_since > datetime.timedelta(seconds=30):
                 level = "high"
+                if not self.freezer_door_open_alarmed:
+                    self.freezer_door_open_alarmed = True
+                    self.play_sound("finished")
             self.update_notification("small-freezer-door-open", "Pikkupakastimen ovi auki ({from_now_timestamp})", False, from_now_timestamp=self.freezer_door_open_since, level=level)
         else:
             self.delete_notification("small-freezer-door-open")
             self.freezer_door_open_since = None
+            self.freezer_door_open_alarmed = False
 
 def main():
     item = FridgeInside()
