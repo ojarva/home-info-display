@@ -30,7 +30,7 @@
 
     .notification-container {
       position: relative;
-      height: 80px;
+      height: 105px;
       overflow-y: hidden;
 
       .content {
