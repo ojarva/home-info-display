@@ -25,6 +25,7 @@ CustomTimer = (options) ->
       jq.post "/homecontroller/timer/create",
         name: name
         duration: seconds
+        alarm_0s: "true"
 
     modal_elem.find(".close").click()
 
