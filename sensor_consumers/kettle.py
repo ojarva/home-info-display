@@ -79,7 +79,7 @@ class Kettle(SensorConsumerBase):
                     if item["type"] == "status":
                         status_updated = True
                         self.latest_status = item["data"]
-                        self.latest_status["temperature"] = self.add_temperature(self.latest_status["temperature"])
+                        self.latest_status["temperature"] = self.add_temperature(datetime.datetime.now(), self.latest_status["temperature"])
             if status_updated:
                 self.r.setex("kettle-info", 60, json.dumps(self.latest_status))
                 self.r.publish("home:broadcast:generic", json.dumps({"key": "kettle-info", "content": self.latest_status}))
