@@ -2,12 +2,11 @@ import copy
 import datetime
 import glob
 import json
-import sys
-import time
 import os
+import sys
 
 
-class DishwasherParser():
+class DishwasherParser(object):
     AVERAGE_PROGRAMS = {
         "quick": [
             ("starting", datetime.timedelta(minutes=1, seconds=36)),
@@ -38,10 +37,21 @@ class DishwasherParser():
     }
 
     def __init__(self):
-        self.reset()
+        self.running_since = None
+        self.last_prewash_exceeded = None
+        self.first_prewash_exceeded = None
+        self.last_washing_exceeded = None
+        self.first_washing_exceeded = None
+        self.last_noise_exceeded = None
+        self.first_noise_exceeded = None
+        self.phases = []
+        self.current_phase = None
+        self.current_program = []
+        self.running_or_finished_phases = []
+        self.current_phase_since = None
 
     def reset(self):
-        self.running_since = None # program started at
+        self.running_since = None
         self.last_prewash_exceeded = None
         self.first_prewash_exceeded = None
         self.last_washing_exceeded = None
@@ -57,10 +67,6 @@ class DishwasherParser():
     def set_phase(self, phase, timestamp):
         if self.current_phase == phase:
             return
-#        if self.current_phase_since:
-#            print "setting phase %s at %s - last phase (%s) took %s" % (phase, timestamp, self.current_phase, timestamp - self.current_phase_since)
-#        else:
-#            print "setting phase %s at %s" % (phase, timestamp)
         self.current_phase = phase
         self.running_or_finished_phases.append(phase)
         self.current_phase_since = timestamp
@@ -125,10 +131,10 @@ class DishwasherParser():
                 self.running_since = timestamp
                 self.current_program = set(["quick", "prewash", "50C", "65C"])
 
-        if value > 1:
             self.last_noise_exceeded = timestamp
             if self.first_noise_exceeded is None:
                 self.first_noise_exceeded = timestamp
+
         if value > 25 and value < 200:
             if len(self.running_or_finished_phases) == 1:
                 self.set_phase("prewash", timestamp)
@@ -157,38 +163,41 @@ class DishwasherParser():
             if self.first_washing_exceeded is None:
                 self.first_washing_exceeded = timestamp
 
-
         if value < 1:
             # noise / not running
             if self.running_since and self.last_noise_exceeded:
                 time_diff = timestamp - self.last_noise_exceeded
-                if "50C" in self.current_program or "65C" in self.current_program:
+                if "50C" in self.current_program or "65C" in self.current_program and "quick" not in self.current_program:
                     last_noise_exceeded_threshold = datetime.timedelta(minutes=24)
                     if time_diff > datetime.timedelta(minutes=3) and self.current_phase == "finishing":
                         self.set_phase("cooling", timestamp)
                 else:
                     last_noise_exceeded_threshold = datetime.timedelta(minutes=3)
                 if time_diff > last_noise_exceeded_threshold:
-                    print "Non-running period exceeded"
-                    self.set_phase("finished", timestamp)
-                    print "running time was from %s to %s: %s - active time until %s: %s" % (self.running_since, timestamp, timestamp - self.running_since, self.last_noise_exceeded, self.last_noise_exceeded - self.running_since)
-                    prev = None
-                    for i in range(0, len(self.phases)):
-                        phase = self.phases[i]
-                        if i < len(self.phases) - 1:
-                            diff = self.phases[i + 1]["timestamp"] - phase["timestamp"]
-                        else:
-                            diff = None
-                        phase["diff"] = diff
-                        print "%s - %s" % (phase["phase"], diff)
-                    print self.current_program
-                    print
-                    data = copy.deepcopy(self.get_data(timestamp))
-                    self.reset()
+                    if not self.last_prewash_exceeded:
+                        print "Noise or interrupted - dishwasher didn't run."
+                        data = copy.deepcopy(self.get_data(timestamp))
+                        self.reset()
+                        data["exc"] = "noise_or_interrupted"
+                    else:
+                        print "Non-running period exceeded"
+                        self.set_phase("finished", timestamp)
+                        print "running time was from %s to %s: %s - active time until %s: %s" % (self.running_since, timestamp, timestamp - self.running_since, self.last_noise_exceeded, self.last_noise_exceeded - self.running_since)
+                        for i in range(0, len(self.phases)):
+                            phase = self.phases[i]
+                            if i < len(self.phases) - 1:
+                                diff = self.phases[i + 1]["timestamp"] - phase["timestamp"]
+                            else:
+                                diff = None
+                            phase["diff"] = diff
+                            print "%s - %s" % (phase["phase"], diff)
+                        print self.current_program
+                        print
+                        data = copy.deepcopy(self.get_data(timestamp))
+                        self.reset()
 
         if value < 25:
             if self.first_prewash_exceeded and self.last_prewash_exceeded:
-                length = self.last_prewash_exceeded - self.first_prewash_exceeded
                 self.first_prewash_exceeded = None
 
         if value < 200:
@@ -227,7 +236,7 @@ def main():
         series = content["results"][0]["series"][0]["values"]
         latest_data = None
         for timestamp, value in series:
-            timestamp = datetime.datetime.fromtimestamp(timestamp/1000)
+            timestamp = datetime.datetime.fromtimestamp(timestamp / 1000)
             data = parser.add_value(timestamp, value)
             if data is not None and data["current_phase"] is not None:
                 latest_data = data

@@ -1,10 +1,9 @@
 # coding=utf-8
 
-from local_settings import *
 from utils import SensorConsumerBase
-import redis
 import datetime
 import sys
+
 
 class Freezer(SensorConsumerBase):
     def __init__(self):

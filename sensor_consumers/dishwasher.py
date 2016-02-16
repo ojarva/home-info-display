@@ -1,10 +1,10 @@
 # coding=utf-8
 
-from local_settings import *
 from utils import SensorConsumerBase
 from dishwasher_parser import DishwasherParser
 import datetime
 import sys
+
 
 class Dishwasher(SensorConsumerBase):
 
@@ -20,8 +20,10 @@ class Dishwasher(SensorConsumerBase):
 
     def __init__(self):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
-        self.show_was_running = False
+        self.running_dialog_visible = False
+        self.finished_dialog_visible = False
         self.dishwasher_parser = DishwasherParser()
+        self.delete_notification("dishwasher")
 
     def run(self):
         self.subscribe("dishwasher-pubsub", self.pubsub_callback)
@@ -43,7 +45,7 @@ class Dishwasher(SensorConsumerBase):
         if "action" in data:
             if data["action"] == "user_dismissed":
                 # User dismissed the dialog
-                pass
+                self.running_dialog_visible = False
             return
 
         self.insert_into_influx([{
@@ -61,9 +63,17 @@ class Dishwasher(SensorConsumerBase):
                 pass
             elif parser_data["current_phase"] == "finished":
                 program = self._determine_program(parser_data["current_program"])
-                message = "Pesukone valmis ({from_now_timestamp}, päällä %s, %s)" % (parser_data["duration"], program)
+                message = "Pesukone valmis ({from_now_timestamp}, päällä %s, %s)" % (self.format_timedelta(parser_data["duration"]), program)
+                self.running_dialog_visible = False
+                self.finished_dialog_visible = True
                 self.update_notification("dishwasher", message, True, from_now_timestamp=datetime.datetime.now())
                 self.play_sound("finished")
+            elif parser_data.get("exc") == "noise_or_interrupted":
+                print "Noise or interrupted run - remove incorrect dialog (if exists)"
+                if self.running_dialog_visible:
+                    self.delete_notification("dishwasher")
+                    self.running_dialog_visible = False
+                    self.finished_dialog_visible = True
             else:
                 program = self._determine_program(parser_data["current_program"])
                 message = "Astiat: "
@@ -80,6 +90,8 @@ class Dishwasher(SensorConsumerBase):
                 if len(components) == 0:
                     components.append("{elapsed_since}")
                 message = message + ", ".join(components)
+                self.running_dialog_visible = True
+                self.finished_dialog_visible = False
                 self.update_notification("dishwasher", message, False, elapsed_since=parser_data["running_since"])
 
 

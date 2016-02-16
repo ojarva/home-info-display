@@ -4,8 +4,8 @@ import datetime
 import ikettle2
 import json
 import redis
-import select
 import time
+
 
 def listen_kettle_commands(queue):
     r = redis.StrictRedis()
@@ -18,6 +18,7 @@ def listen_kettle_commands(queue):
                 item = json.loads(item["data"])
                 queue.put(item)
 
+
 class Kettle(SensorConsumerBase):
     def __init__(self):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
@@ -25,10 +26,12 @@ class Kettle(SensorConsumerBase):
         self.latest_status = None
         self.temperatures = []
         self.last_update_at = 0
-        self.delete_notification("kettle")
         self.boil_to = None
         self.boiled_at = None
         self.eta = []
+        self.kettle_dialog_visible = False
+        self.delete_notification("kettle")
+        self.kettle = None
 
     def add_temperature(self, timestamp, temperature):
         if temperature > 101:
@@ -54,12 +57,7 @@ class Kettle(SensorConsumerBase):
             if latest_timestamp - timestamp > datetime.timedelta(seconds=5):
                 delta_per_second = float(latest_temperature - temperature) / (latest_timestamp - timestamp).total_seconds()
                 break
-        print delta_per_second
-        if delta_per_second is None:
-            return None
-        if delta_per_second < 0.1:
-            return None
-        if delta_per_second > 2:
+        if delta_per_second is None or delta_per_second < 0.1 or delta_per_second > 2:
             return None
 
         diff = self.boil_to - latest_temperature
@@ -79,11 +77,11 @@ class Kettle(SensorConsumerBase):
 
         p_commands = Process(target=listen_kettle_commands, args=(commands_queue,))
         p_commands.start()
-        kettle = ikettle2.Kettle2("192.168.10.156")
-        kettle.connect()
+        self.kettle = ikettle2.Kettle2("192.168.10.156")
+        self.kettle.connect()
         while True:
             time.sleep(0.2)
-            data = kettle.read()
+            data = self.kettle.read()
             status_updated = False
             if len(data) > 0:
                 for item in data:
@@ -96,57 +94,71 @@ class Kettle(SensorConsumerBase):
                 self.r.publish("home:broadcast:generic", json.dumps({"key": "kettle-info", "content": self.latest_status}))
 
                 if self.latest_status["status"] == "boiling" and self.boil_to:
-                    eta = self.get_eta()
-                    if eta is None:
-                        eta = "?"
-                    self.update_notification("kettle", "Vesi {}&deg;C -&gt; {}&deg;C, ETA {}s".format(self.latest_status["temperature"], self.boil_to, eta), False)
-                    self.boiled_at = datetime.datetime.now()
+                    self.set_boiling_message()
                 else:
                     self.eta = []
                     if self.latest_status["present"] and self.boiled_at and datetime.datetime.now() - self.boiled_at < datetime.timedelta(seconds=30):
                         self.update_notification("kettle", "Vesi valmis ({}&deg;C -&gt; {}&deg;C)".format(self.latest_status["temperature"], self.boil_to), False)
+                        self.kettle_dialog_visible = True
                     else:
                         self.boiled_at = None
-                        self.delete_notification("kettle")
+                        if self.kettle_dialog_visible:
+                            self.delete_notification("kettle")
+                            self.kettle_dialog_visible = False
                         self.boil_to = None
 
                 if time.time() - self.last_update_at > 10:
-                    water_level = self.latest_status["water_level"]
-                    if water_level:
-                        water_level = int(water_level * 100)
-                    self.last_update_at = time.time()
-                    self.insert_into_influx([{
-                        "measurement": "kettle",
-                        "time": datetime.datetime.utcnow().isoformat() + "Z",
-                        "fields": {
-                            "temperature": self.latest_status["temperature"],
-                            "water_level": self.latest_status["water_level_raw"],
-                            "water_level_percent": water_level,
-                            "present": self.latest_status["present"],
-                            "status": self.latest_status["status"],
-                        }
-                    }])
+                    self.push_to_influxdb(self.latest_status)
 
             try:
                 command = commands_queue.get(False)
             except:
                 continue
-            if command.get("on"):
-                if self.latest_status is None:
-                    print "Can't turn on - no status information available"
-                    continue
-                if not self.latest_status["present"]:
-                    print "Can't turn on - kettle is not on the base"
-                    continue
-                if self.latest_status["water_level"] < 0.1:
-                    print "Can't turn on - not enough water"
-                    continue
-                destination_temperature = command.get("on", 100)
-                self.boil_to = destination_temperature
-                kettle.on(destination_temperature)
-            elif command.get("off"):
-                self.boiled_at = None
-                kettle.off()
+            self.process_command(command)
+
+    def set_boiling_message(self):
+        eta = self.get_eta()
+        if eta is None:
+            eta = "?"
+        self.update_notification("kettle", "Vesi {current_temperature}&deg;C -&gt; {destination_temperature}&deg;C, ETA {eta}s".format(current_temperature=self.latest_status["temperature"], destination_temperature=self.boil_to, eta=eta), False)
+        self.kettle_dialog_visible = True
+        self.boiled_at = datetime.datetime.now()
+
+    def push_to_influxdb(self, latest_status):
+        water_level = latest_status["water_level"]
+        if water_level:
+            water_level = int(water_level * 100)
+        self.last_update_at = time.time()
+        self.insert_into_influx([{
+            "measurement": "kettle",
+            "time": datetime.datetime.utcnow().isoformat() + "Z",
+            "fields": {
+                "temperature": latest_status["temperature"],
+                "water_level": latest_status["water_level_raw"],
+                "water_level_percent": water_level,
+                "present": latest_status["present"],
+                "status": latest_status["status"],
+            }
+        }])
+
+    def process_command(self, command):
+        if command.get("on"):
+            if self.latest_status is None:
+                print "Can't turn on - no status information available"
+                return
+            if not self.latest_status["present"]:
+                print "Can't turn on - kettle is not on the base"
+                return
+            if self.latest_status["water_level"] < 0.1:
+                print "Can't turn on - not enough water"
+                return
+            destination_temperature = command.get("on", 100)
+            self.boil_to = destination_temperature
+            self.kettle.on(destination_temperature)
+        elif command.get("off"):
+            self.boiled_at = None
+            self.kettle.off()
+
 
 def main():
     kettle = Kettle()

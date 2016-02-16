@@ -1,10 +1,9 @@
 # coding=utf-8
 
-from local_settings import *
 from utils import SensorConsumerBase
-import redis
 import datetime
 import sys
+
 
 class Oven(SensorConsumerBase):
     def __init__(self):
@@ -30,6 +29,7 @@ class Oven(SensorConsumerBase):
             self.update_notification("oven", "Uuni: %s&deg;C" % int(round(temperature)), False)
         else:
             self.delete_notification("oven")
+
 
 def main():
     item = Oven()

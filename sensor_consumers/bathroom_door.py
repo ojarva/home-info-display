@@ -1,10 +1,8 @@
 # coding=utf-8
 
-from local_settings import *
 from utils import SensorConsumerBase
-import redis
-import datetime
 import sys
+
 
 class Bathroom(SensorConsumerBase):
     def __init__(self):
@@ -15,7 +13,7 @@ class Bathroom(SensorConsumerBase):
 
     def pubsub_callback(self, data):
         if "action" in data:
-#            if data["action"] == "user_dismissed":
+            # if data["action"] == "user_dismissed":
 
             return
 
@@ -31,6 +29,7 @@ class Bathroom(SensorConsumerBase):
             }
         }
         self.insert_into_influx([influx_data])
+
 
 def main():
     item = Bathroom()

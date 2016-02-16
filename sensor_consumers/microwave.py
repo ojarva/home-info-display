@@ -1,23 +1,11 @@
 # coding=utf-8
 
-from local_settings import *
 from utils import SensorConsumerBase
-import redis
 import datetime
 import sys
 
-"""
-- ~34W -> light on
-- ~1W -> off
-- >120W -> running
 
-- Mikro päällä (00:05)
-- Mikrossa kamaa (oli päällä 00:30)
-- Valo päällä (oli päällä 00:30)
-
-"""
-
-class MicrowaveState:
+class MicrowaveState(object):
 
     def __init__(self):
         self.stuff_inside = False
@@ -46,9 +34,9 @@ class MicrowaveState:
     def set_running(self):
         if not self.running:
             self.stuff_inside = True
-            self.stuff_inside_since = datetime.datetime.now()
             self.stuff_inside_alarmed = False
             self.on_since = datetime.datetime.now()
+        self.stuff_inside_since = datetime.datetime.now()
         self.set_light_on()
         self.running = True
 
@@ -142,13 +130,14 @@ class Microwave(SensorConsumerBase):
                 return
             else:
                 self.state.set_stopped()
-                if self.state.stuff_inside:
+                if self.state.stuff_inside and self.state.get_total_time_running() > datetime.timedelta(seconds=2):
                     self.update_notification("microwave", "Mikrossa kamaa (%s, {from_now_timestamp})" % self.state.get_total_time_running_formatted(), True, from_now_timestamp=self.state.last_used_at)
                     if not self.state.stuff_inside_alarmed and self.state.stuff_inside_since and datetime.datetime.now() - self.state.stuff_inside_since > datetime.timedelta(seconds=60):
                         self.play_sound("normal")
                         self.state.stuff_inside_alarmed = True
                 else:
                     self.delete_notification("microwave")
+
 
 def main():
     item = Microwave()

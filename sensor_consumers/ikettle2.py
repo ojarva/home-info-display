@@ -1,26 +1,3 @@
-commands = {
-    "autoDacKettle": 44,
-    "autoDacKettleResponse": 45,
-    "endMessage": 126,
-    "kettleScheduleRequest": 65,
-    "kettleStatus": 20,
-    "turnOffKettle": 22,
-    "turnOnKettle": 21,
-    "configureWifi": 12,
-    "configureWifiSSID": 5,
-    "configureWifiPassword": 7,
-    "listWifiNetworks": 13,
-    "deviceInfo": 100,
-    "firmwareUpdate": 109,
-    "commandSentAck": 3,
-    "kettleOffBase": 7,
-    "kettleOnBase": 8,
-    "wifiNetworkResponse": 14,
-    "deviceInfoResponse": 101,
-    "deviceKettle": 1,
-    "deviceCoffee": 2,
-}
-
 """
 2075 +-5 = empty
 2153 +-5 = 6dl
@@ -29,10 +6,10 @@ commands = {
 """
 
 import socket
-import pickle
 import sys
 import select
 import time
+
 
 def get_status(value):
     if value == 0:
@@ -47,7 +24,6 @@ def get_status(value):
         return "cooling"
 
 
-
 def read_all_available(proc):
     ret = ""
     while select.select([proc.stdout], [], [], 0)[0] != []:
@@ -55,15 +31,15 @@ def read_all_available(proc):
     return ret
 
 
-class Kettle2:
+class Kettle2(object):
 
     def __init__(self, ip, port=2081):
-        self.TCP_IP = ip
-        self.TCP_PORT = port
+        self.tcp_ip = ip
+        self.tcp_port = port
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self):
-        self.s.connect((self.TCP_IP, self.TCP_PORT))
+        self.s.connect((self.tcp_ip, self.tcp_port))
 
     def disconnect(self):
         self.s.close()
@@ -87,12 +63,11 @@ class Kettle2:
         return self.parse(data)
 
     def parse(self, data):
-        message_open = False
         message_data = ""
         output = []
-        for ch in data:
-            item = ch.encode("hex")
-            message_data += ch
+        for input_byte in data:
+            item = input_byte.encode("hex")
+            message_data += input_byte
             if item == "7e":
                 buf = []
                 for collected_ch in message_data:
@@ -122,9 +97,9 @@ class Kettle2:
                 if buf[0] == 3:
                     output.append({"type": "ack"})
 
-                message_open = False
                 message_data = ""
         return output
+
 
 def main(ip):
     kettle = Kettle2(ip)

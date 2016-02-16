@@ -1,10 +1,9 @@
 # coding=utf-8
 
-from local_settings import *
 from utils import SensorConsumerBase
-import redis
 import datetime
 import sys
+
 
 class Fridge(SensorConsumerBase):
     def __init__(self):
@@ -25,6 +24,7 @@ class Fridge(SensorConsumerBase):
                 "kitchen_ceiling_temperature": round(data["data"]["room_temperature"], 1),
             }
         }])
+
 
 def main():
     item = Fridge()
