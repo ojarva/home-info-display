@@ -1,27 +1,87 @@
 # coding=utf-8
 
-from local_settings import *
 from utils import SensorConsumerBase
-import redis
 import datetime
 import sys
 
+
 class FridgeInside(SensorConsumerBase):
+    THRESHOLD_CONFIG = {
+        "fridge_temperature2": {
+            "notification": "fridge-temperature",
+            "message": "Jääkaappi liian lämmin: {value}&deg;C ({{elapsed_since}})",
+            "normal": {
+                "gt": 7,
+                "sound": datetime.timedelta(minutes=30),
+                "delay": datetime.timedelta(seconds=30),
+                "escalate": datetime.timedelta(minutes=31),
+            },
+            "high": {
+                "gt": 10,
+                "sound": datetime.timedelta(minutes=15),
+                "escalate": datetime.timedelta(minutes=30),
+            },
+            "urgent": {
+                "gt": 15,
+                "sound": datetime.timedelta(minutes=3),
+            },
+        },
+        "freezer_temperature1": {
+            "notification": "small-freezer-temperature",
+            "message": "Pikkupakastin liian lämmin: {value}&deg;C ({{elapsed_since}})",
+            "normal": {
+                "gt": -20,
+                "sound": datetime.timedelta(minutes=30),
+                "delay": datetime.timedelta(seconds=30),
+                "escalate": datetime.timedelta(minutes=15),
+            },
+            "high": {
+                "gt": -15,
+                "sound": datetime.timedelta(minutes=15),
+                "escalate": datetime.timedelta(minutes=60),
+            },
+            "urgent": {
+                "gt": -10,
+                "sound": datetime.timedelta(minutes=3),
+            },
+        },
+        "fridge_door_open": {
+            "notification": "fridge-door-open",
+            "message": "Jääkaapin ovi auki ({{elapsed_since}})",
+            "normal": {
+                "bool": True,
+                "sound": datetime.timedelta(seconds=30),
+                "escalate": datetime.timedelta(seconds=60),
+            },
+            "high": {
+                "sound": datetime.timedelta(seconds=0),
+                "escalate": datetime.timedelta(minutes=10),
+            },
+            "urgent": {
+                "sound": datetime.timedelta(seconds=0),
+            }
+        },
+        "freezer_door_open": {
+            "message": "Pikkupakastimen ovi auki ({{elapsed_since}})",
+            "notification": "small-freezer-door-open",
+            "normal": {
+                "bool": True,
+                "sound": datetime.timedelta(seconds=30),
+                "escalate": datetime.timedelta(seconds=60),
+            },
+            "high": {
+                "sound": datetime.timedelta(seconds=0),
+                "escalate": datetime.timedelta(minutes=5),
+            },
+            "urgent": {
+                "sound": datetime.timedelta(seconds=0),
+            }
+        },
+    }
+
     def __init__(self):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
-        self.delete_notification("fridge-door-open")
-        self.delete_notification("fridge-temperature")
-        self.delete_notification("small-freezer-door-open")
-        self.delete_notification("small-freezer-temperature")
-
-        self.fridge_temperature_too_high_since = None
-        self.freezer_temperature_too_high_since = None
-
-        self.fridge_door_open_since = None
-        self.freezer_door_open_since = None
-
-        self.fridge_door_open_alarmed = False
-        self.freezer_door_open_alarmed = False
+        self.initialize_notifications(self.THRESHOLD_CONFIG)
 
     def run(self):
         self.subscribe("fridge-inside-pubsub", self.pubsub_callback)
@@ -30,7 +90,7 @@ class FridgeInside(SensorConsumerBase):
         print "Received %s" % data
         if "action" in data:
             if data["action"] == "user_dismissed":
-                self.delete_notification("microwave")
+                pass
             return
 
         self.insert_into_influx([{
@@ -39,58 +99,8 @@ class FridgeInside(SensorConsumerBase):
             "fields": data["data"],
         }])
 
-        temperature = data["data"]["fridge_temperature2"]
-        if temperature > 10:
-            if self.fridge_temperature_too_high_since is None:
-                self.fridge_temperature_too_high_since = datetime.datetime.now()
-            level = "normal"
-            if datetime.datetime.now() - self.fridge_temperature_too_high_since > datetime.timedelta(minutes=30):
-                level = "high"
-            self.update_notification("fridge-temperature", "Jääkaappi liian lämmin: %s ({elapsed_since})" % temperature, False, elapsed_since=self.fridge_temperature_too_high_since, level=level)
-        else:
-            self.fridge_temperature_too_high_since = None
+        self.check_notifications(data["data"])
 
-        temperature = data["data"]["freezer_temperature1"]
-        if temperature > 10:
-            if self.freezer_temperature_too_high_since is None:
-                self.freezer_temperature_too_high_since = datetime.datetime.now()
-                level = "normal"
-            if datetime.datetime.now() - self.freezer_temperature_too_high_since > datetime.timedelta(minutes=30):
-                level = "high"
-            self.update_notification("small-freezer-temperature", "Pikkupakastin liian lämmin: %s ({elapsed_since})" % temperature, False, elapsed_since=self.freezer_temperature_too_high_since, level=level)
-        else:
-            self.freezer_temperature_too_high_since = None
-
-
-        if data["data"]["fridge_door_open"]:
-            if not self.fridge_door_open_since:
-                self.fridge_door_open_since = datetime.datetime.now()
-            level = "normal"
-            if datetime.datetime.now() - self.fridge_door_open_since > datetime.timedelta(seconds=30):
-                level = "high"
-                if not self.fridge_door_open_alarmed:
-                    self.fridge_door_open_alarmed = True
-                    self.play_sound("finished")
-            self.update_notification("fridge-door-open", "Jääkaapin ovi auki ({from_now_timestamp})", False, from_now_timestamp=self.fridge_door_open_since, level=level)
-        else:
-            self.delete_notification("fridge-door-open")
-            self.fridge_door_open_since = None
-            self.fridge_door_open_alarmed = False
-
-        if data["data"]["freezer_door_open"]:
-            if not self.freezer_door_open_since:
-                self.freezer_door_open_since = datetime.datetime.now()
-            level = "normal"
-            if datetime.datetime.now() - self.freezer_door_open_since > datetime.timedelta(seconds=30):
-                level = "high"
-                if not self.freezer_door_open_alarmed:
-                    self.freezer_door_open_alarmed = True
-                    self.play_sound("finished")
-            self.update_notification("small-freezer-door-open", "Pikkupakastimen ovi auki ({from_now_timestamp})", False, from_now_timestamp=self.freezer_door_open_since, level=level)
-        else:
-            self.delete_notification("small-freezer-door-open")
-            self.freezer_door_open_since = None
-            self.freezer_door_open_alarmed = False
 
 def main():
     item = FridgeInside()
