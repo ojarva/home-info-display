@@ -7,6 +7,16 @@ import sys
 
 
 class DishwasherParser(object):
+    STATE_TRANSITIONS = {
+        "starting": ["prewash", "washing-1"],
+        "prewash": ["finishing", "finished", "washing-1"],
+        "washing-1": ["mid-washing"],
+        "mid-washing": ["washing-2"],
+        "washing-2": ["finishing", "cooling", "finished"],
+        "finishing": ["cooling", "finished"],
+        "cooling": ["finished"],
+    }
+
     AVERAGE_PROGRAMS = {
         "quick": [
             ("starting", datetime.timedelta(minutes=1, seconds=36)),
@@ -33,22 +43,31 @@ class DishwasherParser(object):
             ("washing-2", datetime.timedelta(minutes=15, seconds=04)),
             ("finishing", datetime.timedelta(minutes=5, seconds=00)),
             ("cooling", datetime.timedelta(minutes=21, seconds=8))
-        ]
+        ],
+        "prewash": [
+            ("starting", datetime.timedelta(minutes=1, seconds=18)),
+            ("prewash", datetime.timedelta(minutes=13)),
+        ],
     }
 
-    def __init__(self):
-        self.running_since = None
-        self.last_prewash_exceeded = None
-        self.first_prewash_exceeded = None
-        self.last_washing_exceeded = None
-        self.first_washing_exceeded = None
-        self.last_noise_exceeded = None
-        self.first_noise_exceeded = None
-        self.phases = []
-        self.current_phase = None
-        self.current_program = []
-        self.running_or_finished_phases = []
-        self.current_phase_since = None
+    ARGS = ("running_since", "last_prewash_exceeded", "first_prewash_exceeded", "last_washing_exceeded", "first_washing_exceeded", "last_noise_exceeded", "first_noise_exceeded", "phases", "current_phase", "current_program", "running_or_finished_phases", "current_phase_since")
+
+    def __init__(self, single_run_testing=False, **kwargs):
+        self.reset()
+        self.single_run_testing = single_run_testing  # True for throwing exception for multiple runs on a single instance
+        self.start_detected = False  # Related to previous variable, True if run has started, stays True forever.
+        if kwargs["state"]:
+            self.load_state(kwargs["state"])
+
+    def load_state(self, state):
+        for arg in self.ARGS:
+            setattr(self, state[arg])
+
+    def get_state(self):
+        state = {}
+        for arg in self.ARGS:
+            state[arg] = getattr(self, arg)
+        return state
 
     def reset(self):
         self.running_since = None
@@ -67,6 +86,11 @@ class DishwasherParser(object):
     def set_phase(self, phase, timestamp):
         if self.current_phase == phase:
             return
+        if self.current_phase is not None:
+            possible_transitions = self.STATE_TRANSITIONS[self.current_phase]
+            if phase not in possible_transitions:
+                print "Invalid transition from %s to %s. Only %s are allowed" % (self.current_phase, phase, possible_transitions)
+                raise ValueError
         self.current_phase = phase
         self.running_or_finished_phases.append(phase)
         self.current_phase_since = timestamp
@@ -127,6 +151,10 @@ class DishwasherParser(object):
 
         if value > 2:
             if self.running_since is None:
+                if self.single_run_testing and self.start_detected:
+                    print "Single run testing enabled but duplicate start detected"
+                    assert False
+                self.start_detected = True
                 self.set_phase("starting", timestamp)
                 self.running_since = timestamp
                 self.current_program = set(["quick", "prewash", "50C", "65C"])
@@ -168,7 +196,7 @@ class DishwasherParser(object):
             # noise / not running
             if self.running_since and self.last_noise_exceeded:
                 time_diff = timestamp - self.last_noise_exceeded
-                if "50C" in self.current_program or "65C" in self.current_program and "quick" not in self.current_program:
+                if ("50C" in self.current_program or "65C" in self.current_program) and "quick" not in self.current_program and "washing-2" in self.running_or_finished_phases:
                     last_noise_exceeded_threshold = datetime.timedelta(minutes=24)
                     if time_diff > datetime.timedelta(minutes=3) and self.current_phase == "finishing":
                         self.set_phase("cooling", timestamp)
@@ -183,6 +211,9 @@ class DishwasherParser(object):
                     else:
                         print "Non-running period exceeded"
                         self.set_phase("finished", timestamp)
+                        if "washing-2" not in self.running_or_finished_phases and "prewash" in self.running_or_finished_phases:
+                            self.current_program = set(["prewash"])
+
                         print "running time was from %s to %s: %s - active time until %s: %s" % (self.running_since, timestamp, timestamp - self.running_since, self.last_noise_exceeded, self.last_noise_exceeded - self.running_since)
                         for i in range(0, len(self.phases)):
                             phase = self.phases[i]
@@ -202,7 +233,7 @@ class DishwasherParser(object):
                 self.first_prewash_exceeded = None
 
         if value < 200:
-            if self.first_washing_exceeded is not None and self.last_washing_exceeded is not None:
+            if self.first_washing_exceeded and self.last_washing_exceeded:
                 self.first_washing_exceeded = None
 
         if data is not None:
@@ -228,7 +259,7 @@ def main():
 
     stats = {}
     for filename in glob.glob("../datasets/dishwasher_*.json"):
-        parser = DishwasherParser()
+        parser = DishwasherParser(single_run_testing=True)
         program = get_program(filename)
         if program not in stats:
             stats[program] = {}
@@ -243,6 +274,14 @@ def main():
                 latest_data = data
         print latest_data
         if latest_data:
+            assert program in latest_data["current_program"]
+            if program in ("quick", "prewash"):
+                assert len(latest_data["current_program"]) == 1
+            elif program in ("65C", "50C"):
+                assert len(latest_data["current_program"]) == 2
+            assert latest_data["current_phase"] == "finished"
+            if latest_data["eta"] is not None:
+                assert latest_data["eta"] == datetime.timedelta(0)
             for phase in latest_data["phases"]:
                 if "diff" not in phase or phase["diff"] is None:
                     continue

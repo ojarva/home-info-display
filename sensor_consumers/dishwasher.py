@@ -3,6 +3,8 @@
 from utils import SensorConsumerBase
 from dishwasher_parser import DishwasherParser
 import datetime
+import json
+import redis
 import requests.exceptions
 import sys
 import time
@@ -25,6 +27,12 @@ class Dishwasher(SensorConsumerBase):
         self.running_dialog_visible = False
         self.finished_dialog_visible = False
         self.dishwasher_parser = DishwasherParser()
+        self.redis = redis.StrictRedis()
+        state = self.redis.get("dishwasher-parser-state")
+        if state:
+            state = json.loads(state)
+            print "Restoring state from redis"
+            self.dishwasher_parser.load_state(state)
         try:
             self.delete_notification("dishwasher")
         except requests.exceptions.ConnectionError as err:
@@ -64,6 +72,7 @@ class Dishwasher(SensorConsumerBase):
         }])
 
         parser_data = self.dishwasher_parser.add_value(datetime.datetime.now(), data["data"]["power_consumption"] * 230)
+        self.redis.setex("dishwasher-parser-state", 120, json.dumps(self.dishwasher_parser.get_state()))
 
         if parser_data:
             if parser_data["current_phase"] is None:
