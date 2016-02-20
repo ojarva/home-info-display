@@ -8,7 +8,7 @@ import subprocess
 import time
 
 class UnifiStatusPublisher(object):
-    stainfo_re = re.compile("(?P<timestamp>.{2,3})\[(?P<mac>.*)\].(?P<flags>.{3}) idle=(?P<idletime>[0-9 ]+)rssi=(?P<rssi>[0-9 ]+) (?P<bandwidth_in>[0-9 ]+)/(?P<bandwidth_out>[0-9 ]+)ccq=.*queued=(?P<tx>[0-9 ]+)/(?P<ret>[0-9 ]+)/(?P<queued>[0-9 ]+)rx=(?P<rx>[0-9 ]+)err=(?P<err>[0-9/ ]+)")
+    stainfo_re = re.compile("^(?P<timestamp>.{2,3})\[(?P<mac>.*)\]\s+(?P<flags>.{3}) idle=(?P<idletime>[0-9 ]+)rssi=(?P<rssi>[0-9 ]+)\s+(?P<bandwidth_in>[0-9 ]+)/(?P<bandwidth_out>[0-9 ]+)ccq=.*queued=(?P<tx>[0-9 ]+)/(?P<tx_ret>[0-9 ]+)/(?P<tx_queued>[0-9 ]+)rx/ret/mc=(?P<rx>[0-9 ]+)/(?P<rx_ret>[0-9 ]+)/(?P<rx_queued>[0-9 ]+)err=(?P<err>[0-9/ ]+)$")
 
     def __init__(self):
         self.redis_instance = redis.StrictRedis()
