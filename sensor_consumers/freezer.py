@@ -6,15 +6,47 @@ import sys
 
 
 class Freezer(SensorConsumerBase):
+    THRESHOLD_CONFIG = {
+        "temperature1": {
+            "notification": "freezer-temperature",
+            "message": "Pakastin on liian lämmin: {value}&deg;C ({{elapsed_since}})",
+            "normal": {
+                "gt": -20,
+                "sound": datetime.timedelta(minutes=30),
+                "delay": datetime.timedelta(seconds=30),
+                "escalate": datetime.timedelta(minutes=15),
+            },
+            "high": {
+                "gt": -15,
+                "sound": datetime.timedelta(minutes=15),
+                "escalate": datetime.timedelta(minutes=60),
+            },
+            "urgent": {
+                "gt": -10,
+                "sound": datetime.timedelta(minutes=3),
+            },
+        },
+        "door_open": {
+            "message": "Pakastimen ovi auki ({{elapsed_since}})",
+            "notification": "freezer-door-open",
+            "normal": {
+                "bool": True,
+                "sound": datetime.timedelta(seconds=30),
+                "escalate": datetime.timedelta(seconds=60),
+            },
+            "high": {
+                "sound": datetime.timedelta(seconds=0),
+                "escalate": datetime.timedelta(minutes=5),
+            },
+            "urgent": {
+                "sound": datetime.timedelta(seconds=0),
+            }
+        },
+    }
+
     def __init__(self):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
-        self.door_open_since = None
-        self.temperature_too_high_since = None
-        self.door_open_alarmed_at = None
-        self.temperature_too_high_alarmed = False
-        self.temperature_urgent = None
-        self.delete_notification("freezer-door")
-        self.delete_notification("freezer-temperature")
+        self.initialize_notifications(self.THRESHOLD_CONFIG)
 
     def run(self):
         self.subscribe("freezer-pubsub", self.pubsub_callback)
@@ -25,57 +57,21 @@ class Freezer(SensorConsumerBase):
 
         door_open = int(data["data"]["door"]) == 0
 
+        processed_data = {
+            "power_consumption": round(data["data"]["power_consumption"], 3),
+            "door": door_open,
+            "temperature1": round(data["data"]["temperature1"], 1),
+            "temperature2": round(data["data"]["temperature2"], 1),
+            "water": data["data"]["water"],
+        }
+
         self.insert_into_influx([{
             "measurement": "freezer",
             "time": datetime.datetime.utcnow().isoformat() + "Z",
-            "fields": {
-                "power_consumption": round(data["data"]["power_consumption"], 3),
-                "door": door_open,
-                "temperature1": round(data["data"]["temperature1"], 1),
-                "temperature2": round(data["data"]["temperature2"], 1),
-                "water": data["data"]["water"],
-            }
+            "fields": processed_data,
         }])
 
-        temperature = round(data["data"]["temperature1"], 1)
-        if temperature > - 8:
-            if self.temperature_too_high_since is None:
-                self.temperature_too_high_since = datetime.datetime.now()
-            level = "normal"
-            if datetime.datetime.now() - self.temperature_too_high_since > datetime.timedelta(minutes=30):
-                level = "high"
-                if not self.temperature_too_high_alarmed:
-                    self.play_sound("finished")
-                    self.temperature_too_high_alarmed = True
-            if temperature > -2:
-                if not self.temperature_urgent:
-                    self.temperature_urgent = datetime.datetime.now()
-                if datetime.datetime.now() - self.temperature_urgent > datetime.timedelta(minutes=2):
-                    self.play_sound("finished")
-                level = "high"
-            self.update_notification("freezer-temperature", "Iso pakastin liian lämmin: %s ({elapsed_since})" % temperature, False, elapsed_since=self.temperature_too_high_since, level=level)
-        else:
-            self.temperature_too_high_since = None
-            self.temperature_too_high_alarmed = False
-            self.temperature_urgent = None
-            self.delete_notification("freezer-temperature")
-
-        if door_open:
-            if self.door_open_since is None:
-                self.door_open_since = datetime.datetime.now()
-                self.door_open_alarmed_at = datetime.datetime.now()
-            level = "normal"
-            if datetime.datetime.now() - self.door_open_since > datetime.timedelta(seconds=30):
-                level = "high"
-                if datetime.datetime.now() - self.door_open_alarmed_at > datetime.timedelta(seconds=30):
-                    self.door_open_alarmed_at = datetime.datetime.now()
-                    self.play_sound("finished")
-            self.update_notification("freezer-door", "Ison pakastimen ovi auki ({elapsed_since})", False, elapsed_since=self.door_open_since, level=level)
-        else:
-            if self.door_open_since:
-                self.door_open_since = None
-                self.door_open_alarmed_at = None
-                self.delete_notification("freezer-door")
+        self.check_notifications(processed_data)
 
 
 def main():

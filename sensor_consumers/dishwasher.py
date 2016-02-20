@@ -3,7 +3,9 @@
 from utils import SensorConsumerBase
 from dishwasher_parser import DishwasherParser
 import datetime
+import requests.exceptions
 import sys
+import time
 
 
 class Dishwasher(SensorConsumerBase):
@@ -23,7 +25,12 @@ class Dishwasher(SensorConsumerBase):
         self.running_dialog_visible = False
         self.finished_dialog_visible = False
         self.dishwasher_parser = DishwasherParser()
-        self.delete_notification("dishwasher")
+        try:
+            self.delete_notification("dishwasher")
+        except requests.exceptions.ConnectionError as err:
+            print "Initial deleting of notifications failed. Sleep 10s before exiting."
+            time.sleep(10)
+            raise err
 
     def run(self):
         self.subscribe("dishwasher-pubsub", self.pubsub_callback)
@@ -81,7 +88,7 @@ class Dishwasher(SensorConsumerBase):
                 if "eta" in parser_data and parser_data["eta"] is not None:
                     eta = datetime.datetime.now() + parser_data["eta"]
                     eta = eta.strftime("%H:%M:%S")
-                    components.append("ETA %s" % eta)
+                    components.append("ETA klo %s" % eta)
                 if program:
                     components.append(program)
                 if parser_data["current_phase"]:

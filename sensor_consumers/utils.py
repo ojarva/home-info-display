@@ -5,6 +5,8 @@ import influxdb.exceptions
 import json
 import redis
 import requests
+import requests.exceptions
+import time
 
 
 class NotificationConfig(object):
@@ -12,6 +14,8 @@ class NotificationConfig(object):
         self.config = config
         self.notification = notification
         self.data = {}
+        self.avg_data = {}
+        self.avg_config = {}
         for level in ("normal", "high", "urgent"):
             self.data[level] = {}
             self.deactivate(level)
@@ -80,16 +84,33 @@ class SensorConsumerBase(object):
             elapsed_since = elapsed_since.isoformat()
         if from_now_timestamp:
             from_now_timestamp = from_now_timestamp.isoformat()
-        resp = requests.post(BASE_URL + "notifications/create", data={"item_type": item_type, "description": description, "can_dismiss": can_dismiss, "elapsed_since": elapsed_since, "from_now_timestamp": from_now_timestamp, "level": level})
-        print "Creating %s (%s, %s): %s - %s, args=%s" % (item_type, description, can_dismiss, resp.status_code, resp.content, kwargs)
+        for i in range(0, 5):
+            url = BASE_URL + "notifications/create"
+            data = {"item_type": item_type, "description": description, "can_dismiss": can_dismiss, "elapsed_since": elapsed_since, "from_now_timestamp": from_now_timestamp, "level": level}
+            try:
+                resp = requests.post(url, data=data)
+                print "Creating %s (%s, %s): %s - %s, args=%s" % (item_type, description, can_dismiss, resp.status_code, resp.content, kwargs)
+                return True
+            except requests.exceptions.ConnectionError as err:
+                print "Creating a new notification failed: %s - %s: %s" % (url, data, err)
+                time.sleep(1)
+        raise err
 
     def play_sound(self, sound):
         print "Playing sound: {}".format(sound)
         self.redis_instance.publish("sound-notification", json.dumps({"type": sound, "timestamp": str(datetime.datetime.now())}))
 
     def delete_notification(self, item_type):
-        resp = requests.delete(BASE_URL + "notifications/delete/" + item_type)
-        print "Deleting %s: %s" % (item_type, resp.status_code)
+        for i in range(0, 5):
+            url = BASE_URL + "notifications/delete/" + item_type
+            try:
+                resp = requests.delete(url)
+                print "Deleting %s: %s" % (item_type, resp.status_code)
+                return True
+            except requests.exceptions.ConnectionError as err:
+                print "Connecting to %s failed: %s." % (url, err)
+                time.sleep(1)
+        raise err
 
     def get_elapsed_time(self, timestamp):
         time_diff = datetime.datetime.now() - timestamp
@@ -99,7 +120,12 @@ class SensorConsumerBase(object):
         self.notification_data = {}
         for notification, config in notification_config.items():
             self.notification_data[notification] = NotificationConfig(notification, config)
-            self.delete_notification(config["notification"])
+            try:
+                self.delete_notification(config["notification"])
+            except requests.exceptions.ConnectionError as err:
+                print "Deleting %s failed with %s. Sleeping 10s before exiting." % (config["notification"], err)
+                time.sleep(10)
+                raise err
 
     def check_notifications(self, data):
         notification_levels = ('normal', 'high', 'urgent')
@@ -197,6 +223,26 @@ class SensorConsumerBase(object):
     def format_timedelta(cls, timedelta):
         """ Strip out microseconds """
         return datetime.timedelta(seconds=int(timedelta.total_seconds()))
+
+    def initialize_average(self, series, length):
+        self.avg_data[series] = []
+        self.avg_config[series] = length
+
+    def add_running_average(self, series, value):
+        if series not in self.avg_data:
+            raise KeyError("series %s not initialized" % series)
+
+        self.avg_data[series].append(value)
+        self.avg_data[series] = self.avg_data[series][-self.avg_config[series]:]
+        return self.get_average(series)
+
+    def get_average(self, series):
+        if series not in self.avg_data:
+            return None
+
+        dataset = self.avg_data[series]
+        if len(dataset) > 0:
+            return float(sum(dataset)) / len(dataset)
 
     def format_elapsed_time(self, delta):
         total_seconds = delta.total_seconds()

@@ -8,6 +8,7 @@ import sys
 class Oven(SensorConsumerBase):
     def __init__(self):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
+        self.notification_visible = False
 
     def run(self):
         self.subscribe("oven-pubsub", self.pubsub_callback)
@@ -27,8 +28,10 @@ class Oven(SensorConsumerBase):
         }])
         if temperature > 50:
             self.update_notification("oven", "Uuni: %s&deg;C" % int(round(temperature)), False)
-        else:
+            self.notification_visible = True
+        elif self.notification_visible:
             self.delete_notification("oven")
+            self.notification_visible = False
 
 
 def main():

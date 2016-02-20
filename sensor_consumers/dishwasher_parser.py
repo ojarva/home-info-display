@@ -125,12 +125,13 @@ class DishwasherParser(object):
         if value is None:
             return
 
-        if value > 1:
+        if value > 2:
             if self.running_since is None:
                 self.set_phase("starting", timestamp)
                 self.running_since = timestamp
                 self.current_program = set(["quick", "prewash", "50C", "65C"])
 
+        if value > 1 and self.running_since:
             self.last_noise_exceeded = timestamp
             if self.first_noise_exceeded is None:
                 self.first_noise_exceeded = timestamp

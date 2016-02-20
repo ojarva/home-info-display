@@ -4,6 +4,8 @@ import datetime
 import ikettle2
 import json
 import redis
+import socket.error
+import sys
 import time
 
 
@@ -78,7 +80,16 @@ class Kettle(SensorConsumerBase):
         p_commands = Process(target=listen_kettle_commands, args=(commands_queue,))
         p_commands.start()
         self.kettle = ikettle2.Kettle2("192.168.10.156")
-        self.kettle.connect()
+        try:
+            self.kettle.connect()
+        except socket.error as err:
+            print "Connecting to kettle failed with %s" % err
+            print "Terminating redis listener"
+            p_commands.terminate()
+            print "Waiting 10s before exiting"
+            time.sleep(10)
+            sys.exit(1)
+
         while True:
             time.sleep(0.2)
             data = self.kettle.read()
