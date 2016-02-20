@@ -198,7 +198,7 @@ class SensorConsumerBase(object):
                     if level == "urgent":  # TODO
                         print "Level is urgent -> convert to high"
                         message_level = "high"
-                    notification_meta = {"level": message_level, "message": message.format(value=point), "user_dismissable": False, "elapsed_since": notification_data[level]["triggered-since"], "notification": notification_config.notification}
+                    notification_meta = {"level": message_level, "message": message.format(value=point), "user_dismissable": False, "elapsed_since": notification_data[level]["triggered-since"], "notification": config["notification"]}
                     if notification_config.current_notification != notification_meta:
                         notification_config.current_notification = notification_meta
                         self.update_notification_from_dict(**notification_meta)
@@ -216,7 +216,7 @@ class SensorConsumerBase(object):
                 # no break executed - no notification is there.
                 if notification_config.current_notification:
                     # delete notification
-                    self.delete_notification(notification_config.notification)
+                    self.delete_notification(config["notification"])
                     notification_config.current_notification = None
 
     @classmethod
