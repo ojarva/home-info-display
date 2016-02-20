@@ -1,5 +1,5 @@
 from influxdb import InfluxDBClient
-from local_settings import *
+from local_settings import BASE_URL
 import datetime
 import influxdb.exceptions
 import json
@@ -14,8 +14,6 @@ class NotificationConfig(object):
         self.config = config
         self.notification = notification
         self.data = {}
-        self.avg_data = {}
-        self.avg_config = {}
         for level in ("normal", "high", "urgent"):
             self.data[level] = {}
             self.deactivate(level)
@@ -45,6 +43,8 @@ class SensorConsumerBase(object):
     def __init__(self, influx_database=None):
         self.redis_instance = redis.StrictRedis()
         self.notification_data = None
+        self.avg_data = {}
+        self.avg_config = {}
         if influx_database:
             self.influx_client = InfluxDBClient("localhost", 8086, "root", "root", influx_database)
             try:
@@ -71,7 +71,13 @@ class SensorConsumerBase(object):
     def insert_into_influx(self, data):
         if not self.influx_database:
             raise ValueError("Influx is not initialized")
-        self.influx_client.write_points(data)
+        try:
+            self.influx_client.write_points(data)
+        except (requests.exceptions.ConnectionError, influxdb.exceptions.InfluxDBServerError) as err:
+            print "Connection to influxdb failed: %s. Saving data to plain log" % err
+            f = open("influxdb-log.txt", "a")
+            f.write("%s\n" % json.dumps(data))
+            f.close()
 
     def update_notification_from_dict(self, **kwargs):
         return self.update_notification(kwargs["notification"], kwargs["message"], kwargs["user_dismissable"], **kwargs)
@@ -92,7 +98,7 @@ class SensorConsumerBase(object):
                 print "Creating %s (%s, %s): %s - %s, args=%s" % (item_type, description, can_dismiss, resp.status_code, resp.content, kwargs)
                 return True
             except requests.exceptions.ConnectionError as err:
-                print "Creating a new notification failed: %s - %s: %s" % (url, data, err)
+                print "Creating a new notification failed: %s - %s: %s. %s/5" % (url, data, err, i)
                 time.sleep(1)
         raise err
 
@@ -108,7 +114,7 @@ class SensorConsumerBase(object):
                 print "Deleting %s: %s" % (item_type, resp.status_code)
                 return True
             except requests.exceptions.ConnectionError as err:
-                print "Connecting to %s failed: %s." % (url, err)
+                print "Connecting to %s failed: %s. %s/5" % (url, err, i)
                 time.sleep(1)
         raise err
 
@@ -244,7 +250,8 @@ class SensorConsumerBase(object):
         if len(dataset) > 0:
             return float(sum(dataset)) / len(dataset)
 
-    def format_elapsed_time(self, delta):
+    @classmethod
+    def format_elapsed_time(cls, delta):
         total_seconds = delta.total_seconds()
         if total_seconds < 60:
             return "<1min"
