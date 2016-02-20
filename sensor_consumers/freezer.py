@@ -11,7 +11,7 @@ class Freezer(SensorConsumerBase):
             "notification": "freezer-temperature",
             "message": "Pakastin on liian lämmin: {value}&deg;C ({{elapsed_since}})",
             "normal": {
-                "gt": -20,
+                "gt": -17.5,
                 "sound": datetime.timedelta(minutes=30),
                 "delay": datetime.timedelta(seconds=30),
                 "escalate": datetime.timedelta(minutes=15),
