@@ -4,7 +4,7 @@ import datetime
 import ikettle2
 import json
 import redis
-import socket.error
+import socket
 import sys
 import time
 
@@ -20,10 +20,11 @@ def listen_kettle_commands(queue):
                 item = json.loads(item["data"])
                 queue.put(item)
 
-
-class Kettle(SensorConsumerBase):
-    def __init__(self):
+class KettleCommunication(SensorConsumerBase):
+    def __init__(self, commands_queue, update_queue):
         SensorConsumerBase.__init__(self, "indoor_air_quality")
+        self.commands_queue = commands_queue
+        self.update_queue = update_queue
         self.r = redis.StrictRedis()
         self.latest_status = None
         self.temperatures = []
@@ -75,20 +76,14 @@ class Kettle(SensorConsumerBase):
         return int(round(sum(self.eta) / len(self.eta)))
 
     def run(self):
-        commands_queue = Queue()
-
-        p_commands = Process(target=listen_kettle_commands, args=(commands_queue,))
-        p_commands.start()
         self.kettle = ikettle2.Kettle2("192.168.10.156")
         try:
             self.kettle.connect()
         except socket.error as err:
             print "Connecting to kettle failed with %s" % err
             print "Terminating redis listener"
-            p_commands.terminate()
-            print "Waiting 10s before exiting"
-            time.sleep(10)
-            sys.exit(1)
+            self.update_queue.put({"fail": "connection"})
+            return
 
         while True:
             time.sleep(0.2)
@@ -97,6 +92,7 @@ class Kettle(SensorConsumerBase):
             if len(data) > 0:
                 for item in data:
                     if item["type"] == "status":
+                        self.update_queue.put({"success": "status"})
                         status_updated = True
                         self.latest_status = item["data"]
                         self.latest_status["temperature"] = self.add_temperature(datetime.datetime.now(), self.latest_status["temperature"])
@@ -122,7 +118,7 @@ class Kettle(SensorConsumerBase):
                     self.push_to_influxdb(self.latest_status)
 
             try:
-                command = commands_queue.get(False)
+                command = self.commands_queue.get(False)
             except:
                 continue
             self.process_command(command)
@@ -169,6 +165,48 @@ class Kettle(SensorConsumerBase):
         elif command.get("off"):
             self.boiled_at = None
             self.kettle.off()
+
+
+
+def run_kettle_socket(commands_queue, update_queue):
+    kettle_communication = KettleCommunication(commands_queue, update_queue)
+    kettle_communication.run()
+
+class Kettle(object):
+
+    @classmethod
+    def terminate(cls, *args):
+        for item in args:
+            item.terminate()
+        print "Waiting 10s before exiting"
+        time.sleep(10)
+        sys.exit(1)
+
+    def run(self):
+        commands_queue = Queue()
+        update_queue = Queue()
+
+        p_commands = Process(target=listen_kettle_commands, args=(commands_queue,))
+        p_commands.start()
+
+        p_socket = Process(target=run_kettle_socket, args=(commands_queue, update_queue))
+        p_socket.start()
+
+        last_update_at = datetime.datetime.now()
+        while True:
+            if datetime.datetime.now() - last_update_at > datetime.timedelta(seconds=30):
+                print "Watchdog exceeded. Terminating"
+                self.terminate(p_commands, p_socket)
+            time.sleep(0.2)
+            try:
+                status = update_queue.get(False)
+            except:
+                continue
+            if status.get("fail"):
+                print "Failed with %s. Terminating." % status.get("fail")
+                self.terminate(p_commands, p_socket)
+            if status.get("success"):
+                last_update_at = datetime.datetime.now()
 
 
 def main():
