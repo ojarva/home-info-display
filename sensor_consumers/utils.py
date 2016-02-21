@@ -69,6 +69,7 @@ class SensorConsumerBase(object):
         pubsub.unsubscribe(channel)
 
     def insert_into_influx(self, data):
+        self.redis_instance.publish("influx-update-pubsub", json.dumps(data))
         if not self.influx_database:
             raise ValueError("Influx is not initialized")
         try:

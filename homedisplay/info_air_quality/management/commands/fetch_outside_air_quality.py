@@ -3,12 +3,13 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 from homedisplay.utils import publish_ws
+from influxdb import InfluxDBClient
 from info_air_quality.models import OutsideAirQuality
 import datetime
-import json
-import requests
-from influxdb import InfluxDBClient
 import influxdb.exceptions
+import json
+import redis
+import requests
 
 class Command(BaseCommand):
     args = ''
@@ -74,7 +75,6 @@ class Command(BaseCommand):
                         item, _ = OutsideAirQuality.objects.get_or_create(type=quality_item, timestamp=timestamp, defaults={"value": value})
                         item.value = value
 
-
                         influx_datapoints.append({
                             "measurement": "outside_air_quality",
                             "tags": {
@@ -91,6 +91,8 @@ class Command(BaseCommand):
                 latest_values[quality_item] = {"timestamp": str(timestamp), "value": value}
         if len(influx_datapoints) > 0:
             print influx_datapoints
+            redis_instance = redis.StrictRedis()
+            redis_instance.publish("influx-update-pubsub", json.dumps(influx_datapoints))
             influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
 
             try:

@@ -46,6 +46,7 @@ class IndoorAirQualitySerial:
                         "fields": influx_fields
                     }
                 ]
+                self.redis_instance.publish("influx-update-pubsub", json.dumps(influx_data))
                 self.influx_client.write_points(influx_data)
                 influx_fields = {}
                 last_updated_at = time.time()

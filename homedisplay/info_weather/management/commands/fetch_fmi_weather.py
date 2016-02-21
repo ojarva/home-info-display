@@ -78,6 +78,7 @@ class Command(BaseCommand):
                         }
                     })
         if len(influx_datapoints) > 0:
+            redis_instance.publish("influx-update-pubsub", json.dumps(influx_datapoints))
             influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
             try:
                 influx_client.create_database("home")

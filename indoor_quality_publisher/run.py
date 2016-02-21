@@ -48,6 +48,7 @@ class IndoorQualityPublisher(object):
                 influx_data["fields"]["co2_temperature"] = temperature
 
             if len(influx_data["fields"]) > 0:
+                self.redis_instance.publish("influx-update-pubsub", json.dumps(influx_data))
                 self.influx_client.write_points([influx_data])
             time.sleep(15)
 
