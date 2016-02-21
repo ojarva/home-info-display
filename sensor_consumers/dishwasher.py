@@ -73,10 +73,10 @@ class Dishwasher(SensorConsumerBase):
             "time": datetime.datetime.utcnow().isoformat() + "Z",
             "tags": {
                 "location": "kitchen",
-            }
+            },
             "fields": {
                 "power_consumption": power_consumption,
-            }
+            },
         }])
 
         parser_data = self.dishwasher_parser.add_value(datetime.datetime.now(), data["data"]["power_consumption"] * 230)

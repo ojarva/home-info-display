@@ -31,11 +31,11 @@ class Fridge(SensorConsumerBase):
             "tags": {
                 "unit": "consumption-meter",
                 "location": "kitchen",
-            }
+            },
             "fields": {
                 "power_consumption": power_consumption,
                 "kitchen_ceiling_temperature": kitchen_ceiling_temperature,
-            }
+            },
         }])
 
 

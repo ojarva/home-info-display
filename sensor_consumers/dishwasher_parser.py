@@ -56,12 +56,12 @@ class DishwasherParser(object):
         self.reset()
         self.single_run_testing = single_run_testing  # True for throwing exception for multiple runs on a single instance
         self.start_detected = False  # Related to previous variable, True if run has started, stays True forever.
-        if kwargs["state"]:
+        if kwargs.get("state"):
             self.load_state(kwargs["state"])
 
     def load_state(self, state):
         for arg in self.ARGS:
-            setattr(self, state[arg])
+            setattr(self, arg, state[arg])
 
     def get_state(self):
         state = {}

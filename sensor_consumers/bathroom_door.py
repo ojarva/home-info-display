@@ -22,14 +22,14 @@ class Bathroom(SensorConsumerBase):
             "timestamp": data["utctimestamp"].isoformat() + "Z",
             "tags": {
                 "location": "bathroom-door",
-            }
+            },
             "fields": {
                 "distance_reading": data["data"]["distance_reading"],
                 "bathroom_temperature": round(data["data"]["bathroom_temperature"], 1),
                 "bathroom_humidity": round(data["data"]["bathroom_humidity"], 1),
                 "corridor_temperature": round(data["data"]["corridor_temperature"], 1),
                 "corridor_humidity": round(data["data"]["corridor_humidity"], 1)
-            }
+            },
         }
         self.insert_into_influx([influx_data])
 
