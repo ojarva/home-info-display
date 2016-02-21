@@ -79,7 +79,7 @@ class Command(BaseCommand):
                             "measurement": "outside_air_quality",
                             "tags": {
                                 "measurement": quality_item,
-                                "loc": "Kallio",
+                                "location": "Kallio",
                             },
                             "time": timestamp.isoformat(),
                             "fields": {
@@ -91,10 +91,10 @@ class Command(BaseCommand):
                 latest_values[quality_item] = {"timestamp": str(timestamp), "value": value}
         if len(influx_datapoints) > 0:
             print influx_datapoints
-            influx_client = InfluxDBClient("localhost", 8086, "root", "root", "indoor_air_quality")
+            influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
 
             try:
-                influx_client.create_database("indoor_air_quality")
+                influx_client.create_database("home")
             except influxdb.exceptions.InfluxDBClientError:
                 pass
             influx_client.write_points(influx_datapoints)

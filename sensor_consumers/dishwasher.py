@@ -23,7 +23,7 @@ class Dishwasher(SensorConsumerBase):
     }
 
     def __init__(self):
-        SensorConsumerBase.__init__(self, "indoor_air_quality")
+        SensorConsumerBase.__init__(self, "home")
         self.running_dialog_visible = False
         self.finished_dialog_visible = False
         self.dishwasher_parser = DishwasherParser()
@@ -63,11 +63,19 @@ class Dishwasher(SensorConsumerBase):
                 self.running_dialog_visible = False
             return
 
+        power_consumption = round(data["data"]["power_consumption"], 3) * 230
+        if 0 > power_consumption or power_consumption > 3000:
+            print "Invalid power consumption for dishwasher: %s. Setting to null." % power_consumption
+            power_consumption = None
+
         self.insert_into_influx([{
             "measurement": "dishwasher",
             "time": datetime.datetime.utcnow().isoformat() + "Z",
+            "tags": {
+                "location": "kitchen",
+            }
             "fields": {
-                "power_consumption": round(data["data"]["power_consumption"], 3),
+                "power_consumption": power_consumption,
             }
         }])
 

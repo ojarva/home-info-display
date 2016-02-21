@@ -6,7 +6,7 @@ import sys
 
 class Bathroom(SensorConsumerBase):
     def __init__(self):
-        SensorConsumerBase.__init__(self, "indoor_air_quality")
+        SensorConsumerBase.__init__(self, "home")
 
     def run(self):
         self.subscribe("bathroom-pubsub", self.pubsub_callback)
@@ -20,6 +20,9 @@ class Bathroom(SensorConsumerBase):
         influx_data = {
             "measurement": "bathroom",
             "timestamp": data["utctimestamp"].isoformat() + "Z",
+            "tags": {
+                "location": "bathroom-door",
+            }
             "fields": {
                 "distance_reading": data["data"]["distance_reading"],
                 "bathroom_temperature": round(data["data"]["bathroom_temperature"], 1),

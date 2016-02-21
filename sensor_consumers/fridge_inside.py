@@ -80,7 +80,7 @@ class FridgeInside(SensorConsumerBase):
     }
 
     def __init__(self):
-        SensorConsumerBase.__init__(self, "indoor_air_quality")
+        SensorConsumerBase.__init__(self, "home")
         self.initialize_notifications(self.THRESHOLD_CONFIG)
 
     def run(self):
@@ -94,7 +94,11 @@ class FridgeInside(SensorConsumerBase):
             return
 
         self.insert_into_influx([{
-            "measurement": "fridge-inside",
+            "measurement": "fridge",
+            "tags": {
+                "unit": "inside",
+                "location": "kitchen",
+            },
             "time": datetime.datetime.utcnow().isoformat() + "Z",
             "fields": data["data"],
         }])

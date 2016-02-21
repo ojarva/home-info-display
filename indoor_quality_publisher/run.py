@@ -10,10 +10,10 @@ import datetime
 class IndoorQualityPublisher(object):
     def __init__(self):
         self.redis_instance = redis.StrictRedis()
-        self.influx_client = InfluxDBClient("localhost", 8086, "root", "root", "indoor_air_quality")
+        self.influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
 
         try:
-            self.influx_client.create_database("indoor_air_quality")
+            self.influx_client.create_database("home")
         except influxdb.exceptions.InfluxDBClientError:
             pass
 
@@ -30,9 +30,14 @@ class IndoorQualityPublisher(object):
             now = datetime.datetime.utcnow().isoformat() + "Z"
             temperature = self.read_value(TEMPERATURE_FILE)
             co2 = self.read_value(CO2_FILE)
-            influx_data = {"measurement": "indoor_air_quality",
-            "time": now,
-            "fields": {}}
+            influx_data = {
+                "measurement": "indoor_air_quality",
+                "time": now,
+                "tags": {
+                    "location": "display",
+                },
+                "fields": {}
+            }
             if co2:
                 self.redis_instance.rpush("air-quality-co2", co2)
                 self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "indoor_co2", "content": {"value": co2}}))

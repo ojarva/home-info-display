@@ -77,7 +77,7 @@ class MicrowaveState(object):
 
 class Microwave(SensorConsumerBase):
     def __init__(self):
-        SensorConsumerBase.__init__(self, "indoor_air_quality")
+        SensorConsumerBase.__init__(self, "home")
         self.state = MicrowaveState()
         self.delete_notification("microwave")
 
@@ -93,12 +93,20 @@ class Microwave(SensorConsumerBase):
                 self.delete_notification("microwave")
             return
 
+        power_consumption = round(data["data"]["power_consumption"], 3)
+        if 0 > power_consumption or power_consumption > 3000:
+            print "Invalid power consumption for microwave: %s. Setting to null." % power_consumption
+            power_consumption = None
+
         door_open = int(data["data"]["door"]) == 1
         self.insert_into_influx([{
             "measurement": "microwave",
             "time": datetime.datetime.utcnow().isoformat() + "Z",
+            "tags": {
+                "location": "kitchen",
+            },
             "fields": {
-                "power_consumption": round(data["data"]["power_consumption"], 3),
+                "power_consumption": power_consumption,
                 "door": door_open,
             }
         }])

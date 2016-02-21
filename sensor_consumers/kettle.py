@@ -22,7 +22,7 @@ def listen_kettle_commands(queue):
 
 class KettleCommunication(SensorConsumerBase):
     def __init__(self, commands_queue, update_queue):
-        SensorConsumerBase.__init__(self, "indoor_air_quality")
+        SensorConsumerBase.__init__(self, "home")
         self.commands_queue = commands_queue
         self.update_queue = update_queue
         self.r = redis.StrictRedis()
@@ -133,12 +133,13 @@ class KettleCommunication(SensorConsumerBase):
 
     def push_to_influxdb(self, latest_status):
         water_level = latest_status["water_level"]
-        if water_level:
-            water_level = int(water_level * 100)
         self.last_update_at = time.time()
         self.insert_into_influx([{
             "measurement": "kettle",
             "time": datetime.datetime.utcnow().isoformat() + "Z",
+            "tags": {
+                "location": "kitchen",
+            },
             "fields": {
                 "temperature": latest_status["temperature"],
                 "water_level": latest_status["water_level_raw"],

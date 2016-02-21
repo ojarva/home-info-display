@@ -78,9 +78,9 @@ class Command(BaseCommand):
                         }
                     })
         if len(influx_datapoints) > 0:
-            influx_client = InfluxDBClient("localhost", 8086, "root", "root", "indoor_air_quality")
+            influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
             try:
-                influx_client.create_database("indoor_air_quality")
+                influx_client.create_database("home")
             except influxdb.exceptions.InfluxDBClientError:
                 pass
             influx_client.write_points(influx_datapoints)

@@ -11,10 +11,10 @@ class IndoorAirQualitySerial:
     def __init__(self):
         self.redis_instance = redis.StrictRedis()
         self.serial = serial.Serial(SERIAL_DEVICE, 9600)
-        self.influx_client = InfluxDBClient("localhost", 8086, "root", "root", "indoor_air_quality")
+        self.influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
 
         try:
-            self.influx_client.create_database("indoor_air_quality")
+            self.influx_client.create_database("home")
         except influxdb.exceptions.InfluxDBClientError:
             pass
 
@@ -39,6 +39,9 @@ class IndoorAirQualitySerial:
                 influx_data = [
                     {
                         "measurement": "gas_sensors",
+                        "tags": {
+                            "location": "display",
+                        },
                         "time": current_time.isoformat() + "Z",
                         "fields": influx_fields
                     }
