@@ -11,6 +11,15 @@ import json
 import redis
 import requests
 
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
+
 class Command(BaseCommand):
     args = ''
     help = 'Fetches outdoor air quality information'
@@ -92,7 +101,7 @@ class Command(BaseCommand):
         if len(influx_datapoints) > 0:
             print influx_datapoints
             redis_instance = redis.StrictRedis()
-            redis_instance.publish("influx-update-pubsub", json.dumps(influx_datapoints))
+            redis_instance.publish("influx-update-pubsub", json.dumps(influx_datapoints, cls=DateTimeEncoder))
             influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
 
             try:

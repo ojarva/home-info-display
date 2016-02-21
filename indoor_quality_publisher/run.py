@@ -7,6 +7,15 @@ import redis
 import time
 import datetime
 
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
+
 class IndoorQualityPublisher(object):
     def __init__(self):
         self.redis_instance = redis.StrictRedis()
@@ -48,7 +57,7 @@ class IndoorQualityPublisher(object):
                 influx_data["fields"]["co2_temperature"] = temperature
 
             if len(influx_data["fields"]) > 0:
-                self.redis_instance.publish("influx-update-pubsub", json.dumps(influx_data))
+                self.redis_instance.publish("influx-update-pubsub", json.dumps(influx_data, cls=DateTimeEncoder))
                 self.influx_client.write_points([influx_data])
             time.sleep(15)
 

@@ -7,6 +7,15 @@ from local_settings import *
 from influxdb import InfluxDBClient
 import influxdb.exceptions
 
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
+
 class IndoorAirQualitySerial:
     def __init__(self):
         self.redis_instance = redis.StrictRedis()
@@ -46,7 +55,7 @@ class IndoorAirQualitySerial:
                         "fields": influx_fields
                     }
                 ]
-                self.redis_instance.publish("influx-update-pubsub", json.dumps(influx_data))
+                self.redis_instance.publish("influx-update-pubsub", json.dumps(influx_data, cls=DateTimeEncoder))
                 self.influx_client.write_points(influx_data)
                 influx_fields = {}
                 last_updated_at = time.time()

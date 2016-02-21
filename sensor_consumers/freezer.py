@@ -98,7 +98,7 @@ class Freezer(SensorConsumerBase):
             "time": datetime.datetime.utcnow().isoformat() + "Z",
             "tags": {
                 "location": "kitchen",
-            }
+            },
             "fields": processed_data,
         }])
 

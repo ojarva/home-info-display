@@ -9,6 +9,14 @@ import requests.exceptions
 import time
 
 
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
+
 class NotificationConfig(object):
     def __init__(self, notification, config):
         self.config = config
@@ -69,7 +77,7 @@ class SensorConsumerBase(object):
         pubsub.unsubscribe(channel)
 
     def insert_into_influx(self, data):
-        self.redis_instance.publish("influx-update-pubsub", json.dumps(data))
+        self.redis_instance.publish("influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
         if not self.influx_database:
             raise ValueError("Influx is not initialized")
         try:
@@ -77,7 +85,7 @@ class SensorConsumerBase(object):
         except (requests.exceptions.ConnectionError, influxdb.exceptions.InfluxDBServerError) as err:
             print "Connection to influxdb failed: %s. Saving data to plain log" % err
             f = open("influxdb-log.txt", "a")
-            f.write("%s\n" % json.dumps(data))
+            f.write("%s\n" % json.dumps(data, cls=DateTimeEncoder))
             f.close()
 
     def update_notification_from_dict(self, **kwargs):
