@@ -93,7 +93,7 @@ class Microwave(SensorConsumerBase):
                 self.delete_notification("microwave")
             return
 
-        power_consumption = round(data["data"]["power_consumption"], 3)
+        power_consumption = round(data["data"]["power_consumption"], 3) * 230
         if 0 > power_consumption or power_consumption > 3000:
             print "Invalid power consumption for microwave: %s. Setting to null." % power_consumption
             power_consumption = None
