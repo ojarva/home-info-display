@@ -72,7 +72,7 @@ class Freezer(SensorConsumerBase):
             return
 
         door_open = int(data["data"]["door"]) == 0
-        power_consumption = round(data["data"]["power_consumption"], 3) * 230
+        power_consumption = round(data["data"]["power_consumption"] * 230, 2)
         if 0 > power_consumption or power_consumption > 3000:
             print "Invalid power consumption for freezer: %s. Setting to null." % (power_consumption)
             power_consumption = None

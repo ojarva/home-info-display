@@ -20,7 +20,7 @@ class Fridge(SensorConsumerBase):
         if kitchen_ceiling_temperature < 10 or kitchen_ceiling_temperature > 40:
             print "Invalid temperature for kitchen ceiling sensor: %s. Setting to null." % kitchen_ceiling_temperature
             kitchen_ceiling_temperature = None
-        power_consumption = round(data["data"]["power_consumption"], 3) * 230
+        power_consumption = round(data["data"]["power_consumption"] * 230, 2)
         if 0 > power_consumption or power_consumption > 3000:
             print "Invalid power consumption for fridge: %s. Setting to null." % power_consumption
             power_consumption = None

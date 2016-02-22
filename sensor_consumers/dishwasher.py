@@ -64,7 +64,7 @@ class Dishwasher(SensorConsumerBase):
                 self.running_dialog_visible = False
             return
 
-        power_consumption = round(data["data"]["power_consumption"], 3) * 230
+        power_consumption = round(data["data"]["power_consumption"] * 230, 2)
         if 0 > power_consumption or power_consumption > 3000:
             print "Invalid power consumption for dishwasher: %s. Setting to null." % power_consumption
             power_consumption = None
