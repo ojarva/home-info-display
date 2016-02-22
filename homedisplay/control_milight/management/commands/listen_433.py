@@ -2,6 +2,7 @@ from control_milight.utils import process_automatic_trigger
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from influxdb import InfluxDBClient
+import datetime
 import json
 import logging
 import redis
