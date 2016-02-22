@@ -18,7 +18,12 @@ Transportation = () ->
       departures = jq(".transportation ul li .departures").last()
       departures_for_stop = 0
       jq.each @departures, ->
-        departures.append "<span class='auto-update-timestamp' data-timestamp='#{@}'><span class='minutes'></span><span class='seconds'></span></span> "
+        if @.realtime
+          extra_open = "<u>"
+          extra_close = "</u>"
+        else
+          extra_open = extra_close = ""
+        departures.append "<span class='auto-update-timestamp' data-timestamp='#{@.timestamp}'>#{extra_open}<span class='minutes'></span><span class='seconds'></span>#{extra_close}</span> "
         departures_for_stop += 1
         if departures_for_stop > 7
           return false
