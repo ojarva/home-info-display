@@ -1,11 +1,22 @@
 from control_milight.utils import process_automatic_trigger
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from influxdb import InfluxDBClient
+import logging
+import redis
 import serial
 import time
-import logging
 
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
+
+
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
+
 
 class Command(BaseCommand):
     args = ''
@@ -15,6 +26,8 @@ class Command(BaseCommand):
         s = serial.Serial(settings.ARDUINO_433, 9600)
         queue = []
         slow_queue = []
+        redis_instance = redis.StrictRedis()
+        influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
 
         def execute_queue():
             # Run items with changes first. Reads more items if anything is available from serial port.
@@ -64,6 +77,21 @@ class Command(BaseCommand):
                             # Already triggered recently - no action
                             continue
                     logger.info("Processing trigger %s (%s)", item_name, id)
+                    data = [{
+                        "measurement": "triggers",
+                        "time": datetime.datetime.utcnow().isoformat() + "Z",
+                        "tags": {
+                            "trigger": item_name,
+                        },
+                        "fields": {
+                            "triggered": True,
+                        },
+                    }]
+                    redis_instance.publish("influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
+                    try:
+                        influx_client.write_points(data)
+                    except Exception as err:
+                        logger.info("Pushing to influxdb failed: %s. Ignoring." % err)
                     should_execute_something = process_automatic_trigger(item_name, False)
                     sent_event_map[item_name] = time.time()
                     if should_execute_something:
