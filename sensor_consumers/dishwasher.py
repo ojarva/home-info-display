@@ -1,9 +1,10 @@
 # coding=utf-8
 
-from utils import SensorConsumerBase
 from dishwasher_parser import DishwasherParser
+from utils import SensorConsumerBase
+import base64
 import datetime
-import json
+import pickle
 import redis
 import requests.exceptions
 import sys
@@ -30,7 +31,7 @@ class Dishwasher(SensorConsumerBase):
         self.redis = redis.StrictRedis()
         state = self.redis.get("dishwasher-parser-state")
         if state:
-            state = json.loads(state)
+            state = pickle.loads(base64.b64decode(state))
             print "Restoring state from redis"
             self.dishwasher_parser.load_state(state)
         try:
@@ -80,7 +81,7 @@ class Dishwasher(SensorConsumerBase):
         }])
 
         parser_data = self.dishwasher_parser.add_value(datetime.datetime.now(), data["data"]["power_consumption"] * 230)
-        self.redis.setex("dishwasher-parser-state", 120, json.dumps(self.dishwasher_parser.get_state()))
+        self.redis.setex("dishwasher-parser-state", 120, base64.b64encode(pickle.dumps(self.dishwasher_parser.get_state())))
 
         if parser_data:
             if parser_data["current_phase"] is None:
