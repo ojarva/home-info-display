@@ -10,18 +10,18 @@
   }
 
   .type-bus {
-    color: #4097F5;
+    color: #007AC9;
   }
 
   .type-tram {
-    color: #09992D;
+    color: #00985F;
   }
 
   .type-train {
-    color: #E61919;
+    color: #8C4799;
   }
 
   .type-metro {
-    color: #F78605;
+    color: #FF6319;
   }
 }
