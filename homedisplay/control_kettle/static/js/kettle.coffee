@@ -1,9 +1,21 @@
 Kettle = (elem) ->
 
+  update_timeout = null
+
+  clearAutoNoUpdates = ->
+    if update_timeout?
+      update_timeout = clearTimeout update_timeout
+
   onReceiveItemWS = (message) ->
     processData message
 
+  noData = ->
+    jq(elem).find(".online-status").hide()
+    jq(elem).find(".offline-status").hide()
+    jq(elem).find(".unknown-status").show()
+
   processData = (data) ->
+    clearAutoNoUpdates()
     if data.status == "ready" and data.present and data.water_level > 0.1
       jq(elem).find(".action-on").removeClass("disabled")
       jq(elem).find(".disabled-mode").hide()
@@ -14,6 +26,7 @@ Kettle = (elem) ->
     if data.present
       jq(elem).find(".online-status").show()
       jq(elem).find(".offline-status").hide()
+      jq(elem).find(".unknown-status").hide()
       if not data.water_level?
         water_level = "?"
       else if data.water_level < 0.1
@@ -24,7 +37,9 @@ Kettle = (elem) ->
       jq(elem).find(".temperature-content").html(data.temperature)
     else
       jq(elem).find(".online-status").hide()
+      jq(elem).find(".unknown-status").hide()
       jq(elem).find(".offline-status").show()
+    update_timeout = setTimeout noData, 5 * 1000
 
 
   update = ->
@@ -49,6 +64,7 @@ Kettle = (elem) ->
     jq(@).click ->
       jq.post "/homecontroller/kettle/control/off"
 
+  noData()
 
   @startInterval = startInterval
   @stopInterval = stopInterval
