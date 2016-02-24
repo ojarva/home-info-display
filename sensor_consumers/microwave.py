@@ -80,9 +80,15 @@ class Microwave(SensorConsumerBase):
         SensorConsumerBase.__init__(self, "home")
         self.state = MicrowaveState()
         self.delete_notification("microwave")
+        self.notification_visible = False
 
     def run(self):
         self.subscribe("microwave-pubsub", self.pubsub_callback)
+
+    def delete_microwave_notification(self):
+        if self.notification_visible:
+            self.delete_notification("microwave")
+            self.notification_visible = False
 
     def pubsub_callback(self, data):
         self.state.print_state()
@@ -90,7 +96,7 @@ class Microwave(SensorConsumerBase):
         if "action" in data:
             if data["action"] == "user_dismissed":
                 self.state.stuff_inside = False
-                self.delete_notification("microwave")
+                self.delete_microwave_notification()
             return
 
         power_consumption = round(data["data"]["power_consumption"], 3) * 230
@@ -128,23 +134,26 @@ class Microwave(SensorConsumerBase):
                 else:
                     message = "Mikron ovi auki"
 
+            self.notification_visible = True
             self.update_notification("microwave", message, False)
             return
         else:
             self.state.set_door_closed()
             if data["data"]["power_consumption"] > 0.2:
                 self.state.set_running()
+                self.notification_visible = True
                 self.update_notification("microwave", "Mikro päällä ({elapsed_since})", False, elapsed_since=self.state.get_calculated_on_since())
                 return
             else:
                 self.state.set_stopped()
                 if self.state.stuff_inside and self.state.get_total_time_running() > datetime.timedelta(seconds=2):
+                    self.notification_visible = True
                     self.update_notification("microwave", "Mikrossa kamaa (%s, {from_now_timestamp})" % self.state.get_total_time_running_formatted(), True, from_now_timestamp=self.state.last_used_at)
                     if not self.state.stuff_inside_alarmed and self.state.stuff_inside_since and datetime.datetime.now() - self.state.stuff_inside_since > datetime.timedelta(seconds=60):
                         self.play_sound("normal")
                         self.state.stuff_inside_alarmed = True
                 else:
-                    self.delete_notification("microwave")
+                    self.delete_microwave_notification()
 
 
 def main():
