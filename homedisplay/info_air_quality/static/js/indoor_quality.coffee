@@ -53,6 +53,15 @@ IndoorAirQuality = (options) ->
     .data "value", temperature
     .html Math.round(parseFloat(temperature) * 10) / 10 + "&degC"
 
+  processHumidity = (data) ->
+    if not data?
+      console.warn "!!! No humidity information available"
+      return
+    humidity = data.value
+    output.find(".humidity")
+    .data "value", humidity
+    .html Math.round(parseFloat(humidity) * 10) / 10 + "%"
+
 
   fetch = ->
     jq.get "/homecontroller/air_quality/get/sensor/co2/latest", (data) ->
@@ -61,20 +70,26 @@ IndoorAirQuality = (options) ->
     jq.get "/homecontroller/air_quality/get/sensor/temperature/latest", (data) ->
       processTemperature data
 
+    jq.get "/homecontroller/air_quality/get/sensor/humidity/latest", (data) ->
+      processHumidity data
+
+
   update = ->
     fetch()
 
   startInterval = ->
     update()
-    update_timeout = setTimeout autoNoUpdates, 5000
+    update_timeout = setTimeout autoNoUpdates, 30000
     ws_generic.register "indoor_co2", processCo2
     ws_generic.register "indoor_temperature", processTemperature
+    ws_generic.register "indoor_humidity", processHumidity
     ge_refresh.register "indoor_quality", update
 
   stopInterval = ->
     ws_generic.deRegister "indoor_quality"
     ws_generic.deRegister "indoor_co2"
     ws_generic.deRegister "indoor_temperature"
+    ws_generic.deRegister "indoor_humidity"
     ge_refresh.deRegister "indoor_quality"
 
   @fetch = fetch
