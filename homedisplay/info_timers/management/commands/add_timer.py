@@ -19,11 +19,11 @@ class Command(BaseCommand):
             type='string',
             default='3600',
             help='Timer duration (in seconds)'),
-        make_option('--no-refresh',
+        make_option('--no-bell',
             action='store_true',
-            dest='no_refresh',
+            dest='no_bell',
             default=False,
-            help='Do not show refresh button'),
+            help='Do not show "alarm until dismissed" button'),
         make_option('--auto-remove',
             action='store',
             dest='auto_remove',
@@ -78,5 +78,5 @@ class Command(BaseCommand):
 
         start_time = datetime.datetime.combine(start_date, start_time)
         start_time = timezone.make_aware(start_time, timezone.get_current_timezone())
-        timer = Timer(name=options["name"], no_refresh=options["no_refresh"], auto_remove=auto_remove, start_time=start_time, duration=duration)
+        timer = Timer(name=options["name"], no_bell=options["no_bell"], auto_remove=auto_remove, start_time=start_time, duration=duration)
         timer.save()

@@ -21,7 +21,7 @@ def update_group_automatic_timer(group, on_until):
     start_time = timezone.now() - datetime.timedelta(seconds=5)
     duration += 5
 
-    timer, created = timer_models.Timer.objects.get_or_create(action="auto-lightgroup-%s" % group, defaults={"name": GROUP_TIMER_NAME_MAP[group], "start_time": start_time, "duration": duration, "auto_remove": 0})
+    timer, created = timer_models.Timer.objects.get_or_create(action="auto-lightgroup-%s" % group, defaults={"name": GROUP_TIMER_NAME_MAP[group], "start_time": start_time, "duration": duration, "auto_remove": 0, "no_bell": True})
     if not created:
         if on_until > timer.end_time:
             timer.start_time = start_time

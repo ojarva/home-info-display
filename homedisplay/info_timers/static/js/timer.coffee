@@ -348,7 +348,7 @@ Timers = (options) ->
               "running": @fields.running
               "id": @pk
               "stopped_at": @fields.stopped_at
-              "no_refresh": @fields.no_refresh
+              "no_bell": @fields.no_bell
               "auto_remove": @fields.auto_remove
           else
             timer = new Timer timer_holder,
@@ -358,7 +358,7 @@ Timers = (options) ->
               "running": @fields.running
               "id": @pk
               "stopped_at": @fields.stopped_at
-              "no_refresh": @fields.no_refresh
+              "no_bell": @fields.no_bell
               "auto_remove": @fields.auto_remove
 
   addTimerId = (id) ->
@@ -393,7 +393,7 @@ Timers = (options) ->
           "running": data.fields.running
           "id": data.pk
           "stopped_at": data.fields.stopped_at
-          "no_refresh": data.fields.no_refresh
+          "no_bell": data.fields.no_bell
           "auto_remove": data.fields.auto_remove
 
       else
@@ -404,7 +404,7 @@ Timers = (options) ->
           "running": data.fields.running
           "id": data.pk
           "stopped_at": data.fields.stopped_at
-          "no_refresh": data.fields.no_refresh
+          "no_bell": data.fields.no_bell
           "auto_remove": data.fields.auto_remove
           "alarm_until_dismissed": data.fields.alarm_until_dismissed
 
