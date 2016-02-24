@@ -12,7 +12,6 @@ OutdoorQuality = ->
 
   clearData = ->
     elem.children().remove()
-    jq(".outdoor-quality-warning").html ""
     if data_timeout?
       data_timeout = clearTimeout data_timeout
 
@@ -53,8 +52,6 @@ OutdoorQuality = ->
           <span class="status"><i class="fa fa-#{icon} #{icon_class}"></i></span>
         </span>"""
 
-    if max_percent > .75
-      jq(".outdoor-quality-warning").html """<span class="error-message"><i class="fa fa-building"><i class="fa fa-child"> (#{Math.round(max_percent*100)}%)</span>"""
     return
 
   ws_generic.register "outside_air_quality", receivedData

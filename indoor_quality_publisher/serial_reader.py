@@ -42,7 +42,6 @@ class IndoorAirQualitySerial:
             except KeyError:
                 print "Invalid key: %s" % line[0]
                 continue
-            self.redis_instance.rpush("air-quality-%s" % k, line[1])
             influx_fields[k] = round(float(line[1]), 1)
             if time.time() - last_updated_at > 10:
                 influx_data = [

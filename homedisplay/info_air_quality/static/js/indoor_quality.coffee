@@ -61,30 +61,12 @@ IndoorAirQuality = (options) ->
     jq.get "/homecontroller/air_quality/get/sensor/temperature/latest", (data) ->
       processTemperature data
 
-  fetchTrend = ->
-    jq.get "/homecontroller/air_quality/get/sensor/co2/trend", (data) ->
-      if data.status == "no_data"
-        output.find(".trend").html ""
-        return
-
-      if data.delta < -0.025
-        icon = "down"
-      else if data.delta > 0.025
-        icon = "up"
-      else
-        icon = "right"
-
-      output.find(".trend").html "<i class='fa fa-arrow-#{icon}'></i>"
-
   update = ->
     fetch()
-    fetchTrend()
-
 
   startInterval = ->
     update()
     update_timeout = setTimeout autoNoUpdates, 5000
-    ws_generic.register "indoor_quality", fetchTrend # TODO: trend should be updated without polling
     ws_generic.register "indoor_co2", processCo2
     ws_generic.register "indoor_temperature", processTemperature
     ge_refresh.register "indoor_quality", update
@@ -96,7 +78,6 @@ IndoorAirQuality = (options) ->
     ge_refresh.deRegister "indoor_quality"
 
   @fetch = fetch
-  @fetchTrend = fetchTrend
   @startInterval = startInterval
   @stopInterval = stopInterval
   return @
