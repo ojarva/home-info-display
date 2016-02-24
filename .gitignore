@@ -10,3 +10,6 @@ static/CACHE
 logs/
 byo-images
 dev/
+sound_receiver/*.wav
+sensor_consumers/.ikettle
+sensor_consumers/ikettle2
