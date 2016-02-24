@@ -1,6 +1,6 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
 from . import views
 
-urlpatterns = patterns('',
-    (r'^fridge$', views.Fridge.as_view()),
-)
+urlpatterns = [
+    url(r'^fridge$', views.Fridge.as_view()),
+]

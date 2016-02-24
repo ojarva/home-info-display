@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
 from . import views
 
-urlpatterns = patterns('',
-    (r'^status', views.GetJson.as_view()),
-    (r'^wifi/info', views.WifiInfo.as_view()),
-)
+urlpatterns = [
+    url(r'^status', views.GetJson.as_view()),
+    url(r'^wifi/info', views.WifiInfo.as_view()),
+]

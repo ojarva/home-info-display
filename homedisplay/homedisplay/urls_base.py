@@ -1,8 +1,8 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.views.generic.base import RedirectView
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/homecontroller/display/content/computer', permanent=False)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^lightcontrol/', include("control_milight.urls")),
@@ -24,4 +24,4 @@ urlpatterns = patterns('',
     url(r'^notifications/', include("info_notifications.urls")),
     url(r'^nodes/', include("node_data_receiver.urls")),
     url(r'^kettle/', include("control_kettle.urls")),
-)
+]

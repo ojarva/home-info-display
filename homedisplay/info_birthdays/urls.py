@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url
 
 from . import views
 
-urlpatterns = patterns('',
-    (r'^get_json/(?P<date>([a-z_-]+))$', views.list.as_view()),
-)
+urlpatterns = [
+    url(r'^get_json/(?P<date>([a-z_-]+))$', views.list.as_view()),
+]
