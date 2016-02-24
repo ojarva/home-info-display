@@ -41,7 +41,7 @@ ContentSwitch = ->
   resetSwitchToMain = ->
     if switch_visible_content_timeout?
       switch_visible_content_timeout = clearTimeout switch_visible_content_timeout
-    switch_visible_content_timeout = setTimeout mainContent, 60 * 1000
+    switch_visible_content_timeout = setTimeout mainContent, 120 * 1000
 
   switchContent = (elem, set_timeout = true) ->
     if switch_visible_content_timeout?
@@ -54,7 +54,7 @@ ContentSwitch = ->
     jq("#navbar").collapse "hide" # Hide menu, if visible
     if elem != "#main-content"
       if set_timeout
-        switch_visible_content_timeout = setTimeout mainContent, 60 * 1000
+        switch_visible_content_timeout = setTimeout mainContent, 120 * 1000
       switch_visible_content_currently_active = elem
       jq(elem).show()
 
