@@ -6,6 +6,7 @@ import datetime
 import json
 import logging
 import redis
+import subprocess
 import time
 
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
@@ -48,15 +49,17 @@ def alarm_play_until_dismissed(timer_id):
         print "Timer does not have alarm enabled - abort"
         return "Timer %s does not have alarms enabled" % timer
     print "Processing alarm for %s" % timer
+    alarm_number = 2
     while True:
+        alarm_number = (alarm_number % 2) + 1
         try:
             timer = Timer.objects.get(id=timer_id)
         except Timer.DoesNotExist:
             logger.info("Timer %s has been removed" % timer_id)
             return "End-of-timer alarm finished (timer removed)"
         if timer.alarm_until_dismissed:
-            play_sound("finished-important")
-            time.sleep(5)
+            p = subprocess.Popen(["aplay", "timer_alarm_%s.wav" % alarm_number])
+            p.wait()
         else:
             logger.info("Timer %s does not have alarm_until_dismissed set anymore." % timer_id)
             return "End-of-timer alarm finished (exists, but alarm_until_dismissed not set)"
@@ -80,6 +83,9 @@ def alarm_notification_task(timer_id):
             print "Alarm %s enabled, diff: %s" % (alarm, timezone.now() - timer.end_time)
             if timezone.now() - timer.end_time >= datetime.timedelta(seconds=alarm):
                 print "Playing alarm for %s" % alarm
-                play_sound("finished-important-quiet")
+                if timer.alarm_until_dismissed:
+                    print "Alarm playing with 'alarm_until_dismissed' - skip playing the alarm"
+                else:
+                    play_sound("finished-important-quiet")
                 setattr(timer, alarm_name, False)
                 timer.save()
