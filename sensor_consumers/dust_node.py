@@ -2,6 +2,7 @@
 
 from utils import SensorConsumerBase
 import sys
+import json
 
 
 class DustNode(SensorConsumerBase):
@@ -32,7 +33,7 @@ class DustNode(SensorConsumerBase):
         self.insert_into_influx([influx_data])
         self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "indoor_temperature", "content": {"value": room_temperature}}))
         self.redis_instance.setex("air-latest-temperature", 300, room_temperature)
-        self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "indoor_humidity", "content": {"value": room_temperature}}))
+        self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "indoor_humidity", "content": {"value": room_humidity}}))
         self.redis_instance.setex("air-latest-humidity", 300, room_humidity)
 
 
