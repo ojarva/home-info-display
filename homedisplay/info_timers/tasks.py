@@ -6,6 +6,7 @@ import datetime
 import json
 import logging
 import redis
+import time
 
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
@@ -24,12 +25,41 @@ def alarm_ending_task(timer_id):
     if timer.end_time > timezone.now():
         # Item has been restarted. Do not play alarms yet.
         logger.info("Timer %s did not expire yet. Time is %s, but timer end time is %s", timer_id, timer.end_time, timezone.now())
-        return "Timer %s did not expire yet."
+        return "Timer %s did not expire yet." % timer
     print "Processing %s" % timer
 
     if timer.auto_remove:
         print "Removing automatically"
         timer.delete()
+
+
+@shared_task
+def alarm_play_until_dismissed(timer_id):
+    try:
+        timer = Timer.objects.get(id=timer_id)
+    except Timer.DoesNotExist:
+        logger.info("No timer object for ID %s available", timer_id)
+        return "No timer object available"
+    if timer.end_time > timezone.now():
+        # Item has been restarted. Do not play alarms yet.
+        logger.info("Timer %s did not expire yet. Time is %s, but timer end time is %s", timer_id, timer.end_time, timezone.now())
+        return "Timer %s did not expire yet." % timer
+    if not timer.alarm_until_dismissed:
+        print "Timer does not have alarm enabled - abort"
+        return "Timer %s does not have alarms enabled" % timer
+    print "Processing alarm for %s" % timer
+    while True:
+        try:
+            timer = Timer.objects.get(id=timer_id)
+        except Timer.DoesNotExist:
+            logger.info("Timer %s has been removed" % timer_id)
+            return "End-of-timer alarm finished (timer removed)"
+        if timer.alarm_until_dismissed:
+            play_sound("finished-important")
+            time.sleep(5)
+        else:
+            logger.info("Timer %s does not have alarm_until_dismissed set anymore." % timer_id)
+            return "End-of-timer alarm finished (exists, but alarm_until_dismissed not set)"
 
 
 @shared_task
@@ -42,7 +72,7 @@ def alarm_notification_task(timer_id):
     if timer.end_time > timezone.now():
         # Item has been restarted. Do not play alarms yet.
         logger.info("Timer %s did not expire yet. Time is %s, but timer end time is %s", timer_id, timer.end_time, timezone.now())
-        return "Timer %s did not expire yet."
+        return "Timer %s did not expire yet." % timer
     print "Processing alarms for %s" % timer
     for alarm in TIMER_ALARMS:
         alarm_name = "alarm_%ss" % alarm

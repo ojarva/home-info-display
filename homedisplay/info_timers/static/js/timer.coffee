@@ -14,7 +14,7 @@ Timer = (parent_elem, options) ->
   options = options or {}
   options.delay = options.delay or 1000
   options.backend_interval = options.backend_interval or FAST_UPDATE
-
+  options.alarm_until_dismissed = options.alarm_until_dismissed or false
 
   clearItemIntervals = ->
     if update_interval?
@@ -150,10 +150,24 @@ Timer = (parent_elem, options) ->
       diff = (new Date(options.stopped_at) - start_time) / 1000
       updateTimerContent diff, ""
 
+  setBell = ->
+    if options.alarm_until_dismissed
+      timer_elem.find ".timer-bell"
+      .find ".fa"
+      .removeClass "fa-bell-slash"
+      .addClass "fa-bell"
+    else
+      timer_elem.find ".timer-bell"
+      .find ".fa"
+      .addClass "fa-bell-slash"
+      .removeClass "fa-bell"
+
   receivedData = (message) ->
     data = message[0]
     start_time = new Date data.fields.start_time
     options.duration = data.fields.duration
+    options.alarm_until_dismissed = data.fields.alarm_until_dismissed
+    setBell()
     # TODO: update start_time and end_time data fields
 
     if data.fields.running
@@ -207,6 +221,11 @@ Timer = (parent_elem, options) ->
       start_time = clock.getDate()
     return
 
+  toggleBell = ->
+    if id?
+      jq.patch "/homecontroller/timer/bell/#{id}"
+    return
+
   create = ->
     # Creates HTML elements and starts timer.
     if timer_type == "timer"
@@ -222,20 +241,20 @@ Timer = (parent_elem, options) ->
   <div class='col-md-2 timer-stop timer-control animate-click'>
     <i class='fa fa-trash'></i>
   </div>
-  <div class='col-md-2 timer-restart timer-control animate-click'>
-    <i class='fa fa-refresh'></i>
+  <div class='col-md-2 timer-bell timer-control animate-click'>
+    <i class='fa fa-bell'></i>
   </div>
 </div>"""
       timer_elem = jq "#timer-#{id_uniq}"
       timer_elem.find(".timer-stop").click ->
         deleteItem "ui"
 
-      if options.no_refresh
-        timer_elem.find(".timer-restart").hide()
+      if options.no_bell
+        timer_elem.find(".timer-bell").hide()
       else
-        timer_elem.find(".timer-restart").click ->
-          restartItem()
-
+        timer_elem.find(".timer-bell").click ->
+          toggleBell()
+      setBell()
     else
       jq(parent_elem).append """<div class='row timer-item' style='display:none' id='timer-#{id_uniq}'>
   <div class='col-md-8 stopclock timer-main center-content stopclock-content'>
@@ -376,6 +395,7 @@ Timers = (options) ->
           "stopped_at": data.fields.stopped_at
           "no_refresh": data.fields.no_refresh
           "auto_remove": data.fields.auto_remove
+
       else
         run_timer = new Timer timer_holder,
           "name": data.fields.name
@@ -386,6 +406,7 @@ Timers = (options) ->
           "stopped_at": data.fields.stopped_at
           "no_refresh": data.fields.no_refresh
           "auto_remove": data.fields.auto_remove
+          "alarm_until_dismissed": data.fields.alarm_until_dismissed
 
 
   ws_generic.register "timers", onReceiveWS

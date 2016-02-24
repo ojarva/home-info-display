@@ -1,5 +1,6 @@
 from .models import get_labels, Timer, TIMER_ALARMS
-from .tasks import alarm_ending_task, alarm_notification_task
+from .tasks import alarm_ending_task, alarm_notification_task, alarm_play_until_dismissed
+from celery.task.control import revoke
 from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -41,6 +42,7 @@ class Stop(View):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.running = False
         item.stopped_at = timezone.now()
+        revoke_tasks(item)
         item.save()
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
@@ -48,18 +50,52 @@ class Stop(View):
 class Delete(View):
     def delete(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
+        revoke_tasks(item)
         item.delete()
         return HttpResponse(json.dumps({"deleted": True, "id": kwargs["id"]}), content_type="application/json")
 
 
+def revoke_tasks(timer):
+    if timer.alarm_ending_task:
+        revoke(timer.alarm_ending_task)
+        timer.alarm_ending_task = None
+    for alarm in TIMER_ALARMS:
+        task_field = "alarm_%ss_task" % alarm
+        if getattr(timer, task_field):
+            revoke(getattr(timer, task_field))
+            setattr(timer, task_field, None)
+    if timer.alarm_until_dismissed_task:
+        revoke(timer.alarm_until_dismissed_task)
+        timer.alarm_until_dismissed_task = None
+
 def set_timer_notifications(timer):
+    revoke_tasks(timer)
     if timer.duration:
-        alarm_ending_task.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1), expires=timer.end_time+datetime.timedelta(seconds=300))
+        timer.alarm_ending_task = alarm_ending_task.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1), expires=timer.end_time+datetime.timedelta(seconds=300)).id
     for alarm in TIMER_ALARMS:
         alarm_name = "alarm_%ss" % alarm
         if getattr(timer, alarm_name):
-            alarm_notification_task.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1+alarm), expires=timer.end_time+datetime.timedelta(seconds=300)+datetime.timedelta(seconds=alarm))
+            setattr(timer, alarm_name + "_task", alarm_notification_task.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1+alarm), expires=timer.end_time+datetime.timedelta(seconds=300)+datetime.timedelta(seconds=alarm)).id)
 
+    set_alarm_until_dismissed(timer)
+    timer.save()
+
+def set_alarm_until_dismissed(timer):
+    if timer.alarm_until_dismissed_task:
+        revoke(timer.alarm_until_dismissed_task)
+        timer.alarm_until_dismissed_task = None
+
+    if timer.alarm_until_dismissed:
+        timer.alarm_until_dismissed_task = alarm_play_until_dismissed.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1), expires=timer.end_time+datetime.timedelta(seconds=300)).id
+
+
+class SetBell(View):
+    def patch(self, request, *args, **kwargs):
+        item = get_object_or_404(Timer, pk=kwargs["id"])
+        item.alarm_until_dismissed = not item.alarm_until_dismissed
+        set_alarm_until_dismissed(item)
+        item.save()
+        return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 
 class Restart(View):

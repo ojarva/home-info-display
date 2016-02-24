@@ -9,6 +9,22 @@
   margin-right: 25px;
 }
 
+.popover-title, .popover-content, .popover {
+  border-radius: 0px !important;
+}
+.popover {
+  background-color: black;
+  .popover-title {
+    background-color: #505050;
+    border-bottom: #505050;
+  }
+  .popover-content {
+    background-color: #2D2D2D;
+  }
+}
+
+
+
 .progress {
   /* Override border-radius from bootstrap */
   border-radius: 0px !important;

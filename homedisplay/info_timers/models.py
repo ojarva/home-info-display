@@ -41,14 +41,23 @@ class Timer(models.Model):
     # Time after which timer is automatically deleted
     auto_remove = models.IntegerField(null=True)
 
-    # Disable refresh/restart button from the UI
-    no_refresh = models.BooleanField(default=False, blank=True)
+    # Disable alarm toggle button from the UI
+    no_bell = models.BooleanField(default=False, blank=True)
+
+    alarm_ending_task = models.CharField(max_length=50, null=True)
 
     alarm_0s = models.BooleanField(default=False, blank=True)
+    alarm_0s_task = models.CharField(max_length=50, null=True)
     alarm_30s = models.BooleanField(default=False, blank=True)
+    alarm_30s_task = models.CharField(max_length=50, null=True)
     alarm_60s = models.BooleanField(default=False, blank=True)
+    alarm_60s_task = models.CharField(max_length=50, null=True)
     alarm_300s = models.BooleanField(default=False, blank=True)
+    alarm_300s_task = models.CharField(max_length=50, null=True)
     alarm_600s = models.BooleanField(default=False, blank=True)
+    alarm_600s_task = models.CharField(max_length=50, null=True)
+    alarm_until_dismissed = models.BooleanField(default=False, blank=True)
+    alarm_until_dismissed_task = models.CharField(max_length=50, null=True)
 
     @property
     def end_time(self):

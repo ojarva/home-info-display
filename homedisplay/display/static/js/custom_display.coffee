@@ -14,3 +14,5 @@ jq ->
     "height": height
   .css
     "min-height": height
+
+  jq('[data-toggle="popover"]').popover()
