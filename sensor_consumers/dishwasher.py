@@ -69,7 +69,25 @@ class Dishwasher(SensorConsumerBase):
             print "Invalid power consumption for dishwasher: %s. Setting to null." % power_consumption
             power_consumption = None
 
-        self.insert_into_influx([{
+        temperature1 = round(data["data"]["temperature1"], 1)
+        if temperature1 < 0 or temperature1 > 100:
+            temperature1 = None
+
+        temperature2 = round(data["data"]["temperature2"], 1)
+        if temperature2 < 0 or temperature2 > 100:
+            temperature2 = None
+
+        temperature3 = round(data["data"]["temperature3"], 1)
+        if temperature3 < 0 or temperature3 > 100:
+            temperature3 = None
+
+        temperature4 = round(data["data"]["temperature4"], 1)
+        if temperature4 < 0 or temperature4 > 100:
+            temperature4 = None
+
+        door = data["data"]["door"] == 0
+
+        influx_data = [{
             "measurement": "dishwasher",
             "time": datetime.datetime.utcnow().isoformat() + "Z",
             "tags": {
@@ -77,8 +95,15 @@ class Dishwasher(SensorConsumerBase):
             },
             "fields": {
                 "power_consumption": power_consumption,
+                "temperature1": temperature1,
+                "temperature2": temperature2,
+                "temperature3": temperature3,
+                "temperature4": temperature4,
+                "door_is_open": door,
             },
-        }])
+        }]
+
+        self.insert_into_influx(influx_data)
 
         parser_data = self.dishwasher_parser.add_value(datetime.datetime.now(), data["data"]["power_consumption"] * 230)
         self.redis.setex("dishwasher-parser-state", 120, base64.b64encode(pickle.dumps(self.dishwasher_parser.get_state())))
