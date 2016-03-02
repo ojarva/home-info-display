@@ -28,4 +28,4 @@ def lightgroup_on_until(group_id):
 
     if group.on:
         led.off()
-        update_lightstate(self.TABLE, None, None, False)
+        update_lightstate(group_id, None, None, False)
