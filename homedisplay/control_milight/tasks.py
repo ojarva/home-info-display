@@ -29,7 +29,7 @@ def lightgroup_on_until(group_id):
     logger.info("Switching off group {group_id}. Current time is {now} and on_until is {on_until}".format(group_id=group_id, now=now, on_until=group.on_until))
 
     if group.on:
-        led.off()
+        led.off(group_id)
         group.on_until = None
         group.on = False
         group.save()
