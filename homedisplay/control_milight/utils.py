@@ -184,8 +184,8 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
 
     # If already on, don't do anything
     if state.on and not state.on_automatically:
-        logger.debug(
-            "Group %s is already on. Skip automatic triggering", group)
+        logger.debug("Group %s is already on. Skip automatic triggering", group)
+        state.save()  # Save to keep updated on_until
         return False
 
     if not state.on:
@@ -206,8 +206,7 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
         # bugs where brightness changes change bulb color.
         led.set_brightness(brightness, group)
 
-    light_models.update_lightstate(
-        group, brightness, color, True, automatic=True, on_until=on_until)
+    light_models.update_lightstate(group, brightness, color, True, automatic=True, on_until=on_until)
 
     if quick:
         led.repeat_commands = original_repeat_commands
@@ -267,7 +266,7 @@ def get_program_brightness(action, percent_done):
     if action == "evening" or action == "evening-weekend":
         brightness = (1 - percent_done) * 100
     elif action == "morning" or action == "morning-weekend":
-        brightness = percent_done * 100
+        brightness = 100
     else:
         raise NotImplementedError("Action %s is not implented." % action)
 
