@@ -18,10 +18,8 @@ Kettle = (elem) ->
     clearAutoNoUpdates()
     if data.status == "ready" and data.present and data.water_level > 0.1
       jq(elem).find(".action-on").removeClass("disabled")
-      jq(elem).find(".disabled-mode").hide()
     else
       jq(elem).find(".action-on").addClass("disabled")
-      jq(elem).find(".disabled-mode").show()
 
     if data.present
       jq(elem).find(".online-status").show()

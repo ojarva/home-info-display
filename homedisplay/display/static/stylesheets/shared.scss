@@ -138,9 +138,9 @@ a.list-group-item {
 }
 
 .item-box {
-  padding: 20px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  padding-top: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .item-box-left {
@@ -148,6 +148,10 @@ a.list-group-item {
 }
 
 
+.stripe-box {
+  background-color: #111;
+}
+/*
 .stripe-box:nth-child(even) {
   background-color: #111;
 }
@@ -155,6 +159,7 @@ a.list-group-item {
 .stripe-box:nth-child(odd) {
   background-color: #222;
 }
+*/
 
 .action-button {
   padding: 15px;

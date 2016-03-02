@@ -23,33 +23,29 @@
     <div id="main-content">
       <div class="row">
 
-        <div class="col-md-4">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="item-box main-button-box">
-                <div class="center-content stripe-box animate-click action-button electricity"><i class="fa fa-bolt"></i></div>
-                <div class="center-content stripe-box animate-click action-button lights"><i class="fa fa-lightbulb-o"></i></div>
-                <div class="center-content stripe-box animate-click action-button repeating"><i class="fa fa-repeat"></i></div>
-                <div class="center-content stripe-box animate-click action-button birthdays"><i class="fa fa-birthday-cake"></i></div>
-                <div class="center-content stripe-box animate-click action-button open-weather-modal"><i class="fa fa-umbrella"></i></div>
-                <div class="center-content stripe-box animate-click action-button print-labels"><i class="fa fa-print"></i></div>
-                <div class="center-content stripe-box animate-click action-button linux-downloads"><i class="fa fa-download"></i></div>
-                <div class="center-content stripe-box animate-click action-button debug-modal"><i class="fa fa-bug"></i></div>
-                <div class="center-content stripe-box animate-click action-button open-wifi-settings">
-                  <i class="fa fa-wifi"></i>
-                </div>
-                <div class="center-content stripe-box animate-click action-button open-transportation-dialog">
-                  <i class="fa fa-bus"></i>
-                </div>
-                <div class="server-power">
-                  <div style="display:none;" class="shutdown action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-power-off"></i></div>
-                  <div style="display:none;" class="startup action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-power-off"></i></div>
-                  <div style="display:none;" class="unknown action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-question-circle"></i></div>
-                </div>
-                <div class="genelec-power">
-                  <div class="startup action-button animate-click stripe-box"><i class="fa fa-bullhorn"></i>&nbsp;<i class="fa fa-power-off"></i></div>
-                </div>
-              </div>
+        <div class="col-md-4 left-main-column">
+          <div class="item-box main-button-box">
+            <div class="center-content stripe-box animate-click action-button electricity"><i class="fa fa-bolt"></i></div>
+            <div class="center-content stripe-box animate-click action-button lights"><i class="fa fa-lightbulb-o"></i></div>
+            <div class="center-content stripe-box animate-click action-button repeating"><i class="fa fa-repeat"></i></div>
+            <div class="center-content stripe-box animate-click action-button birthdays"><i class="fa fa-birthday-cake"></i></div>
+            <div class="center-content stripe-box animate-click action-button open-weather-modal"><i class="fa fa-umbrella"></i></div>
+            <div class="center-content stripe-box animate-click action-button print-labels"><i class="fa fa-print"></i></div>
+            <div class="center-content stripe-box animate-click action-button linux-downloads"><i class="fa fa-download"></i></div>
+            <div class="center-content stripe-box animate-click action-button debug-modal"><i class="fa fa-bug"></i></div>
+            <div class="center-content stripe-box animate-click action-button open-wifi-settings">
+              <i class="fa fa-wifi"></i>
+            </div>
+            <div class="center-content stripe-box animate-click action-button open-transportation-dialog">
+              <i class="fa fa-bus"></i>
+            </div>
+            <div class="server-power">
+              <div style="display:none;" class="shutdown action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-power-off"></i></div>
+              <div style="display:none;" class="startup action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-power-off"></i></div>
+              <div style="display:none;" class="unknown action-button animate-click stripe-box"><i class="fa fa-server"></i>&nbsp;<i class="fa fa-question-circle"></i></div>
+            </div>
+            <div class="genelec-power">
+              <div class="startup action-button animate-click stripe-box"><i class="fa fa-bullhorn"></i>&nbsp;<i class="fa fa-power-off"></i></div>
             </div>
           </div>
 
@@ -119,8 +115,8 @@
             {% include "snippets/air_quality.html" %}
           </div>
 
-          <div class="row weather open-weather-modal">
-            <div class="col-md-12 weather-main">
+          <div class="item-box weather open-weather-modal">
+            <div class="weather-main">
               <span class="temperature-now data-field"><i class='fa fa-question-circle'></i></span><span class="wind-now-description">Tuuli:</span> <span class="wind-now data-field"><i class='fa fa-question-circle'></i></span> <span class="wind-direction-now data-field"></span><br>
               <span class="description-now data-field"></span><br>
               <span class="future-direction"></span>

@@ -26,6 +26,8 @@
     font-size: 150%;
     margin-top: 5px;
     width: 49%;
+    margin-left: 2px;
+    margin-right: 2px;
     display: inline-block;
 
     .notification-container {
@@ -43,12 +45,8 @@
       }
     }
   }
-  .notification-striping:nth-child(even) {
+  .notification-striping {
     background-color: #111;
-  }
-
-  .notification-striping:nth-child(odd) {
-    background-color: #222;
   }
 }
 

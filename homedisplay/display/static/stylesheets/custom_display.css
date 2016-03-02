@@ -2,9 +2,8 @@
   display: inline;
 }
 
-.weather-main {
-  margin-bottom: 20px;
-  margin-left: 20px;
+.left-main-column {
+  padding-left: 50px !important;
 }
 
 .last-column {

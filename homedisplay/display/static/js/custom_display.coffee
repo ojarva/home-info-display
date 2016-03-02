@@ -3,8 +3,8 @@
 
 jq ->
   # Disabling right click menu is evil. However, Ubuntu&Chrome&touchscreen means problems when context menu is triggered.
-  jq("body").bind "contextmenu", ->
-    false
+#  jq("body").bind "contextmenu", ->
+#    false
   setInterval ->
     window.getSelection().empty()
   , 1000
