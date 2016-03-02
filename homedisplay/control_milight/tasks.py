@@ -23,9 +23,10 @@ def lightgroup_on_until(group_id):
 
     now = timezone.now()
     if group.on_until > now:
-        logger.error("Called incorrectly - on_until is on the future. Group id {group_id}".format(group_id=group_id))
+        logger.error("Called incorrectly - on_until is in the future. Group id {group_id}".format(group_id=group_id))
         return
 
     if group.on:
         led.off()
-        update_lightstate(group_id, None, None, False)
+        group.on_until = None
+        group.save()

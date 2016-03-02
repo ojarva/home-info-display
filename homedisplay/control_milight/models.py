@@ -190,18 +190,30 @@ class LightGroup(models.Model):
         blank=True, null=True, verbose_name="Automaattinen sammutusaika", help_text="Aika, johon asti valo pidetään päällä")
     on_until_task = models.TextField(null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        import tasks as milight_tasks
-
+    def revoke_task(self):
+        """ This is called from save(). To avoid cycles, *do not* call self.save here. """
         if self.on_until_task:
             celery_app.control.revoke(self.on_until_task)
             self.on_until_task = None
-        if self.on_until:
-            now = timezone.now()
-            if self.on_until > now:
-                # on_until is in the future. Add new task.
-                self.on_until_task = str(milight_tasks.lightgroup_on_until.apply_async((self.group_id,), eta=self.on_until + datetime.timedelta(seconds=1), expires=self.on_until + datetime.timedelta(seconds=60)))
 
+    def save(self, *args, **kwargs):
+        import tasks as milight_tasks
+        if not state.on_until:
+            self.revoke_task()
+        else:
+            old_on_until = redis.get("on-until-timestamp-group-%s" % group_id)
+            if not old_on_until:
+                old_on_until = timezone.now() - datetime.timedelta(days=365)
+            else:
+                old_on_until = timezone.make_aware(datetime.datetime.fromtimestamp(float(old_on_until)), timezone.utc)
+
+            if abs((state.on_until - old_on_until).total_seconds()) > 15:
+                redis.set("on-until-timestamp-group-%s" % group_id, state.on_until.strftime("%s"))
+                self.revoke_task()
+                now = timezone.now()
+                if self.on_until > now:
+                    # on_until is in the future. Add new task.
+                    self.on_until_task = str(milight_tasks.lightgroup_on_until.apply_async((self.group_id,), eta=self.on_until + datetime.timedelta(seconds=16), expires=self.on_until + datetime.timedelta(seconds=60)))
 
         super(LightGroup, self).save(*args, **kwargs)
 
