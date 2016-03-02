@@ -29,4 +29,5 @@ def lightgroup_on_until(group_id):
     if group.on:
         led.off()
         group.on_until = None
+        group.on = False
         group.save()

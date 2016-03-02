@@ -198,17 +198,17 @@ class LightGroup(models.Model):
 
     def save(self, *args, **kwargs):
         import tasks as milight_tasks
-        if not state.on_until:
+        if not self.on_until:
             self.revoke_task()
         else:
-            old_on_until = redis.get("on-until-timestamp-group-%s" % group_id)
+            old_on_until = redis_instance.get("on-until-timestamp-group-%s" % self.group_id)
             if not old_on_until:
                 old_on_until = timezone.now() - datetime.timedelta(days=365)
             else:
                 old_on_until = timezone.make_aware(datetime.datetime.fromtimestamp(float(old_on_until)), timezone.utc)
 
-            if abs((state.on_until - old_on_until).total_seconds()) > 15:
-                redis.set("on-until-timestamp-group-%s" % group_id, state.on_until.strftime("%s"))
+            if abs((self.on_until - old_on_until).total_seconds()) > 15:
+                redis_instance.set("on-until-timestamp-group-%s" % self.group_id, self.on_until.strftime("%s"))
                 self.revoke_task()
                 now = timezone.now()
                 if self.on_until > now:
