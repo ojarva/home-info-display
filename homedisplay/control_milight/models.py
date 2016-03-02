@@ -207,7 +207,7 @@ class LightGroup(models.Model):
             else:
                 old_on_until = timezone.make_aware(datetime.datetime.fromtimestamp(float(old_on_until)), timezone.utc)
 
-            if abs((self.on_until - old_on_until).total_seconds()) > 15:
+            if abs((self.on_until - old_on_until).total_seconds()) > 15 or timezone.now() > self.on_until or self.on_until - timezone.now() < datetime.timedelta(seconds=45):
                 redis_instance.set("on-until-timestamp-group-%s" % self.group_id, self.on_until.strftime("%s"))
                 self.revoke_task()
                 now = timezone.now()
