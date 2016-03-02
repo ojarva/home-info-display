@@ -1,4 +1,3 @@
-from .models import OutsideAirQuality
 from django.conf import settings
 from django.core import serializers
 from django.http import HttpResponseRedirect, HttpResponse, Http404
@@ -40,12 +39,8 @@ class GetHistoryForSensor(View):
 class GetLatestOutdoor(View):
     def get(self, request, *args, **kwargs):
         data = {}
-        now = timezone.now()
-        maximum_age = datetime.timedelta(hours=6)
-        types = OutsideAirQuality.objects.values_list("type", flat=True).order_by("type").distinct()
-        for type in types:
-            obj = OutsideAirQuality.objects.filter(type=type).latest()
-            if obj:
-                if now - obj.timestamp < maximum_age:
-                    data[type] = {"value": float(obj.value), "timestamp": obj.timestamp.isoformat()}
+        for sensor in ["particulateslt10um", "ozone", "particulateslt2.5um", "sulphurdioxide", "nitrogendioxide"]:
+            value = redis_instance.get("outdoor-air-quality-latest-%s" % sensor)
+            if value:
+                data[sensor] = {"value": float(value)}
         return HttpResponse(json.dumps(data), content_type="application/json")
