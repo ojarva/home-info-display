@@ -185,6 +185,7 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
     # If already on, don't do anything
     if state.on and not state.on_automatically:
         logger.debug("Group %s is already on. Skip automatic triggering", group)
+        state.on_until = on_until
         state.save()  # Save to keep updated on_until
         return False
 
