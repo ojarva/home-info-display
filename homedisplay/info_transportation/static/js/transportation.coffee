@@ -4,7 +4,15 @@ Transportation = () ->
 
   show_first = 8 # Show first 8 departures
   transportation_common = new TransportationCommon show_first
+  no_poikkeusinfo_timeout = null
 
+  resetNoPoikkeusinfo = ->
+    if no_poikkeusinfo_timeout?
+      no_poikkeusinfo_timeout = clearTimeout no_poikkeusinfo_timeout
+    no_poikkeusinfo_timeout = setTimeout noPoikkeusInfo, 60 * 15 * 1000
+
+  noPoikkeusInfo = ->
+    jq(".poikkeustiedotteet-data").html """<p>Poikkeusinfojen tietoja ei ole saatavilla</p>"""
 
   processData = (data) ->
     transportation_common.clearEntries()
@@ -88,7 +96,6 @@ Transportation = () ->
       processPoikkeusinfo data
 
   processPoikkeusinfo = (data) ->
-    console.log data
     html = """<ul>"""
     if not data? or data.length == 0
       html += "<li>Ei poikkeusinfoja</li>"
@@ -97,6 +104,7 @@ Transportation = () ->
         html += "<li>#{p.info.text}</li>"
     html += """</ul>"""
     el = jq(".poikkeustiedotteet-data").html html
+    resetNoPoikkeusinfo()
     return
 
   startInterval = ->
