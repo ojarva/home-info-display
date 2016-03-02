@@ -204,7 +204,7 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
 
     if set_brightness:
         # Only set brightness if it's changing. This prevents data corruption
-        # bugs where brightness changes change bulb color.
+        # bugs where setting brightness changes bulb color.
         led.set_brightness(brightness, group)
 
     light_models.update_lightstate(group, brightness, color, True, automatic=True, on_until=on_until)

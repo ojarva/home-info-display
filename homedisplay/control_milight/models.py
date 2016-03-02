@@ -121,10 +121,10 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
                 state_set = True
                 state.on_automatically = True
 
-                on_until = kwargs.get("on_until")
-                if on_until:
-                    # Set ending time for automatic lights.
-                    state.on_until = on_until
+    on_until = kwargs.get("on_until")
+    if on_until:
+        # Set ending time for automatic lights.
+        state.on_until = on_until
 
     if state_set is False and kwargs.get("timed", False) is False:
         # Default state for on_automatically
