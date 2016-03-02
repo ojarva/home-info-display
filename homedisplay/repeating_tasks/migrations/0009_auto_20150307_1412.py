@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='taskhistory',
-            options={'ordering': ('-completed_at',), 'get_latest_by': 'completed_at'},
+            options={'ordering': ('-completed_at',),
+                     'get_latest_by': 'completed_at'},
         ),
         migrations.AddField(
             model_name='task',

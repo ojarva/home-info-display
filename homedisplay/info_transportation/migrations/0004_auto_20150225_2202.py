@@ -16,7 +16,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='data',
             name='last_updated',
-            field=models.DateTimeField(default=datetime.datetime(2015, 2, 25, 20, 2, 14, 104155, tzinfo=utc), auto_now=True),
+            field=models.DateTimeField(default=datetime.datetime(
+                2015, 2, 25, 20, 2, 14, 104155, tzinfo=utc), auto_now=True),
             preserve_default=False,
         ),
         migrations.AlterField(

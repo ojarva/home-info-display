@@ -11,6 +11,8 @@ import redis
 
 redis_instance = redis.StrictRedis()
 
+
 class get_json(View):
+
     def get(self, request, *args, **kwargs):
         return HttpResponse(redis_instance.get("weather-all"), content_type="application/json")

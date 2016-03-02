@@ -14,13 +14,15 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='printlabel',
             name='include_date',
-            field=models.BooleanField(default=False, verbose_name=b'Tulosta p\xc3\xa4iv\xc3\xa4ys'),
+            field=models.BooleanField(
+                default=False, verbose_name=b'Tulosta p\xc3\xa4iv\xc3\xa4ys'),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='printlabel',
             name='include_time',
-            field=models.BooleanField(default=False, verbose_name=b'Tulosta aika'),
+            field=models.BooleanField(
+                default=False, verbose_name=b'Tulosta aika'),
             preserve_default=True,
         ),
     ]

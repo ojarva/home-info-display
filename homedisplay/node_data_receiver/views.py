@@ -8,6 +8,7 @@ redis_instance = redis.StrictRedis()
 
 
 class Fridge(View):
+
     def get(self, request, *args, **kwargs):
         def format_number(number):
             if number is None:

@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LightGroup',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('description', models.TextField(null=True, blank=True)),
                 ('rgbw_brightness', models.PositiveSmallIntegerField(null=True)),
                 ('white_brightness', models.PositiveSmallIntegerField(null=True)),
@@ -27,7 +28,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LightTransition',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('description', models.TextField(null=True, blank=True)),
                 ('start_time', models.DateTimeField()),
                 ('end_time', models.DateTimeField()),

@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OutsideAirQuality',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField()),
                 ('type', models.CharField(max_length=40)),
                 ('value', models.DecimalField(max_digits=7, decimal_places=2)),

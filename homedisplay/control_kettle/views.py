@@ -8,11 +8,14 @@ redis_instance = redis.StrictRedis()
 
 
 class Status(View):
+
     def get(self, request, *args, **kwargs):
         status = redis_instance.get("kettle-info")
         return HttpResponse(status, content_type="application/json")
 
+
 class Control(View):
+
     def post(self, request, *args, **kwargs):
         def run_kettle_command(data):
             redis_instance.publish("kettle-commands", json.dumps(data))

@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='notification',
-            options={'ordering': ('-timestamp',), 'get_latest_by': 'timestamp'},
+            options={'ordering': ('-timestamp',),
+                     'get_latest_by': 'timestamp'},
         ),
         migrations.AddField(
             model_name='notification',

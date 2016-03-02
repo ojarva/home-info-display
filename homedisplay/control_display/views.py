@@ -9,6 +9,7 @@ redis_instance = redis.StrictRedis()
 
 
 class Power(View):
+
     def post(self, request, *args, **kwargs):
 
         cmd = kwargs.get("command")
@@ -29,16 +30,19 @@ class Power(View):
 
 
 class Brightness(View):
+
     def post(self, request, *args, **kwargs):
         set_destination_brightness(float(kwargs.get("brightness")))
         return HttpResponse("ok")
 
 
 class RestartBrowser(View):
+
     def post(self, request, *args, **kwargs):
         p = subprocess.Popen(["killall", "chromium-browser"])
         p.wait()
         env = {"DISPLAY": ":0"}
-        p = subprocess.Popen(["chromium-browser", "--touch-events=enabled", "--start-fullscreen", "--disable-session-crashed-bubble", "--disable-touch-drag-drop", "--disable-pinch"], env=env, shell=True)
+        p = subprocess.Popen(["chromium-browser", "--touch-events=enabled", "--start-fullscreen",
+                              "--disable-session-crashed-bubble", "--disable-touch-drag-drop", "--disable-pinch"], env=env, shell=True)
         p.wait()
         return HttpResponse("ok")

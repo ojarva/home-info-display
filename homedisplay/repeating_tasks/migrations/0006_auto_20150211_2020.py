@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='task',
-            options={'verbose_name': 'Toistuva teht\xe4v\xe4', 'verbose_name_plural': 'Toistuvat teht\xe4v\xe4t'},
+            options={'verbose_name': 'Toistuva teht\xe4v\xe4',
+                     'verbose_name_plural': 'Toistuvat teht\xe4v\xe4t'},
         ),
     ]

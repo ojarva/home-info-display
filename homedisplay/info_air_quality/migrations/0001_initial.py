@@ -13,9 +13,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AirDataPoint',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=20)),
-                ('value', models.DecimalField(null=True, max_digits=7, decimal_places=2)),
+                ('value', models.DecimalField(
+                    null=True, max_digits=7, decimal_places=2)),
             ],
             options={
             },
@@ -24,7 +26,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AirTimePoint',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True)),
             ],
             options={

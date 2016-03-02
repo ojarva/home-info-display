@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='line',
             name='show_times',
-            field=models.ManyToManyField(to='info_transportation.LineShow', blank=True),
+            field=models.ManyToManyField(
+                to='info_transportation.LineShow', blank=True),
         ),
     ]

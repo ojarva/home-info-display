@@ -26,6 +26,7 @@ def set_light_group_delayed_off(group):
 
 
 class TimedProgram(View):
+
     def post(self, request, *args, **kwargs):
         action = kwargs.get("action")
         command = kwargs.get("command")
@@ -39,7 +40,8 @@ class TimedProgram(View):
                 running = False
             start_time = datetime.time(int(start_time[0]), int(start_time[1]))
             duration = int(duration[0]) * 3600 + int(duration[1]) * 60
-            item, created = LightAutomation.objects.get_or_create(action=action, defaults={"start_time": start_time, "duration": duration, "running": running})
+            item, created = LightAutomation.objects.get_or_create(action=action, defaults={
+                                                                  "start_time": start_time, "duration": duration, "running": running})
             if not created:
                 item.start_time = start_time
                 item.duration = duration
@@ -49,8 +51,10 @@ class TimedProgram(View):
             if is_any_timed_running() == False:
                 # No timed lightcontrol is running (anymore). Delete overrides.
                 for group in range(1, 5):
-                    redis_instance.delete("lightcontrol-no-automatic-%s" % group)
-                    publish_ws("lightcontrol-timed-override", {"action": "resume"})
+                    redis_instance.delete(
+                        "lightcontrol-no-automatic-%s" % group)
+                    publish_ws("lightcontrol-timed-override",
+                               {"action": "resume"})
             else:
                 run_timed_actions()
             return HttpResponse(json.dumps(get_serialized_timed_action(item)), content_type="application/json")
@@ -63,12 +67,12 @@ class TimedProgram(View):
         item = get_serialized_timed_action(instance)
         return HttpResponse(json.dumps(item), content_type="application/json")
 
-
     def get(self, request, *args, **kwargs):
         action = kwargs.get("action")
         instance = get_object_or_404(LightAutomation, action=action)
         item = get_serialized_timed_action(instance)
         return HttpResponse(json.dumps(item), content_type="application/json")
+
 
 class ControlPerSource(View):
     BED = 1
@@ -102,7 +106,7 @@ class ControlPerSource(View):
             elif command == "off-all":
                 set_light_group_delayed_off(0)
                 initiate_delayed_shutdown()
-                sp.shutdown() # Shutdown server
+                sp.shutdown()  # Shutdown server
                 # TODO: shut down speakers
 
         elif source == "door":
@@ -153,6 +157,7 @@ class ControlPerSource(View):
 
 
 class Control(View):
+
     def post(self, request, *args, **kwargs):
         command = kwargs.get("command")
         group = int(kwargs.get("group"))

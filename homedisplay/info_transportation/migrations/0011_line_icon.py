@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='line',
             name='icon',
-            field=models.CharField(default=b'bus', max_length=10, verbose_name=b'Ikoni', choices=[(b'bus', b'bus'), (b'train', b'train')]),
+            field=models.CharField(default=b'bus', max_length=10, verbose_name=b'Ikoni', choices=[
+                                   (b'bus', b'bus'), (b'train', b'train')]),
             preserve_default=True,
         ),
     ]

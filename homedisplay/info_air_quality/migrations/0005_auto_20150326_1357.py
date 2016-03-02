@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='airdatapoint',
-            options={'ordering': ['-timepoint__timestamp'], 'get_latest_by': 'timepoint__timestamp'},
+            options={'ordering': ['-timepoint__timestamp'],
+                     'get_latest_by': 'timepoint__timestamp'},
         ),
         migrations.AlterModelOptions(
             name='airtimepoint',

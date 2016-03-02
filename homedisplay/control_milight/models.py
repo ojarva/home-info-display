@@ -14,11 +14,13 @@ import json
 import logging
 import redis
 
-__all__ = ["LightGroup", "LightAutomation", "update_lightstate", "is_any_timed_running", "get_serialized_timed_action", "get_serialized_lightgroup"]
+__all__ = ["LightGroup", "LightAutomation", "update_lightstate",
+           "is_any_timed_running", "get_serialized_timed_action", "get_serialized_lightgroup"]
 
 led = LedController(settings.MILIGHT_IP)
 redis_instance = redis.StrictRedis()
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
+
 
 def get_main_buttons():
     all_off = True
@@ -45,13 +47,16 @@ def get_main_buttons():
             all_on_red_dim = False
     return {"on": all_on_white_bright, "off": all_off, "night": all_on_red_dim, "lights-morning-auto": all_on_white_dim}
 
+
 def get_serialized_lightgroups():
     return [get_serialized_lightgroup(item) for item in LightGroup.objects.all()]
+
 
 def get_serialized_lightgroup(item):
     ret = json.loads(serializers.serialize("json", [item]))[0]
     ret["fields"]["current_brightness"] = item.current_brightness
     return ret
+
 
 def get_serialized_timed_action(item):
     ret = json.loads(serializers.serialize("json", [item]))
@@ -62,6 +67,7 @@ def get_serialized_timed_action(item):
             ret[0]["fields"]["is_overridden"] = True
             break
     return ret
+
 
 def update_lightstate(group, brightness, color=None, on=True, **kwargs):
     """
@@ -76,23 +82,30 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
             update_lightstate(group_num, brightness, color, on, **kwargs)
         return
 
-    logger.debug("Updating lightstate: group=%s, brightness=%s, color=%s, on=%s, kwargs=%s", group, brightness, color, on, kwargs)
+    logger.debug("Updating lightstate: group=%s, brightness=%s, color=%s, on=%s, kwargs=%s",
+                 group, brightness, color, on, kwargs)
     if kwargs.get("important", True) is True and kwargs.get("automatic", False) is False and kwargs.get("no_override", False) is False:
         timed_ends_at = is_any_timed_running()
         logger.debug("Lightstate: important is True")
         if timed_ends_at != False:
-            time_until_ends = (timed_ends_at - timezone.now()).total_seconds() + 65
-            logger.debug("Next timed task ends at %s (%s seconds)", timed_ends_at, time_until_ends)
-            logger.info("Setting timed lightcontrol override for %s until %s", group, time_until_ends)
-            redis_instance.setex("lightcontrol-no-automatic-%s" % group, int(time_until_ends), True)
+            time_until_ends = (timed_ends_at - timezone.now()
+                               ).total_seconds() + 65
+            logger.debug("Next timed task ends at %s (%s seconds)",
+                         timed_ends_at, time_until_ends)
+            logger.info(
+                "Setting timed lightcontrol override for %s until %s", group, time_until_ends)
+            redis_instance.setex("lightcontrol-no-automatic-%s" %
+                                 group, int(time_until_ends), True)
             publish_ws("lightcontrol-timed-override", {"action": "pause"})
 
     state, _ = LightGroup.objects.get_or_create(group_id=group)
 
     state_set = False
     if kwargs.get("automatic"):
-        # This is update is triggered automatically (by PIR/magnetic switch/...)
-        logger.debug("Requested automatic triggering. on_automatically=%s", state.on_automatically)
+        # This is update is triggered automatically (by PIR/magnetic
+        # switch/...)
+        logger.debug(
+            "Requested automatic triggering. on_automatically=%s", state.on_automatically)
         if state.on_automatically:
             # Keep on_automatically true
             logger.debug("Keep on_automatically=True")
@@ -118,24 +131,29 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
         state.on_automatically = False
         timer_utils.delete_group_automatic_timer(group, True)
 
-
-    logger.debug("on_automatically=%s, on_until=%s", state.on_automatically, state.on_until)
+    logger.debug("on_automatically=%s, on_until=%s",
+                 state.on_automatically, state.on_until)
 
     if color is not None:
-        logger.debug("Setting color for group %s, from %s to %s", group, state.color, color)
+        logger.debug("Setting color for group %s, from %s to %s",
+                     group, state.color, color)
         state.color = color
 
     if brightness is not None:
         if state.color == "white":
-            logger.debug("Setting white brightness for group %s, from %s to %s", group, state.white_brightness, brightness)
+            logger.debug("Setting white brightness for group %s, from %s to %s",
+                         group, state.white_brightness, brightness)
             state.white_brightness = brightness
         else:
-            logger.debug("Setting rgb brightness for group %s, from %s to %s", group, state.rgbw_brightness, brightness)
+            logger.debug("Setting rgb brightness for group %s, from %s to %s",
+                         group, state.rgbw_brightness, brightness)
             state.rgbw_brightness = brightness
-    logger.debug("Setting state on=%s for group %s (was %s)", on, group, state.on)
+    logger.debug("Setting state on=%s for group %s (was %s)",
+                 on, group, state.on)
     state.on = on
     state.save()
     return state
+
 
 def is_any_timed_running():
     timestamp = timezone.now()
@@ -143,6 +161,7 @@ def is_any_timed_running():
         if timed.is_running(timestamp):
             return timed.get_end_datetime()
     return False
+
 
 def is_group_on(group):
     groups = LightGroup.objects.all()
@@ -153,16 +172,23 @@ def is_group_on(group):
             return True
     return False
 
+
 class LightGroup(models.Model):
-    group_id = models.PositiveSmallIntegerField(unique=True, verbose_name="Numero")
-    description = models.CharField(max_length=20, null=True, blank=True, verbose_name="Kuvaus")
-    rgbw_brightness = models.PositiveSmallIntegerField(null=True, verbose_name="Värillisen kirkkaus")
-    white_brightness = models.PositiveSmallIntegerField(null=True, verbose_name="Valkoisen kirkkaus")
+    group_id = models.PositiveSmallIntegerField(
+        unique=True, verbose_name="Numero")
+    description = models.CharField(
+        max_length=20, null=True, blank=True, verbose_name="Kuvaus")
+    rgbw_brightness = models.PositiveSmallIntegerField(
+        null=True, verbose_name="Värillisen kirkkaus")
+    white_brightness = models.PositiveSmallIntegerField(
+        null=True, verbose_name="Valkoisen kirkkaus")
     color = models.TextField(null=True, blank=True, verbose_name="Väri")
     on = models.NullBooleanField(null=True, verbose_name="Päällä")
 
-    on_automatically = models.BooleanField(blank=True, default=False, verbose_name="Päällä automaattisesti", help_text="Onko ryhmä päällä automaattisesti vai manuaalisesti")
-    on_until = models.DateTimeField(blank=True, null=True, verbose_name="Automaattinen sammutusaika", help_text="Aika, johon asti valo pidetään päällä")
+    on_automatically = models.BooleanField(blank=True, default=False, verbose_name="Päällä automaattisesti",
+                                           help_text="Onko ryhmä päällä automaattisesti vai manuaalisesti")
+    on_until = models.DateTimeField(
+        blank=True, null=True, verbose_name="Automaattinen sammutusaika", help_text="Aika, johon asti valo pidetään päällä")
 
     def delete(self, *args, **kwargs):
         logger.info("Deleted lightgroup")
@@ -182,19 +208,29 @@ class LightGroup(models.Model):
         verbose_name_plural = "Valoryhmät"
         ordering = ("group_id", )
 
+
 class LightAutomation(models.Model):
-    action = models.CharField(max_length=30, verbose_name="Sisäinen nimi toiminnolle", unique=True)
+    action = models.CharField(
+        max_length=30, verbose_name="Sisäinen nimi toiminnolle", unique=True)
     running = models.NullBooleanField(default=True, verbose_name="Päällä")
     start_time = models.TimeField(verbose_name="Aloitusaika")
-    duration = models.IntegerField(verbose_name="Kestoaika sekunteina") # in seconds
-    active_days = models.CharField(max_length=7, default="0000000", verbose_name="Päivät", help_text="ma-su, 0=pois, 1=päällä")
+    duration = models.IntegerField(
+        verbose_name="Kestoaika sekunteina")  # in seconds
+    active_days = models.CharField(
+        max_length=7, default="0000000", verbose_name="Päivät", help_text="ma-su, 0=pois, 1=päällä")
 
-    turn_display_on = models.BooleanField(default=False, blank=True, verbose_name="Käynnistä näyttö", help_text="Käynnistä näyttö ohjelman alussa")
-    turn_display_off = models.BooleanField(default=False, blank=True, verbose_name="Sammuta näyttö", help_text="Sammuta näyttö ohjelman lopussa")
-    action_if_off = models.BooleanField(default=True, blank=True, verbose_name="Suorita sammutetuille", help_text="Suorita ohjelma myös sammutetuille valoille")
-    set_white = models.BooleanField(default=False, blank=True, verbose_name="Vaihda väri valkoiseksi", help_text="Vaihda ohjelman aikana väri valkoiseksi")
-    no_brighten = models.BooleanField(default=False, blank=True, verbose_name="Älä lisää valojen kirkkautta", help_text="Jos raksitettu, valojen kirkkautta ei koskaan lisätä")
-    no_dimming = models.BooleanField(default=False, blank=True, verbose_name="Älä vähennä valojen kirkkautta", help_text="Jos raksitettu, valojen kirkkautta ei koskaan vähennetä")
+    turn_display_on = models.BooleanField(
+        default=False, blank=True, verbose_name="Käynnistä näyttö", help_text="Käynnistä näyttö ohjelman alussa")
+    turn_display_off = models.BooleanField(
+        default=False, blank=True, verbose_name="Sammuta näyttö", help_text="Sammuta näyttö ohjelman lopussa")
+    action_if_off = models.BooleanField(
+        default=True, blank=True, verbose_name="Suorita sammutetuille", help_text="Suorita ohjelma myös sammutetuille valoille")
+    set_white = models.BooleanField(
+        default=False, blank=True, verbose_name="Vaihda väri valkoiseksi", help_text="Vaihda ohjelman aikana väri valkoiseksi")
+    no_brighten = models.BooleanField(default=False, blank=True, verbose_name="Älä lisää valojen kirkkautta",
+                                      help_text="Jos raksitettu, valojen kirkkautta ei koskaan lisätä")
+    no_dimming = models.BooleanField(default=False, blank=True, verbose_name="Älä vähennä valojen kirkkautta",
+                                     help_text="Jos raksitettu, valojen kirkkautta ei koskaan vähennetä")
 
     def __unicode__(self):
         return u"%s (%s) %s -- %s" % (self.action, self.running, self.start_time, self.duration)
@@ -212,7 +248,8 @@ class LightAutomation(models.Model):
     def get_end_datetime(self):
         """ Returns datetime.datetime for next ending time. """
         duration = max(self.duration, 300)
-        timestamp = (timezone.now() - datetime.timedelta(seconds=duration)).time()
+        timestamp = (timezone.now() -
+                     datetime.timedelta(seconds=duration)).time()
         return self.get_start_datetime(timestamp) + datetime.timedelta(seconds=duration)
 
     @property
@@ -254,10 +291,14 @@ class LightAutomation(models.Model):
             return
         return float((timestamp - self.get_start_datetime()).total_seconds()) / self.duration
 
+
 @receiver(post_save, sender=LightAutomation, dispatch_uid="lightautomation_post_save")
 def publish_lightautomation_saved(sender, instance, *args, **kwargs):
-    publish_ws("lightcontrol-timed-%s" % instance.action, get_serialized_timed_action(instance))
+    publish_ws("lightcontrol-timed-%s" % instance.action,
+               get_serialized_timed_action(instance))
+
 
 @receiver(post_save, sender=LightGroup, dispatch_uid="lightgroup_post_save")
 def publish_lightgroup_saved(sender, instance, *args, **kwargs):
-    publish_ws("lightcontrol", {"groups": get_serialized_lightgroups(), "main_buttons": get_main_buttons()})
+    publish_ws("lightcontrol", {
+               "groups": get_serialized_lightgroups(), "main_buttons": get_main_buttons()})

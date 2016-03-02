@@ -14,10 +14,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MarineWeather',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField()),
                 ('location', models.CharField(max_length=30)),
-                ('temperature', models.DecimalField(max_digits=4, decimal_places=1)),
+                ('temperature', models.DecimalField(
+                    max_digits=4, decimal_places=1)),
                 ('dewpoint', models.DecimalField(max_digits=4, decimal_places=1)),
                 ('humidity', models.DecimalField(max_digits=4, decimal_places=1)),
                 ('cloudiness', models.PositiveSmallIntegerField()),

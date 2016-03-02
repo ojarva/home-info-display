@@ -12,6 +12,7 @@ import time
 
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
+
 class Command(BaseCommand):
     args = ''
     help = 'Listen for jeenode messages'
@@ -29,10 +30,12 @@ class Command(BaseCommand):
         slow_queue = []
 
         def execute_queue():
-            # Run items with changes first. Reads more items if anything is available from serial port.
+            # Run items with changes first. Reads more items if anything is
+            # available from serial port.
             executed_items = set()
 
-            # First, execute all led commands only once - more unreliable but faster.
+            # First, execute all led commands only once - more unreliable but
+            # faster.
             while len(queue) > 0:
                 if s.inWaiting() != 0:
                     return
@@ -43,7 +46,8 @@ class Command(BaseCommand):
                 process_automatic_trigger(item, quick=True)
                 slow_queue.append((priority, item))
 
-            # Execute all queue items again, with multiple repetitions to ensure everything will succeed.
+            # Execute all queue items again, with multiple repetitions to
+            # ensure everything will succeed.
             executed_items = set()
             while len(slow_queue) > 0:
                 if s.inWaiting() != 0:
@@ -53,7 +57,6 @@ class Command(BaseCommand):
                     continue
                 executed_items.add(item)
                 process_automatic_trigger(item)
-
 
         sent_event_map = {}
         queue_executed_at = time.time()
@@ -79,7 +82,8 @@ class Command(BaseCommand):
                             # Already triggered recently - no action
                             continue
                     logger.info("Processing trigger %s (%s)", item_name, id)
-                    should_execute_something = process_automatic_trigger(item_name, False)
+                    should_execute_something = process_automatic_trigger(
+                        item_name, False)
                     sent_event_map[item_name] = time.time()
                     if should_execute_something:
                         prio = 1
@@ -88,17 +92,22 @@ class Command(BaseCommand):
                     queue.append((should_execute_something, item_name))
                 elif id in settings.NODE_MAPPING:
                     node_data = settings.NODE_MAPPING[id]
-                    decoded_data = self.decode(node_data["fmt"], node_data["data"], items[2])
+                    decoded_data = self.decode(
+                        node_data["fmt"], node_data["data"], items[2])
                     data = {
                         "timestamp": time.time(),
                         "data": decoded_data._asdict(),
                     }
                     coded_data = json.dumps(data)
                     if node_data.get("redis_queue"):
-                        redis_instance.rpush(node_data["redis_queue"], coded_data)
-                        logger.info("Pushed to %s: %s" % (node_data["redis_queue"], coded_data))
+                        redis_instance.rpush(
+                            node_data["redis_queue"], coded_data)
+                        logger.info("Pushed to %s: %s" %
+                                    (node_data["redis_queue"], coded_data))
                     if node_data.get("redis_pubsub"):
-                        redis_instance.publish(node_data["redis_pubsub"], coded_data)
-                        logger.info("Published to %s: %s" % (node_data["redis_pubsub"], coded_data))
+                        redis_instance.publish(
+                            node_data["redis_pubsub"], coded_data)
+                        logger.info("Published to %s: %s" %
+                                    (node_data["redis_pubsub"], coded_data))
                 else:
                     logger.warn("Unknown ID: %s", id)

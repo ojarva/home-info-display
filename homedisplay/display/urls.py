@@ -9,5 +9,6 @@ urlpatterns = [
     url(r'^content/door$', TemplateView.as_view(template_name='main/door.html')),
     url(r'^content/computer$', TemplateView.as_view(template_name='main/computer.html')),
 
-    url(r'^content/wrapped/(?P<view>([a-zA-Z0-9-_]+))$', views.Wrapped.as_view()),
+    url(r'^content/wrapped/(?P<view>([a-zA-Z0-9-_]+))$',
+        views.Wrapped.as_view()),
 ]

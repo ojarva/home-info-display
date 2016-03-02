@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='extpage',
-            options={'ordering': ('timestamp',), 'get_latest_by': 'timestamp', 'verbose_name': 'Osoite', 'verbose_name_plural': 'Osoitteet'},
+            options={'ordering': ('timestamp',), 'get_latest_by': 'timestamp',
+                     'verbose_name': 'Osoite', 'verbose_name_plural': 'Osoitteet'},
         ),
     ]

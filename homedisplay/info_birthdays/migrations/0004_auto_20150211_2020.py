@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='birthday',
-            options={'ordering': ['name'], 'verbose_name': 'Merkkip\xe4iv\xe4', 'verbose_name_plural': 'Merkkip\xe4iv\xe4t'},
+            options={'ordering': ['name'], 'verbose_name': 'Merkkip\xe4iv\xe4',
+                     'verbose_name_plural': 'Merkkip\xe4iv\xe4t'},
         ),
     ]

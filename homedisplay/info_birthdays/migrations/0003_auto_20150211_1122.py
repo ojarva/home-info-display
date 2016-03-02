@@ -26,13 +26,15 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='birthday',
             name='nickname',
-            field=models.CharField(help_text=b'Jos t\xc3\xa4ytetty, n\xc3\xa4ytet\xc3\xa4\xc3\xa4n nimen sijaan', max_length=100, null=True, verbose_name=b'Lempinimi', blank=True),
+            field=models.CharField(help_text=b'Jos t\xc3\xa4ytetty, n\xc3\xa4ytet\xc3\xa4\xc3\xa4n nimen sijaan',
+                                   max_length=100, null=True, verbose_name=b'Lempinimi', blank=True),
             preserve_default=True,
         ),
         migrations.AlterField(
             model_name='birthday',
             name='valid_year',
-            field=models.NullBooleanField(default=True, help_text=b'Onko vuosi oikein? Jos ei, ik\xc3\xa4\xc3\xa4 ei n\xc3\xa4ytet\xc3\xa4.', verbose_name=b'Vuosi oikein'),
+            field=models.NullBooleanField(
+                default=True, help_text=b'Onko vuosi oikein? Jos ei, ik\xc3\xa4\xc3\xa4 ei n\xc3\xa4ytet\xc3\xa4.', verbose_name=b'Vuosi oikein'),
             preserve_default=True,
         ),
     ]

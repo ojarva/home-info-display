@@ -12,6 +12,7 @@ redis_instance = redis.StrictRedis()
 
 __all__ = ["cancel_delayed_shutdown", "run_display_command"]
 
+
 def cancel_delayed_shutdown():
     """ Cancels delayed shutdown, if one is running """
     display_task = redis_instance.get("display-control-task")
@@ -24,6 +25,7 @@ def cancel_delayed_shutdown():
         return display_task
     logger.info("cancel_delayed_shutdown did not find task to be revoked")
     return False
+
 
 def run_display_command(cmd):
     """ Runs xset command. This method does not validate command, but it is escaped properly. """

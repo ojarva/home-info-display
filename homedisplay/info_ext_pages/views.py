@@ -7,7 +7,9 @@ from django.views.generic import View
 from homedisplay.utils import publish_ws
 import json
 
+
 class PushExt(View):
+
     def post(self, request, *args, **kwargs):
         url = request.POST.get("page")
         if url is None or len(url) < 3:

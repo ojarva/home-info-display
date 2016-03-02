@@ -16,6 +16,7 @@ def play_sound(sound):
     r = redis.StrictRedis()
     r.publish("sound-notification", json.dumps({"type": sound}))
 
+
 @shared_task
 def alarm_ending_task(timer_id):
     try:
@@ -25,7 +26,8 @@ def alarm_ending_task(timer_id):
         return "No timer object available"
     if timer.end_time > timezone.now():
         # Item has been restarted. Do not play alarms yet.
-        logger.info("Timer %s did not expire yet. Time is %s, but timer end time is %s", timer_id, timer.end_time, timezone.now())
+        logger.info("Timer %s did not expire yet. Time is %s, but timer end time is %s",
+                    timer_id, timer.end_time, timezone.now())
         return "Timer %s did not expire yet." % timer
     print "Processing %s" % timer
 
@@ -43,7 +45,8 @@ def alarm_play_until_dismissed(timer_id):
         return "No timer object available"
     if timer.end_time > timezone.now():
         # Item has been restarted. Do not play alarms yet.
-        logger.info("Timer %s did not expire yet. Time is %s, but timer end time is %s", timer_id, timer.end_time, timezone.now())
+        logger.info("Timer %s did not expire yet. Time is %s, but timer end time is %s",
+                    timer_id, timer.end_time, timezone.now())
         return "Timer %s did not expire yet." % timer
     if not timer.alarm_until_dismissed:
         print "Timer does not have alarm enabled - abort"
@@ -58,10 +61,12 @@ def alarm_play_until_dismissed(timer_id):
             logger.info("Timer %s has been removed" % timer_id)
             return "End-of-timer alarm finished (timer removed)"
         if timer.alarm_until_dismissed:
-            p = subprocess.Popen(["aplay", "timer_alarm_%s.wav" % alarm_number])
+            p = subprocess.Popen(
+                ["aplay", "timer_alarm_%s.wav" % alarm_number])
             p.wait()
         else:
-            logger.info("Timer %s does not have alarm_until_dismissed set anymore." % timer_id)
+            logger.info(
+                "Timer %s does not have alarm_until_dismissed set anymore." % timer_id)
             return "End-of-timer alarm finished (exists, but alarm_until_dismissed not set)"
 
 
@@ -74,7 +79,8 @@ def alarm_notification_task(timer_id):
         return "No timer object available"
     if timer.end_time > timezone.now():
         # Item has been restarted. Do not play alarms yet.
-        logger.info("Timer %s did not expire yet. Time is %s, but timer end time is %s", timer_id, timer.end_time, timezone.now())
+        logger.info("Timer %s did not expire yet. Time is %s, but timer end time is %s",
+                    timer_id, timer.end_time, timezone.now())
         return "Timer %s did not expire yet." % timer
     print "Processing alarms for %s" % timer
     for alarm in TIMER_ALARMS:

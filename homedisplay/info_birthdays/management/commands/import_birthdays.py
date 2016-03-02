@@ -2,6 +2,7 @@ from datetime import date
 from django.core.management.base import BaseCommand, CommandError
 from info_birthdays.models import Birthday
 
+
 class Command(BaseCommand):
     args = ''
     help = 'Imports <name>[, nickname] <birthday> formatted birthdays from file'
@@ -36,5 +37,6 @@ class Command(BaseCommand):
                 year = int(birthday[2])
             birthday = date(year, month, day)
             print full_name, nickname, birthday
-            a = Birthday(name=full_name, nickname=nickname, birthday=birthday, valid_year=valid_year)
+            a = Birthday(name=full_name, nickname=nickname,
+                         birthday=birthday, valid_year=valid_year)
             a.save()

@@ -14,7 +14,6 @@ import logging
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
 
-
 def get_repeating_data(date, serialized=False):
     todo_tasks = []
     tasks = Task.objects.all().prefetch_related("tasks")
@@ -24,14 +23,17 @@ def get_repeating_data(date, serialized=False):
         day_starts = timezone.now().replace(hour=0, minute=0, second=0)
         day_ends = timezone.now().replace(hour=23, minute=59, second=59)
     elif date == "tomorrow":
-        day_starts = timezone.now().replace(hour=0, minute=0, second=0) + datetime.timedelta(days=1)
-        day_ends = timezone.now().replace(hour=23, minute=59, second=59) + datetime.timedelta(days=1)
+        day_starts = timezone.now().replace(hour=0, minute=0, second=0) + \
+            datetime.timedelta(days=1)
+        day_ends = timezone.now().replace(hour=23, minute=59, second=59) + \
+            datetime.timedelta(days=1)
     else:
         day_starts = day_ends = None
     for task in tasks:
         expires_at = task.expires_at()
         task_serialized = json.loads(serializers.serialize("json", [task]))[0]
-        task_serialized["fields"]["history"] = json.loads(serializers.serialize("json", TaskHistory.objects.filter(task=task)))
+        task_serialized["fields"]["history"] = json.loads(
+            serializers.serialize("json", TaskHistory.objects.filter(task=task)))
 
         snooze_to_show = None
         if expires_at > timezone.now():
@@ -48,11 +50,13 @@ def get_repeating_data(date, serialized=False):
     todo_tasks = sorted(todo_tasks, key=lambda t: t["fields"]["optional"])
     return todo_tasks
 
+
 def get_all_repeating_data():
     data = {}
     for spec in ("today", "tomorrow", "all"):
         data[spec] = get_repeating_data(spec)
     return data
+
 
 class Task(models.Model):
     WEEKDAYS = (
@@ -66,14 +70,19 @@ class Task(models.Model):
     )
 
     title = models.CharField(max_length=100, verbose_name="Otsikko")
-    optional = models.NullBooleanField(default=False, verbose_name="Optionaalinen", help_text="Kyllä, jos tarkoituksena on tarkistaa, eikä tehdä joka kerta.")
+    optional = models.NullBooleanField(default=False, verbose_name="Optionaalinen",
+                                       help_text="Kyllä, jos tarkoituksena on tarkistaa, eikä tehdä joka kerta.")
     snooze = models.DateTimeField(null=True, blank=True)
     show_immediately = models.BooleanField(default=False, blank=True)
 
-    repeat_every_n_seconds = models.IntegerField(null=True, blank=True, verbose_name="Toista joka n:s sekunti", help_text="Toistoväli sekunteina")
-    trigger_every_weekday = models.CharField(null=True, blank=True, max_length=2, choices=WEEKDAYS, verbose_name="Toista tiettynä viikonpäivänä")
-    trigger_every_day_of_month = models.SmallIntegerField(null=True, blank=True, verbose_name="Toista tiettynä päivänä kuukaudesta")
-    last_completed_at = models.DateTimeField(null=True, blank=True, verbose_name="Edellinen valmistuminen", help_text="Edellinen kerta kun tehtävä on tehty")
+    repeat_every_n_seconds = models.IntegerField(
+        null=True, blank=True, verbose_name="Toista joka n:s sekunti", help_text="Toistoväli sekunteina")
+    trigger_every_weekday = models.CharField(
+        null=True, blank=True, max_length=2, choices=WEEKDAYS, verbose_name="Toista tiettynä viikonpäivänä")
+    trigger_every_day_of_month = models.SmallIntegerField(
+        null=True, blank=True, verbose_name="Toista tiettynä päivänä kuukaudesta")
+    last_completed_at = models.DateTimeField(
+        null=True, blank=True, verbose_name="Edellinen valmistuminen", help_text="Edellinen kerta kun tehtävä on tehty")
 
     class Meta:
         verbose_name = "Toistuva tehtävä"
@@ -96,11 +105,11 @@ class Task(models.Model):
         if self.last_completed_at is None:
             return timezone.now()
         # TODO: this does not work properly with other triggering options
-        exact_expiration = self.last_completed_at + datetime.timedelta(seconds=self.repeat_every_n_seconds)
+        exact_expiration = self.last_completed_at + \
+            datetime.timedelta(seconds=self.repeat_every_n_seconds)
         if exact_expiration < timezone.now():
             return timezone.now()
         return exact_expiration
-
 
     def overdue_by(self):
         """ Returns overdue in datetime.timedelta.
@@ -150,10 +159,12 @@ class Task(models.Model):
             return False
 
     def __unicode__(self):
-        #TODO: this does not work properly with other triggering options
+        # TODO: this does not work properly with other triggering options
         return u"%s (%sd)" % (self.title, self.repeat_every_n_seconds / 86400)
 
+
 class TaskHistory(models.Model):
+
     class Meta:
         get_latest_by = "completed_at"
         ordering = ("-completed_at", )
@@ -164,6 +175,7 @@ class TaskHistory(models.Model):
     task = models.ForeignKey("Task", related_name="tasks")
     completed_at = models.DateTimeField(null=True)
 
+
 def publish_changes():
     for k in ("today", "tomorrow", "all"):
         publish_ws("repeating_tasks_%s" % k, get_repeating_data(k))
@@ -172,6 +184,7 @@ def publish_changes():
 @receiver(post_delete, sender=Task, dispatch_uid='task_delete_signal')
 def publish_task_deleted(sender, instance, using, **kwargs):
     publish_changes()
+
 
 @receiver(post_save, sender=Task, dispatch_uid="task_saved_signal")
 def publish_task_saved(sender, instance, *args, **kwargs):

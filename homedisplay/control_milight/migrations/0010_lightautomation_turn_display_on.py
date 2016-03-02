@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='lightautomation',
             name='turn_display_on',
-            field=models.BooleanField(default=False, help_text=b'K\xc3\xa4ynnist\xc3\xa4 n\xc3\xa4ytt\xc3\xb6 ohjelman alussa', verbose_name=b'K\xc3\xa4ynnist\xc3\xa4 n\xc3\xa4ytt\xc3\xb6'),
+            field=models.BooleanField(default=False, help_text=b'K\xc3\xa4ynnist\xc3\xa4 n\xc3\xa4ytt\xc3\xb6 ohjelman alussa',
+                                      verbose_name=b'K\xc3\xa4ynnist\xc3\xa4 n\xc3\xa4ytt\xc3\xb6'),
             preserve_default=True,
         ),
     ]

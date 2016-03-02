@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 
+
 class SpecialAuthenticationMiddleware(object):
 
     def process_request(self, request):

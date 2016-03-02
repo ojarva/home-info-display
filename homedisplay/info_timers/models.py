@@ -12,24 +12,29 @@ import control_milight.models as light_models
 import datetime
 import json
 
-__all__ = ["get_labels", "get_serialized_timer", "Timer", "CustomLabel", "TimedCustomLabel"]
+__all__ = ["get_labels", "get_serialized_timer",
+           "Timer", "CustomLabel", "TimedCustomLabel"]
 
 led = LedController(settings.MILIGHT_IP)
+
 
 def get_labels():
     items = {"labels": [], "timed_labels": []}
     for item in CustomLabel.objects.all():
         items["labels"].append(item.name)
     for item in TimedCustomLabel.objects.all():
-        items["timed_labels"].append({"label": item.name, "duration": item.duration})
+        items["timed_labels"].append(
+            {"label": item.name, "duration": item.duration})
     return items
+
 
 def get_serialized_timer(item):
     return json.loads(serializers.serialize("json", [item]))
 
-TIMER_ALARMS = (0, 30, 60, 300,600)
-class Timer(models.Model):
+TIMER_ALARMS = (0, 30, 60, 300, 600)
 
+
+class Timer(models.Model):
 
     name = models.CharField(max_length=30)
     start_time = models.DateTimeField()
@@ -73,16 +78,17 @@ class Timer(models.Model):
             state = light_models.LightGroup.objects.get(group_id=group)
             if state.on_automatically:
                 # Group is on automatically (vs. overridden by manual updates)
-                # TODO: this should be method from control_milight.utils instead of hardcoded logic.
+                # TODO: this should be method from control_milight.utils
+                # instead of hardcoded logic.
                 led.off(group)
-                light_models.update_lightstate(group, None, None, False, no_override=True)
+                light_models.update_lightstate(
+                    group, None, None, False, no_override=True)
 
         try:
             del kwargs["no_actions"]
         except KeyError:
             pass
         super(Timer, self).delete(*args, **kwargs)
-
 
     def __unicode__(self):
         return u"%s - %s (%s)" % (self.name, self.start_time, self.duration)
@@ -117,6 +123,7 @@ class TimedCustomLabel(models.Model):
         verbose_name = "Ajastin valmiilla ajalla"
         verbose_name_plural = "Ajastimet valmiilla ajoilla"
 
+
 def publish_changes():
     publish_ws("timer-labels", get_labels())
 
@@ -125,6 +132,7 @@ def publish_changes():
 def publish_timer_deleted(sender, instance, using, **kwargs):
     publish_ws("timer-%s" % instance.pk, "delete")
 
+
 @receiver(post_save, sender=Timer, dispatch_uid="timer_saved_signal")
 def publish_timer_saved(sender, instance, created, *args, **kwargs):
     if created:
@@ -132,17 +140,21 @@ def publish_timer_saved(sender, instance, created, *args, **kwargs):
     else:
         publish_ws("timer-%s" % instance.pk, get_serialized_timer(instance))
 
+
 @receiver(post_delete, sender=CustomLabel, dispatch_uid="customlabel_delete_signal")
 def publish_customlabel_deleted(sender, instance, using, **kwargs):
-    publish_changes();
+    publish_changes()
+
 
 @receiver(post_save, sender=CustomLabel, dispatch_uid="customlabel_saved_signal")
 def publish_customlabel_saved(sender, instance, *args, **kwargs):
     publish_changes()
 
+
 @receiver(post_delete, sender=TimedCustomLabel, dispatch_uid="timedcustomlabel_delete_signal")
 def publish_timedcustomlabel_deleted(sender, instance, using, **kwargs):
-    publish_changes();
+    publish_changes()
+
 
 @receiver(post_save, sender=TimedCustomLabel, dispatch_uid="timedcustomlabel_saved_signal")
 def publish_timedcustomlabel_saved(sender, instance, *args, **kwargs):

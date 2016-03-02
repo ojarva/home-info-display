@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='marinedatapoint',
             name='wave_direction',
-            field=models.DecimalField(null=True, max_digits=4, decimal_places=1, blank=True),
+            field=models.DecimalField(
+                null=True, max_digits=4, decimal_places=1, blank=True),
             preserve_default=True,
         ),
     ]

@@ -17,7 +17,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='stop',
-            options={'verbose_name': 'Pys\xe4kki', 'verbose_name_plural': 'Pys\xe4kit'},
+            options={'verbose_name': 'Pys\xe4kki',
+                     'verbose_name_plural': 'Pys\xe4kit'},
         ),
         migrations.AddField(
             model_name='line',
@@ -28,7 +29,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='line',
             name='raw',
-            field=models.CharField(default=' ', max_length=50, verbose_name=b'Sis\xc3\xa4inen numero'),
+            field=models.CharField(
+                default=' ', max_length=50, verbose_name=b'Sis\xc3\xa4inen numero'),
             preserve_default=False,
         ),
         migrations.AlterField(
@@ -46,7 +48,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='line',
             name='show_line',
-            field=models.BooleanField(default=False, verbose_name=b'N\xc3\xa4yt\xc3\xa4 l\xc3\xa4hd\xc3\xb6t'),
+            field=models.BooleanField(
+                default=False, verbose_name=b'N\xc3\xa4yt\xc3\xa4 l\xc3\xa4hd\xc3\xb6t'),
             preserve_default=True,
         ),
         migrations.AlterField(
@@ -58,7 +61,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='stop',
             name='stop_number',
-            field=models.CharField(unique=True, max_length=20, verbose_name=b'Numero'),
+            field=models.CharField(
+                unique=True, max_length=20, verbose_name=b'Numero'),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

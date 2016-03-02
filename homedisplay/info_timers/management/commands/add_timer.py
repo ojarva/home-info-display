@@ -4,39 +4,40 @@ from info_timers.models import Timer
 from optparse import make_option
 import datetime
 
+
 class Command(BaseCommand):
     args = ''
     help = 'Add new timer'
 
     option_list = BaseCommand.option_list + (
         make_option('--name',
-            action='store',
-            type='string',
-            dest='name',
-            help='Timer name'),
+                    action='store',
+                    type='string',
+                    dest='name',
+                    help='Timer name'),
         make_option('--duration',
-            action='store',
-            type='string',
-            default='3600',
-            help='Timer duration (in seconds)'),
+                    action='store',
+                    type='string',
+                    default='3600',
+                    help='Timer duration (in seconds)'),
         make_option('--no-bell',
-            action='store_true',
-            dest='no_bell',
-            default=False,
-            help='Do not show "alarm until dismissed" button'),
+                    action='store_true',
+                    dest='no_bell',
+                    default=False,
+                    help='Do not show "alarm until dismissed" button'),
         make_option('--auto-remove',
-            action='store',
-            dest='auto_remove',
-            help='Automatically remove after overdue by N seconds'),
+                    action='store',
+                    dest='auto_remove',
+                    help='Automatically remove after overdue by N seconds'),
         make_option('--start-time',
-            action='store',
-            dest='start_time',
-            help='Start time (HH:MM)'),
+                    action='store',
+                    dest='start_time',
+                    help='Start time (HH:MM)'),
         make_option('--start-date',
-            action='store',
-            dest='start_date',
-            help='Start date (YYYY-MM-DD)')
-        )
+                    action='store',
+                    dest='start_date',
+                    help='Start date (YYYY-MM-DD)')
+    )
 
     def handle(self, *args, **options):
         if not options["name"]:
@@ -75,8 +76,9 @@ class Command(BaseCommand):
         else:
             start_date = datetime.datetime.now().date()
 
-
         start_time = datetime.datetime.combine(start_date, start_time)
-        start_time = timezone.make_aware(start_time, timezone.get_current_timezone())
-        timer = Timer(name=options["name"], no_bell=options["no_bell"], auto_remove=auto_remove, start_time=start_time, duration=duration)
+        start_time = timezone.make_aware(
+            start_time, timezone.get_current_timezone())
+        timer = Timer(name=options["name"], no_bell=options[
+                      "no_bell"], auto_remove=auto_remove, start_time=start_time, duration=duration)
         timer.save()

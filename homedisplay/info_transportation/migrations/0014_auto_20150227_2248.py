@@ -13,12 +13,14 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='lineshow',
-            options={'verbose_name': 'N\xe4yt\xf6n aikataulu', 'verbose_name_plural': 'N\xe4yt\xf6n aikataulut'},
+            options={'verbose_name': 'N\xe4yt\xf6n aikataulu',
+                     'verbose_name_plural': 'N\xe4yt\xf6n aikataulut'},
         ),
         migrations.AlterField(
             model_name='line',
             name='show_times',
-            field=models.ManyToManyField(to='info_transportation.LineShow', null=True, blank=True),
+            field=models.ManyToManyField(
+                to='info_transportation.LineShow', null=True, blank=True),
             preserve_default=True,
         ),
         migrations.AlterField(

@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='stop',
             name='time_needed',
-            field=models.IntegerField(default=60, help_text=b'K\xc3\xa4velyaika kotoa pys\xc3\xa4kille (sekunteina)', verbose_name=b'Aika pys\xc3\xa4kille'),
+            field=models.IntegerField(
+                default=60, help_text=b'K\xc3\xa4velyaika kotoa pys\xc3\xa4kille (sekunteina)', verbose_name=b'Aika pys\xc3\xa4kille'),
             preserve_default=False,
         ),
     ]

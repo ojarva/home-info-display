@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='line',
             name='only_show_next',
-            field=models.BooleanField(default=False, verbose_name=b'N\xc3\xa4yt\xc3\xa4 vain seuraava'),
+            field=models.BooleanField(
+                default=False, verbose_name=b'N\xc3\xa4yt\xc3\xa4 vain seuraava'),
             preserve_default=True,
         ),
     ]

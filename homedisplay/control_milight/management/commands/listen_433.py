@@ -13,6 +13,7 @@ logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
 
 
 class DateTimeEncoder(json.JSONEncoder):
+
     def default(self, o):
         if isinstance(o, datetime.datetime):
             return o.isoformat()
@@ -29,13 +30,16 @@ class Command(BaseCommand):
         queue = []
         slow_queue = []
         redis_instance = redis.StrictRedis()
-        influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
+        influx_client = InfluxDBClient(
+            "localhost", 8086, "root", "root", "home")
 
         def execute_queue():
-            # Run items with changes first. Reads more items if anything is available from serial port.
+            # Run items with changes first. Reads more items if anything is
+            # available from serial port.
             executed_items = set()
 
-            # First, execute all led commands only once - more unreliable but faster.
+            # First, execute all led commands only once - more unreliable but
+            # faster.
             while len(queue) > 0:
                 if s.inWaiting() != 0:
                     return
@@ -46,7 +50,8 @@ class Command(BaseCommand):
                 process_automatic_trigger(item, quick=True)
                 slow_queue.append((priority, item))
 
-            # Execute all queue items again, with multiple repetitions to ensure everything will succeed.
+            # Execute all queue items again, with multiple repetitions to
+            # ensure everything will succeed.
             executed_items = set()
             while len(slow_queue) > 0:
                 if s.inWaiting() != 0:
@@ -56,7 +61,6 @@ class Command(BaseCommand):
                     continue
                 executed_items.add(item)
                 process_automatic_trigger(item)
-
 
         ITEM_MAP = settings.ARDUINO_433_ITEM_MAP
         sent_event_map = {}
@@ -89,12 +93,15 @@ class Command(BaseCommand):
                             "triggered": True,
                         },
                     }]
-                    redis_instance.publish("influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
+                    redis_instance.publish(
+                        "influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
                     try:
                         influx_client.write_points(data)
                     except Exception as err:
-                        logger.info("Pushing to influxdb failed: %s. Ignoring." % err)
-                    should_execute_something = process_automatic_trigger(item_name, False)
+                        logger.info(
+                            "Pushing to influxdb failed: %s. Ignoring." % err)
+                    should_execute_something = process_automatic_trigger(
+                        item_name, False)
                     sent_event_map[item_name] = time.time()
                     if should_execute_something:
                         prio = 1

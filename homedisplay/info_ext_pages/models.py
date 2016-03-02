@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ExtPage(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     url = models.CharField(max_length=1024)

@@ -15,10 +15,14 @@ def get_serialized_labels():
 
 
 class PrintLabel(models.Model):
-    name = models.CharField(max_length=15, verbose_name="Nimi", help_text="Käyttöliittymässä näkyvä nimi")
-    content = models.CharField(max_length=15, verbose_name="Sisältö", help_text="Tarralle tuleva sisältö")
-    include_time = models.BooleanField(default=False, blank=True, verbose_name="Tulosta aika")
-    include_date = models.BooleanField(default=False, blank=True, verbose_name="Tulosta päiväys")
+    name = models.CharField(
+        max_length=15, verbose_name="Nimi", help_text="Käyttöliittymässä näkyvä nimi")
+    content = models.CharField(
+        max_length=15, verbose_name="Sisältö", help_text="Tarralle tuleva sisältö")
+    include_time = models.BooleanField(
+        default=False, blank=True, verbose_name="Tulosta aika")
+    include_date = models.BooleanField(
+        default=False, blank=True, verbose_name="Tulosta päiväys")
 
     def __unicode__(self):
         return u"%s (%s), time: %s, date: %s" % (self.name, self.content, self.include_time, self.include_date)

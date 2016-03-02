@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='line',
             name='type',
-            field=models.CharField(default=b'bus', help_text=b'Liikennev\xc3\xa4linetyyppi', max_length=10, verbose_name=b'Tyyppi', choices=[(b'bus', b'bus'), (b'tram', b'tram'), (b'train', b'train')]),
+            field=models.CharField(default=b'bus', help_text=b'Liikennev\xc3\xa4linetyyppi', max_length=10,
+                                   verbose_name=b'Tyyppi', choices=[(b'bus', b'bus'), (b'tram', b'tram'), (b'train', b'train')]),
             preserve_default=True,
         ),
     ]

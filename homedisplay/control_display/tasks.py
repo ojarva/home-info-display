@@ -5,6 +5,7 @@ import redis
 
 __all__ = ["run_display_command_task"]
 
+
 @shared_task
 def run_display_command_task():
     redis_instance = redis.StrictRedis()

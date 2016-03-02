@@ -13,7 +13,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Electricity',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('date', models.DateField()),
                 ('hour', models.PositiveSmallIntegerField()),
                 ('usage', models.DecimalField(max_digits=10, decimal_places=2)),

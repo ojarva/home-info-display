@@ -13,12 +13,14 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='taskhistory',
-            options={'ordering': ('completed_at',), 'get_latest_by': 'completed_at'},
+            options={'ordering': ('completed_at',),
+                     'get_latest_by': 'completed_at'},
         ),
         migrations.AlterField(
             model_name='taskhistory',
             name='task',
-            field=models.ForeignKey(related_name='tasks', to='repeating_tasks.Task'),
+            field=models.ForeignKey(
+                related_name='tasks', to='repeating_tasks.Task'),
             preserve_default=True,
         ),
     ]

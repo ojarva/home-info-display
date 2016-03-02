@@ -5,7 +5,9 @@ from django.dispatch import receiver
 from django.core import serializers
 import json
 
+
 class Notification(models.Model):
+
     class Meta:
         get_latest_by = "timestamp"
         ordering = ("-timestamp",)
@@ -22,12 +24,16 @@ class Notification(models.Model):
     def __unicode__(self):
         return u'%s @ %s: %s (%s)' % (self.item_type, self.timestamp, self.description, self.can_dismiss)
 
+
 def publish_notifications():
-    publish_ws("notifications", json.loads(serializers.serialize("json", Notification.objects.all())))
+    publish_ws("notifications", json.loads(
+        serializers.serialize("json", Notification.objects.all())))
+
 
 @receiver(post_save, sender=Notification, dispatch_uid="notification_post_save")
 def publish_notification_saved(sender, instance, *args, **kwargs):
     publish_notifications()
+
 
 @receiver(post_delete, sender=Notification, dispatch_uid="notification_post_delete")
 def publish_notification_deleted(sender, instance, *args, **kwargs):

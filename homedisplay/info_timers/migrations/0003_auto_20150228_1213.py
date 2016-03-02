@@ -14,7 +14,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CustomLabel',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=30)),
             ],
             options={
@@ -27,7 +28,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TimedCustomLabel',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=30)),
                 ('duration', models.IntegerField()),
             ],
@@ -40,6 +42,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='timer',
-            options={'ordering': ('name', 'start_time'), 'verbose_name': 'Ajastin', 'verbose_name_plural': 'Ajastimet'},
+            options={'ordering': (
+                'name', 'start_time'), 'verbose_name': 'Ajastin', 'verbose_name_plural': 'Ajastimet'},
         ),
     ]

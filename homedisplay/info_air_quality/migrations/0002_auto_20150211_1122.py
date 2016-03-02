@@ -14,10 +14,12 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='IndoorQuality',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
                 ('timestamp', models.DateTimeField(auto_now_add=True)),
                 ('co2', models.IntegerField(null=True)),
-                ('temperature', models.DecimalField(max_digits=6, decimal_places=2)),
+                ('temperature', models.DecimalField(
+                    max_digits=6, decimal_places=2)),
             ],
             options={
                 'ordering': ['-timestamp'],
@@ -27,6 +29,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterModelOptions(
             name='airdatapoint',
-            options={'ordering': ['-timepoint__timestamp'], 'get_latest_by': '-timepoint__timestamp'},
+            options={'ordering': ['-timepoint__timestamp'],
+                     'get_latest_by': '-timepoint__timestamp'},
         ),
     ]

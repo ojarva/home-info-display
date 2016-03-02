@@ -22,12 +22,14 @@ class Command(BaseCommand):
 
         for location in data:
             for observation in data[location]["observations"]:
-                timestamp = timezone.make_aware(observation["timestamp"], timezone.get_current_timezone())
+                timestamp = timezone.make_aware(
+                    observation["timestamp"], timezone.get_current_timezone())
 
                 values = observation
                 del values["timestamp"]
                 values["forecast"] = False
-                datapoint, created = MarineDataPoint.objects.get_or_create(location=location, timestamp=timestamp, defaults=values)
+                datapoint, created = MarineDataPoint.objects.get_or_create(
+                    location=location, timestamp=timestamp, defaults=values)
 
                 if not created:
                     for attr, value in values.iteritems():
@@ -35,12 +37,14 @@ class Command(BaseCommand):
                     datapoint.save()
 
             for forecast in data[location]["forecasts"]:
-                timestamp = timezone.make_aware(forecast["timestamp"], timezone.get_current_timezone())
+                timestamp = timezone.make_aware(
+                    forecast["timestamp"], timezone.get_current_timezone())
 
                 values = forecast
                 del values["timestamp"]
                 values["forecast"] = True
-                datapoint, created = MarineDataPoint.objects.get_or_create(location=location, timestamp=timestamp, defaults=values)
+                datapoint, created = MarineDataPoint.objects.get_or_create(
+                    location=location, timestamp=timestamp, defaults=values)
 
                 if not created:
                     for attr, value in values.iteritems():

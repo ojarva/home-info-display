@@ -14,17 +14,20 @@ import time
 
 
 class GetLabels(View):
+
     def get(self, request, *args, **kwargs):
         items = get_labels()
         return HttpResponse(json.dumps(items), content_type="application/json")
 
 
 class CurrentTime(View):
+
     def get(self, request, *args, **kwargs):
         return HttpResponse(int(time.time()) * 1000)
 
 
 class List(View):
+
     def get(self, request, *args, **kwargs):
         items = Timer.objects.all()
         items = sorted(items, key=lambda x: x.end_time)
@@ -32,12 +35,14 @@ class List(View):
 
 
 class Get(View):
+
     def get(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         return HttpResponse(serializers.serialize("json", [item]), content_type="application/json")
 
 
 class Stop(View):
+
     def patch(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.running = False
@@ -48,6 +53,7 @@ class Stop(View):
 
 
 class Delete(View):
+
     def delete(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         revoke_tasks(item)
@@ -68,17 +74,21 @@ def revoke_tasks(timer):
         revoke(timer.alarm_until_dismissed_task)
         timer.alarm_until_dismissed_task = None
 
+
 def set_timer_notifications(timer):
     revoke_tasks(timer)
     if timer.duration:
-        timer.alarm_ending_task = alarm_ending_task.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1), expires=timer.end_time+datetime.timedelta(seconds=300)).id
+        timer.alarm_ending_task = alarm_ending_task.apply_async(
+            (timer.pk,), eta=timer.end_time + datetime.timedelta(seconds=1), expires=timer.end_time + datetime.timedelta(seconds=300)).id
     for alarm in TIMER_ALARMS:
         alarm_name = "alarm_%ss" % alarm
         if getattr(timer, alarm_name):
-            setattr(timer, alarm_name + "_task", alarm_notification_task.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1+alarm), expires=timer.end_time+datetime.timedelta(seconds=300)+datetime.timedelta(seconds=alarm)).id)
+            setattr(timer, alarm_name + "_task", alarm_notification_task.apply_async((timer.pk,), eta=timer.end_time + datetime.timedelta(
+                seconds=1 + alarm), expires=timer.end_time + datetime.timedelta(seconds=300) + datetime.timedelta(seconds=alarm)).id)
 
     set_alarm_until_dismissed(timer)
     timer.save()
+
 
 def set_alarm_until_dismissed(timer):
     if timer.alarm_until_dismissed_task:
@@ -86,10 +96,12 @@ def set_alarm_until_dismissed(timer):
         timer.alarm_until_dismissed_task = None
 
     if timer.alarm_until_dismissed:
-        timer.alarm_until_dismissed_task = alarm_play_until_dismissed.apply_async((timer.pk,), eta=timer.end_time+datetime.timedelta(seconds=1), expires=timer.end_time+datetime.timedelta(seconds=300)).id
+        timer.alarm_until_dismissed_task = alarm_play_until_dismissed.apply_async(
+            (timer.pk,), eta=timer.end_time + datetime.timedelta(seconds=1), expires=timer.end_time + datetime.timedelta(seconds=300)).id
 
 
 class SetBell(View):
+
     def patch(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.alarm_until_dismissed = not item.alarm_until_dismissed
@@ -99,6 +111,7 @@ class SetBell(View):
 
 
 class Restart(View):
+
     def patch(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.start_time = timezone.now()
@@ -109,7 +122,8 @@ class Restart(View):
 
 
 class Start(View):
-    #TODO: this does not handle pausing properly.
+    # TODO: this does not handle pausing properly.
+
     def patch(self, request, *args, **kwargs):
         item = get_object_or_404(Timer, pk=kwargs["id"])
         item.running = True
@@ -120,6 +134,7 @@ class Start(View):
 
 
 class Create(View):
+
     @method_decorator(csrf_exempt)
     def post(self, request, *args, **kwargs):
         p = request.POST
@@ -133,7 +148,7 @@ class Create(View):
             "duration": duration,
         }
         for alarm in TIMER_ALARMS:
-            alarm_name="alarm_%ss" % alarm
+            alarm_name = "alarm_%ss" % alarm
             if alarm_name in p:
                 if p[alarm_name] in ("true", "True", "1", "on"):
                     timer_data[alarm_name] = True

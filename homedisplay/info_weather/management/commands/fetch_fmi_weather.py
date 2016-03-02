@@ -13,6 +13,7 @@ import time
 
 
 class DateTimeEncoder(json.JSONEncoder):
+
     def default(self, o):
         if isinstance(o, datetime.datetime):
             return o.isoformat()
@@ -27,7 +28,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         def parse_datetime(dstring):
-            #201512141440
+            # 201512141440
             return timezone.make_aware(datetime.datetime.strptime(dstring, "%Y%m%d%H%M"), timezone.get_current_timezone())
         redis_instance = redis.StrictRedis()
         headers = {
@@ -36,21 +37,25 @@ class Command(BaseCommand):
         }
 
         # Fetch warnings - Sörnäinen
-        response = requests.get("http://m.fmi.fi/mobile/interfaces/warnings.php?l=fi&version=1.1.10&preventcache=%s654" % time.time(), headers=headers)
+        response = requests.get(
+            "http://m.fmi.fi/mobile/interfaces/warnings.php?l=fi&version=1.1.10&preventcache=%s654" % time.time(), headers=headers)
         redis_instance.setex("weather-main-warnings", 7200, response.text)
         main_warnings = response.json()
 
         # Fetch forecasts
-        response = requests.get("http://m.fmi.fi/mobile/interfaces/weatherdata.php?locations=636242&l=fi&version=1.1.10&preventcache=%s070" % time.time(), headers=headers)
+        response = requests.get(
+            "http://m.fmi.fi/mobile/interfaces/weatherdata.php?locations=636242&l=fi&version=1.1.10&preventcache=%s070" % time.time(), headers=headers)
         redis_instance.setex("weather-main-forecasts", 7200, response.text)
         main_forecasts = response.json()
 
         # Harmaja forecasts
-        response = requests.get("http://m.fmi.fi/mobile/interfaces/weatherdata.php?locations=658802&l=en&version=1.1.10&preventcache=%s842" % time.time(), headers=headers)
+        response = requests.get(
+            "http://m.fmi.fi/mobile/interfaces/weatherdata.php?locations=658802&l=en&version=1.1.10&preventcache=%s842" % time.time(), headers=headers)
         redis_instance.setex("weather-marine-forecasts", 7200, response.text)
         marine_forecasts = response.json()
 
-        all_info = {"main_forecasts": main_forecasts, "main_warnings": main_warnings, "marine_forecasts": marine_forecasts}
+        all_info = {"main_forecasts": main_forecasts,
+                    "main_warnings": main_warnings, "marine_forecasts": marine_forecasts}
         redis_instance.setex("weather-all", 7200, json.dumps(all_info))
 
         publish_ws("weather", all_info)
@@ -87,8 +92,10 @@ class Command(BaseCommand):
                         }
                     })
         if len(influx_datapoints) > 0:
-            redis_instance.publish("influx-update-pubsub", json.dumps(influx_datapoints, cls=DateTimeEncoder))
-            influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
+            redis_instance.publish(
+                "influx-update-pubsub", json.dumps(influx_datapoints, cls=DateTimeEncoder))
+            influx_client = InfluxDBClient(
+                "localhost", 8086, "root", "root", "home")
             try:
                 influx_client.create_database("home")
             except influxdb.exceptions.InfluxDBClientError:

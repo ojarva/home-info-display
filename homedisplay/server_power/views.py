@@ -8,9 +8,12 @@ import redis
 
 redis_instance = redis.StrictRedis()
 
-sp = manage_server_power.ServerPower(server_hostname=settings.SERVER_IP_ADDRESS, server_mac=settings.SERVER_MAC_ADDRESS, ssh_username=settings.SERVER_SSH_USERNAME, broadcast_ip=settings.SERVER_BROADCAST_IP)
+sp = manage_server_power.ServerPower(server_hostname=settings.SERVER_IP_ADDRESS, server_mac=settings.SERVER_MAC_ADDRESS,
+                                     ssh_username=settings.SERVER_SSH_USERNAME, broadcast_ip=settings.SERVER_BROADCAST_IP)
+
 
 class info(View):
+
     def get(self, request, *args, **kwargs):
         status = {"status": "unknown"}
         alive_status = sp.is_alive()
@@ -25,6 +28,7 @@ class info(View):
 
 
 class startup(View):
+
     def post(self, request, *args, **kwargs):
         status = sp.is_alive()
         sp.wake_up()
@@ -34,6 +38,7 @@ class startup(View):
 
 
 class shutdown(View):
+
     def post(self, request, *args, **kwargs):
         status = sp.is_alive()
         sp.shutdown()
