@@ -81,18 +81,18 @@
 }
 
 .indoor-quality {
-  font-size: 200%;
+  font-size: 300%;
 
   .status {
-    font-size: 200%;
+    font-size: 150%;
   }
 }
 
 .internet-connection {
-  font-size: 200%;
+  font-size: 300%;
 
   .connected {
-    font-size: 200%;
+    font-size: 150%;
   }
 }
 
