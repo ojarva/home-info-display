@@ -26,6 +26,8 @@ def lightgroup_on_until(group_id):
         logger.error("Called incorrectly - on_until is in the future. Group id {group_id}".format(group_id=group_id))
         return
 
+    logger.info("Switching off group {group_id}. Current time is {now} and on_until is {on_until}".format(group_id=group_id, now=now, on_until=group.on_until))
+
     if group.on:
         led.off()
         group.on_until = None
