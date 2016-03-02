@@ -15,8 +15,17 @@ class Bathroom(SensorConsumerBase):
     def pubsub_callback(self, data):
         if "action" in data:
             # if data["action"] == "user_dismissed":
-
             return
+
+        bathroom_temperature = round(data["data"]["bathroom_temperature"], 1)
+        bathroom_humidity = round(data["data"]["bathroom_humidity"], 1)
+        corridor_temperature = round(data["data"]["corridor_temperature"], 1)
+        corridor_humidity = round(data["data"]["corridor_humidity"], 1)
+
+        if bathroom_temperature < 1 or bathroom_temperature > 60:
+            bathroom_temperature = None
+        if corridor_temperature < 1 or corridor_temperature > 60:
+            corridor_temperature = None
 
         influx_data = {
             "measurement": "bathroom",
@@ -26,10 +35,10 @@ class Bathroom(SensorConsumerBase):
             },
             "fields": {
                 "distance_reading": data["data"]["distance_reading"],
-                "bathroom_temperature": round(data["data"]["bathroom_temperature"], 1),
-                "bathroom_humidity": round(data["data"]["bathroom_humidity"], 1),
-                "corridor_temperature": round(data["data"]["corridor_temperature"], 1),
-                "corridor_humidity": round(data["data"]["corridor_humidity"], 1)
+                "bathroom_temperature": bathroom_temperature,
+                "bathroom_humidity": bathroom_humidity,
+                "corridor_temperature": corridor_temperature,
+                "corridor_humidity": corridor_humidity,
             },
         }
         self.insert_into_influx([influx_data])
