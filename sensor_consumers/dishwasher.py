@@ -105,18 +105,23 @@ class Dishwasher(SensorConsumerBase):
 
         self.insert_into_influx(influx_data)
 
-        parser_data = self.dishwasher_parser.add_value(datetime.datetime.now(), data["data"]["power_consumption"] * 230)
-        self.redis.setex("dishwasher-parser-state", 120, base64.b64encode(pickle.dumps(self.dishwasher_parser.get_state())))
+        parser_data = self.dishwasher_parser.add_value(
+            datetime.datetime.now(), data["data"]["power_consumption"] * 230)
+        self.redis.setex("dishwasher-parser-state", 120,
+                         base64.b64encode(pickle.dumps(self.dishwasher_parser.get_state())))
 
         if parser_data:
             if parser_data["current_phase"] is None:
                 pass
             elif parser_data["current_phase"] == "finished":
-                program = self._determine_program(parser_data["current_program"])
-                message = "Pesukone valmis ({from_now_timestamp}, päällä %s, %s)" % (self.format_timedelta(parser_data["duration"]), program)
+                program = self._determine_program(
+                    parser_data["current_program"])
+                message = "Pesukone valmis ({from_now_timestamp}, päällä %s, %s)" % (
+                    self.format_timedelta(parser_data["duration"]), program)
                 self.running_dialog_visible = False
                 self.finished_dialog_visible = True
-                self.update_notification("dishwasher", message, True, from_now_timestamp=datetime.datetime.now())
+                self.update_notification(
+                    "dishwasher", message, True, from_now_timestamp=datetime.datetime.now())
                 self.play_sound("finished")
             elif parser_data.get("exc") == "noise_or_interrupted":
                 print "Noise or interrupted run - remove incorrect dialog (if exists)"
@@ -125,7 +130,8 @@ class Dishwasher(SensorConsumerBase):
                     self.running_dialog_visible = False
                     self.finished_dialog_visible = True
             else:
-                program = self._determine_program(parser_data["current_program"])
+                program = self._determine_program(
+                    parser_data["current_program"])
                 message = "Astiat: "
                 components = []
                 if "eta" in parser_data and parser_data["eta"] is not None:
@@ -135,14 +141,16 @@ class Dishwasher(SensorConsumerBase):
                 if program:
                     components.append(program)
                 if parser_data["current_phase"]:
-                    phase_translated = self.PHASE_MAPPING[parser_data["current_phase"]]
+                    phase_translated = self.PHASE_MAPPING[
+                        parser_data["current_phase"]]
                     components.append(phase_translated)
                 if len(components) == 0:
                     components.append("{elapsed_since}")
                 message = message + ", ".join(components)
                 self.running_dialog_visible = True
                 self.finished_dialog_visible = False
-                self.update_notification("dishwasher", message, False, elapsed_since=parser_data["running_since"])
+                self.update_notification(
+                    "dishwasher", message, False, elapsed_since=parser_data["running_since"])
 
 
 def main():

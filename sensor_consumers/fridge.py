@@ -6,6 +6,7 @@ import sys
 
 
 class Fridge(SensorConsumerBase):
+
     def __init__(self):
         SensorConsumerBase.__init__(self, "home")
 
@@ -16,7 +17,8 @@ class Fridge(SensorConsumerBase):
         if "action" in data:
             return
 
-        kitchen_ceiling_temperature = round(data["data"]["room_temperature"], 1)
+        kitchen_ceiling_temperature = round(
+            data["data"]["room_temperature"], 1)
         if kitchen_ceiling_temperature < 10 or kitchen_ceiling_temperature > 40:
             print "Invalid temperature for kitchen ceiling sensor: %s. Setting to null." % kitchen_ceiling_temperature
             kitchen_ceiling_temperature = None

@@ -6,6 +6,7 @@ import redis
 import subprocess
 import time
 
+
 class PingRunner(object):
     PARSER = re.compile(".*: \[([0-9]+)\], .*bytes, ([0-9\.]+) ms.*")
 
@@ -38,9 +39,11 @@ class PingRunner(object):
                 self.current_responses = []
                 self.counter = counter
                 print "broadcasting", message
-                self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "ping", "content": message}))
+                self.redis_instance.publish("home:broadcast:generic", json.dumps({
+                                            "key": "ping", "content": message}))
 
         p.communicate()
+
 
 def main():
     setproctitle("ping_publisher: run")

@@ -20,7 +20,9 @@ def listen_kettle_commands(queue):
                 item = json.loads(item["data"])
                 queue.put(item)
 
+
 class KettleCommunication(SensorConsumerBase):
+
     def __init__(self, commands_queue, update_queue):
         SensorConsumerBase.__init__(self, "home")
         self.commands_queue = commands_queue
@@ -58,7 +60,8 @@ class KettleCommunication(SensorConsumerBase):
         latest_timestamp, latest_temperature = self.temperatures[-1]
         for timestamp, temperature in reversed(self.temperatures[-5:-1]):
             if latest_timestamp - timestamp > datetime.timedelta(seconds=5):
-                delta_per_second = float(latest_temperature - temperature) / (latest_timestamp - timestamp).total_seconds()
+                delta_per_second = float(
+                    latest_temperature - temperature) / (latest_timestamp - timestamp).total_seconds()
                 break
         if delta_per_second is None or delta_per_second < 0.1 or delta_per_second > 2:
             return None
@@ -95,17 +98,20 @@ class KettleCommunication(SensorConsumerBase):
                         self.update_queue.put({"success": "status"})
                         status_updated = True
                         self.latest_status = item["data"]
-                        self.latest_status["temperature"] = self.add_temperature(datetime.datetime.now(), self.latest_status["temperature"])
+                        self.latest_status["temperature"] = self.add_temperature(
+                            datetime.datetime.now(), self.latest_status["temperature"])
             if status_updated:
                 self.r.setex("kettle-info", 60, json.dumps(self.latest_status))
-                self.r.publish("home:broadcast:generic", json.dumps({"key": "kettle-info", "content": self.latest_status}))
+                self.r.publish("home:broadcast:generic", json.dumps(
+                    {"key": "kettle-info", "content": self.latest_status}))
 
                 if self.latest_status["status"] == "boiling" and self.boil_to:
                     self.set_boiling_message()
                 else:
                     self.eta = []
                     if self.latest_status["present"] and self.boiled_at and datetime.datetime.now() - self.boiled_at < datetime.timedelta(seconds=30):
-                        self.update_notification("kettle", "Vesi valmis ({}&deg;C -&gt; {}&deg;C)".format(self.latest_status["temperature"], self.boil_to), False)
+                        self.update_notification("kettle", "Vesi valmis ({}&deg;C -&gt; {}&deg;C)".format(
+                            self.latest_status["temperature"], self.boil_to), False)
                         self.kettle_dialog_visible = True
                     else:
                         self.boiled_at = None
@@ -127,7 +133,8 @@ class KettleCommunication(SensorConsumerBase):
         eta = self.get_eta()
         if eta is None:
             eta = "?"
-        self.update_notification("kettle", "Vesi {current_temperature}&deg;C -&gt; {destination_temperature}&deg;C, ETA {eta}s".format(current_temperature=self.latest_status["temperature"], destination_temperature=self.boil_to, eta=eta), False)
+        self.update_notification("kettle", "Vesi {current_temperature}&deg;C -&gt; {destination_temperature}&deg;C, ETA {eta}s".format(
+            current_temperature=self.latest_status["temperature"], destination_temperature=self.boil_to, eta=eta), False)
         self.kettle_dialog_visible = True
         self.boiled_at = datetime.datetime.now()
 
@@ -168,10 +175,10 @@ class KettleCommunication(SensorConsumerBase):
             self.kettle.off()
 
 
-
 def run_kettle_socket(commands_queue, update_queue):
     kettle_communication = KettleCommunication(commands_queue, update_queue)
     kettle_communication.run()
+
 
 class Kettle(object):
 
@@ -187,10 +194,12 @@ class Kettle(object):
         commands_queue = Queue()
         update_queue = Queue()
 
-        p_commands = Process(target=listen_kettle_commands, args=(commands_queue,))
+        p_commands = Process(target=listen_kettle_commands,
+                             args=(commands_queue,))
         p_commands.start()
 
-        p_socket = Process(target=run_kettle_socket, args=(commands_queue, update_queue))
+        p_socket = Process(target=run_kettle_socket,
+                           args=(commands_queue, update_queue))
         p_socket.start()
 
         last_update_at = datetime.datetime.now()

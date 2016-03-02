@@ -50,12 +50,16 @@ class DishwasherParser(object):
         ],
     }
 
-    ARGS = ("running_since", "last_prewash_exceeded", "first_prewash_exceeded", "last_washing_exceeded", "first_washing_exceeded", "last_noise_exceeded", "first_noise_exceeded", "phases", "current_phase", "current_program", "running_or_finished_phases", "current_phase_since")
+    ARGS = ("running_since", "last_prewash_exceeded", "first_prewash_exceeded", "last_washing_exceeded", "first_washing_exceeded",
+            "last_noise_exceeded", "first_noise_exceeded", "phases", "current_phase", "current_program", "running_or_finished_phases", "current_phase_since")
 
     def __init__(self, single_run_testing=False, **kwargs):
         self.reset()
-        self.single_run_testing = single_run_testing  # True for throwing exception for multiple runs on a single instance
-        self.start_detected = False  # Related to previous variable, True if run has started, stays True forever.
+        # True for throwing exception for multiple runs on a single instance
+        self.single_run_testing = single_run_testing
+        # Related to previous variable, True if run has started, stays True
+        # forever.
+        self.start_detected = False
         if kwargs.get("state"):
             self.load_state(kwargs["state"])
 
@@ -110,7 +114,8 @@ class DishwasherParser(object):
             for program_phase, duration in program_phases:
                 if program_phase == phase:
                     started = True
-                    current_phase_remaining = duration - (timestamp - current_phase_since)
+                    current_phase_remaining = duration - \
+                        (timestamp - current_phase_since)
                     if current_phase_remaining > datetime.timedelta(0):
                         eta += current_phase_remaining
                     continue
@@ -197,11 +202,13 @@ class DishwasherParser(object):
             if self.running_since and self.last_noise_exceeded:
                 time_diff = timestamp - self.last_noise_exceeded
                 if ("50C" in self.current_program or "65C" in self.current_program) and "quick" not in self.current_program and "washing-2" in self.running_or_finished_phases:
-                    last_noise_exceeded_threshold = datetime.timedelta(minutes=24)
+                    last_noise_exceeded_threshold = datetime.timedelta(
+                        minutes=24)
                     if time_diff > datetime.timedelta(minutes=3) and self.current_phase == "finishing":
                         self.set_phase("cooling", timestamp)
                 else:
-                    last_noise_exceeded_threshold = datetime.timedelta(minutes=3)
+                    last_noise_exceeded_threshold = datetime.timedelta(
+                        minutes=3)
                 if time_diff > last_noise_exceeded_threshold:
                     if not self.last_prewash_exceeded:
                         print "Noise or interrupted - dishwasher didn't run."
@@ -218,7 +225,8 @@ class DishwasherParser(object):
                         for i in range(0, len(self.phases)):
                             phase = self.phases[i]
                             if i < len(self.phases) - 1:
-                                diff = self.phases[i + 1]["timestamp"] - phase["timestamp"]
+                                diff = self.phases[
+                                    i + 1]["timestamp"] - phase["timestamp"]
                             else:
                                 diff = None
                             phase["diff"] = diff

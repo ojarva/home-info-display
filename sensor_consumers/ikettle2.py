@@ -88,7 +88,8 @@ class Kettle2(object):
                     water_level = (water_level1 << 8) + water_level2
                     parsed["water_level_raw"] = water_level
                     water_level = water_level - 2075
-                    water_level_percentage = round(min(1, max(0, float(water_level) / 185)), 3)
+                    water_level_percentage = round(
+                        min(1, max(0, float(water_level) / 185)), 3)
                     if not parsed["present"]:
                         water_level_percentage = None
                     parsed["water_level"] = water_level_percentage

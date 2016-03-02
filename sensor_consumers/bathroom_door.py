@@ -5,6 +5,7 @@ import sys
 
 
 class Bathroom(SensorConsumerBase):
+
     def __init__(self):
         SensorConsumerBase.__init__(self, "home")
 

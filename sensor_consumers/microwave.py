@@ -44,7 +44,8 @@ class MicrowaveState(object):
         if self.running:
             self.last_used_at = datetime.datetime.now()
             if self.on_since:
-                self.total_time_running += (datetime.datetime.now() - self.on_since)
+                self.total_time_running += (datetime.datetime.now() -
+                                            self.on_since)
             self.on_since = None
         self.running = False
 
@@ -76,6 +77,7 @@ class MicrowaveState(object):
 
 
 class Microwave(SensorConsumerBase):
+
     def __init__(self):
         SensorConsumerBase.__init__(self, "home")
         self.state = MicrowaveState()
@@ -122,15 +124,18 @@ class Microwave(SensorConsumerBase):
 
             if data["data"]["power_consumption"] > 0.08:
                 self.state.set_light_on()
-                # Door is open, microwave is not running but still consumes energy -> timer is not set to zero.
+                # Door is open, microwave is not running but still consumes
+                # energy -> timer is not set to zero.
                 if self.state.get_total_time_running() > datetime.timedelta(seconds=2):
-                    message = "Mikron valo päällä (%s)" % self.state.get_total_time_running_formatted()
+                    message = "Mikron valo päällä (%s)" % self.state.get_total_time_running_formatted(
+                    )
                 else:
                     message = "Mikron valo päällä"
             else:
                 self.state.set_light_off()
                 if self.state.get_total_time_running() > datetime.timedelta(seconds=2):
-                    message = "Mikron ovi auki (%s)" % self.state.get_total_time_running_formatted()
+                    message = "Mikron ovi auki (%s)" % self.state.get_total_time_running_formatted(
+                    )
                 else:
                     message = "Mikron ovi auki"
 
@@ -142,13 +147,15 @@ class Microwave(SensorConsumerBase):
             if data["data"]["power_consumption"] > 0.2:
                 self.state.set_running()
                 self.notification_visible = True
-                self.update_notification("microwave", "Mikro päällä ({elapsed_since})", False, elapsed_since=self.state.get_calculated_on_since())
+                self.update_notification(
+                    "microwave", "Mikro päällä ({elapsed_since})", False, elapsed_since=self.state.get_calculated_on_since())
                 return
             else:
                 self.state.set_stopped()
                 if self.state.stuff_inside and self.state.get_total_time_running() > datetime.timedelta(seconds=2):
                     self.notification_visible = True
-                    self.update_notification("microwave", "Mikrossa kamaa (%s, {from_now_timestamp})" % self.state.get_total_time_running_formatted(), True, from_now_timestamp=self.state.last_used_at)
+                    self.update_notification("microwave", "Mikrossa kamaa (%s, {from_now_timestamp})" % self.state.get_total_time_running_formatted(
+                    ), True, from_now_timestamp=self.state.last_used_at)
                     if not self.state.stuff_inside_alarmed and self.state.stuff_inside_since and datetime.datetime.now() - self.state.stuff_inside_since > datetime.timedelta(seconds=60):
                         self.play_sound("normal")
                         self.state.stuff_inside_alarmed = True

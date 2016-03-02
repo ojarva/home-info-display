@@ -10,6 +10,7 @@ import time
 
 
 class DateTimeEncoder(json.JSONEncoder):
+
     def default(self, o):
         if isinstance(o, datetime.datetime):
             return o.isoformat()
@@ -18,6 +19,7 @@ class DateTimeEncoder(json.JSONEncoder):
 
 
 class NotificationConfig(object):
+
     def __init__(self, notification, config):
         self.config = config
         self.notification = notification
@@ -29,7 +31,8 @@ class NotificationConfig(object):
 
     def escalated(self, from_level, to_level):
         self.data[to_level]["escalated"] = True
-        self.data[to_level]["triggered-since"] = self.data[from_level]["active-since"]
+        self.data[to_level][
+            "triggered-since"] = self.data[from_level]["active-since"]
         self.data[to_level]["current-active"] = True
         if not self.data[to_level]["active-since"]:
             self.data[to_level]["active-since"] = datetime.datetime.now()
@@ -48,13 +51,15 @@ class NotificationConfig(object):
 
 
 class SensorConsumerBase(object):
+
     def __init__(self, influx_database=None):
         self.redis_instance = redis.StrictRedis()
         self.notification_data = None
         self.avg_data = {}
         self.avg_config = {}
         if influx_database:
-            self.influx_client = InfluxDBClient("localhost", 8086, "root", "root", influx_database)
+            self.influx_client = InfluxDBClient(
+                "localhost", 8086, "root", "root", influx_database)
             try:
                 self.influx_client.create_database(influx_database)
             except influxdb.exceptions.InfluxDBClientError:
@@ -72,12 +77,14 @@ class SensorConsumerBase(object):
             if "timestamp" in data:
                 timestamp = data["timestamp"]
                 data["timestamp"] = datetime.datetime.fromtimestamp(timestamp)
-                data["utctimestamp"] = datetime.datetime.utcfromtimestamp(timestamp)
+                data["utctimestamp"] = datetime.datetime.utcfromtimestamp(
+                    timestamp)
             callback(data)
         pubsub.unsubscribe(channel)
 
     def insert_into_influx(self, data):
-        self.redis_instance.publish("influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
+        self.redis_instance.publish(
+            "influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
         if not self.influx_database:
             raise ValueError("Influx is not initialized")
         try:
@@ -101,7 +108,8 @@ class SensorConsumerBase(object):
             from_now_timestamp = from_now_timestamp.isoformat()
         for i in range(0, 5):
             url = BASE_URL + "notifications/create"
-            data = {"item_type": item_type, "description": description, "can_dismiss": can_dismiss, "elapsed_since": elapsed_since, "from_now_timestamp": from_now_timestamp, "level": level}
+            data = {"item_type": item_type, "description": description, "can_dismiss": can_dismiss,
+                    "elapsed_since": elapsed_since, "from_now_timestamp": from_now_timestamp, "level": level}
             try:
                 resp = requests.post(url, data=data)
                 print "Creating %s (%s, %s): %s - %s, args=%s" % (item_type, description, can_dismiss, resp.status_code, resp.content, kwargs)
@@ -113,7 +121,8 @@ class SensorConsumerBase(object):
 
     def play_sound(self, sound):
         print "Playing sound: {}".format(sound)
-        self.redis_instance.publish("sound-notification", json.dumps({"type": sound, "timestamp": str(datetime.datetime.now())}))
+        self.redis_instance.publish("sound-notification", json.dumps(
+            {"type": sound, "timestamp": str(datetime.datetime.now())}))
 
     def delete_notification(self, item_type):
         for i in range(0, 5):
@@ -134,7 +143,8 @@ class SensorConsumerBase(object):
     def initialize_notifications(self, notification_config):
         self.notification_data = {}
         for notification, config in notification_config.items():
-            self.notification_data[notification] = NotificationConfig(notification, config)
+            self.notification_data[notification] = NotificationConfig(
+                notification, config)
             try:
                 self.delete_notification(config["notification"])
             except requests.exceptions.ConnectionError as err:
@@ -164,7 +174,8 @@ class SensorConsumerBase(object):
                     alarm_matches = True
                 if alarm_matches:
                     if not notification_data[level]["triggered-since"]:
-                        notification_data[level]["triggered-since"] = datetime.datetime.now()
+                        notification_data[level][
+                            "triggered-since"] = datetime.datetime.now()
                     if "delay" in config[level]:
                         if datetime.datetime.now() - notification_data[level]["triggered-since"] > config[level]["delay"]:
                             notification_config.activate(level)
@@ -177,7 +188,8 @@ class SensorConsumerBase(object):
                 else:
                     # check whether previous level is escalated or triggered
                     if earlier_active:
-                        # previous level is currently active -> keep this active as well
+                        # previous level is currently active -> keep this
+                        # active as well
                         continue
                     notification_data[level]["active-since"] = None
                     notification_data[level]["current-active"] = False
@@ -191,7 +203,8 @@ class SensorConsumerBase(object):
 
                 if notification_data[level]["current-active"]:
                     if "escalate" in config[level]:
-                        time_diff = datetime.datetime.now() - notification_data[level]["active-since"]
+                        time_diff = datetime.datetime.now(
+                        ) - notification_data[level]["active-since"]
                         print "Escalation: time_diff={time_diff}, escalate={escalate}".format(time_diff=time_diff, escalate=config[level]["escalate"])
                         if time_diff > config[level]["escalate"]:
                             next_level = notification_levels[i + 1]
@@ -213,14 +226,16 @@ class SensorConsumerBase(object):
                     if level == "urgent":  # TODO
                         print "Level is urgent -> convert to high"
                         message_level = "high"
-                    notification_meta = {"level": message_level, "message": message.format(value=point), "user_dismissable": False, "elapsed_since": notification_data[level]["triggered-since"], "notification": config["notification"]}
+                    notification_meta = {"level": message_level, "message": message.format(value=point), "user_dismissable": False, "elapsed_since": notification_data[
+                        level]["triggered-since"], "notification": config["notification"]}
                     if notification_config.current_notification != notification_meta:
                         notification_config.current_notification = notification_meta
                         self.update_notification_from_dict(**notification_meta)
 
                     # check sounds
                     if "sound" in config[level]:
-                        time_diff = datetime.datetime.now() - notification_data[level]["active-since"]
+                        time_diff = datetime.datetime.now(
+                        ) - notification_data[level]["active-since"]
                         print "Sound: time_diff={}".format(time_diff)
                         if time_diff > config[level]["sound"] and not notification_data[level]["sound-played"]:
                             notification_data[level]["sound-played"] = True
@@ -248,7 +263,8 @@ class SensorConsumerBase(object):
             raise KeyError("series %s not initialized" % series)
 
         self.avg_data[series].append(value)
-        self.avg_data[series] = self.avg_data[series][-self.avg_config[series]:]
+        self.avg_data[series] = self.avg_data[
+            series][-self.avg_config[series]:]
         return self.get_average(series)
 
     def get_average(self, series):
