@@ -200,7 +200,7 @@ class LightGroup(models.Model):
             now = timezone.now()
             if self.on_until > now:
                 # on_until is in the future. Add new task.
-                self.on_until_task = milight_tasks.lightgroup_on_until.apply_async((self.group_id,), eta=self.on_until + datetime.timedelta(seconds=1), expires=self.on_until + datetime.timedelta(seconds=60))
+                self.on_until_task = str(milight_tasks.lightgroup_on_until.apply_async((self.group_id,), eta=self.on_until + datetime.timedelta(seconds=1), expires=self.on_until + datetime.timedelta(seconds=60)))
 
 
         super(LightGroup, self).save(*args, **kwargs)
