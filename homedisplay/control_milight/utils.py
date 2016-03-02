@@ -7,7 +7,6 @@ from django.utils import timezone
 from homedisplay.utils import publish_ws
 from ledcontroller import LedController
 import datetime
-import info_timers.utils as timer_utils
 import logging
 import models as light_models
 import redis
@@ -150,7 +149,6 @@ def convert_group_to_automatic(group, on_until):
     state.on_automatically = True
     state.on_until = on_until
     state.save()
-    timer_utils.update_group_automatic_timer(group, on_until)
 
 
 def set_automatic_trigger_light(group, take_action=True, **kwargs):
@@ -190,10 +188,6 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
             "Group %s is already on. Skip automatic triggering", group)
         return False
 
-    # Update timer so that light does not go off too early
-    logger.debug("Group %s is on automatically. Update timer", group)
-    timer_utils.update_group_automatic_timer(group, on_until)
-
     if not state.on:
         led.on(group)
 
@@ -214,7 +208,6 @@ def set_automatic_trigger_light(group, take_action=True, **kwargs):
 
     light_models.update_lightstate(
         group, brightness, color, True, automatic=True, on_until=on_until)
-    timer_utils.update_group_automatic_timer(group, on_until)
 
     if quick:
         led.repeat_commands = original_repeat_commands
@@ -308,12 +301,10 @@ def run_timed_actions():
             led.white()
             led.set_brightness(brightness)
             light_models.update_lightstate(
-                group, brightness, "white", important=False, timed=True)
+                group, brightness, "white", important=False, timed=True, on_until=on_until)
             publish_ws("lightcontrol-timed-brightness-%s" %
                        item.action, brightness)
             set_destination_brightness()
-            for group in range(1, 5):
-                timer_utils.update_group_automatic_timer(group, on_until)
 
     for item in light_models.LightAutomation.objects.filter(running=True).filter(action__startswith="evening"):
         if not item.is_running(now):

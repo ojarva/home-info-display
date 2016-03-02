@@ -6,9 +6,9 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
+from homedisplay.celery import app as celery_app
 from homedisplay.utils import publish_ws
 from ledcontroller import LedController
-import info_timers.utils as timer_utils
 import datetime
 import json
 import logging
@@ -129,7 +129,6 @@ def update_lightstate(group, brightness, color=None, on=True, **kwargs):
     if state_set is False and kwargs.get("timed", False) is False:
         # Default state for on_automatically
         state.on_automatically = False
-        timer_utils.delete_group_automatic_timer(group, True)
 
     logger.debug("on_automatically=%s, on_until=%s",
                  state.on_automatically, state.on_until)
@@ -189,8 +188,27 @@ class LightGroup(models.Model):
                                            help_text="Onko ryhmä päällä automaattisesti vai manuaalisesti")
     on_until = models.DateTimeField(
         blank=True, null=True, verbose_name="Automaattinen sammutusaika", help_text="Aika, johon asti valo pidetään päällä")
+    on_until_task = models.TextField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        import tasks as milight_tasks
+
+        if self.on_until_task:
+            celery_app.control.revoke(self.on_until_task)
+            self.on_until_task = None
+        if self.on_until:
+            now = timezone.now()
+            if self.on_until > now:
+                # on_until is in the future. Add new task.
+                self.on_until_task = milight_tasks.lightgroup_on_until.apply_async((self.group_id,), eta=self.on_until + datetime.timedelta(seconds=1), expires=self.on_until + datetime.timedelta(seconds=60))
+
+
+        super(LightGroup, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        if self.on_until_task:
+            celery_app.control.revoke(self.on_until_task)
+
         logger.info("Deleted lightgroup")
         super(LightGroup, self).delete(*args, **kwargs)
 
