@@ -92,7 +92,8 @@ def get_current_settings_for_light(group_id):
             color = "white"
             if program.action.startswith("morning"):
                 brightness = 100
-            brightness = get_program_brightness(program.action, percent_done)
+            else:
+                brightness = get_program_brightness(program.action, percent_done)
             logger.info("Brightness for group %s set by program %s, %s%%. Color: %s",
                         group_id, program.action, percent_done, color)
             return (brightness, color)
