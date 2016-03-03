@@ -139,7 +139,11 @@ class KettleCommunication(SensorConsumerBase):
         self.boiled_at = datetime.datetime.now()
 
     def push_to_influxdb(self, latest_status):
-        water_level = float(latest_status["water_level"])
+        water_level = latest_status["water_level"]
+        if water_level:
+            water_level = float(water_level)
+        else:
+            water_level = None
         self.last_update_at = time.time()
         self.insert_into_influx([{
             "measurement": "kettle",
