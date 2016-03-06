@@ -35,7 +35,7 @@ class Door(SensorConsumerBase):
                 self.door_open_elapsed_since = datetime.datetime.now()
             notification = {
                 "notification": "door",
-                "message": "Ulko-ovi on auki ({{elapsed_since}})",
+                "message": "Ulko-ovi on auki ({elapsed_since})",
                 "user_dismissable": False,
                 "elapsed_since": self.door_open_elapsed_since,
             }
