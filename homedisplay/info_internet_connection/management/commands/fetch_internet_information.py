@@ -25,6 +25,14 @@ class Command(BaseCommand):
     help = 'Fetches home 4g router status information'
 
     def handle(self, *args, **options):
+        modes = {
+            "sim_disabled": -1,
+            "off": 0,
+            "2g": 1,
+            "3g": 2,
+            "4g": 3,
+        }
+
         status = huawei_b593_status.HuaweiStatus()
         data = status.read()
         age_threshold = datetime.timedelta(minutes=2)
@@ -44,9 +52,9 @@ class Command(BaseCommand):
         latest_data.update_timestamp = timezone.now()
         latest_data.save()
 
-        influx_data = {
-            "timestamp": timezone.now(),
-            "measurement": "4g-modem",
+        influx_data = [{
+            "timestamp": timezone.now().isoformat(),
+            "measurement": "modem",
             "tags": {
                 "device": "home-gw",
             },
@@ -54,10 +62,11 @@ class Command(BaseCommand):
                 "wifi": data["WIFI"] != "off",
                 "signal": int(data["SIG"]),
                 "mode": data["Mode"],
+                "mode_number": modes.get(data["Mode"]),
                 "sim": data["SIM"],
                 "connect_status": data["Connect"],
             },
-        }
+        }]
         redis_instance = redis.StrictRedis()
         redis_instance.publish("influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
         publish_ws("internet", get_latest_serialized())
