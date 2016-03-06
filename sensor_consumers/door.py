@@ -2,6 +2,7 @@
 
 from utils import SensorConsumerBase
 import sys
+import datetime
 
 
 class Door(SensorConsumerBase):

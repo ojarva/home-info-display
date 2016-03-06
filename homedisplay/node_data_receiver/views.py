@@ -19,7 +19,7 @@ def format_number(number):
 
 class Door(View):
     def get(self, request, *args, **kwargs):
-        corridor_floor_temperature = format_number(request.GET.get("temperature1"))
+        corridor_floor_temperature = format_number(request.GET.get("t1"))
         door_outer = request.GET.get("door_outer")
         door_inner = request.GET.get("door_inner")
         if door_outer is not None:
