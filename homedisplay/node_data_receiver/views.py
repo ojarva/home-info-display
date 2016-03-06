@@ -7,17 +7,39 @@ import redis
 redis_instance = redis.StrictRedis()
 
 
+def format_number(number):
+    if number is None:
+        return None
+    else:
+        value = round(float(number), 1)
+        if value == -127:
+            return None
+        return value
+
+
+class Door(View):
+    def get(self, request, *args, **kwargs):
+        corridor_floor_temperature = format_number(request.GET.get("temperature1"))
+        door_outer = request.GET.get("door_outer")
+        door_inner = request.GET.get("door_inner")
+        if door_outer is not None:
+            door_outer = door_outer == 1
+        if door_inner is not None:
+            door_inner = door_inner == 1
+        data = {
+            "data": {
+                "door_outer_open": door_outer,
+                "door_inner_open": door_inner,
+                "corridor_floor_temperature": corridor_floor_temperature,
+            }
+        }
+        redis_instance.publish("door-pubsub", json.dumps(data))
+        return HttpResponse(json.dumps({"status": "ok"}), content_type="application/json")
+
+
 class Fridge(View):
 
     def get(self, request, *args, **kwargs):
-        def format_number(number):
-            if number is None:
-                return None
-            else:
-                value = float(number)
-                if value == -127:
-                    return None
-                return value
         fridge_humidity = None
         fridge_temperature4 = None
         humidity_data = request.GET.get("hd")
