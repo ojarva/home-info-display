@@ -23,9 +23,9 @@ class Door(View):
         door_outer = request.GET.get("door_outer")
         door_inner = request.GET.get("door_inner")
         if door_outer is not None:
-            door_outer = door_outer == 1
+            door_outer = door_outer == "1"
         if door_inner is not None:
-            door_inner = door_inner == 1
+            door_inner = door_inner == "1"
         data = {
             "data": {
                 "door_outer_open": door_outer,
