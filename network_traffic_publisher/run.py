@@ -41,7 +41,7 @@ class NetworkStatusPublisher(object):
                         "tags": {
                             "source": "edgerouter",
                         },
-                        "time": datetime.datetime.utcnow().isoformat() + "Z"
+                        "time": datetime.datetime.utcnow().isoformat() + "Z",
                         "fields": {
                             "speed_in": int(item["speed_in"]),
                             "speed_out": int(item["speed_out"]),
