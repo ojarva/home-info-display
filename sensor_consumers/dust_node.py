@@ -22,7 +22,7 @@ class DustNode(SensorConsumerBase):
 
         influx_data = {
             "measurement": "dustnode",
-            "timestamp": data["utctimestamp"].isoformat() + "Z",
+            "time": data["utctimestamp"].isoformat() + "Z",
             "fields": {
                 "room_humidity": room_humidity,
                 "room_temperature": room_temperature,

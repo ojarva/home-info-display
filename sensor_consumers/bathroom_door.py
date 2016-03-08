@@ -29,7 +29,7 @@ class Bathroom(SensorConsumerBase):
 
         influx_data = {
             "measurement": "bathroom",
-            "timestamp": data["utctimestamp"].isoformat() + "Z",
+            "time": data["utctimestamp"].isoformat() + "Z",
             "tags": {
                 "location": "bathroom-door",
             },

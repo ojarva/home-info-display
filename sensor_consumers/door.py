@@ -22,7 +22,7 @@ class Door(SensorConsumerBase):
 
         influx_data = {
             "measurement": "door",
-            "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+            "time": datetime.datetime.utcnow().isoformat() + "Z",
             "tags": {
                 "location": "door",
             },
