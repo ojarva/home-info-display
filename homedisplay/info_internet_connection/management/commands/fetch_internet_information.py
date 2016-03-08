@@ -68,7 +68,7 @@ class Command(BaseCommand):
             },
         }]
         redis_instance = redis.StrictRedis()
-        redis_instance.publish("influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
+        redis_instance.publish("influx-update-pubsub", json.dumps(influx_data, cls=DateTimeEncoder))
         publish_ws("internet", get_latest_serialized())
 
         influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
