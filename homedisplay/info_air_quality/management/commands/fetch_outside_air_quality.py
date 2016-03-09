@@ -3,21 +3,10 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 from homedisplay.utils import publish_ws
-from influxdb import InfluxDBClient
 import datetime
-import influxdb.exceptions
 import json
 import redis
 import requests
-
-
-class DateTimeEncoder(json.JSONEncoder):
-
-    def default(self, o):
-        if isinstance(o, datetime.datetime):
-            return o.isoformat()
-
-        return json.JSONEncoder.default(self, o)
 
 
 class Command(BaseCommand):
@@ -27,17 +16,9 @@ class Command(BaseCommand):
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__()
         self.redis_instance = redis.StrictRedis()
-        self.influx_client = InfluxDBClient(
-            "localhost", 8086, "root", "root", "home")
-        try:
-            self.influx_client.create_database("home")
-        except influxdb.exceptions.InfluxDBClientError:
-            pass
 
     def save_to_influx(self, datapoints):
-        self.redis_instance.publish(
-            "influx-update-pubsub", json.dumps(datapoints, cls=DateTimeEncoder))
-        self.influx_client.write_points(datapoints)
+        self.redis_instance.publish("influx-update-pubsub", json.dumps(datapoints))
 
     def get_data(self, station_id, sensor):
         session = requests.Session()

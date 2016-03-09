@@ -1,30 +1,14 @@
 from local_settings import *
 from setproctitle import setproctitle
-from influxdb import InfluxDBClient
-import influxdb.exceptions
 import json
 import redis
 import time
 import datetime
 
 
-class DateTimeEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, datetime.datetime):
-            return o.isoformat()
-
-        return json.JSONEncoder.default(self, o)
-
-
 class IndoorQualityPublisher(object):
     def __init__(self):
         self.redis_instance = redis.StrictRedis()
-        self.influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
-
-        try:
-            self.influx_client.create_database("home")
-        except influxdb.exceptions.InfluxDBClientError:
-            pass
 
     @classmethod
     def read_value(cls, filename):
@@ -52,9 +36,9 @@ class IndoorQualityPublisher(object):
                 influx_data["fields"]["co2"] = co2
 
             if len(influx_data["fields"]) > 0:
-                self.redis_instance.publish("influx-update-pubsub", json.dumps(influx_data, cls=DateTimeEncoder))
-                self.influx_client.write_points([influx_data])
+                self.redis_instance.publish("influx-update-pubsub", json.dumps([influx_data]))
             time.sleep(15)
+
 
 def main():
     setproctitle("indoor_quality_publisher: run")

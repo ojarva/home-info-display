@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 from homedisplay.utils import publish_ws
-from influxdb import InfluxDBClient
 from info_internet_connection.models import Internet, get_latest_serialized
 import datetime
 import huawei_b593_status
@@ -10,15 +9,6 @@ import redis
 
 
 # {'WIFI': 'off', 'SIG': '5', 'Mode': '4g', 'Roam': 'home', 'SIM': 'normal', 'Connect': 'connected'}
-
-class DateTimeEncoder(json.JSONEncoder):
-
-    def default(self, o):
-        if isinstance(o, datetime.datetime):
-            return o.isoformat()
-
-        return json.JSONEncoder.default(self, o)
-
 
 class Command(BaseCommand):
     args = ''
@@ -68,8 +58,5 @@ class Command(BaseCommand):
             },
         }]
         redis_instance = redis.StrictRedis()
-        redis_instance.publish("influx-update-pubsub", json.dumps(influx_data, cls=DateTimeEncoder))
+        redis_instance.publish("influx-update-pubsub", json.dumps(influx_data))
         publish_ws("internet", get_latest_serialized())
-
-        influx_client = InfluxDBClient("localhost", 8086, "root", "root", "home")
-        influx_client.write_points(influx_data)

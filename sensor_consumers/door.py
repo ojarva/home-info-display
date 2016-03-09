@@ -8,7 +8,7 @@ import datetime
 class Door(SensorConsumerBase):
 
     def __init__(self):
-        SensorConsumerBase.__init__(self, "home")
+        SensorConsumerBase.__init__(self)
         self.notification = None
         self.delete_notification("door")
         self.door_open_elapsed_since = None

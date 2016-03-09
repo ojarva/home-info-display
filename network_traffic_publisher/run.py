@@ -6,14 +6,12 @@ import time
 import nettraffic
 import datetime
 import pprint
-from influxdb import InfluxDBClient
 
 
 class NetworkStatusPublisher(object):
 
     def __init__(self):
         self.redis_instance = redis.StrictRedis()
-        self.influx = InfluxDBClient("localhost", 8086, "root", "root", "home")
         self.stats = nettraffic.CalcStats()
         self.traffic = nettraffic.GetNetworkStats(
             local_settings.GW_IP, local_settings.GW_PORT, local_settings.GW_COMMUNITY)
@@ -48,10 +46,6 @@ class NetworkStatusPublisher(object):
                         }
                     }]
                     self.redis_instance.publish("influx-update-pubsub", json.dumps(influx_data))
-                    try:
-                        self.influx.write_points(influx_data)
-                    except Exception as err:
-                        print "Updating influx failed: %s" % err
                     break  # no need to continue loop
 
 

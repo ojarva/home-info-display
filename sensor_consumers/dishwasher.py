@@ -24,7 +24,7 @@ class Dishwasher(SensorConsumerBase):
     }
 
     def __init__(self):
-        SensorConsumerBase.__init__(self, "home")
+        SensorConsumerBase.__init__(self)
         self.running_dialog_visible = False
         self.finished_dialog_visible = False
         self.dishwasher_parser = DishwasherParser()

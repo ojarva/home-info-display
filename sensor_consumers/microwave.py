@@ -79,7 +79,7 @@ class MicrowaveState(object):
 class Microwave(SensorConsumerBase):
 
     def __init__(self):
-        SensorConsumerBase.__init__(self, "home")
+        SensorConsumerBase.__init__(self)
         self.state = MicrowaveState()
         self.delete_notification("microwave")
         self.notification_visible = False

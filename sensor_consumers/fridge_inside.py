@@ -80,7 +80,7 @@ class FridgeInside(SensorConsumerBase):
     }
 
     def __init__(self):
-        SensorConsumerBase.__init__(self, "home")
+        SensorConsumerBase.__init__(self)
         self.initialize_notifications(self.THRESHOLD_CONFIG)
 
     def run(self):

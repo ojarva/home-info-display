@@ -1,7 +1,5 @@
-from influxdb import InfluxDBClient
 from local_settings import BASE_URL
 import datetime
-import influxdb.exceptions
 import json
 import redis
 import requests
@@ -52,21 +50,11 @@ class NotificationConfig(object):
 
 class SensorConsumerBase(object):
 
-    def __init__(self, influx_database=None):
+    def __init__(self):
         self.redis_instance = redis.StrictRedis()
         self.notification_data = None
         self.avg_data = {}
         self.avg_config = {}
-        if influx_database:
-            self.influx_client = InfluxDBClient(
-                "localhost", 8086, "root", "root", influx_database)
-            try:
-                self.influx_client.create_database(influx_database)
-            except influxdb.exceptions.InfluxDBClientError:
-                pass
-            self.influx_database = influx_database
-        else:
-            influx_database = None
 
     def subscribe(self, channel, callback):
         pubsub = self.redis_instance.pubsub(ignore_subscribe_messages=True)
@@ -83,17 +71,7 @@ class SensorConsumerBase(object):
         pubsub.unsubscribe(channel)
 
     def insert_into_influx(self, data):
-        self.redis_instance.publish(
-            "influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
-        if not self.influx_database:
-            raise ValueError("Influx is not initialized")
-        try:
-            self.influx_client.write_points(data)
-        except (requests.exceptions.ConnectionError, influxdb.exceptions.InfluxDBServerError) as err:
-            print "Connection to influxdb failed: %s. Saving data to plain log" % err
-            f = open("influxdb-log.txt", "a")
-            f.write("%s\n" % json.dumps(data, cls=DateTimeEncoder))
-            f.close()
+        self.redis_instance.publish("influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
 
     def update_notification_from_dict(self, **kwargs):
         return self.update_notification(kwargs["notification"], kwargs["message"], kwargs["user_dismissable"], **kwargs)

@@ -3,22 +3,11 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 from homedisplay.utils import publish_ws
-from influxdb import InfluxDBClient
 import datetime
-import influxdb.exceptions
 import json
 import redis
 import requests
 import time
-
-
-class DateTimeEncoder(json.JSONEncoder):
-
-    def default(self, o):
-        if isinstance(o, datetime.datetime):
-            return o.isoformat()
-
-        return json.JSONEncoder.default(self, o)
 
 
 class Command(BaseCommand):
@@ -74,7 +63,7 @@ class Command(BaseCommand):
                     timestamp = parse_datetime(obs["time"])
                     influx_datapoints.append({
                         "measurement": "weather_observations",
-                        "time": timestamp,
+                        "time": timestamp.isoformat(),
                         "tags": {
                             "location": obs["stationname"],
                         },
@@ -92,12 +81,4 @@ class Command(BaseCommand):
                         }
                     })
         if len(influx_datapoints) > 0:
-            redis_instance.publish(
-                "influx-update-pubsub", json.dumps(influx_datapoints, cls=DateTimeEncoder))
-            influx_client = InfluxDBClient(
-                "localhost", 8086, "root", "root", "home")
-            try:
-                influx_client.create_database("home")
-            except influxdb.exceptions.InfluxDBClientError:
-                pass
-            influx_client.write_points(influx_datapoints)
+            redis_instance.publish("influx-update-pubsub", json.dumps(influx_datapoints))

@@ -8,7 +8,7 @@ import json
 class DustNode(SensorConsumerBase):
 
     def __init__(self):
-        SensorConsumerBase.__init__(self, "home")
+        SensorConsumerBase.__init__(self)
 
     def run(self):
         self.subscribe("dust-node-pubsub", self.pubsub_callback)

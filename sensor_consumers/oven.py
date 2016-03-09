@@ -8,7 +8,7 @@ import sys
 class Oven(SensorConsumerBase):
 
     def __init__(self):
-        SensorConsumerBase.__init__(self, "home")
+        SensorConsumerBase.__init__(self)
         self.notification_visible = False
 
     def run(self):

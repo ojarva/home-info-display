@@ -24,7 +24,7 @@ def listen_kettle_commands(queue):
 class KettleCommunication(SensorConsumerBase):
 
     def __init__(self, commands_queue, update_queue):
-        SensorConsumerBase.__init__(self, "home")
+        SensorConsumerBase.__init__(self)
         self.commands_queue = commands_queue
         self.update_queue = update_queue
         self.r = redis.StrictRedis()

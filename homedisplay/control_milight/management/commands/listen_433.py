@@ -1,7 +1,6 @@
 from control_milight.utils import process_automatic_trigger
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from influxdb import InfluxDBClient
 import datetime
 import json
 import logging
@@ -10,15 +9,6 @@ import serial
 import time
 
 logger = logging.getLogger("%s.%s" % ("homecontroller", __name__))
-
-
-class DateTimeEncoder(json.JSONEncoder):
-
-    def default(self, o):
-        if isinstance(o, datetime.datetime):
-            return o.isoformat()
-
-        return json.JSONEncoder.default(self, o)
 
 
 class Command(BaseCommand):
@@ -30,8 +20,6 @@ class Command(BaseCommand):
         queue = []
         slow_queue = []
         redis_instance = redis.StrictRedis()
-        influx_client = InfluxDBClient(
-            "localhost", 8086, "root", "root", "home")
 
         def execute_queue():
             # Run items with changes first. Reads more items if anything is
@@ -93,13 +81,7 @@ class Command(BaseCommand):
                             "triggered": True,
                         },
                     }]
-                    redis_instance.publish(
-                        "influx-update-pubsub", json.dumps(data, cls=DateTimeEncoder))
-                    try:
-                        influx_client.write_points(data)
-                    except Exception as err:
-                        logger.info(
-                            "Pushing to influxdb failed: %s. Ignoring." % err)
+                    redis_instance.publish("influx-update-pubsub", json.dumps(data))
                     should_execute_something = process_automatic_trigger(
                         item_name, False)
                     sent_event_map[item_name] = time.time()
