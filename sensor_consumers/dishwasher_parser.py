@@ -40,8 +40,8 @@ class DishwasherParser(object):
             ("prewash", datetime.timedelta(minutes=14, seconds=19)),
             ("washing-1", datetime.timedelta(minutes=14, seconds=46)),
             ("mid-washing", datetime.timedelta(minutes=20, seconds=23)),
-            ("washing-2", datetime.timedelta(minutes=15, seconds=04)),
-            ("finishing", datetime.timedelta(minutes=5, seconds=00)),
+            ("washing-2", datetime.timedelta(minutes=15, seconds=4)),
+            ("finishing", datetime.timedelta(minutes=5, seconds=0)),
             ("cooling", datetime.timedelta(minutes=21, seconds=8))
         ],
         "prewash": [
@@ -93,7 +93,7 @@ class DishwasherParser(object):
         if self.current_phase is not None:
             possible_transitions = self.STATE_TRANSITIONS[self.current_phase]
             if phase not in possible_transitions:
-                print "Invalid transition from %s to %s. Only %s are allowed" % (self.current_phase, phase, possible_transitions)
+                print("Invalid transition from %s to %s. Only %s are allowed" % (self.current_phase, phase, possible_transitions))
                 raise ValueError
         self.current_phase = phase
         self.running_or_finished_phases.append(phase)
@@ -157,7 +157,7 @@ class DishwasherParser(object):
         if value > 2:
             if self.running_since is None:
                 if self.single_run_testing and self.start_detected:
-                    print "Single run testing enabled but duplicate start detected"
+                    print("Single run testing enabled but duplicate start detected")
                     assert False
                 self.start_detected = True
                 self.set_phase("starting", timestamp)
@@ -211,17 +211,17 @@ class DishwasherParser(object):
                         minutes=3)
                 if time_diff > last_noise_exceeded_threshold:
                     if not self.last_prewash_exceeded:
-                        print "Noise or interrupted - dishwasher didn't run."
+                        print("Noise or interrupted - dishwasher didn't run.")
                         data = copy.deepcopy(self.get_data(timestamp))
                         self.reset()
                         data["exc"] = "noise_or_interrupted"
                     else:
-                        print "Non-running period exceeded"
+                        print("Non-running period exceeded")
                         self.set_phase("finished", timestamp)
                         if "washing-2" not in self.running_or_finished_phases and "prewash" in self.running_or_finished_phases:
                             self.current_program = set(["prewash"])
 
-                        print "running time was from %s to %s: %s - active time until %s: %s" % (self.running_since, timestamp, timestamp - self.running_since, self.last_noise_exceeded, self.last_noise_exceeded - self.running_since)
+                        print("running time was from %s to %s: %s - active time until %s: %s" % (self.running_since, timestamp, timestamp - self.running_since, self.last_noise_exceeded, self.last_noise_exceeded - self.running_since))
                         for i in range(0, len(self.phases)):
                             phase = self.phases[i]
                             if i < len(self.phases) - 1:
@@ -230,9 +230,8 @@ class DishwasherParser(object):
                             else:
                                 diff = None
                             phase["diff"] = diff
-                            print "%s - %s" % (phase["phase"], diff)
-                        print self.current_program
-                        print
+                            print("%s - %s" % (phase["phase"], diff))
+                        print(self.current_program)
                         data = copy.deepcopy(self.get_data(timestamp))
                         self.reset()
 
@@ -257,13 +256,13 @@ def main():
 
     def print_stats(stats):
         for program in stats:
-            print
-            print program
+            print()
+            print(program)
             for phase in stats[program]:
                 diff_sum = datetime.timedelta(0)
                 for diff in stats[program][phase]:
                     diff_sum += diff
-                print "%s: %s" % (phase, diff_sum / len(stats[program][phase]))
+                print("%s: %s" % (phase, diff_sum / len(stats[program][phase])))
 
     stats = {}
     for filename in glob.glob("../datasets/dishwasher_*.json"):
@@ -271,7 +270,7 @@ def main():
         program = get_program(filename)
         if program not in stats:
             stats[program] = {}
-        print filename
+        print(filename)
         content = json.load(open(filename))
         series = content["results"][0]["series"][0]["values"]
         latest_data = None
@@ -280,7 +279,7 @@ def main():
             data = parser.add_value(timestamp, value)
             if data is not None and data["current_phase"] is not None:
                 latest_data = data
-        print latest_data
+        print(latest_data)
         if latest_data:
             assert program in latest_data["current_program"]
             if program in ("quick", "prewash"):

@@ -1,14 +1,15 @@
 # coding=utf-8
 
 from utils import SensorConsumerBase
-import sys
 import json
+import os
+import sys
 
 
 class DustNode(SensorConsumerBase):
 
-    def __init__(self):
-        SensorConsumerBase.__init__(self)
+    def __init__(self, redis_host, redis_port):
+        SensorConsumerBase.__init__(self, redis_host=redis_host, redis_port=redis_port)
 
     def run(self):
         self.subscribe("dust-node-pubsub", self.pubsub_callback)
@@ -42,7 +43,9 @@ class DustNode(SensorConsumerBase):
 
 
 def main():
-    item = DustNode()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    item = DustNode(redis_host, redis_port)
     item.run()
     return 0
 

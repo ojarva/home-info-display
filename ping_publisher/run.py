@@ -1,17 +1,19 @@
-from local_settings import *
 from setproctitle import setproctitle
 import json
+import os
 import re
 import redis
 import subprocess
 import time
 
 
+# TODO: destination
+
 class PingRunner(object):
     PARSER = re.compile(".*: \[([0-9]+)\], .*bytes, ([0-9\.]+) ms.*")
 
-    def __init__(self):
-        self.redis_instance = redis.StrictRedis()
+    def __init__(self, redis_host, redis_port):
+        self.redis_instance = redis.StrictRedis(host=redis_host, port=redis_port)
         self.counter = 0
         self.current_responses = []
 
@@ -47,7 +49,9 @@ class PingRunner(object):
 
 def main():
     setproctitle("ping_publisher: run")
-    pr = PingRunner()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    pr = PingRunner(redis_host, redis_port)
     pr.run()
 
 if __name__ == '__main__':

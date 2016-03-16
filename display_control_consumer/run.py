@@ -1,5 +1,6 @@
 from setproctitle import setproctitle
 import json
+import os
 import redis
 import subprocess
 import time
@@ -8,8 +9,8 @@ import time
 class DisplayControlConsumer(object):
     STEP = 0.05
 
-    def __init__(self):
-        self.redis_instance = redis.StrictRedis()
+    def __init__(self, redis_host, redis_port):
+        self.redis_instance = redis.StrictRedis(host=redis_host, port=redis_port)
         self.env = {"DISPLAY": ":0"}
 
     def get_brightness(self):
@@ -21,8 +22,7 @@ class DisplayControlConsumer(object):
                 return float(line.strip().split(": ")[1])
 
     def set_brightness(self, brightness):
-        p = subprocess.Popen(["xrandr", "--q1", "--output", "HDMI-0",
-                              "--brightness", unicode(brightness)], env=self.env)
+        p = subprocess.Popen(["xrandr", "--q1", "--output", "HDMI-0", "--brightness", brightness], env=self.env)
         p.wait()
         self.redis_instance.setex("display-control-brightness", 60, brightness)
 
@@ -32,7 +32,7 @@ class DisplayControlConsumer(object):
         self.run_single_instance()
         pubsub = self.redis_instance.pubsub()
         pubsub.subscribe("display-control-set-brightness")
-        for item in pubsub.listen():
+        for _ in pubsub.listen():
             # Only poll redis after triggered with pubsub
             self.run_single_instance()
 
@@ -57,18 +57,18 @@ class DisplayControlConsumer(object):
             if current_brightness > destination_brightness:
                 # Decrease brightness. Current brightness is too large.
                 new_brightness = current_brightness - self.STEP
-                print "Decreasing brightness: %s (-> %s, currently at %s)" % (new_brightness, destination_brightness, current_brightness)
+                print("Decreasing brightness: %s (-> %s, currently at %s)" % (new_brightness, destination_brightness, current_brightness))
                 if new_brightness < destination_brightness:
                     # Wrapped around: new brightness is smaller than
                     # destination brightness.; no action
-                    print "Brightness wrapped around"
+                    print("Brightness wrapped around")
                     self.redis_instance.delete(
                         "display-control-destination-brightness")
                     return
             elif current_brightness < destination_brightness:
                 # Increase brightness
                 new_brightness = current_brightness + self.STEP
-                print "Increasing brightness: %s (-> %s, currently at %s)" % (new_brightness, destination_brightness, current_brightness)
+                print("Increasing brightness: %s (-> %s, currently at %s)" % (new_brightness, destination_brightness, current_brightness))
 
                 if new_brightness > destination_brightness:
                     # Wrapped around; no action
@@ -80,7 +80,7 @@ class DisplayControlConsumer(object):
                 self.redis_instance.delete(
                     "display-control-destination-brightness")
                 return
-            print "Setting brightness to %s (destination: %s)" % (new_brightness, destination_brightness)
+            print("Setting brightness to %s (destination: %s)" % (new_brightness, destination_brightness))
             self.set_brightness(new_brightness)
             self.redis_instance.publish("home:broadcast:generic", json.dumps(
                 {"key": "display_brightness", "content": new_brightness}))
@@ -88,7 +88,9 @@ class DisplayControlConsumer(object):
 
 def main():
     setproctitle("display_control_consumer: run")
-    dcc = DisplayControlConsumer()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    dcc = DisplayControlConsumer(redis_host, redis_port)
     dcc.run()
 
 if __name__ == '__main__':

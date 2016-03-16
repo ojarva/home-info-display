@@ -2,13 +2,14 @@
 
 from utils import SensorConsumerBase
 import datetime
+import os
 import sys
 
 
 class Oven(SensorConsumerBase):
 
-    def __init__(self):
-        SensorConsumerBase.__init__(self)
+    def __init__(self, redis_host, redis_port):
+        SensorConsumerBase.__init__(self, redis_host=redis_host, redis_port=redis_port)
         self.notification_visible = False
 
     def run(self):
@@ -19,16 +20,16 @@ class Oven(SensorConsumerBase):
             return
         temperature = round(data["data"]["oven_temperature"], 1)
         if 0 > temperature or temperature > 400:
-            print "Invalid value for oven temperature: %s. Setting to null" % temperature
+            print("Invalid value for oven temperature: %s. Setting to null" % temperature)
             temperature = None
         room_temperature = round(data["data"]["room_temperature"], 1)
         outside_box_room_temperature = round(
             data["data"]["outside_box_temperature"], 1)
         if 0 > room_temperature or room_temperature > 40:
-            print "Invalid value for room temperature (sensor calibration): %s. Setting to null." % room_temperature
+            print("Invalid value for room temperature (sensor calibration): %s. Setting to null." % room_temperature)
             room_temperature = None
         if 0 > outside_box_room_temperature or outside_box_room_temperature > 40:
-            print "Invalid value for room temperature (outside of the box): %s. Setting to null." % outside_box_room_temperature
+            print("Invalid value for room temperature (outside of the box): %s. Setting to null." % outside_box_room_temperature)
             outside_box_room_temperature = None
 
         self.insert_into_influx([{
@@ -56,7 +57,9 @@ class Oven(SensorConsumerBase):
 
 
 def main():
-    item = Oven()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    item = Oven(redis_host, redis_port)
     item.run()
     return 0
 

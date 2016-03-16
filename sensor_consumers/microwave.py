@@ -2,6 +2,7 @@
 
 from utils import SensorConsumerBase
 import datetime
+import os
 import sys
 
 
@@ -20,7 +21,7 @@ class MicrowaveState(object):
         self.light_on = False
 
     def print_state(self):
-        print "door_open=%s, running=%s, light_on=%s, stuff_inside=%s, last_used_at=%s, on_since=%s, total_time_running=%s" % (self.door_open, self.running, self.light_on, self.stuff_inside, self.last_used_at, self.on_since, self.total_time_running)
+        print("door_open=%s, running=%s, light_on=%s, stuff_inside=%s, last_used_at=%s, on_since=%s, total_time_running=%s" % (self.door_open, self.running, self.light_on, self.stuff_inside, self.last_used_at, self.on_since, self.total_time_running))
 
     def set_door_open(self):
         self.set_stopped()
@@ -78,8 +79,8 @@ class MicrowaveState(object):
 
 class Microwave(SensorConsumerBase):
 
-    def __init__(self):
-        SensorConsumerBase.__init__(self)
+    def __init__(self, redis_host, redis_port):
+        SensorConsumerBase.__init__(self, redis_host=redis_host, redis_port=redis_port)
         self.state = MicrowaveState()
         self.delete_notification("microwave")
         self.notification_visible = False
@@ -103,7 +104,7 @@ class Microwave(SensorConsumerBase):
 
         power_consumption = round(data["data"]["power_consumption"], 3) * 230
         if 0 > power_consumption or power_consumption > 3000:
-            print "Invalid power consumption for microwave: %s. Setting to null." % power_consumption
+            print("Invalid power consumption for microwave: %s. Setting to null." % power_consumption)
             power_consumption = None
 
         door_open = int(data["data"]["door"]) == 1
@@ -164,7 +165,9 @@ class Microwave(SensorConsumerBase):
 
 
 def main():
-    item = Microwave()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    item = Microwave(redis_host, redis_port)
     item.run()
     return 0
 

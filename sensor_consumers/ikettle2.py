@@ -108,7 +108,7 @@ def main(ip):
     for _ in range(1, 10000):
         data = kettle.read()
         if len(data) > 0:
-            print data
+            print(data)
         time.sleep(0.1)
     kettle.disconnect()
 

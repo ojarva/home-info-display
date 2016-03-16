@@ -1,13 +1,14 @@
 # coding=utf-8
 
 from utils import SensorConsumerBase
+import os
 import sys
 
 
 class Bathroom(SensorConsumerBase):
 
-    def __init__(self):
-        SensorConsumerBase.__init__(self)
+    def __init__(self, redis_host, redis_port):
+        SensorConsumerBase.__init__(self, redis_host=redis_host, redis_port=redis_port)
 
     def run(self):
         self.subscribe("bathroom-pubsub", self.pubsub_callback)
@@ -45,7 +46,9 @@ class Bathroom(SensorConsumerBase):
 
 
 def main():
-    item = Bathroom()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    item = Bathroom(redis_host, redis_port)
     item.run()
     return 0
 

@@ -1,16 +1,25 @@
+from setproctitle import setproctitle
+import datetime
 import json
+import os
 import redis
 import serial
 import time
-import datetime
-from setproctitle import setproctitle
-from local_settings import *
 
 
 class IndoorAirQualitySerial:
-    def __init__(self):
-        self.redis_instance = redis.StrictRedis()
-        self.serial = serial.Serial(SERIAL_DEVICE, 9600)
+    INPUT_MAP = {
+        "14": "mq-3",
+        "15": "mq-2",
+        "16": "mq-9",
+        "17": "aq",
+        "20": "mq-5",
+        "21": "hcho",
+    }
+
+    def __init__(self, serial_device, redis_host, redis_port):
+        self.redis_instance = redis.StrictRedis(host=redis_host, port=redis_port)
+        self.serial = serial.Serial(serial_device, 9600)
 
     def run(self):
         influx_fields = {}
@@ -18,14 +27,14 @@ class IndoorAirQualitySerial:
         while True:
             current_time = datetime.datetime.utcnow()
             line = self.serial.readline().strip()
-            print "Received '%s'" % line
+            print("Received '%s'" % line)
             line = line.strip().split(":")
             if len(line) != 2:
                 continue
             try:
-                k = INPUT_MAP[line[0]]
+                k = self.INPUT_MAP[line[0]]
             except KeyError:
-                print "Invalid key: %s" % line[0]
+                print("Invalid key: %s" % line[0])
                 continue
             influx_fields[k] = round(float(line[1]), 1)
             if time.time() - last_updated_at > 10:
@@ -46,7 +55,10 @@ class IndoorAirQualitySerial:
 
 def main():
     setproctitle("indoor_air_quality - serial: run")
-    iqps = IndoorAirQualitySerial()
+    serial_device = os.environ["SERIAL_DEVICE"]
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    iqps = IndoorAirQualitySerial(serial_device, redis_host, redis_port)
     iqps.run()
 
 if __name__ == '__main__':

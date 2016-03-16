@@ -1,0 +1,6 @@
+ecdsa==0.13
+hiredis==0.2.0
+paramiko==1.16.0
+pycrypto==2.6.1
+redis==2.10.5
+setproctitle==1.1.9

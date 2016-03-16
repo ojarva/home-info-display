@@ -1,14 +1,15 @@
 # coding=utf-8
 
 from utils import SensorConsumerBase
-import sys
 import datetime
+import os
+import sys
 
 
 class Door(SensorConsumerBase):
 
-    def __init__(self):
-        SensorConsumerBase.__init__(self)
+    def __init__(self, redis_host, redis_port):
+        SensorConsumerBase.__init__(self, redis_host=redis_host, redis_port=redis_port)
         self.notification = None
         self.delete_notification("door")
         self.door_open_elapsed_since = None
@@ -50,7 +51,9 @@ class Door(SensorConsumerBase):
 
 
 def main():
-    item = Door()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    item = Door(redis_host, redis_port)
     item.run()
     return 0
 

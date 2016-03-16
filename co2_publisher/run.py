@@ -1,14 +1,15 @@
-from local_settings import *
 from setproctitle import setproctitle
 import json
 import redis
 import time
 import datetime
+import os
 
 
 class IndoorQualityPublisher(object):
-    def __init__(self):
-        self.redis_instance = redis.StrictRedis()
+    def __init__(self, co2_file, redis_host, redis_port):
+        self.co2_file = co2_file
+        self.redis_instance = redis.StrictRedis(host=redis_host, port=redis_port)
 
     @classmethod
     def read_value(cls, filename):
@@ -21,7 +22,7 @@ class IndoorQualityPublisher(object):
     def run(self):
         while True:
             now = datetime.datetime.utcnow().isoformat() + "Z"
-            co2 = self.read_value(CO2_FILE)
+            co2 = self.read_value(self.co2_file)
             influx_data = {
                 "measurement": "indoor_air_quality",
                 "time": now,
@@ -42,7 +43,10 @@ class IndoorQualityPublisher(object):
 
 def main():
     setproctitle("indoor_quality_publisher: run")
-    iqp = IndoorQualityPublisher()
+    co2_file = os.environ["CO2_FILE"]
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    iqp = IndoorQualityPublisher(co2_file, redis_host, redis_port)
     iqp.run()
 
 if __name__ == '__main__':

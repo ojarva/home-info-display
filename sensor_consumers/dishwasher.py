@@ -4,6 +4,7 @@ from dishwasher_parser import DishwasherParser
 from utils import SensorConsumerBase
 import base64
 import datetime
+import os
 import pickle
 import redis
 import requests.exceptions
@@ -23,8 +24,8 @@ class Dishwasher(SensorConsumerBase):
         "cooling": "jäähdytys"
     }
 
-    def __init__(self):
-        SensorConsumerBase.__init__(self)
+    def __init__(self, redis_host, redis_port):
+        SensorConsumerBase.__init__(self, redis_host=redis_host, redis_port=redis_port)
         self.running_dialog_visible = False
         self.finished_dialog_visible = False
         self.dishwasher_parser = DishwasherParser()
@@ -32,12 +33,12 @@ class Dishwasher(SensorConsumerBase):
         state = self.redis.get("dishwasher-parser-state")
         if state:
             state = pickle.loads(base64.b64decode(state))
-            print "Restoring state from redis"
+            print("Restoring state from redis")
             self.dishwasher_parser.load_state(state)
         try:
             self.delete_notification("dishwasher")
         except requests.exceptions.ConnectionError as err:
-            print "Initial deleting of notifications failed. Sleep 10s before exiting."
+            print("Initial deleting of notifications failed. Sleep 10s before exiting.")
             time.sleep(10)
             raise err
 
@@ -66,7 +67,7 @@ class Dishwasher(SensorConsumerBase):
 
         power_consumption = round(data["data"]["power_consumption"] * 230, 2)
         if 0 > power_consumption or power_consumption > 3000:
-            print "Invalid power consumption for dishwasher: %s. Setting to null." % power_consumption
+            print("Invalid power consumption for dishwasher: %s. Setting to null." % power_consumption)
             power_consumption = None
 
         temperature1 = round(data["data"]["temperature1"], 1)
@@ -124,7 +125,7 @@ class Dishwasher(SensorConsumerBase):
                     "dishwasher", message, True, from_now_timestamp=datetime.datetime.now())
                 self.play_sound("finished")
             elif parser_data.get("exc") == "noise_or_interrupted":
-                print "Noise or interrupted run - remove incorrect dialog (if exists)"
+                print("Noise or interrupted run - remove incorrect dialog (if exists)")
                 if self.running_dialog_visible:
                     self.delete_notification("dishwasher")
                     self.running_dialog_visible = False
@@ -154,7 +155,9 @@ class Dishwasher(SensorConsumerBase):
 
 
 def main():
-    item = Dishwasher()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    item = Dishwasher(redis_host, redis_port)
     item.run()
     return 0
 

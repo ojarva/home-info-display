@@ -50,8 +50,8 @@ class NotificationConfig(object):
 
 class SensorConsumerBase(object):
 
-    def __init__(self):
-        self.redis_instance = redis.StrictRedis()
+    def __init__(self, **kwargs):
+        self.redis_instance = redis.StrictRedis(host=kwargs.get("redis_host", "localhost"), port=kwargs.get("redis_port", 6379))
         self.notification_data = None
         self.avg_data = {}
         self.avg_config = {}
@@ -60,7 +60,7 @@ class SensorConsumerBase(object):
         pubsub = self.redis_instance.pubsub(ignore_subscribe_messages=True)
         pubsub.subscribe(channel)
         for message in pubsub.listen():
-            print "Got '%s'" % message
+            print("Got '%s'" % message)
             data = json.loads(message["data"])
             if "timestamp" in data:
                 timestamp = data["timestamp"]
@@ -90,15 +90,15 @@ class SensorConsumerBase(object):
                     "elapsed_since": elapsed_since, "from_now_timestamp": from_now_timestamp, "level": level}
             try:
                 resp = requests.post(url, data=data)
-                print "Creating %s (%s, %s): %s - %s, args=%s" % (item_type, description, can_dismiss, resp.status_code, resp.content, kwargs)
+                print("Creating %s (%s, %s): %s - %s, args=%s" % (item_type, description, can_dismiss, resp.status_code, resp.content, kwargs))
                 return True
             except requests.exceptions.ConnectionError as err:
-                print "Creating a new notification failed: %s - %s: %s. %s/5" % (url, data, err, i)
+                print("Creating a new notification failed: %s - %s: %s. %s/5" % (url, data, err, i))
                 time.sleep(1)
         raise err
 
     def play_sound(self, sound):
-        print "Playing sound: {}".format(sound)
+        print("Playing sound: {}".format(sound))
         self.redis_instance.publish("sound-notification", json.dumps(
             {"type": sound, "timestamp": str(datetime.datetime.now())}))
 
@@ -107,10 +107,10 @@ class SensorConsumerBase(object):
             url = BASE_URL + "notifications/delete/" + item_type
             try:
                 resp = requests.delete(url)
-                print "Deleting %s: %s" % (item_type, resp.status_code)
+                print("Deleting %s: %s" % (item_type, resp.status_code))
                 return True
             except requests.exceptions.ConnectionError as err:
-                print "Connecting to %s failed: %s. %s/5" % (url, err, i)
+                print("Connecting to %s failed: %s. %s/5" % (url, err, i))
                 time.sleep(1)
         raise err
 
@@ -126,7 +126,7 @@ class SensorConsumerBase(object):
             try:
                 self.delete_notification(config["notification"])
             except requests.exceptions.ConnectionError as err:
-                print "Deleting %s failed with %s. Sleeping 10s before exiting." % (config["notification"], err)
+                print("Deleting %s failed with %s. Sleeping 10s before exiting." % (config["notification"], err))
                 time.sleep(10)
                 raise err
 
@@ -159,7 +159,7 @@ class SensorConsumerBase(object):
                             notification_config.activate(level)
                             earlier_active = True
                         else:
-                            print "Activating {level} is delayed".format(level=level)
+                            print("Activating {level} is delayed".format(level=level))
                     else:
                         notification_config.activate(level)
                         earlier_active = True
@@ -183,10 +183,10 @@ class SensorConsumerBase(object):
                     if "escalate" in config[level]:
                         time_diff = datetime.datetime.now(
                         ) - notification_data[level]["active-since"]
-                        print "Escalation: time_diff={time_diff}, escalate={escalate}".format(time_diff=time_diff, escalate=config[level]["escalate"])
+                        print("Escalation: time_diff={time_diff}, escalate={escalate}".format(time_diff=time_diff, escalate=config[level]["escalate"]))
                         if time_diff > config[level]["escalate"]:
                             next_level = notification_levels[i + 1]
-                            print "Escalating {from_level} to {to_level}".format(from_level=level, to_level=next_level)
+                            print("Escalating {from_level} to {to_level}".format(from_level=level, to_level=next_level))
                             notification_config.escalated(level, next_level)
                             continue
 
@@ -202,7 +202,7 @@ class SensorConsumerBase(object):
                         message = config["message"]
                     message_level = level
                     if level == "urgent":  # TODO
-                        print "Level is urgent -> convert to high"
+                        print("Level is urgent -> convert to high")
                         message_level = "high"
                     notification_meta = {"level": message_level, "message": message.format(value=point), "user_dismissable": False, "elapsed_since": notification_data[
                         level]["triggered-since"], "notification": config["notification"]}
@@ -214,10 +214,10 @@ class SensorConsumerBase(object):
                     if "sound" in config[level]:
                         time_diff = datetime.datetime.now(
                         ) - notification_data[level]["active-since"]
-                        print "Sound: time_diff={}".format(time_diff)
+                        print("Sound: time_diff={}".format(time_diff))
                         if time_diff > config[level]["sound"] and not notification_data[level]["sound-played"]:
                             notification_data[level]["sound-played"] = True
-                            print "Playing sound triggered by {} - {}".format(notification_config.notification, level)
+                            print("Playing sound triggered by {} - {}".format(notification_config.notification, level))
                             self.play_sound("finished")
                     break
             else:

@@ -3,6 +3,7 @@ from utils import SensorConsumerBase
 import datetime
 import ikettle2
 import json
+import os
 import redis
 import socket
 import sys
@@ -14,7 +15,7 @@ def listen_kettle_commands(queue):
     pubsub = r.pubsub()
     pubsub.subscribe("kettle-commands")
     for item in pubsub.listen():
-        print "Received %s" % item
+        print("Received %s" % item)
         if isinstance(item, dict):
             if isinstance(item["data"], str):
                 item = json.loads(item["data"])
@@ -23,8 +24,8 @@ def listen_kettle_commands(queue):
 
 class KettleCommunication(SensorConsumerBase):
 
-    def __init__(self, commands_queue, update_queue):
-        SensorConsumerBase.__init__(self)
+    def __init__(self, commands_queue, update_queue, redis_host, redis_port):
+        SensorConsumerBase.__init__(self, redis_host=redis_host, redis_port=redis_port)
         self.commands_queue = commands_queue
         self.update_queue = update_queue
         self.r = redis.StrictRedis()
@@ -68,11 +69,11 @@ class KettleCommunication(SensorConsumerBase):
 
         diff = self.boil_to - latest_temperature
         if diff < 0:
-            print "diff is %s" % diff
+            print("diff is %s" % diff)
             return None
         eta = diff * delta_per_second
         if eta > 300:
-            print "eta is %s" % eta
+            print("eta is %s" % eta)
             return None
         self.eta.append(eta)
         self.eta = self.eta[-5:]
@@ -83,8 +84,8 @@ class KettleCommunication(SensorConsumerBase):
         try:
             self.kettle.connect()
         except socket.error as err:
-            print "Connecting to kettle failed with %s" % err
-            print "Terminating redis listener"
+            print("Connecting to kettle failed with %s" % err)
+            print("Terminating redis listener")
             self.update_queue.put({"fail": "connection"})
             return
 
@@ -163,13 +164,13 @@ class KettleCommunication(SensorConsumerBase):
     def process_command(self, command):
         if command.get("on"):
             if self.latest_status is None:
-                print "Can't turn on - no status information available"
+                print("Can't turn on - no status information available")
                 return
             if not self.latest_status["present"]:
-                print "Can't turn on - kettle is not on the base"
+                print("Can't turn on - kettle is not on the base")
                 return
             if self.latest_status["water_level"] < 0.1:
-                print "Can't turn on - not enough water"
+                print("Can't turn on - not enough water")
                 return
             destination_temperature = command.get("on", 100)
             self.boil_to = destination_temperature
@@ -179,18 +180,22 @@ class KettleCommunication(SensorConsumerBase):
             self.kettle.off()
 
 
-def run_kettle_socket(commands_queue, update_queue):
-    kettle_communication = KettleCommunication(commands_queue, update_queue)
+def run_kettle_socket(commands_queue, update_queue, redis_host, redis_port):
+    kettle_communication = KettleCommunication(commands_queue, update_queue, redis_host, redis_port)
     kettle_communication.run()
 
 
 class Kettle(object):
 
+    def __init__(self, redis_host, redis_port):
+        self.redis_host = redis_host
+        self.redis_port = redis_port
+
     @classmethod
     def terminate(cls, *args):
         for item in args:
             item.terminate()
-        print "Waiting 10s before exiting"
+        print("Waiting 10s before exiting")
         time.sleep(10)
         sys.exit(1)
 
@@ -203,13 +208,13 @@ class Kettle(object):
         p_commands.start()
 
         p_socket = Process(target=run_kettle_socket,
-                           args=(commands_queue, update_queue))
+                           args=(commands_queue, update_queue, self.redis_host, self.redis_port))
         p_socket.start()
 
         last_update_at = datetime.datetime.now()
         while True:
             if datetime.datetime.now() - last_update_at > datetime.timedelta(seconds=30):
-                print "Watchdog exceeded. Terminating"
+                print("Watchdog exceeded. Terminating")
                 self.terminate(p_commands, p_socket)
             time.sleep(0.2)
             try:
@@ -217,14 +222,16 @@ class Kettle(object):
             except:
                 continue
             if status.get("fail"):
-                print "Failed with %s. Terminating." % status.get("fail")
+                print("Failed with %s. Terminating." % status.get("fail"))
                 self.terminate(p_commands, p_socket)
             if status.get("success"):
                 last_update_at = datetime.datetime.now()
 
 
 def main():
-    kettle = Kettle()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    kettle = Kettle(redis_host, redis_port)
     kettle.run()
 
 if __name__ == '__main__':

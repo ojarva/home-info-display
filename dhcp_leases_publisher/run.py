@@ -1,29 +1,24 @@
 from setproctitle import setproctitle
 import json
-import local_settings
 import paramiko
-import re
 import redis
-import subprocess
 import time
+import os
 
 
 class DhcpLeasesPublisher(object):
 
-    def __init__(self):
-        self.redis_instance = redis.StrictRedis()
+    def __init__(self, server_ip, username, password, redis_host="localhost", redis_port=6379):
+        self.redis_instance = redis.StrictRedis(host=redis_host, port=redis_port)
         self.client = paramiko.client.SSHClient()
-        self.client.load_system_host_keys()
-        self.client.connect(local_settings.DHCP_SERVER_IP, username=local_settings.DHCP_SERVER_USERNAME,
-                            password=local_settings.DHCP_SERVER_PASSWORD)
+        self.client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        self.client.connect(server_ip, username=username, password=password)
 
     def poll_dhcp_leases(self):
-        stdin, stdout, stderr = self.client.exec_command(
-            "cat /var/run/dhcpd.leases")
+        _, stdout, _ = self.client.exec_command("cat /var/run/dhcpd.leases")
         publish_data = {"devices": {}, "stats": {}}
         item_data = {}
         for line in stdout:
-
             data = line.strip()
             if data.startswith("#"):
                 # Skip comment lines
@@ -48,8 +43,7 @@ class DhcpLeasesPublisher(object):
         if "mac" in item_data:
             publish_data["devices"][item_data["mac"]] = item_data
 
-        stdin, stdout, stderr = self.client.exec_command(
-            "sudo cat /config/config.boot")
+        _, stdout, _ = self.client.exec_command("sudo cat /config/config.boot")
         hostname = ip_address = mac_address = None
         block_open = False
         for line in stdout:
@@ -80,7 +74,12 @@ class DhcpLeasesPublisher(object):
 
 def main():
     setproctitle("dhcp_leases_publisher: run")
-    dlp = DhcpLeasesPublisher()
+    server_ip = os.environ["SERVER_IP"]
+    username = os.environ["SERVER_USERNAME"]
+    password = os.environ["SERVER_PASSWORD"]
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    dlp = DhcpLeasesPublisher(server_ip, username, password, redis_host, redis_port)
     dlp.run()
 
 if __name__ == '__main__':

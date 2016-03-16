@@ -2,6 +2,7 @@
 
 from utils import SensorConsumerBase
 import datetime
+import os
 import sys
 
 
@@ -79,15 +80,15 @@ class FridgeInside(SensorConsumerBase):
         },
     }
 
-    def __init__(self):
-        SensorConsumerBase.__init__(self)
+    def __init__(self, redis_host, redis_port):
+        SensorConsumerBase.__init__(self, redis_host=redis_host, redis_port=redis_port)
         self.initialize_notifications(self.THRESHOLD_CONFIG)
 
     def run(self):
         self.subscribe("fridge-inside-pubsub", self.pubsub_callback)
 
     def pubsub_callback(self, data):
-        print "Received %s" % data
+        print("Received %s" % data)
         if "action" in data:
             if data["action"] == "user_dismissed":
                 pass
@@ -107,7 +108,9 @@ class FridgeInside(SensorConsumerBase):
 
 
 def main():
-    item = FridgeInside()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    item = FridgeInside(redis_host, redis_port)
     item.run()
     return 0
 

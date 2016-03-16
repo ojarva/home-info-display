@@ -2,6 +2,7 @@
 
 from utils import SensorConsumerBase
 import datetime
+import os
 import sys
 
 
@@ -60,8 +61,8 @@ class Freezer(SensorConsumerBase):
         }
     }
 
-    def __init__(self):
-        SensorConsumerBase.__init__(self)
+    def __init__(self, redis_host, redis_port):
+        SensorConsumerBase.__init__(self, redis_host=redis_host, redis_port=redis_port)
         self.initialize_notifications(self.THRESHOLD_CONFIG)
 
     def run(self):
@@ -74,15 +75,15 @@ class Freezer(SensorConsumerBase):
         door_open = int(data["data"]["door"]) == 0
         power_consumption = round(data["data"]["power_consumption"] * 230, 2)
         if 0 > power_consumption or power_consumption > 3000:
-            print "Invalid power consumption for freezer: %s. Setting to null." % (power_consumption)
+            print("Invalid power consumption for freezer: %s. Setting to null." % (power_consumption))
             power_consumption = None
         temperature1 = round(data["data"]["temperature1"], 1)
         temperature2 = round(data["data"]["temperature2"], 1)
         if -35 > temperature1 or temperature1 > 40:
-            print "Invalid value for temperature1: %s. Setting to null." % temperature1
+            print("Invalid value for temperature1: %s. Setting to null." % temperature1)
             temperature1 = None
         if -35 > temperature2 or temperature2 > 40:
-            print "Invalid value for temperature2: %s. Setting to null." % temperature2
+            print("Invalid value for temperature2: %s. Setting to null." % temperature2)
             temperature2 = None
 
         processed_data = {
@@ -106,7 +107,9 @@ class Freezer(SensorConsumerBase):
 
 
 def main():
-    item = Freezer()
+    redis_host = os.environ["REDIS_HOST"]
+    redis_port = os.environ["REDIS_PORT"]
+    item = Freezer(redis_host, redis_port)
     item.run()
     return 0
 
