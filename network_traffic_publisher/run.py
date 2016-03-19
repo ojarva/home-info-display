@@ -1,11 +1,11 @@
 from setproctitle import setproctitle
+import datetime
 import json
-import local_settings
+import nettraffic
+import os
+import pprint
 import redis
 import time
-import nettraffic
-import datetime
-import pprint
 
 
 class NetworkStatusPublisher(object):
@@ -49,7 +49,7 @@ class NetworkStatusPublisher(object):
 
 
 def main():
-    setproctitle("network_traffic_publisher: run")
+    setproctitle("network-traffic-publisher: run")
     gw_ip = os.environ["GW_IP"]
     gw_port = os.environ["GW_PORT"]
     gw_community = os.environ["GW_COMMUNITY"]

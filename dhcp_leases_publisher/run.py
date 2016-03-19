@@ -73,7 +73,7 @@ class DhcpLeasesPublisher(object):
 
 
 def main():
-    setproctitle("dhcp_leases_publisher: run")
+    setproctitle("dhcp-leases-publisher: run")
     server_ip = os.environ["SERVER_IP"]
     username = os.environ["SERVER_USERNAME"]
     password = os.environ["SERVER_PASSWORD"]

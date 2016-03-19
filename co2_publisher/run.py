@@ -1,9 +1,9 @@
 from setproctitle import setproctitle
+import datetime
 import json
+import os
 import redis
 import time
-import datetime
-import os
 
 
 class IndoorQualityPublisher(object):
@@ -42,7 +42,7 @@ class IndoorQualityPublisher(object):
 
 
 def main():
-    setproctitle("indoor_quality_publisher: run")
+    setproctitle("co2-publisher: run")
     co2_file = os.environ["CO2_FILE"]
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]

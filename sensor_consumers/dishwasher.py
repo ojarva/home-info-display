@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from setproctitle import setproctitle
 from dishwasher_parser import DishwasherParser
 from utils import SensorConsumerBase
 import base64
@@ -155,6 +156,7 @@ class Dishwasher(SensorConsumerBase):
 
 
 def main():
+    setproctitle("dishwasher: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     item = Dishwasher(redis_host, redis_port)

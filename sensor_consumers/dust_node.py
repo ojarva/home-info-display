@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from setproctitle import setproctitle
 from utils import SensorConsumerBase
 import json
 import os
@@ -43,6 +44,7 @@ class DustNode(SensorConsumerBase):
 
 
 def main():
+    setproctitle("indoor-air-quality-node: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     item = DustNode(redis_host, redis_port)

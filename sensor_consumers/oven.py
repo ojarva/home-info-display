@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from setproctitle import setproctitle
 from utils import SensorConsumerBase
 import datetime
 import os
@@ -57,6 +58,7 @@ class Oven(SensorConsumerBase):
 
 
 def main():
+    setproctitle("oven: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     item = Oven(redis_host, redis_port)

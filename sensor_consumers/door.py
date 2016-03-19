@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from setproctitle import setproctitle
 from utils import SensorConsumerBase
 import datetime
 import os
@@ -51,6 +52,7 @@ class Door(SensorConsumerBase):
 
 
 def main():
+    setproctitle("door: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     item = Door(redis_host, redis_port)

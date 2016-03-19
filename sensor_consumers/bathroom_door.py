@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from setproctitle import setproctitle
 from utils import SensorConsumerBase
 import os
 import sys
@@ -46,6 +47,7 @@ class Bathroom(SensorConsumerBase):
 
 
 def main():
+    setproctitle("bathroom-door: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     item = Bathroom(redis_host, redis_port)

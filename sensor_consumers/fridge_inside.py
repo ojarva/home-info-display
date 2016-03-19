@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from setproctitle import setproctitle
 from utils import SensorConsumerBase
 import datetime
 import os
@@ -108,6 +109,7 @@ class FridgeInside(SensorConsumerBase):
 
 
 def main():
+    setproctitle("fridge-inside: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     item = FridgeInside(redis_host, redis_port)

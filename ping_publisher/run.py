@@ -28,7 +28,7 @@ class PingRunner(object):
 
     def run(self):
         cmd = ["fping", "-l", "-e"]
-        cmd += DESTINATIONS
+        cmd += DESTINATIONS  # TODO
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, bufsize=1)
         for line in iter(p.stdout.readline, b''):
             (counter, response) = self.parse_ping_output(line)
@@ -48,7 +48,7 @@ class PingRunner(object):
 
 
 def main():
-    setproctitle("ping_publisher: run")
+    setproctitle("ping-publisher: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     pr = PingRunner(redis_host, redis_port)

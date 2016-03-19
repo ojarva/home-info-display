@@ -1,5 +1,6 @@
 # coding=utf-8
 
+from setproctitle import setproctitle
 from utils import SensorConsumerBase
 import datetime
 import os
@@ -107,6 +108,7 @@ class Freezer(SensorConsumerBase):
 
 
 def main():
+    setproctitle("freezer: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     item = Freezer(redis_host, redis_port)

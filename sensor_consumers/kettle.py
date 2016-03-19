@@ -1,3 +1,4 @@
+from setproctitle import setproctitle
 from multiprocessing import Process, Queue
 from utils import SensorConsumerBase
 import datetime
@@ -229,6 +230,7 @@ class Kettle(object):
 
 
 def main():
+    setproctitle("kettle: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     kettle = Kettle(redis_host, redis_port)

@@ -87,7 +87,7 @@ class DisplayControlConsumer(object):
 
 
 def main():
-    setproctitle("display_control_consumer: run")
+    setproctitle("display-control-consumer: run")
     redis_host = os.environ["REDIS_HOST"]
     redis_port = os.environ["REDIS_PORT"]
     dcc = DisplayControlConsumer(redis_host, redis_port)

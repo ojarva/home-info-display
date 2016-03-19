@@ -61,7 +61,7 @@ class UnifiStatusPublisher(object):
 
 
 def main():
-    setproctitle("unifi_status_publisher: run")
+    setproctitle("unifi-status-publisher: run")
     usp = UnifiStatusPublisher()
     usp.run()
 
