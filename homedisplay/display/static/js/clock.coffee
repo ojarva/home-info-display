@@ -16,7 +16,7 @@ ClockCalendar = (options) ->
       console.error "Invalid timestamp from server"
       return
 
-    clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date()) # In milliseconds
+#    clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date()) # In milliseconds
 
 
   updateOffset = ->
