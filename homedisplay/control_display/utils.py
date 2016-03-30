@@ -1,6 +1,5 @@
 from .display_utils import cancel_delayed_shutdown
 from .tasks import run_display_command_task
-from control_milight.models import LightGroup
 from django.utils import timezone
 from homedisplay.utils import publish_ws
 from info_weather.utils import get_sun_info
@@ -38,25 +37,16 @@ def get_desired_brightness():
     # Fetch sun information
     sun_info = get_sun_info()
     if sun_info["sunrise"] < now and sun_info["sunset"] > now:
-        if now.hour < 20:
-            # Sun is up and it is not too late. Full brightness, please.
-            logger.debug(
-                "Sun is up and it's not too late. Set brightness to full")
+        if now.hour < 22:
+            # Sun is up and it is not too late. Full brightness
+            logger.debug("Sun is up and it's not too late. Set brightness to full")
             return 1
         min_brightness = 0.6
 
     light_brightness_set = False
     light_brightness = 0
-    for lightgroup in LightGroup.objects.all():
-        if lightgroup.group_id == 4:
-            continue
-        light_brightness_set = True
-        if lightgroup.on == True:
-            group_brightness = lightgroup.current_brightness
-            if group_brightness is not None:
-                logger.debug("Brightness for group %s is %s",
-                             lightgroup.group_id, group_brightness)
-                light_brightness = max(light_brightness, group_brightness)
+
+    return 1  # TODO
 
     if light_brightness_set:
         return_brightness = max(min_brightness, float(light_brightness) / 100)
@@ -76,6 +66,4 @@ def set_destination_brightness(brightness=None):
             "Setting destination brightness to automatically calculated %s", brightness)
     else:
         logger.debug("Setting destination brightness to %s", brightness)
-    redis_instance.publish("display-control-set-brightness", True)
-    redis_instance.setex(
-        "display-control-destination-brightness", 60, brightness)
+    redis_instance.publish("display-control-set-brightness", brightness)
