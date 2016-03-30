@@ -25,12 +25,12 @@ LightControlTimed = (options) ->
   action = main.data "action"
 
   getNextStartDatetime = ->
-    if latest_data? and latest_data.fields?
-      return moment latest_data.fields.start_datetime
+    if latest_data?
+      return moment latest_data.next_start_at
 
   getNextEndDatetime = ->
-    if latest_data? and latest_data.fields?
-      return moment latest_data.fields.end_datetime
+    if latest_data?
+      return moment latest_data.next_end_at
 
   pauseOverride = ->
     main.find(".play-pause-control").slideDown()
@@ -89,11 +89,11 @@ LightControlTimed = (options) ->
       .addClass "fa-toggle-off error-message"
 
   updateFields = (data) ->
-    latest_data = data[0]
-    setStartTime(data[0].fields.start_time)
-    setDuration(data[0].fields.duration)
-    setRunning(data[0].fields.running)
-    if data[0].fields.is_overridden
+    latest_data = data
+    setStartTime(data.start_at)
+    setDuration(data.duration)
+    setRunning(data.running)
+    if data.is_overridden
       pauseOverride()
     else
       resumeOverride "backend"
@@ -118,7 +118,7 @@ LightControlTimed = (options) ->
       start_time.add 15, "minutes"
     else
       start_time.subtract 15, "minutes"
-    setStartTime start_time.format "HH:mm"
+    setStartTime start_time.format("HH:mm")
     postUpdate()
 
 
@@ -127,7 +127,7 @@ LightControlTimed = (options) ->
       main.find(".current-brightness").hide()
       return
 
-    data = latest_data.fields
+    data = latest_data
     start_time = getNextStartDatetime()
     end_time = getNextEndDatetime()
     now = clock.getMoment()
@@ -280,9 +280,9 @@ ShowTimers = ->
 jq =>
   @lightcontrol_timed_sort = new ShowTimers()
   @lightcontrol_timed_morning = new LightControlTimed
-    "elem": ".timed-lightcontrol-morning"
+    "elem": ".timed-lightcontrol-morning-weekday"
   @lightcontrol_timed_evening = new LightControlTimed
-    "elem": ".timed-lightcontrol-evening"
+    "elem": ".timed-lightcontrol-evening-weekday"
   @lightcontrol_timed_weekend_morning = new LightControlTimed
     "elem": ".timed-lightcontrol-morning-weekend"
   @lightcontrol_timed_weekend_evening = new LightControlTimed
