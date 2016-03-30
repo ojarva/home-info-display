@@ -16,12 +16,14 @@ class list(View):
 
 class item(View):
     def get(self, request, *args, **kwargs):
-        item = NfcTag.objects.get(tag_id=kwargs["id"])
+        tag_id = kwargs["id"].replace(":", "")
+        item = NfcTag.objects.get(tag_id=tag_id)
         serialized = json.loads(serializers.serialize("json", [item]))
         return HttpResponse(json.dumps(serialized[0]), content_type="application/json")
 
     def post(self, request, *args, **kwargs):
-        item = NfcTag.objects.get(tag_id=kwargs["id"])
+        tag_id = kwargs["id"].replace(":", "")
+        item = NfcTag.objects.get(tag_id=tag_id)
         if item.first_used_at is None:
             item.first_used_at = timezone.now()
         item.last_used_at = timezone.now()
@@ -32,10 +34,11 @@ class item(View):
 
 class get_or_create(View):
     def get(self, request, *args, **kwargs):
+        tag_id = kwargs["id"].replace(":", "")
         try:
-            item = NfcTag.objects.get(tag_id=kwargs["id"])
+            item = NfcTag.objects.get(tag_id=tag_id)
             return HttpResponseRedirect(urlresolvers.reverse("admin:info_tea_nfctag_change", args=(item.id,)))
         except NfcTag.DoesNotExist:
-            item = NfcTag(tag_id=kwargs["id"], name="Auto")
+            item = NfcTag(tag_id=tag_id, name="Auto")
             item.save()
         return HttpResponseRedirect(urlresolvers.reverse("admin:info_tea_nfctag_change", args=(item.id,)))
