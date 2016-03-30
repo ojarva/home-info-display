@@ -4,13 +4,14 @@ Usage:
     run.py run [--debug] [--redis-host=<hostname>] [--redis-port=<port>]
 """
 
-from local_settings import ARDUINO_433, ARDUINO_433_ITEM_MAP
+import local_settings as settings
 import datetime
 import json
 import logging
 import redis
 import serial
 import time
+import docopt
 
 
 class Mhz433Listener(object):
@@ -36,7 +37,7 @@ class Mhz433Listener(object):
     def run(self):
         s = serial.Serial(settings.ARDUINO_433, 9600)
 
-        ITEM_MAP = ARDUINO_433_ITEM_MAP
+        ITEM_MAP = settings.ARDUINO_433_ITEM_MAP
         sent_event_map = {}
         while True:
             line = s.readline()

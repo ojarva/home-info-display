@@ -3,10 +3,12 @@
 Usage:
     run.py run [--debug] [--redis-host=<hostname>] [--redis-port=<port>]
 """
-import local_settings as settings
 from collections import namedtuple
 import array
+import datetime
+import docopt
 import json
+import local_settings as settings
 import logging
 import redis
 import serial
@@ -82,10 +84,10 @@ class JeenodeListener(object):
                     }
                     coded_data = json.dumps(data)
                     if node_data.get("redis_queue"):
-                        redis_instance.rpush(node_data["redis_queue"], coded_data)
+                        self.redis.rpush(node_data["redis_queue"], coded_data)
                         self.logger.info("Pushed to %s: %s", node_data["redis_queue"], coded_data)
                     if node_data.get("redis_pubsub"):
-                        redis_instance.publish(node_data["redis_pubsub"], coded_data)
+                        self.redis.publish(node_data["redis_pubsub"], coded_data)
                         self.logger.info("Published to %s: %s", node_data["redis_pubsub"], coded_data)
                 else:
                     self.logger.warn("Unknown ID: %s", id)
