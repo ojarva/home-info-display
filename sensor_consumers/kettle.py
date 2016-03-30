@@ -11,7 +11,7 @@ import time
 
 def listen_kettle_commands(queue):
     r = redis.StrictRedis()
-    pubsub = r.pubsub()
+    pubsub = r.pubsub(ignore_subscribe_messages=True)
     pubsub.subscribe("kettle-commands")
     for item in pubsub.listen():
         print "Received %s" % item
