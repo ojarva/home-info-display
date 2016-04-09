@@ -22,10 +22,14 @@ class Bathroom(SensorConsumerBase):
         corridor_temperature = round(data["data"]["corridor_temperature"], 1)
         corridor_humidity = round(data["data"]["corridor_humidity"], 1)
 
-        if bathroom_temperature < 1 or bathroom_temperature > 60:
+        if bathroom_temperature < 5 or bathroom_temperature > 60:
             bathroom_temperature = None
-        if corridor_temperature < 1 or corridor_temperature > 60:
+        if corridor_temperature < 5 or corridor_temperature > 60:
             corridor_temperature = None
+        if bathroom_humidity < 5 or bathroom_humidity > 100:
+            bathroom_humidity = None
+        if corridor_humidity < 5 or corridor_humidity > 100:
+            corridor_humidity = None
 
         influx_data = {
             "measurement": "bathroom",
