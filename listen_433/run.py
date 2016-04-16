@@ -63,6 +63,7 @@ class Mhz433Listener(object):
                     self.redis.publish("influx-update-pubsub", json.dumps(data))
                     sent_event_map[item_name] = time.time()
                     self.redis.publish("lightcontrol-triggers-pubsub", json.dumps({"key": item_name}))
+                    self.redis.publish("pir-pubsub", json.dumps({"source": item_name, "name": item_name, "router": "433"}))
                 else:
                     self.logger.warn("Unknown ID: %s", id)
 
