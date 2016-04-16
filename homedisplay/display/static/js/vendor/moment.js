@@ -2240,6 +2240,14 @@
         return this.from(local__createLocal(), withoutSuffix);
     }
 
+    function fromNowSynced (withoutSuffix) {
+      if (clock !== undefined) {
+        return this.from(clock.getMoment(), withoutSuffix);
+      } else {
+        return this.from(local__createLocal(), withoutSuffix);
+      }
+    }
+
     function to (time, withoutSuffix) {
         if (this.isValid() &&
                 ((isMoment(time) && time.isValid()) ||
