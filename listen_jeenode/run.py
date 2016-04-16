@@ -10,10 +10,22 @@ import docopt
 import json
 import local_settings as settings
 import logging
+import multiprocessing
 import redis
 import serial
 import struct
 import time
+
+
+def redis_listener(redis_instance, queue):
+    pubsub = self.redis_instance.pubsub(ignore_subscribe_messages=True)
+    pubsub.subscribe("jeenode-commands-pubsub")
+    for message in pubsub.listen():
+        try:
+            data = json.loads(message["data"])
+        except ValueError, TypeError:
+            continue
+        queue.put(data)
 
 
 class JeenodeListener(object):
@@ -43,11 +55,22 @@ class JeenodeListener(object):
 
     def run(self):
         s = serial.Serial(settings.JEELINK, 57600)
+        queue = multiprocessing.Queue()
+        redis_receiver = multiprocessing.Process(target=redis_listener, args=(self.redis, queue))
+        redis_receiver.start()
 
         sent_event_map = {}
         queue_executed_at = time.time()
 
         while True:
+            try:
+                queue_item = queue.get(False)
+                s.write(queue_item["message"])
+            except multiprocessing.Queue.Empty:
+                pass
+            if select.select([s], [], [], 0)[0] == []:
+                time.sleep(0.5)
+                continue
             line = s.readline().strip()
             self.logger.info("Got '%s' from jeelink", line)
             if line.startswith("OK "):
@@ -73,6 +96,7 @@ class JeenodeListener(object):
                     self.logger.info("Processing trigger %s (%s)", item_name, id)
                     sent_event_map[item_name] = time.time()
                     self.redis.publish("lightcontrol-triggers-pubsub", json.dumps({"key": item_name}))
+                    # TODO: push to PIR/switch pubsub
 
                 elif id in settings.NODE_MAPPING:
                     node_data = settings.NODE_MAPPING[id]
