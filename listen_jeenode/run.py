@@ -11,12 +11,12 @@ import json
 import local_settings as settings
 import logging
 import multiprocessing
+import Queue
 import redis
-import serial
 import select
+import serial
 import struct
 import time
-import Queue
 
 
 def redis_listener(redis_instance, queue):

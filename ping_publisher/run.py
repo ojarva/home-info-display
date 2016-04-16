@@ -5,6 +5,7 @@ import re
 import redis
 import subprocess
 import time
+from local_settings import DESTINATIONS
 
 
 # TODO: destination
