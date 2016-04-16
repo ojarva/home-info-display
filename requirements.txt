@@ -1,3 +1,4 @@
+rjsmin>=1.0.12
 -e git://github.com/ojarva/py-utorrent.git@35c4298463247165012ef8f8b4647f10a2fd5bd4#egg=py_utorrent-master
 aaltopoiju>=0.0.3
 amqp>=1.4.9
@@ -14,6 +15,7 @@ django-extensions>=1.6.1
 django-statsd>=2.0.1
 django-websocket-redis>=0.4.6
 Django>=1.9.2
+docopt==0.6.2
 ecdsa>=0.13
 gevent>=1.0.2
 greenlet>=0.4.9
@@ -22,7 +24,6 @@ hiredis>=0.2.0
 huawei-b593-status>=0.0.1
 influxdb>=2.12.0
 kombu>=3.0.33
-ledcontroller>=1.1.0
 lxml>=3.5.0
 manage-server-power>=0.0.5
 MySQL-python>=1.2.5

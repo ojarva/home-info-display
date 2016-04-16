@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^notifications/', include("info_notifications.urls")),
     url(r'^nodes/', include("node_data_receiver.urls")),
     url(r'^kettle/', include("control_kettle.urls")),
+    url(r'^tea/', include("info_tea.urls")),
 ]

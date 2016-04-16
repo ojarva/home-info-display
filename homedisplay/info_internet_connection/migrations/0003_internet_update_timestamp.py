@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylint:disable=invalid-name,too-few-public-methods,no-name-in-module,bad-continuation
 from __future__ import unicode_literals
 
 from django.db import models, migrations

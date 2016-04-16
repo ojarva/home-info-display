@@ -13,7 +13,7 @@ import time
 
 def listen_kettle_commands(queue):
     r = redis.StrictRedis()
-    pubsub = r.pubsub()
+    pubsub = r.pubsub(ignore_subscribe_messages=True)
     pubsub.subscribe("kettle-commands")
     for item in pubsub.listen():
         print("Received %s" % item)
@@ -100,8 +100,10 @@ class KettleCommunication(SensorConsumerBase):
                         self.update_queue.put({"success": "status"})
                         status_updated = True
                         self.latest_status = item["data"]
-                        self.latest_status["temperature"] = self.add_temperature(
-                            datetime.datetime.now(), self.latest_status["temperature"])
+                        if item["data"]["temperature"] is not None and item["data"]["temperature"] < 101:
+                            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "kettle", "name": "inside", "value": item["data"]["temperature"]}))
+                        self.redis_instance.publish("misc-activity-pubsub", json.dumps({"source": "kettle", "name": "present", "value": item["data"]["present"]}))
+                        self.latest_status["temperature"] = self.add_temperature(datetime.datetime.now(), self.latest_status["temperature"])
             if status_updated:
                 self.r.setex("kettle-info", 60, json.dumps(self.latest_status))
                 self.r.publish("home:broadcast:generic", json.dumps(

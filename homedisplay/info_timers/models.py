@@ -7,15 +7,11 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
 from homedisplay.utils import publish_ws
-from ledcontroller import LedController
-import control_milight.models as light_models
 import datetime
 import json
 
 __all__ = ["get_labels", "get_serialized_timer",
            "Timer", "CustomLabel", "TimedCustomLabel"]
-
-led = LedController(settings.MILIGHT_IP)
 
 
 def get_labels():
@@ -69,26 +65,6 @@ class Timer(models.Model):
         if self.duration:
             return self.start_time + datetime.timedelta(seconds=self.duration)
         return timezone.now()
-
-    def delete(self, *args, **kwargs):
-        # TODO: handle actions here
-        if self.action and self.action.startswith("auto-lightgroup-") and kwargs.get("no_actions", False) != True:
-            # Automatically triggered lightgroup
-            group = int(self.action.replace("auto-lightgroup-", ""))
-            state = light_models.LightGroup.objects.get(group_id=group)
-            if state.on_automatically:
-                # Group is on automatically (vs. overridden by manual updates)
-                # TODO: this should be method from control_milight.utils
-                # instead of hardcoded logic.
-                led.off(group)
-                light_models.update_lightstate(
-                    group, None, None, False, no_override=True)
-
-        try:
-            del kwargs["no_actions"]
-        except KeyError:
-            pass
-        super(Timer, self).delete(*args, **kwargs)
 
     def __unicode__(self):
         return u"%s - %s (%s)" % (self.name, self.start_time, self.duration)

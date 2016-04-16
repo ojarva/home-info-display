@@ -5,6 +5,7 @@ from utils import SensorConsumerBase
 import datetime
 import os
 import sys
+import json
 
 
 class Door(SensorConsumerBase):
@@ -14,6 +15,9 @@ class Door(SensorConsumerBase):
         self.notification = None
         self.delete_notification("door")
         self.door_open_elapsed_since = None
+
+        self.outer_door_state = None
+        self.inner_door_state = None
 
     def run(self):
         self.subscribe("door-pubsub", self.pubsub_callback)
@@ -31,6 +35,18 @@ class Door(SensorConsumerBase):
             "fields": data["data"],
         }
         self.insert_into_influx([influx_data])
+
+        if self.outer_door_state is not None:
+            if self.outer_door_state != data["data"]["door_outer_open"]:
+                self.redis_instance.publish("lightcontrol-triggers-pubsub", json.dumps({"key": "outer-door", "trigger": "switch", "open": data["data"]["door_outer_open"]}))
+        if self.inner_door_state is not None:
+            if self.inner_door_state != data["data"]["door_inner_open"]:
+                self.redis_instance.publish("lightcontrol-triggers-pubsub", json.dumps({"key": "inner-door", "trigger": "switch", "open": data["data"]["door_inner_open"]}))
+
+        self.outer_door_state = data["data"]["door_outer_open"]
+        self.inner_door_state = data["data"]["door_inner_open"]
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "door", "name": "outer-door", "value": self.outer_door_state}))
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "door", "name": "inner-door", "value": self.inner_door_state}))
 
         if data["data"]["door_outer_open"]:
             if not self.door_open_elapsed_since:

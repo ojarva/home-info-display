@@ -37,6 +37,7 @@ INSTALLED_APPS = (
     'info_transportation',
     'info_weather',
     'info_notifications',
+    'info_tea',
     'repeating_tasks',
     'server_power',
     'ws4redis',
@@ -70,7 +71,7 @@ STATICFILES_FINDERS = (
 )
 
 WSGI_APPLICATION = 'ws4redis.django_runserver.application'
-#WSGI_APPLICATION = 'homedisplay.wsgi.application'
+# WSGI_APPLICATION = 'homedisplay.wsgi.application'
 
 
 ROOT_URLCONF = 'homedisplay.urls'

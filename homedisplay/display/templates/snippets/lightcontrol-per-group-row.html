@@ -3,8 +3,8 @@
   <div>
     {% include "snippets/small_button.html" with group=group mode="off" text="Pois" icon="power-off" %}
     {% include "snippets/small_button.html" with group=group mode="on" text="Kirkkaaksi" icon="sun-o" %}
-    {% include "snippets/small_button.html" with group=group mode="morning" text="Aamu" icon="moon-o" %}
     {% include "snippets/small_button.html" with group=group mode="night" text="Yö" icon="bed" %}
+    {% include "snippets/small_button.html" with group=group mode="sync" text="Sync" icon="refresh" %}
   </div>
   <div class="brightness-slider-container">
     <div class="brightness-slider brightness-slider-group-{{ group }}" data-id="{{ group }}"></div>

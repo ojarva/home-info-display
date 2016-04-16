@@ -7,14 +7,13 @@ import json
 
 
 class GetJson(View):
-
-    def get(self, request, *args, **kwargs):
+    def get(self, _):  # pylint:disable=no-self-use
         return HttpResponse(json.dumps(get_latest_serialized()), content_type="application/json")
 
 
 class WifiInfo(View):
 
-    def get(self, request, *args, **kwargs):
+    def get(self, _):  # pylint:disable=no-self-use
         wifi_settings = {
             "ssid": settings.WIFI_SSID,
             "passphrase": settings.WIFI_PASSPHRASE

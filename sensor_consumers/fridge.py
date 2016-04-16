@@ -5,6 +5,7 @@ from utils import SensorConsumerBase
 import datetime
 import os
 import sys
+import json
 
 
 class Fridge(SensorConsumerBase):
@@ -19,11 +20,12 @@ class Fridge(SensorConsumerBase):
         if "action" in data:
             return
 
-        kitchen_ceiling_temperature = round(
-            data["data"]["room_temperature"], 1)
+        kitchen_ceiling_temperature = round(data["data"]["room_temperature"], 1)
         if kitchen_ceiling_temperature < 10 or kitchen_ceiling_temperature > 40:
             print("Invalid temperature for kitchen ceiling sensor: %s. Setting to null." % kitchen_ceiling_temperature)
             kitchen_ceiling_temperature = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "fridge", "name": "ceiling", "value": kitchen_ceiling_temperature}))
         power_consumption = round(data["data"]["power_consumption"] * 230, 2)
         if 0 > power_consumption or power_consumption > 3000:
             print("Invalid power consumption for fridge: %s. Setting to null." % power_consumption)

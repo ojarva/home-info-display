@@ -31,8 +31,6 @@ LightControl = ->
     "white": "valkoinen"
     "red": "punainen"
     "blue": "sininen"
-  latest_data = null
-  delayed_process = null
 
   initialize = (selector) ->
     jq.each jq(".brightness-slider"), ->
@@ -88,45 +86,27 @@ LightControl = ->
           error: ->
             animate_completed "times"
 
-  delayedProcessData = ->
-    max_brightness = 0
-    data = latest_data
+  processData = (data) ->
     if data? and data.groups?
       jq.each data.groups, ->
-        group_id = @fields.group_id
-        color = @fields.color
-        jq(".light-group-#{group_id}-name").html @fields.description
+        group_id = @id
+        color = @color
+        jq(".light-group-#{group_id}-name").html @name
         jq ".light-group-#{group_id}-brightness"
-        .html "#{@fields.current_brightness}%"
-        .data "brightness", @fields.current_brightness
+        .html "#{@current_brightness}%"
+        .data "brightness", @current_brightness
 
-        jq(".brightness-slider-group-#{group_id}").slider "value", @fields.current_brightness
+        jq(".brightness-slider-group-#{group_id}").slider "value", @current_brightness
         jq(".brightness-slider-group-#{group_id}").css "background-color", color
 
         color_elem = jq ".light-group-#{group_id}-color"
         if color_map[color]?
           color_elem.html color_map[color]
 
-        if @fields.on
+        if @on
           jq(".light-group-#{group_id}-on").html "<i class='fa fa-toggle-on'></i>"
         else
           jq(".light-group-#{group_id}-on").html "<i class='fa fa-toggle-off'></i>"
-
-    if data? and data.main_buttons?
-      jq.each data.main_buttons, (key, value) ->
-        if value
-          jq(".lights-#{key}").find(".active-mode").show()
-        else
-          jq(".lights-#{key}").find(".active-mode").hide()
-
-  processData = (data) ->
-    # Usually there is multiple updates for this. Delay processing a bit.
-    latest_data = data
-    if delayed_process?
-      delayed_process = clearTimeout delayed_process
-
-    delayed_process = setTimeout delayedProcessData, 100
-
 
   update = ->
     jq.get "/homecontroller/lightcontrol/status", (data) ->

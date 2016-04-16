@@ -1,5 +1,7 @@
-from .models import LightGroup, LightAutomation, is_any_timed_running, update_lightstate, get_serialized_timed_action, get_serialized_lightgroup, get_serialized_lightgroups, get_main_buttons, is_group_on
-from .utils import run_timed_actions, convert_group_to_automatic, get_current_settings_for_light, sync_lightstate
+import datetime
+import json
+import time
+
 from control_display.display_utils import run_display_command
 from control_display.utils import initiate_delayed_shutdown, set_destination_brightness
 from django.conf import settings
@@ -9,20 +11,47 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.views.generic import View
 from homedisplay.utils import publish_ws
-from ledcontroller import LedController
 from server_power.views import sp
-import datetime
-import json
 import redis
-import time
 
-redis_instance = redis.StrictRedis()
-led = LedController(settings.MILIGHT_IP)
+redis_instance = redis.StrictRedis()  # pylint:disable=invalid-name
 
 
-def set_light_group_delayed_off(group):
-    on_until = timezone.now() + datetime.timedelta(seconds=15)
-    convert_group_to_automatic(group, on_until)
+def send_lightcontrol_command(command, group, source="manual", **kwargs):
+    data = {
+        "source": source,
+        "command": command,
+        "group": group,
+    }
+    data.update(kwargs)
+    redis_instance.publish("lightcontrol-control-pubsub", json.dumps(data))
+
+
+def get_lightprogram(action):
+    redis_key = "lightcontrol-program-%s" % action
+    data = json.loads(redis_instance.get(redis_key))
+    data["next_start_at"] = redis_instance.get("%s-next_start_at" % redis_key)
+    data["next_end_at"] = redis_instance.get("%s-next_end_at" % redis_key)
+    data["running"] = redis_instance.get("lightprogram-%s-running" % action) not in ("False", "false")
+    return data
+
+
+def get_lightgroup(group_id):
+    redis_key = "lightcontrol-state-%s" % group_id
+    color = redis_instance.get("%s-color" % redis_key)
+    if color != "white":
+        brightness_key = "rgb"
+    else:
+        brightness_key = "white"
+    brightness = redis_instance.get("%s-%s_brightness" % (redis_key, brightness_key))
+    data = {
+        "on": redis_instance.get("%s-on" % redis_key) in ("true", "True"),
+        "name": redis_instance.get("lightcontrol-group-%s-name" % group_id),
+        "color": color,
+        "current_brightness": brightness,
+        "id": group_id,
+    }
+    return data
 
 
 class TimedProgram(View):
@@ -33,44 +62,38 @@ class TimedProgram(View):
         if command == "update":
             start_time = request.POST.get("start_time").split(":")
             duration = request.POST.get("duration").replace("+", "").split(":")
-            running = request.POST.get("running")
-            if running == "true":
-                running = True
-            else:
-                running = False
             start_time = datetime.time(int(start_time[0]), int(start_time[1]))
             duration = int(duration[0]) * 3600 + int(duration[1]) * 60
-            item, created = LightAutomation.objects.get_or_create(action=action, defaults={
-                                                                  "start_time": start_time, "duration": duration, "running": running})
-            if not created:
-                item.start_time = start_time
-                item.duration = duration
-                item.running = running
+            current_settings = json.loads(redis_instance.get("lightcontrol-program-%s" % action))
+            current_settings["duration"] = duration
+            current_settings["start_at"] = start_time.strftime("%H:%M")
+            redis_instance.set("lightcontrol-program-%s" % action, json.dumps(current_settings))
 
-            item.save()
-            if is_any_timed_running() == False:
-                # No timed lightcontrol is running (anymore). Delete overrides.
-                for group in range(1, 5):
-                    redis_instance.delete(
-                        "lightcontrol-no-automatic-%s" % group)
-                    publish_ws("lightcontrol-timed-override",
-                               {"action": "resume"})
-            else:
-                run_timed_actions()
-            return HttpResponse(json.dumps(get_serialized_timed_action(item)), content_type="application/json")
+            if "running" in request.POST:
+                running = request.POST.get("running")
+                running = running in ("true", "True", "1")
+                redis_instance.set("lightprogram-%s-running" % action, running)
+                if running:
+                    for group in range(1, 5):
+                        redis_instance.set("lightcontrol-state-%s-auto" % group, True)
+
+            send_lightcontrol_command("program-sync", 0)
+            data = get_lightprogram(action)
+            publish_ws("lightcontrol-timed-%s" % action, data)
+            return HttpResponse(json.dumps(data), content_type="application/json")
         elif command == "override-resume":
             for group in range(1, 5):
-                redis_instance.delete("lightcontrol-no-automatic-%s" % group)
+                redis_instance.set("lightcontrol-state-{group}-auto".format(group=group), True)
+                send_lightcontrol_command("program-sync", 0)
                 publish_ws("lightcontrol-timed-override", {"action": "resume"})
-            run_timed_actions()
-        instance = get_object_or_404(LightAutomation, action=action)
-        item = get_serialized_timed_action(instance)
+
+        # TODO: get and serialize program details
+        item = get_lightprogram(action)
         return HttpResponse(json.dumps(item), content_type="application/json")
 
     def get(self, request, *args, **kwargs):
         action = kwargs.get("action")
-        instance = get_object_or_404(LightAutomation, action=action)
-        item = get_serialized_timed_action(instance)
+        item = get_lightprogram(action)
         return HttpResponse(json.dumps(item), content_type="application/json")
 
 
@@ -84,76 +107,49 @@ class ControlPerSource(View):
         source = kwargs.get("source")
         command = kwargs.get("command")
         if command == "sync":
-            sync_lightstate()
+            send_lightcontrol_command("sync", 0)
         elif source == "computer":
             if command == "night":
-                led.set_brightness(0)
-                led.set_color("red")
-                led.set_brightness(0)
-                update_lightstate(0, 0, "red")
+                send_lightcontrol_command("night", 0)
             elif command == "off":
-                set_light_group_delayed_off(0)
+                send_lightcontrol_command("off", 0)
                 initiate_delayed_shutdown()
-            elif command == "morning":
-                led.set_color("white")
-                led.set_brightness(10)
-                update_lightstate(0, 10, "white")
             elif command == "on":
                 run_display_command("on")
-                led.white()
-                led.set_brightness(100)
-                update_lightstate(0, 100, "white")
+                send_lightcontrol_command("on", 0)
+                send_lightcontrol_command("set_color", 0, color="white")
+                send_lightcontrol_command("set_brightness", 0, brightness=100)
             elif command == "off-all":
-                set_light_group_delayed_off(0)
+                send_lightcontrol_command("off", 0)
                 initiate_delayed_shutdown()
                 sp.shutdown()  # Shutdown server
-                # TODO: shut down speakers
 
         elif source == "door":
             if command == "night":
-                led.off()
-                update_lightstate(self.TABLE, None, None, False)
-                update_lightstate(self.BED, None, None, False)
-                for group in (self.DOOR, self.KITCHEN):
-                    led.set_color("red", group)
-                    led.set_brightness(10, group)
-                    update_lightstate(group, 10, "red")
+                send_lightcontrol_command("night", 0)
             elif command == "on":
                 run_display_command("on")
-                led.white()
-                led.set_brightness(100)
-                update_lightstate(0, 100, "white")
-            elif command == "morning":
-                led.set_color("white")
-                led.set_brightness(10)
-                update_lightstate(0, 10, "white")
+                send_lightcontrol_command("on", 0)
+                send_lightcontrol_command("set_color", 0, color="white")
+                send_lightcontrol_command("set_brightness", 0, brightness=100)
             elif command == "off":
-                set_light_group_delayed_off(0)
+                send_lightcontrol_command("off", 0)
                 initiate_delayed_shutdown()
         elif source == "display":
             if command == "night":
-                if is_group_on(0):
-                    led.set_brightness(0)
-                    update_lightstate(0, 0)
-                led.set_color("red")
-                led.set_brightness(0)
-                update_lightstate(0, 0, "red")
-            elif command == "morning":
-                led.set_color("white")
-                led.set_brightness(10)
-                update_lightstate(0, 10, "white")
+                send_lightcontrol_command("night", 0)
             elif command == "off":
-                set_light_group_delayed_off(0)
+                send_lightcontrol_command("off", 0)
                 initiate_delayed_shutdown()
             elif command == "on":
                 run_display_command("on")
-                led.white()
-                led.set_brightness(100)
-                update_lightstate(0, 100, "white")
+                send_lightcontrol_command("on", 0)
+                send_lightcontrol_command("set_color", 0, color="white")
+                send_lightcontrol_command("set_brightness", 0, brightness=100)
         else:
             raise NotImplementedError("Invalid source: %s" % source)
         set_destination_brightness()
-        return HttpResponse(json.dumps(get_serialized_lightgroups()), content_type="application/json")
+        return HttpResponse(json.dumps({"ok": True}), content_type="application/json")
 
 
 class Control(View):
@@ -163,64 +159,30 @@ class Control(View):
         group = int(kwargs.get("group"))
 
         if command == "on":
-            led.white(group)
-            led.set_brightness(100, group)
-            update_lightstate(group, 100, "white")
+            send_lightcontrol_command("on", group)
+            send_lightcontrol_command("set_color", group, color="white")
+            send_lightcontrol_command("set_brightness", group, brightness=100)
             if group == 0:
                 run_display_command("on")
         elif command == "off":
-            set_light_group_delayed_off(group)
+            send_lightcontrol_command("off", group)
             if group == 0:
                 # Shut down display if all lights were turned off.
                 initiate_delayed_shutdown()
-        elif command == "auto-brightness":
-            def execute(group_id):
-                brightness, color = get_current_settings_for_light(group_id)
-                led.set_color(color, group)
-                led.set_brightness(brightness, group)
-                update_lightstate(group, brightness, color)
-
-            if group == 0:
-                for group in range(1, 5):
-                    execute(group)
-            else:
-                execute(group)
-        elif command == "disco":
-            led.disco(group)
-            update_lightstate(group, None, "disco")
         elif command == "night":
-            def execute(group):
-                (state, _) = LightGroup.objects.get_or_create(group_id=group)
-                if state.color != "red":
-                    led.set_brightness(0, group)
-                    led.white(group)
-                    led.set_brightness(0, group)
-                led.set_color("red", group)
-                led.set_brightness(0, group)
-                update_lightstate(group, 0, "red")
-
-            if group == 0:
-                for group in range(1, 5):
-                    execute(group)
-            else:
-                execute(group)
+            send_lightcontrol_command("night", group)
         elif command == "brightness":
             brightness = int(kwargs.get("parameter"))
-            led.set_brightness(brightness, group)
-            update_lightstate(group, brightness)
+            send_lightcontrol_command("set_brightness", group, brightness=brightness)
         elif command == "sync":
-            sync_lightstate()
+            send_lightcontrol_command("sync", group)
         else:
             raise NotImplementedError("Invalid command: %s" % command)
         set_destination_brightness()
-        return HttpResponse(json.dumps(get_serialized_lightgroups()), content_type="application/json")
+        return HttpResponse(json.dumps({"ok": True}), content_type="application/json")
 
     def get(self, request, *args, **kwargs):
-        group = int(kwargs.get("group", 0))
-        items = LightGroup.objects.all()
-        if group is not 0:
-            items = items.filter(group_id=group)
-        serialized = {"groups": [get_serialized_lightgroup(a) for a in items],
-                      "main_buttons": get_main_buttons()
-                      }
-        return HttpResponse(json.dumps(serialized), content_type="application/json")
+        data = []
+        for group_id in range(1, 5):
+            data.append(get_lightgroup(group_id))
+        return HttpResponse(json.dumps({"groups": data}), content_type="application/json")

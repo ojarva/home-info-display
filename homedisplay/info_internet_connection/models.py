@@ -1,6 +1,6 @@
+import json
 from django.db import models
 from django.core import serializers
-import json
 
 
 def get_latest_serialized():
@@ -13,7 +13,7 @@ def get_latest_serialized():
 
 class Internet(models.Model):
 
-    class Meta:
+    class Meta:  # pylint:disable=no-init,too-few-public-methods,old-style-class
         get_latest_by = "timestamp"
 
     MODES = (("off", "off"),
@@ -56,8 +56,8 @@ class ConnectedClient(models.Model):
     rssi = models.IntegerField(null=True, blank=True)
     bandwidth_in = models.IntegerField(null=True, blank=True)
     bandwidth_out = models.IntegerField(null=True, blank=True)
-    tx = models.BigIntegerField(null=True, blank=True)
-    rx = models.BigIntegerField(null=True, blank=True)
+    tx = models.BigIntegerField(null=True, blank=True)  # pylint:disable=invalid-name
+    rx = models.BigIntegerField(null=True, blank=True)  # pylint:disable=invalid-name
 
     def __unicode__(self):
         return self.mac

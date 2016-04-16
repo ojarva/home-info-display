@@ -121,6 +121,7 @@ class Microwave(SensorConsumerBase):
             }
         }])
 
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "microwave", "name": "door", "value": door_open}))
         if door_open:
             self.state.set_door_open()
 

@@ -7,7 +7,6 @@ import time
 
 
 class DisplayControlConsumer(object):
-    STEP = 0.05
 
     def __init__(self, redis_host, redis_port):
         self.redis_instance = redis.StrictRedis(host=redis_host, port=redis_port)
@@ -24,66 +23,14 @@ class DisplayControlConsumer(object):
     def set_brightness(self, brightness):
         p = subprocess.Popen(["xrandr", "--q1", "--output", "HDMI-0", "--brightness", brightness], env=self.env)
         p.wait()
-        self.redis_instance.setex("display-control-brightness", 60, brightness)
+        self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "display_brightness", "content": brightness}))
 
     def run(self):
-        # To prevent race conditions in restarts/crashes, check whether old
-        # data exists.
-        self.run_single_instance()
-        pubsub = self.redis_instance.pubsub()
+        pubsub = self.redis_instance.pubsub(ignore_subscribe_messages=True)
         pubsub.subscribe("display-control-set-brightness")
         for _ in pubsub.listen():
             # Only poll redis after triggered with pubsub
-            self.run_single_instance()
-
-    def run_single_instance(self):
-        while True:
-            time.sleep(1)
-            destination_brightness = self.redis_instance.get(
-                "display-control-destination-brightness")
-            if not destination_brightness:
-                return
-            destination_brightness = float(destination_brightness)
-
-            current_brightness = self.redis_instance.get(
-                "display-control-brightness")
-            if current_brightness:
-                current_brightness = float(current_brightness)
-            else:
-                current_brightness = self.get_brightness()
-                self.redis_instance.setex(
-                    "display-control-brightness", 60, current_brightness)
-
-            if current_brightness > destination_brightness:
-                # Decrease brightness. Current brightness is too large.
-                new_brightness = current_brightness - self.STEP
-                print("Decreasing brightness: %s (-> %s, currently at %s)" % (new_brightness, destination_brightness, current_brightness))
-                if new_brightness < destination_brightness:
-                    # Wrapped around: new brightness is smaller than
-                    # destination brightness.; no action
-                    print("Brightness wrapped around")
-                    self.redis_instance.delete(
-                        "display-control-destination-brightness")
-                    return
-            elif current_brightness < destination_brightness:
-                # Increase brightness
-                new_brightness = current_brightness + self.STEP
-                print("Increasing brightness: %s (-> %s, currently at %s)" % (new_brightness, destination_brightness, current_brightness))
-
-                if new_brightness > destination_brightness:
-                    # Wrapped around; no action
-                    self.redis_instance.delete(
-                        "display-control-destination-brightness")
-                    return
-            else:
-                # Already matches. No action.
-                self.redis_instance.delete(
-                    "display-control-destination-brightness")
-                return
-            print("Setting brightness to %s (destination: %s)" % (new_brightness, destination_brightness))
-            self.set_brightness(new_brightness)
-            self.redis_instance.publish("home:broadcast:generic", json.dumps(
-                {"key": "display_brightness", "content": new_brightness}))
+            self.set_brightness(item["data"])
 
 
 def main():
