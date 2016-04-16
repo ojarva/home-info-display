@@ -3,6 +3,7 @@
 from utils import SensorConsumerBase
 import datetime
 import sys
+import json
 
 
 class Freezer(SensorConsumerBase):
@@ -72,6 +73,7 @@ class Freezer(SensorConsumerBase):
             return
 
         door_open = int(data["data"]["door"]) == 0
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "freezer", "name": "door", "value": door_open}))
         power_consumption = round(data["data"]["power_consumption"] * 230, 2)
         if 0 > power_consumption or power_consumption > 3000:
             print "Invalid power consumption for freezer: %s. Setting to null." % (power_consumption)
@@ -81,9 +83,13 @@ class Freezer(SensorConsumerBase):
         if -35 > temperature1 or temperature1 > 40:
             print "Invalid value for temperature1: %s. Setting to null." % temperature1
             temperature1 = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "freezer", "name": "inside", "value": temperature1}))
         if -35 > temperature2 or temperature2 > 40:
             print "Invalid value for temperature2: %s. Setting to null." % temperature2
             temperature2 = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "freezer", "name": "condenser", "value": temperature2}))
 
         processed_data = {
             "power_consumption": power_consumption,

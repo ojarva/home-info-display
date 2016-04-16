@@ -18,18 +18,22 @@ class Oven(SensorConsumerBase):
         if "action" in data:
             return
         temperature = round(data["data"]["oven_temperature"], 1)
-        if 0 > temperature or temperature > 400:
-            print "Invalid value for oven temperature: %s. Setting to null" % temperature
-            temperature = None
         room_temperature = round(data["data"]["room_temperature"], 1)
-        outside_box_room_temperature = round(
-            data["data"]["outside_box_temperature"], 1)
+        outside_box_room_temperature = round(data["data"]["outside_box_temperature"], 1)
+        if 0 > temperature or temperature > 400:
+            print("Invalid value for oven temperature: %s. Setting to null" % temperature)
+            temperature = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "oven", "name": "inside", "value": temperature}))
+
         if 0 > room_temperature or room_temperature > 40:
-            print "Invalid value for room temperature (sensor calibration): %s. Setting to null." % room_temperature
+            print("Invalid value for room temperature (sensor calibration): %s. Setting to null." % room_temperature)
             room_temperature = None
         if 0 > outside_box_room_temperature or outside_box_room_temperature > 40:
-            print "Invalid value for room temperature (outside of the box): %s. Setting to null." % outside_box_room_temperature
+            print("Invalid value for room temperature (outside of the box): %s. Setting to null." % outside_box_room_temperature)
             outside_box_room_temperature = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "oven", "name": "floor", "value": outside_box_room_temperature}))
 
         self.insert_into_influx([{
             "measurement": "oven",
@@ -44,11 +48,9 @@ class Oven(SensorConsumerBase):
             }
         }])
         if temperature is None:
-            self.update_notification(
-                "oven", "Uunin lämpötila ei ole saatavilla.", False)
+            self.update_notification("oven", "Uunin lämpötila ei ole saatavilla.", False)
         elif temperature > 50:
-            self.update_notification(
-                "oven", "Uuni: %s&deg;C" % int(round(temperature)), False)
+            self.update_notification("oven", "Uuni: %s&deg;C" % int(round(temperature)), False)
             self.notification_visible = True
         elif self.notification_visible:
             self.delete_notification("oven")

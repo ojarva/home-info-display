@@ -43,6 +43,8 @@ class Door(SensorConsumerBase):
 
         self.outer_door_state = data["data"]["door_outer_open"]
         self.inner_door_state = data["data"]["door_inner_open"]
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "door", "name": "outer-door", "value": self.outer_door_state}))
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "door", "name": "inner-door", "value": self.inner_door_state}))
 
         if data["data"]["door_outer_open"]:
             if not self.door_open_elapsed_since:

@@ -6,6 +6,7 @@ import base64
 import datetime
 import pickle
 import redis
+import json
 import requests.exceptions
 import sys
 import time
@@ -72,20 +73,29 @@ class Dishwasher(SensorConsumerBase):
         temperature1 = round(data["data"]["temperature1"], 1)
         if temperature1 < 0 or temperature1 > 100:
             temperature1 = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "dishwasher", "name": "ceiling", "value": temperature1}))
 
         temperature2 = round(data["data"]["temperature2"], 1)
         if temperature2 < 0 or temperature2 > 100:
             temperature2 = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "dishwasher", "name": "dishwasher-outlet-water", "value": temperature2}))
 
         temperature3 = round(data["data"]["temperature3"], 1)
         if temperature3 < 0 or temperature3 > 100:
             temperature3 = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "dishwasher", "name": "dishwasher-top", "value": temperature3}))
 
         temperature4 = round(data["data"]["temperature4"], 1)
         if temperature4 < 0 or temperature4 > 100:
             temperature4 = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "dishwasher", "name": "shower", "value": temperature4}))
 
         door = data["data"]["door"] == 0
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "dishwasher", "name": "door", "value": door}))
 
         influx_data = [{
             "measurement": "dishwasher",

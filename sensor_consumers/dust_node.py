@@ -20,6 +20,16 @@ class DustNode(SensorConsumerBase):
         room_temperature = round(data["data"]["room_temperature"], 1)
         room_humidity = round(data["data"]["room_humidity"], 1)
 
+        if room_temperature > 50 or room_temperature < 1:
+            room_temperature = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "dustnode", "name": "room", "value": room_temperature}))
+
+        if room_humidity < 0 or room_humidity > 100:
+            room_temperature = None
+        else:
+            self.redis_instance.publish("humidity-pubsub", json.dumps({"source": "dustnode", "name": "room", "value": room_temperature > 100}))
+
         influx_data = {
             "measurement": "dustnode",
             "time": data["utctimestamp"].isoformat() + "Z",
@@ -32,12 +42,9 @@ class DustNode(SensorConsumerBase):
             }
         }
         self.insert_into_influx([influx_data])
-        self.redis_instance.publish("home:broadcast:generic", json.dumps(
-            {"key": "indoor_temperature", "content": {"value": room_temperature}}))
-        self.redis_instance.setex(
-            "air-latest-temperature", 300, room_temperature)
-        self.redis_instance.publish("home:broadcast:generic", json.dumps(
-            {"key": "indoor_humidity", "content": {"value": room_humidity}}))
+        self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "indoor_temperature", "content": {"value": room_temperature}}))
+        self.redis_instance.setex("air-latest-temperature", 300, room_temperature)
+        self.redis_instance.publish("home:broadcast:generic", json.dumps({"key": "indoor_humidity", "content": {"value": room_humidity}}))
         self.redis_instance.setex("air-latest-humidity", 300, room_humidity)
 
 

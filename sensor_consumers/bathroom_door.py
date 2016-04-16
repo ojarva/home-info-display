@@ -31,20 +31,36 @@ class Bathroom(SensorConsumerBase):
             if door_open != self.bathroom_door_state:
                 self.redis_instance.publish("lightcontrol-triggers-pubsub", json.dumps({"key": "bathroom-door", "trigger": "switch"}))
         self.bathroom_door_state = door_open
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "bathroom-door", "name": "bathroom-door", "value": door_open}))
 
         if pir_triggered:
             self.redis_instance.publish("lightcontrol-triggers-pubsub", json.dumps({"key": "corridor-pir", "trigger": "pir"}))
+            self.redis_instance.publish("pir-pubsub", json.dumps({"source": "bathroom-door", "name": "corridor"}))
 
         if bathroom_temperature < 5 or bathroom_temperature > 60:
             bathroom_temperature = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "bathroom-door", "name": "bathroom", "value": corridor_temperature}))
+
         if corridor_temperature < 5 or corridor_temperature > 60:
             corridor_temperature = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "bathroom-door", "name": "corridor", "value": corridor_temperature}))
+
         if bathroom_humidity < 5 or bathroom_humidity > 100:
             bathroom_humidity = None
+        else:
+            self.redis_instance.publish("humidity-pubsub", json.dumps({"source": "bathroom-door", "name": "bathroom", "value": bathroom_humidity}))
+
         if corridor_humidity < 5 or corridor_humidity > 100:
             corridor_humidity = None
+        else:
+            self.redis_instance.publish("humidity-pubsub", json.dumps({"source": "bathroom-door", "name": "corridor", "value": corridor_humidity}))
+
         if ceiling_temperature < 5 or ceiling_temperature > 60:
             ceiling_temperature = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "bathroom-door", "name": "corridor-ceiling", "value": ceiling_temperature}))
 
         influx_data = {
             "measurement": "bathroom",

@@ -3,6 +3,7 @@
 from utils import SensorConsumerBase
 import datetime
 import sys
+import json
 
 
 class FridgeInside(SensorConsumerBase):
@@ -92,6 +93,39 @@ class FridgeInside(SensorConsumerBase):
             if data["action"] == "user_dismissed":
                 pass
             return
+
+        if data["data"]["freezer_temperature1"] < -35 or data["data"]["freezer_temperature1"] > 30:
+            data["data"]["freezer_temperature1"] = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "fridge", "name": "freezer", "value": data["data"]["freezer_temperature1"]}))
+
+        if data["data"]["fridge_temperature1"] < -35 or data["data"]["fridge_temperature1"] > 30:
+            data["data"]["fridge_temperature1"] = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "fridge", "name": "fridge-upper", "value": data["data"]["fridge_temperature1"]}))
+
+        if data["data"]["fridge_temperature2"] < -35 or data["data"]["fridge_temperature2"] > 30:
+            data["data"]["fridge_temperature2"] = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "fridge", "name": "fridge-middle", "value": data["data"]["fridge_temperature2"]}))
+
+        if data["data"]["fridge_temperature3"] < -35 or data["data"]["fridge_temperature3"] > 30:
+            data["data"]["fridge_temperature3"] = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "fridge", "name": "fridge-cooling-element", "value": data["data"]["fridge_temperature3"]}))
+
+        if data["data"]["fridge_temperature4"] < -35 or data["data"]["fridge_temperature4"] > 30:
+            data["data"]["fridge_temperature4"] = None
+        else:
+            self.redis_instance.publish("temperature-pubsub", json.dumps({"source": "fridge", "name": "fridge-middle-rh-sensor", "value": data["data"]["fridge_temperature4"]}))
+
+        if data["data"]["fridge_humidity"] < 0 or data["data"]["fridge_humidity"] > 100:
+            data["data"]["fridge_humidity"] = None
+        else:
+            self.redis_instance.publish("humidity-pubsub", json.dumps({"source": "fridge", "name": "fridge-middle-rh-sensor", "value": data["data"]["fridge_humidity"]}))
+
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "fridge", "name": "fridge-door", "value": data["data"]["fridge_door_open"]}))
+        self.redis_instance.publish("switch-pubsub", json.dumps({"source": "fridge", "name": "freezer-door", "value": data["data"]["freezer_door_open"]}))
 
         self.insert_into_influx([{
             "measurement": "fridge",
