@@ -1,10 +1,10 @@
+import datetime
+import json
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 from homedisplay.utils import publish_ws
 from info_internet_connection.models import Internet, get_latest_serialized
-import datetime
 import huawei_b593_status
-import json
 import redis
 
 
