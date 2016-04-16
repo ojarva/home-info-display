@@ -11,8 +11,8 @@ DoorScreensaver = ->
     last_activity = new Date()
 
   update = ->
-    now = clock.getDate()
-    hour = now.getHours()
+    now = clock.getMoment()
+    hour = now.hour()
     if hour > 21 or hour < 8
       # Active
       if new Date() - last_activity > timeout

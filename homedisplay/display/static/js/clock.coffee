@@ -16,7 +16,7 @@ ClockCalendar = (options) ->
       console.error "Invalid timestamp from server"
       return
 
-#    clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date()) # In milliseconds
+    clock_offset = -1 * parseInt(new Date(server_timestamp) - new Date()) # In milliseconds
 
 
   updateOffset = ->
@@ -26,7 +26,7 @@ ClockCalendar = (options) ->
 
   getMoment = ->
     # Get moment with current offset
-    return moment().subtract getOffset()
+    return moment().subtract(getOffset()).tz("Europe/Helsinki")
 
 
   getDate = ->
@@ -36,20 +36,17 @@ ClockCalendar = (options) ->
 
   update = ->
     days = new Array("su", "ma", "ti", "ke", "to", "pe", "la")
-    currentTime = getDate()
-    currentDay = days[currentTime.getDay()]
-    currentDate = currentTime.getDate()
-    currentMonth = currentTime.getMonth()+1
-    jq(".calendar").html "#{currentDay} #{currentDate}.#{currentMonth}."
+    currentTime = getMoment()
+    jq(".calendar").html currentTime.Format("dd D.M.")
     currentHours = currentTime.getHours()
     currentMinutes = currentTime.getMinutes()
     currentSeconds = currentTime.getSeconds()
     currentHoursPadded = ("0#{currentHours}").substr(-2, 2)
     currentMinutes = ("0#{currentMinutes}").substr(-2, 2)
     currentSeconds = ("0#{currentSeconds}").substr(-2, 2)
-    jq(".clock").html "#{currentHours}:#{currentMinutes}:#{currentSeconds}"
-    jq(".clock-hours").html currentHours
-    jq(".clock-minutes").html currentMinutes
+    jq(".clock").html currentTime.format("H:mm:ss")
+    jq(".clock-hours").html currentTime.format("H")
+    jq(".clock-minutes").html currentTime.format("mm")
 
 
   stopInterval = ->
@@ -77,7 +74,7 @@ ClockCalendar = (options) ->
   @startInterval = startInterval
   @stopInterval = stopInterval
   @getMoment = getMoment
-  @getDate = getDate
+  @*.coffee = getDate
   return @
 
 
