@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 import views
 
-urlpatterns = [
+urlpatterns = [  # pylint:disable=invalid-name
     url(r'^content/display$', TemplateView.as_view(template_name="main/display.html")),
     url(r'^content/kitchen$', TemplateView.as_view(template_name='main/kitchen.html')),
     url(r'^content/door$', TemplateView.as_view(template_name='main/door.html')),
