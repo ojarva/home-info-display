@@ -3010,6 +3010,7 @@
     momentPrototype__proto.format            = format;
     momentPrototype__proto.from              = from;
     momentPrototype__proto.fromNow           = fromNow;
+    momentPrototype__proto.fromNowSynced     = fromNowSynced;
     momentPrototype__proto.to                = to;
     momentPrototype__proto.toNow             = toNow;
     momentPrototype__proto.get               = getSet;
