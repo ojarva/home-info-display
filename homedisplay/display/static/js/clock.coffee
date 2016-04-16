@@ -74,7 +74,7 @@ ClockCalendar = (options) ->
   @startInterval = startInterval
   @stopInterval = stopInterval
   @getMoment = getMoment
-  @*.coffee = getDate
+  @getDate = getDate
   return @
 
 
