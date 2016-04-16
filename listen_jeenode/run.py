@@ -13,12 +13,14 @@ import logging
 import multiprocessing
 import redis
 import serial
+import select
 import struct
 import time
+import Queue
 
 
 def redis_listener(redis_instance, queue):
-    pubsub = self.redis_instance.pubsub(ignore_subscribe_messages=True)
+    pubsub = redis_instance.pubsub(ignore_subscribe_messages=True)
     pubsub.subscribe("jeenode-commands-pubsub")
     for message in pubsub.listen():
         try:
@@ -66,7 +68,7 @@ class JeenodeListener(object):
             try:
                 queue_item = queue.get(False)
                 s.write(queue_item["message"])
-            except multiprocessing.Queue.Empty:
+            except Queue.Empty:
                 pass
             if select.select([s], [], [], 0)[0] == []:
                 time.sleep(0.5)

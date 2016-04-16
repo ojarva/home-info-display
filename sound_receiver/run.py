@@ -6,6 +6,7 @@ import json
 import os
 import redis
 import subprocess
+from setproctitle import setproctitle
 
 
 def play_sound(sound_type):

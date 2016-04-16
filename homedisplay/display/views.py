@@ -7,5 +7,6 @@ from homedisplay.utils import publish_ws
 
 class Wrapped(View):
 
-    def get(self, _, *_, **kwargs):  # pylint:disable=no-self-use
+    # celery breaks if there's two arguments with same name
+    def get(self, a, *b, **kwargs):  # pylint:disable=no-self-use
         return render_to_response("main/frame.html", {"frame_src": "/homecontroller/display/content/%s" % kwargs.get("view")}, context_instance=RequestContext(request))

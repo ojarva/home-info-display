@@ -1,6 +1,7 @@
 import datetime
 import os
 import redis
+from setproctitle import setproctitle
 
 
 class InfluxUpdateReceiver(object):

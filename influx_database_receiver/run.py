@@ -5,6 +5,7 @@ import json
 import os
 import redis
 import requests.exceptions
+from setproctitle import setproctitle
 
 
 class InfluxUpdateReceiver(object):

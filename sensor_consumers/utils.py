@@ -61,7 +61,7 @@ class SensorConsumerBase(object):
         pubsub.subscribe(channel)
         for message in pubsub.listen():
             print("Got '%s'" % message)
-            data = json.loads(message["data"])
+            data = json.loads(message["data"].decode())
             if "timestamp" in data:
                 timestamp = data["timestamp"]
                 data["timestamp"] = datetime.datetime.fromtimestamp(timestamp)
