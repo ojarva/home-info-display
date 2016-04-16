@@ -37,7 +37,7 @@ ClockCalendar = (options) ->
   update = ->
     days = new Array("su", "ma", "ti", "ke", "to", "pe", "la")
     currentTime = getMoment()
-    jq(".calendar").html currentTime.Format("dd D.M.")
+    jq(".calendar").html currentTime.format("dd D.M.")
     currentHours = currentTime.getHours()
     currentMinutes = currentTime.getMinutes()
     currentSeconds = currentTime.getSeconds()
