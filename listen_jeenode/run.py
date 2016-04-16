@@ -67,6 +67,7 @@ class JeenodeListener(object):
         while True:
             try:
                 queue_item = queue.get(False)
+                self.logger.info("Sending '%s'", queue_item["message"])
                 s.write(queue_item["message"])
             except Queue.Empty:
                 pass
