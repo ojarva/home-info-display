@@ -1,3 +1,7 @@
+import datetime
+import json
+import time
+
 from control_display.display_utils import run_display_command
 from control_display.utils import initiate_delayed_shutdown, set_destination_brightness
 from django.conf import settings
@@ -8,12 +12,9 @@ from django.utils import timezone
 from django.views.generic import View
 from homedisplay.utils import publish_ws
 from server_power.views import sp
-import datetime
-import json
 import redis
-import time
 
-redis_instance = redis.StrictRedis()
+redis_instance = redis.StrictRedis()  # pylint:disable=invalid-name
 
 
 def send_lightcontrol_command(command, group, source="manual", **kwargs):

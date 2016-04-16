@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from . import views
 
-urlpatterns = [
+urlpatterns = [  # pylint:disable=invalid-name
     url(r'^status$', views.Control.as_view()),
     url(r'^status/(?P<group>([0-9]))$', views.Control.as_view()),
     url(r'^control/(?P<command>([a-z_-]+))/(?P<group>([0-9]))$',
