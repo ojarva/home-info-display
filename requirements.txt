@@ -1,3 +1,4 @@
+rjsmin>=1.0.12
 -e git://github.com/ojarva/py-utorrent.git@35c4298463247165012ef8f8b4647f10a2fd5bd4#egg=py_utorrent-master
 aaltopoiju>=0.0.3
 amqp>=1.4.9
