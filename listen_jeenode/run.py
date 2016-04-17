@@ -11,21 +11,28 @@ import json
 import local_settings as settings
 import logging
 import multiprocessing
-import Queue
+import queue as queue_module
 import redis
 import select
 import serial
 import struct
 import time
+import sys
 
 
-def redis_listener(redis_instance, queue):
+if sys.version_info < (3, 4):
+    print("Python version must be at least 3.4")
+    sys.exit(1)
+
+
+def redis_listener(redis_instance, queue, logger):
     pubsub = redis_instance.pubsub(ignore_subscribe_messages=True)
     pubsub.subscribe("jeenode-commands-pubsub")
     for message in pubsub.listen():
         try:
             data = json.loads(message["data"])
-        except ValueError, TypeError:
+        except (ValueError, TypeError) as err:
+            logger.warning("Invalid data from commands pubsub: '%s' - %s", message, err)
             continue
         queue.put(data)
 
@@ -69,12 +76,12 @@ class JeenodeListener(object):
                 queue_item = queue.get(False)
                 self.logger.info("Sending '%s'", queue_item["message"])
                 s.write(queue_item["message"])
-            except Queue.Empty:
+            except queue_module.Empty:
                 pass
             if select.select([s], [], [], 0)[0] == []:
                 time.sleep(0.5)
                 continue
-            line = s.readline().strip()
+            line = s.readline().strip().decode()
             self.logger.info("Got '%s' from jeelink", line)
             if line.startswith("OK "):
                 items = line.split(" ", 2)
