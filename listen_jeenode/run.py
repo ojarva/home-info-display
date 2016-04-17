@@ -30,7 +30,7 @@ def redis_listener(redis_instance, queue, logger):
     pubsub.subscribe("jeenode-commands-pubsub")
     for message in pubsub.listen():
         try:
-            data = json.loads(message["data"])
+            data = json.loads(message["data"].decode())
         except (ValueError, TypeError) as err:
             logger.warning("Invalid data from commands pubsub: '%s' - %s", message, err)
             continue
@@ -65,7 +65,7 @@ class JeenodeListener(object):
     def run(self):
         s = serial.Serial(settings.JEELINK, 57600)
         queue = multiprocessing.Queue()
-        redis_receiver = multiprocessing.Process(target=redis_listener, args=(self.redis, queue))
+        redis_receiver = multiprocessing.Process(target=redis_listener, args=(self.redis, queue, self.logger))
         redis_receiver.start()
 
         sent_event_map = {}
