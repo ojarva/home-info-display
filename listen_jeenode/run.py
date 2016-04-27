@@ -75,7 +75,7 @@ class JeenodeListener(object):
             try:
                 queue_item = queue.get(False)
                 self.logger.info("Sending '%s'", queue_item["message"])
-                s.write(queue_item["message"])
+                s.write(queue_item["message"].encode())
             except queue_module.Empty:
                 pass
             if select.select([s], [], [], 0)[0] == []:
