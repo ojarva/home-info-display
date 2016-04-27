@@ -7,6 +7,10 @@ import sys
 
 
 class DishwasherParser(object):
+    NOISE_THRESHOLD = 7
+    PREWASH_THRESHOLD = 25
+    WASHING_THRESHOLD = 200
+
     STATE_TRANSITIONS = {
         "starting": ["prewash", "washing-1"],
         "prewash": ["finishing", "finished", "washing-1"],
@@ -154,7 +158,7 @@ class DishwasherParser(object):
         if value is None:
             return
 
-        if value > 2:
+        if value > self.NOISE_THRESHOLD:
             if self.running_since is None:
                 if self.single_run_testing and self.start_detected:
                     print("Single run testing enabled but duplicate start detected")
@@ -164,12 +168,12 @@ class DishwasherParser(object):
                 self.running_since = timestamp
                 self.current_program = set(["quick", "prewash", "50C", "65C"])
 
-        if value > 1 and self.running_since:
+        if value > self.NOISE_THRESHOLD and self.running_since:
             self.last_noise_exceeded = timestamp
             if self.first_noise_exceeded is None:
                 self.first_noise_exceeded = timestamp
 
-        if value > 25 and value < 200:
+        if value > self.PREWASH_THRESHOLD and value < self.WASHING_THRESHOLD:
             if len(self.running_or_finished_phases) == 1:
                 self.set_phase("prewash", timestamp)
             elif "washing-1" in self.running_or_finished_phases and "mid-washing" not in self.running_or_finished_phases and timestamp - self.current_phase_since > datetime.timedelta(minutes=6):
@@ -182,7 +186,7 @@ class DishwasherParser(object):
 
             if self.current_phase == "prewash" and timestamp - self.current_phase_since > datetime.timedelta(minutes=2, seconds=30):
                 self.drop_program("quick")
-        if value > 200:
+        if value > self.WASHING_THRESHOLD:
             if "washing-1" not in self.running_or_finished_phases:
                 self.set_phase("washing-1", timestamp)
             if "mid-washing" in self.running_or_finished_phases:
@@ -197,7 +201,7 @@ class DishwasherParser(object):
             if self.first_washing_exceeded is None:
                 self.first_washing_exceeded = timestamp
 
-        if value < 1:
+        if value < self.NOISE_THRESHOLD:
             # noise / not running
             if self.running_since and self.last_noise_exceeded:
                 time_diff = timestamp - self.last_noise_exceeded
@@ -235,11 +239,11 @@ class DishwasherParser(object):
                         data = copy.deepcopy(self.get_data(timestamp))
                         self.reset()
 
-        if value < 25:
+        if value < self.PREWASH_THRESHOLD:
             if self.first_prewash_exceeded and self.last_prewash_exceeded:
                 self.first_prewash_exceeded = None
 
-        if value < 200:
+        if value < self.WASHING_THRESHOLD:
             if self.first_washing_exceeded and self.last_washing_exceeded:
                 self.first_washing_exceeded = None
 
